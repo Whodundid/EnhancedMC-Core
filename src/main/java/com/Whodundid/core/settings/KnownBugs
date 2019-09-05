@@ -1,0 +1,259 @@
+Enhanced MC Known Bugs
+-----------------------
+
+Fixed---1. EnhanedGui - EGuiButtons will sometimes not properly transfer or relinquish focus.
+           -Problem actually affected all aspects of EnhancedGui and EnhancedGuiObjects.
+                -Fixed by correcting EnhancedGui.mouseClicked() and EnhancedGuiObject.relinquishFocus() logic.
+            
+            
+Fixed---2. EnhanedGui - Multiple EGuiTextArea textAreaLines can be selected at once leading to overflow error.
+                -Same problem as 1.
+        
+        
+NotBug--3. ParkourHelper - Helper blocks cannot be set using '`' (tilda).
+                -Code is working as intended, '`' (tilda) activates debug command 0 by default.
+                -Helper block hotKey should be reassigned instead.
+    
+    
+Fixed---4. ChatOrganizer - ModdedChat - Chat buttons are drawn over chat hover text boxes.
+                -Rewrote ModdedChat using InGameChatWindow objects.
+    
+    
+        5. ParkourHelper - Cannot identify jump edge when standing on daylight sensor.
+        
+        
+Fixed---6. ParkourHelper - graphics are drawn over jump success text.
+                -Bug seems to have sorted itself out oddly enough.
+        
+        
+Fixed---7. EGuiTextArea - in an EGui where there are multiple textAreas, clicking on another EGuiTextArea will cause all other 
+           textAreas with line numbers being drawn to have their lineNumber separator to either flash or not draw correctly.
+                -Caused by the removal of the mc.renderEngine.bindTexture() being removed from the previous draw lines so the
+                 last color (gray) in the draw lines was being used for the lineNumberSeparator texture.
+                 
+           
+Fixed---8. EGuiTextArea - in an EGui where there are multiple textAreas, textAreas with line numbers enabled who also have entries
+            will not visually display the lineNumber separator.
+                -Fixed in 9.
+                
+        
+Fixed---9. EGuiTextArea - lineNumber separators are not being drawn correctly in general when there are multiple textAreas in one gui.
+                -Fixed in 9.
+        
+        
+Fixed---10. EGuiTextArea - scroll position is off by one unless manually scrolled using the scroll wheel (not bar) to the top.
+                -Rewrote textArea from scratch.
+        
+        
+Fixed---11. EGuiTextArea - when pressing enter to create new lines, scroll position starts advancing after only 2 lines have been created.
+                -Rewrote textArea from scratch.
+        
+        
+Fixed---12. EGuiTextArea - when backspacing to delete lines in a textArea with lineNumbers being drawn, the first line when deleted will
+            have its lineNumber also deleted.
+                -Rewrote textArea from scratch.
+            
+            
+Fixed---13. EGuiTextArea - when backspacing to delete lines, scrollPosition does not automatically move upwards.
+                -Rewrote textArea from scratch.
+                
+        
+Fixed---14. EGuiDropDownList - selecting an option does not close the list.
+                -Caused as a result of completely redoing the previously used focus system which was ultimately bugged.
+        
+        
+Fixed---15. EGuiDropDownList - if opened, the drawn opened list persists even if other objects recieve focus.
+                -Fixed in 16.
+                
+        
+        16. World Editor - occasional problem where when sometimes during zooming, the region that the algorithm thinks is inside the editor
+            drastically shrinks to roughly a 1/4 of it's size and is in an odd position.
+            (have not been able to reproduce in a while)
+            
+        
+Fixed---17. World Editor - when panning outside of the outter boundary in bug 18, and specifically in the more top-left corner of the outside 
+            boundary, a significant portion of the guiObjects move with the mouse position.
+                -Caused by a missing checkDraw() for the moveButton in the EGuiHeader.
+                
+                
+Fixed---18. World Editor - world edit points are not being set when a selection is made.
+                -Caused as a result of not having mousePressed/Released/Dragged calls being made in EnhancedGui.
+        
+        
+Fixed---19. World Editor - many guiObjects are not properly being drawn relative to the gui position, but rather to the screen position.
+                -Corrected drawn positions to draw off of gui position.
+        
+        
+Magically Fixed---20. World Editor - right click menu is not appearing at all.
+        
+        
+Fixed---21. EnhancedChat - ModdedChat - guiObjects are still being created and left behind when resizing the game window.
+                -Caused by the setWorldAndResolution method being removed somehow.
+        
+        
+Fixed---22. EnhancedChat - ModdedChat - cannot click on elements in the chat history.
+Outdated        -Caused by the chat click code being accidentally removed.
+            
+        
+        23. ParkourHelper - only first block is automatically detected, no more can be set afterwards
+        
+        
+        24. ParkourHelper - attempting to manually set a helperBlock will occasionally cause the backgroundChecker thread to crash as the helperBlock
+            value is changing mid method on the backgroundChecker thread.
+            
+            
+        25. ParkourHelper - cannot detect ladders, fence blocks, railings, stone fence
+        
+        
+Fixed---26. MainMenu - CustomInGameMenu - when alt tabbing out of mc, the vanilla inGameMenu appears instead of the custom one.
+            -Caused by not intercepting the init of the default GuiIngameMenu.
+        
+        
+        27. EGuiTextArea - text can extend past the textArea's endX border.
+        
+        
+Fixed---28. EGuiTextArea - when clicking in text to position cursor within, the click position is not offset by the drawn line numbers.
+Outdated        -Rewrote textArea from scratch.
+        
+        
+Fixed---29. ChatOrganizer - ModdedChat - when game window is resized, the position of guiObjects do not properly reorient with new screen dimensions.
+                -Caused as a result of not correctly passing the new scaled width and height to the setWorldAndResolution method.
+                
+        
+        30. EGuiTextArea - the scroll bar does not scale to the height of the textArea.
+        
+        
+        31. EGuiTextArea - the cursor stays as the iBeam cursor even when over the scroll bars.
+        
+        
+Fixed---32. MainMenu - CustomInGameMenu - when resizing the window, the drawn background does not properly resize to the new screen dimensions.
+                -Caused by setWorldAndResolution not being passed new width and height values on window resize.
+        
+        
+Fixed---33. MainMenu - CustomInGameMenu - buttons are drawn too high.
+                -Caused by CustomInGameMenu values being drawn off of the center position and not the screen height.
+                
+                
+Fixed---34. EnhancedGui - When traversing through guiHistory, multiple instances of past guis can be put into the history.
+                -Potential found problem: initGui pushing a new guiInstance into the guiHistory on each setWorldAndResolution call.
+                -Observation: initGui is being called 2x somehow.
+                -Caused by SettingsGui when checking for a gui during the button press to open the subMod's gui, a guiInstance is created,
+                 then created again once inside the if statement.
+                
+        
+Fixed---35. EnhancedGui - Focus locks can break in dialogueBoxes if the dialogueBox's header is clicked, then the dialogueBox itself is clicked.
+                -Fixed by rewriting focus system from the ground up.
+                -Focus now uses the following architecture objects:
+                       1. focusedObject: the current object with focus at a given instance.
+                       2. defaultFocusObject: the object which automatically is passed focus if no other objects have focus.
+                       3. focusLockObject: the object which hold focus within an enhancedgui and prevents focus from being transfered to any object
+                                           which isn't a child of the focus locked parent.
+                       5. focusEvent: an event object which is created upon focus transfer, request, mouse, key, and relinquish events.
+                                      contains:
+                                            1. the object which the event is concerning.
+                                            2. the type of focusEvent this event is, ie. (mouse, transfer, defaultFocus, ..)
+                                            3. additional values for mouse position, buttons, and keys that were used to create the event in the first place.
+                       6. focusQueue: an ArrayDeque which controls the processing order of new focusEvents coming into the gui.
+                                      Uses a first in, first out (fifo) approach.
+                       7. parentTopGui: the head parent of a group of IEnhancedGuiObjects which ultimately control the entire focus protocol for 
+                                        itself and all added children.
+        
+        
+Halfix--36. HotKeys - SayHi hotkey is not working anymore.
+                -Exception thrown when loading hotkeys prevented user made keys from loading.
+                -Can still happen if an exception is thrown during loading.
+                    
+                
+        37. EnhancedGui - resizeable objects can't be resized from every side if any other IEnhancedGuiObject is being drawn over the clickable area
+                          to resize the object as focus is transfered to the new object and not to the resizeable object.
+        
+        
+Fixed---38. EnhancedGui - resizeable objects can't be resized when trying to resize from the header as focus is transfered to the header object instead of
+                          the resizeable object.
+                
+        
+Fixed---39. EnhancedGui - when resetting the position of a resized object, the object is not reset to its original size.
+                -Added special case scenario for rebuilding objects that are resized. 
+        
+        
+Fixed---40. EnhancedGui - when resetting the position of a resized object, initial child object positions are effectively overriden due to recreating the
+                          children with new dimensions on every resize pass.
+                -Made change to have resized parent object reinit objects on position reset so child initial positions no longer matter.
+        
+Fixed---41. ParkourGui - crashes upon opening.
+                -Caused by:
+                    1. vanilla fontRendererObj not being set during setWorldAndResolution.
+                    2. improper variable usage then assingment order.
+        
+        
+Fixed---42. MiniMapGui - can't type into textFields.
+                -Caused by not calling the super's keyPressed for both.
+        
+        
+        43. ParkourAI - default jump value is set to '0.0' instead of '0.535'.
+        
+        
+        44. MiniMap - border is not drawn.
+        
+        
+        45. MiniMap - big map does not draw at the proper location and size.
+        
+        
+        46. MiniMap - vertical draw does not draw correctly.
+        
+        
+Fixed---47. MiniMapGui - drawn current tracked player name does not have enough space to draw players with max name lengths.
+                -Removed 'Currently' from the 'Currently Tracking' message to make space.
+        
+        
+Fixed---48. EGuiSlider - when dragging the slider, if the right mouse button is clicked, the slider never stops following the mouse position even if focus is lost.
+                -Added check to stop sliding when focus is lost.
+        
+        
+        49. EGuiScrollBar - when scrolling by dragging the thumb with the mouse, the thumb position updates even when the mouse location is outside of the
+                            dimensions of the actual scrollBar.
+                            
+                            
+Fixed---50. HotKeyListGui - key description can draw beyond the designated area for displaying hotkey values.
+                -Increased area for description to draw onto multiple lines. Not entirely happy with current state however.
+        
+        
+Fixed---51. EGuiTextArea - inserting lines by pressing enter on a line located anywhere before the end will cause the drawn Y position to jump to the end.
+                -Corrected logic for keeping newly created drawn lines visible.
+        
+        
+        52. HotKeys - key enabled states are not correctly saved or loaded on restarts.
+
+
+Fixed---53. SLS Guis - traversing gui history breaks when navigating the menus over time. (not quite sure how to reproduce)
+                -Caused by pressing the 'Done' buttons in the SLS guis as they bypassed the closeGui method by
+                 directly creating a new instance of the SLSMainGui with the same history.
+        
+        
+Fixed---54. EGuiHeader - when resetting an objects position by right clicking the move button, focus breaks and nothing can be interacted with.
+                -Caused by accidentally changing the width and height values in the SetWorldAndResolution method to use the
+                 width and height of the gui instead of the screen. (It's honestly weird that this didn't visually break more things)
+                 
+        
+Fixed---55. InGameChatWindow - when pulling a tab out to create a new window, the new window's position and child positions can be offset from the correct creation location.
+                -Caused by objects being added but then initialized on later draw calls which would cause a bit of a desynchronization with object positions
+                 which was especially noticeable when adding objects to an already moving object.
+        
+        
+Fixed---56. InGameChatWindow - when pulling a tab out of a window, the new tab button's position is too far to the right by 1 button length.
+                -Caused by using the wrong tab list to base count off of.
+        
+        
+Fixed---57. HotKeys - if the builtIn keys file is overwritten or deleted, the build hotkey will be set to use escape as it's key.
+                -Caused by some idiot setting the key to escape in creation, but because that idiot never bothered to try deleting or overwritting the builtIn key file
+                 they never knew until they randomly broke something else which forced the file to be overwritten anyways!
+        
+        
+        58. Object Moving - moving any object, either by the move button or dragging the header, causes the entire parent object's dimensions to be expanded to the entire screen.
+        
+        
+        
+        
+        
+        
+        

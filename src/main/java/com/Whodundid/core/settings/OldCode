@@ -1,0 +1,842 @@
+THIS WORKS
+
+package com.Whodundid.WorldEditor;
+
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import org.lwjgl.opengl.GL11;
+import com.Whodundid.main.MainMod;
+import com.Whodundid.main.util.InGameTextureHandler;
+import com.Whodundid.main.util.PlayerFacing;
+import com.Whodundid.main.util.PlayerMovement;
+import com.Whodundid.main.util.StorageBox;
+import com.Whodundid.main.util.Vector3DInt;
+import com.Whodundid.main.util.WorldHelper;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.ResourceLocation;
+
+public class Editor extends Gui {
+    
+    private static Minecraft mc = MainMod.getMC();
+    private static EditorGUI drawnGui;
+    private static ResourceLocation selectionBase = new ResourceLocation("global", "selectionBase.png");
+    public static InGameTextureHandler editorImageHandler = new InGameTextureHandler(mc.getTextureManager(), new BufferedImage(151, 151, BufferedImage.TYPE_INT_ARGB));
+    public static InGameTextureHandler editorImageBorder = new InGameTextureHandler(mc.getTextureManager(), new BufferedImage(153, 153, BufferedImage.TYPE_INT_ARGB));
+    public static Vector3DInt center = new Vector3DInt();
+    public static ArrayList<Position> selection = new ArrayList<>();
+    public static StorageBox<Integer, Integer> mousePos1 = new StorageBox(0, 0); 
+    public static StorageBox<Integer, Integer> mousePos2 = new StorageBox(0, 0);
+    public static Vector3DInt pos1 = new Vector3DInt();
+    public static Vector3DInt pos2 = new Vector3DInt();
+    public static EditorTools selectedTool;
+    public static boolean editorOpen = false;
+    public static boolean safeToDraw;
+    public static int imgWidth = 453;
+    public static int imgHeight = 453;
+    public static int drawWidth = 453;
+    public static int drawHeight = 453;
+    public static int locX = 231;
+    public static int locY = 251;
+
+    public static boolean isEditorOpen() { return editorOpen; }
+    public static void closeEditor() { editorOpen = false; drawnGui = null; }
+    public static Vector3DInt getCenter() { return center; }
+    public static void setCenter(int x, int y, int z) { center.set(x, y, z); drawMapImage(); }
+    public static EditorTools getCurrentTool() { return selectedTool; }
+    public static void setCurrentTool(EditorTools tool) { selectedTool = tool; }
+    public static EditorGUI getDrawnGUI() { return drawnGui; }
+    
+    public static void openEditor() {
+        if (!editorOpen) {
+            selectedTool = EditorTools.SELECT;
+            center = new Vector3DInt((int) Math.floor(mc.thePlayer.posX), (int) Math.floor(mc.thePlayer.posY), (int) Math.floor(mc.thePlayer.posZ));
+            drawMapOutline();
+            drawMapImage();
+            editorOpen = true;
+            drawnGui = new EditorGUI();
+            mc.displayGuiScreen(drawnGui);
+            PlayerFacing.setFacingDir(PlayerFacing.Direction.N);
+            PlayerMovement.instantlyStopAllMovement();
+            mc.renderEngine.bindTexture(editorImageHandler.getTextureLocation());
+        }
+    }
+    
+    public static void updateTick() {
+        drawEditor();
+    }
+    
+    private static void drawEditor() {
+        if (editorOpen) {
+            
+            ScaledResolution res = new ScaledResolution(mc);
+            GL11.glPushMatrix();
+            //GL11.glTranslatef(1.1f, 1.5f, 0);
+            //GL11.glScaled(1.001, 1, 1);
+            mc.renderEngine.bindTexture(editorImageBorder.getTextureLocation());
+            drawModalRectWithCustomSizedTexture((res.getScaledWidth() / 2) - locX - 3, (res.getScaledHeight() / 2) - locY, 0, 0, imgWidth + 6, imgHeight + 6, drawWidth + 6, drawHeight + 6);
+            mc.renderEngine.bindTexture(editorImageHandler.getTextureLocation());
+            drawModalRectWithCustomSizedTexture((res.getScaledWidth() / 2) - locX, (res.getScaledHeight() / 2) - locY + 3, 0, 0, 453, 453, 453, 453);
+            GL11.glPopMatrix();
+        }
+    }
+    
+    private static void drawMapImage() {
+        try {
+            for (int z = center.getZ() - 75; z < center.getZ() + 76; z++) {
+                for (int x = center.getX() - 75; x < center.getX() + 76; x++) {
+                    BlockPos pos = new BlockPos(x, center.getY(), z);
+                    IBlockState state = mc.theWorld.getBlockState(pos);
+                    int color = 0;
+                    if (WorldHelper.checkBlockForMapDraw(pos, state)) {
+                        color = WorldHelper.getCorrectMapColor(pos, state);
+                    }                   
+                    editorImageHandler.GBI().setRGB(x - center.getX() + 75, z - center.getZ() + 75, color);
+                }
+            }
+            editorImageHandler.updateTextureData(editorImageHandler.GBI());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private static void drawMapOutline() {
+        for (int x = 0; x < editorImageBorder.GBI().getWidth(); x++) {
+            if (x % 2 == 1) {
+                editorImageBorder.GBI().setRGB(x, 0, 0x330000);
+                editorImageBorder.GBI().setRGB(x, editorImageBorder.GBI().getHeight() - 1, 0x330000);
+                editorImageBorder.GBI().setRGB(0, x, 0x330000);
+                editorImageBorder.GBI().setRGB(editorImageBorder.GBI().getWidth() - 1, x, 0x330000);                
+            } else {
+                editorImageBorder.GBI().setRGB(x, 0, 0xCC0000);
+                editorImageBorder.GBI().setRGB(x, editorImageBorder.GBI().getHeight() - 1, 0xCC0000);
+                editorImageBorder.GBI().setRGB(0, x, 0xCC0000);
+                editorImageBorder.GBI().setRGB(editorImageBorder.GBI().getWidth() - 1, x, 0xCC0000);
+            }
+        }
+        editorImageBorder.updateTextureData(editorImageBorder.GBI());
+    }
+    
+    private void drawSelectionBox() {
+        try {
+            if (safeToDraw) {
+                int width = mousePos2.getObject() - mousePos1.getObject();
+                int height = mousePos2.getValue() - mousePos1.getValue();
+                int x = mousePos1.getObject();
+                int y = mousePos1.getValue();
+                if (width < 0) {
+                    x = mousePos2.getObject();
+                    width *= -1;
+                }
+                if (height < 0) {
+                    y = mousePos2.getValue();
+                    height *= -1;
+                }
+                
+                mc.renderEngine.bindTexture(selectionBase);
+                drawTexturedModalRect(x, y, 1, 1, width, 1);
+                drawTexturedModalRect(x, y, 1, 1, 1, height);
+                drawTexturedModalRect(x, y + height, 1, 1, width + 1, 1);
+                drawTexturedModalRect(x + width, y, 1, 1, 1, height + 1);
+            }
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+}
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+package com.Whodundid.WorldEditor;
+
+import java.io.IOException;
+import org.lwjgl.input.Mouse;
+import com.Whodundid.main.util.CursorProperties;
+import com.Whodundid.main.util.StorageBox;
+import com.Whodundid.main.util.Vector3DInt;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.util.ResourceLocation;
+
+public class EditorGUI extends GuiScreen {
+    
+    static Minecraft mc = Minecraft.getMinecraft();
+    static ScaledResolution res = new ScaledResolution(mc);
+    ResourceLocation settingsGuiOptions = new ResourceLocation("global", "gui_options.png");
+    ResourceLocation selectionBase = new ResourceLocation("global", "selectionBase.png");
+    ResourceLocation grid = new ResourceLocation("global", "grid.png");
+    private EditorTextInput editorTextInput;
+    private EditorToolList editorToolList;
+    private EditorRCM editorRightClickMenu;
+    private GuiButton tpTo, settings;
+    public Vector3DInt grabPosition = new Vector3DInt();
+    public Vector3DInt hoverPos = new Vector3DInt();
+    public Vector3DInt clickedPos = new Vector3DInt();
+    public boolean insideMap = false;
+    public boolean clicked = false;
+    public boolean rightClick = false;
+    int mX, mY;
+    int guiW, wPos;
+    int guiH, hPos;
+    int centerX = res.getScaledWidth() / 2;
+    int centerY = res.getScaledHeight() / 2;
+    int startX = centerX - Editor.locX;
+    int startY = centerY - Editor.locY;
+    int endX = startX + Editor.imgWidth;
+    int endY = startY + Editor.imgHeight;
+    
+    @Override public boolean doesGuiPauseGame() { return false; }
+
+    @Override
+    public void initGui() {
+        guiW = this.width;
+        guiH = this.height;
+        wPos = width / 2;
+        hPos = height / 2;
+        editorTextInput = new EditorTextInput(this);
+        editorToolList = new EditorToolList(this);
+        this.buttonList.add(tpTo = new GuiButton(0, wPos - 339, hPos - 87, 90, 20, "Tp to center"));
+    }
+    
+    @Override
+    public void drawScreen(int x, int y, float ticks) {
+        mX = x; mY = y;
+        insideMap = isMouseInsideMap();
+        hoverPos = getWorldCoordsAtMouseLocation(x, y);
+        
+        //mc.renderEngine.bindTexture(grid);
+        //drawModalRectWithCustomSizedTexture((res.getScaledWidth() / 2) - Editor.locX, (res.getScaledHeight() / 2) - Editor.locY, 0, 0, Editor.drawWidth, Editor.drawHeight, 128, 128);
+        
+        editorToolList.drawGraphics(x, y, ticks);
+        editorTextInput.drawGraphics(x, y, ticks);
+        if (editorRightClickMenu != null) { editorRightClickMenu.drawGraphics(x, y, ticks); }
+        
+        editorToolList.drawStrings(x, y, ticks);
+        editorTextInput.drawStrings(x, y, ticks);
+        if (editorRightClickMenu != null) { editorRightClickMenu.drawStrings(x, y, ticks); }
+        
+        super.drawScreen(x, y, ticks);
+    }
+    
+    @Override
+    public void updateScreen() {
+        editorTextInput.updateScreen();
+        super.updateScreen();
+    }
+    
+    @Override
+    public void handleMouseInput() throws IOException {
+        if (this.isShiftKeyDown()) { Editor.setCenter(Editor.getCenter().getX() - Integer.signum(Mouse.getEventDWheel()) * 10, Editor.getCenter().getY(), Editor.getCenter().getZ()); 
+        } else if (this.isCtrlKeyDown()) { Editor.setCenter(Editor.getCenter().getX(), Editor.getCenter().getY() + Integer.signum(Mouse.getEventDWheel()), Editor.getCenter().getZ()); 
+        } else { Editor.setCenter(Editor.getCenter().getX(), Editor.getCenter().getY(), Editor.getCenter().getZ() -  Integer.signum(Mouse.getEventDWheel()) * 10); 
+        }
+        editorTextInput.resetAllBoxesText();
+        super.handleMouseInput();
+    }
+    
+    @Override
+    public void keyTyped(char typedChar, int keyCode) throws IOException {
+        //System.out.println(keyCode);
+        switch (keyCode) {
+        case 1: if (editorRightClickMenu != null) { editorRightClickMenu = null; } else { closeGUI(); } break;      
+        case 17: Editor.setCenter(Editor.getCenter().getX(), Editor.getCenter().getY(), Editor.getCenter().getZ() - 1); break;
+        case 30: Editor.setCenter(Editor.getCenter().getX() - 1, Editor.getCenter().getY(), Editor.getCenter().getZ()); break;
+        case 31: Editor.setCenter(Editor.getCenter().getX(), Editor.getCenter().getY(), Editor.getCenter().getZ() + 1); break;
+        case 32: Editor.setCenter(Editor.getCenter().getX() + 1, Editor.getCenter().getY(), Editor.getCenter().getZ()); break;      
+        case 35: Editor.setCenter((int) Math.floor(mc.thePlayer.posX), (int) Math.floor(mc.thePlayer.posY), (int) Math.floor(mc.thePlayer.posZ)); break;
+        }
+        
+        editorToolList.keyTyped(typedChar, keyCode);
+        editorTextInput.updateTextInputBoxes(typedChar, keyCode);
+        
+        super.keyTyped(typedChar, keyCode);
+    }
+    
+    @Override
+    public void mouseClicked(int mX, int mY, int button) throws IOException {
+        if (editorRightClickMenu != null) { 
+            editorRightClickMenu.mouseClicked(mX, mY, button); 
+        }
+        if (button == 0) {
+            if (insideMap) {
+                switch (Editor.getCurrentTool()) {
+                case PAN:
+                    Vector3DInt p = this.getWorldCoordsAtMouseLocation(mX, mY);
+                    grabPosition.set(p.getX(), p.getY(), p.getZ());
+                default: break;
+                }
+            } else {
+                editorToolList.mouseClicked(mX, mY, button);
+            }
+            if (editorRightClickMenu != null) {
+                editorRightClickMenu = null;
+            }
+            Editor.safeToDraw = false;
+            clicked = true;
+        } else if (button == 1) {
+            rightClick = true;
+            this.clickedPos = this.getWorldCoordsAtMouseLocation(mX, mY);
+            editorRightClickMenu = new EditorRCM(this, mX, mY);
+        }
+        
+        editorToolList.mouseClicked(mX, mY, button);
+        editorTextInput.mouseClicked(mX, mY, button);
+        
+        super.mouseClicked(mX, mY, button);
+    }
+    
+    @Override
+    public void mouseClickMove(int mX, int mY, int button, long timeSinceLastClick) {
+        try {
+            switch (Editor.getCurrentTool()) {
+            case PAN:
+                if (insideMap) {
+                    Vector3DInt newPos = this.getWorldCoordsAtMouseLocation(mX, mY);
+                    if (this.isShiftKeyDown()) {
+                        Editor.setCenter(Editor.getCenter().getX() + (grabPosition.getX() - newPos.getX()), newPos.getY(), Editor.getCenter().getZ());
+                    } else if (this.isCtrlKeyDown()) {
+                        Editor.setCenter(Editor.getCenter().getX(), newPos.getY(), Editor.getCenter().getZ() + (grabPosition.getZ() - newPos.getZ()));
+                    } else {
+                        Editor.setCenter(Editor.getCenter().getX() + (grabPosition.getX() - newPos.getX()), newPos.getY(), Editor.getCenter().getZ() + (grabPosition.getZ() - newPos.getZ()));
+                    }
+                    editorTextInput.resetAllBoxesText();
+                }
+                break;
+            default: break;
+            }
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+    
+    @Override
+    public void mouseReleased(int mX, int mY, int button) {
+        if (button == 0) {
+            switch (Editor.getCurrentTool()) {
+            case PAN:
+                grabPosition.clear();
+            default: break;
+            }
+            clicked = false;
+        } else if (button == 1) {
+            rightClick = false;
+        }
+        super.mouseReleased(mX, mY, button);
+    }
+    
+    @Override
+    protected void actionPerformed(GuiButton button) throws IOException {
+        if (button.equals(tpTo)) {
+            mc.thePlayer.sendChatMessage("/tp " + editorTextInput.xCoord.getText() + " " + editorTextInput.yCoord.getText() + " " + editorTextInput.zCoord.getText());
+        }
+    }
+    
+    private StorageBox<Integer, Integer> getMouseCoordsAtWorldLocation(int mX, int mY) {
+        return null;
+    }
+    
+    public Vector3DInt getWorldCoordsAtMouseLocation(int mX, int mY) {
+        if (insideMap) {
+            int posX = mX - startX;
+            int posY = mY - startY;
+            
+            int ratioX = (posX * Editor.editorImageHandler.GBI().getWidth()) / Editor.imgWidth;
+            //int ratioX = Editor.getCenter().getX() + (posX/2);
+            int ratioY = (posY * 151) / Editor.imgHeight;
+            
+            int playerX = Editor.getCenter().getX();
+            int playerZ = Editor.getCenter().getZ();
+            
+            int imgEdgeL = playerX - 75;
+            int imgEdgeT = playerZ - 76;
+            
+            int returnX = imgEdgeL + ratioX;
+            int returnZ = imgEdgeT + ratioY;
+            
+            return new Vector3DInt(returnX, Editor.getCenter().getY(), returnZ);
+        }
+        return null;
+    }
+    
+    private boolean isMouseInsideMap() { return mX >= startX && mX <= endX && mY >= startY + 3 && mY <= endY; }
+    public boolean isThereRCM() { return this.editorRightClickMenu != null; }
+    
+    private void closeGUI() {
+        CursorProperties.setCursorVisible();
+        this.mc.displayGuiScreen(null);
+        if (this.mc.currentScreen == null) { this.mc.setIngameFocus(); }
+        Editor.closeEditor();
+    }
+}
+
+        /*try {
+            String s = "";
+            Field getVersionID = mc.getClass().getDeclaredField("launchedVersion");
+            getVersionID.setAccessible(true);
+            Field modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+            modifiersField.setInt(getVersionID, getVersionID.getModifiers() & ~Modifier.FINAL);
+            getVersionID.set(mc, "1.12");
+        } catch (Exception e) { e.printStackTrace(); }*/
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+public boolean tryStartScript(Script script, String[] args, boolean showStateMessage) {
+        if (isEnabled()) {
+            /*
+            try {
+                if (globalKill.get()) {
+                    mc.thePlayer.addChatMessage(ChatBuilder.of(EnumChatFormatting.RED + "GlobalKill is true").build());
+                }
+                if (isScriptRunning(script.getScriptName())) {
+                    throw new ScriptAlreadyRunningException("An instance of: " + script.getScriptName() + " is currently running!");
+                }
+                
+                synchronized (runningScripts) {
+                    script.kill.set(false);
+                    script.ScriptName = script.getClass().getSimpleName();
+                    script.scriptID = constantScriptIDNum;
+                    runningScripts.add(script);
+                    script.startScript(args);
+                    constantScriptIDNum++;
+                    
+                    if (script.showStageMessages) {
+                        mc.thePlayer.addChatMessage(ChatBuilder.of(EnumChatFormatting.GOLD + "Script: " + EnumChatFormatting.WHITE + script.getScriptName() + 
+                                                                   EnumChatFormatting.GREEN + " started.").build());
+                    }
+                    return true;
+                }
+                
+            } catch (ScriptAlreadyRunningException e) {
+                mc.thePlayer.addChatMessage(ChatBuilder.of(e.getMessage()).build());
+            } catch (ScriptArgumentException e) {
+                mc.thePlayer.addChatMessage(ChatBuilder.of("Invalid Script Arguments..").build());
+            }
+            */
+        }
+        return false;
+    }
+    
+    public ArrayList<String> getCurrentlyRunningScriptNames() {
+        /*
+        synchronized (runningScripts) {
+            ArrayList<String> names = new ArrayList();
+            for (int i = 0; i < runningScripts.size(); i++) {
+                names.add(runningScripts.get(i).getScriptName());
+            }
+            return names;
+        }
+        */
+        return null;
+    }
+    
+    public boolean isScriptRunning(String script) {
+        /*
+        synchronized (runningScripts) {
+            if (!script.equals("EmptyScript")) {
+                for (int i = 0; i < runningScripts.size(); i++) {
+                    if (runningScripts.get(i).getScriptName().equals(script)) {
+                        if (runningScripts.get(i).getScriptThread().isAlive()) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        */
+        return false;
+    }
+    
+    public void removeRunningScript(Script script) {
+        /*
+        synchronized (runningScripts) {
+            for (Script s : runningScripts) {
+                if (s.equals(script)) {
+                    try {
+                    s.interruptScript(null);
+                    if (s.showStageMessages) {
+                        mc.thePlayer.addChatMessage(ChatBuilder.of(EnumChatFormatting.GOLD + "Script: " + EnumChatFormatting.WHITE + s.getScriptName() +
+                                                                   "_" + s.scriptID + EnumChatFormatting.RED + " stopped.").build());
+                    }
+                    runningScripts.remove(s);
+                    break;
+                    } catch (Exception e) { e.printStackTrace(); }
+                }
+            }
+        }
+        */
+    }
+    
+    public void removeRunningScript(int scriptID) {
+        /*
+        synchronized (runningScripts) {
+            for (Script s : runningScripts) {
+                if (s.scriptID == scriptID) {
+                    try {
+                    s.interruptScript(null);
+                    if (s.showStageMessages) {
+                        mc.thePlayer.addChatMessage(ChatBuilder.of(EnumChatFormatting.GOLD + "Script: " + EnumChatFormatting.WHITE + s.getScriptName() +
+                                                                   "_" + s.scriptID + EnumChatFormatting.RED + " stopped.").build());
+                    }
+                    runningScripts.remove(s);
+                    break;
+                    } catch (Exception e) { e.printStackTrace(); }
+                }
+            }
+        }
+        */
+    }
+    
+    public void removeAllCurrentlyRunningScripts() {
+        /*
+        synchronized (runningScripts) {
+            if (runningScripts.isEmpty()) {
+            } else {
+                try { killAllRunningScripts(); } catch (ScriptArgumentException e) { e.printStackTrace(); }
+                runningScripts.clear();
+                globalKill.set(false);
+            }
+        }
+        */
+    }
+    
+    private void killAllRunningScripts() throws ScriptArgumentException {
+        /*
+        for (Script s : runningScripts) {
+            s.interruptScript(null);
+            if (s.showStageMessages) {
+                mc.thePlayer.addChatMessage(ChatBuilder.of(EnumChatFormatting.GOLD + "Script: " + EnumChatFormatting.WHITE + s.getScriptName() +
+                                                           EnumChatFormatting.RED + " stopped.").build());
+            }
+        }
+        */
+    }
+    
+    public ArrayList<Script> getCurrentlyRunningScripts() { return null; }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+boolean lineNumbers = parentTextArea.drawLineNumbers;
+        
+        boolean offsetPos = (parentTextArea.getTextDocument().size() > 10 && lineNumber < 10);
+        int offset = offsetPos ? 6 : 0;
+        
+        int drawColor = isEnabled() ? enabledColor : disabledColor;
+        int lineNumberOffset = fontRenderer.getStringWidth(lineNumber + " ") + 1;
+        int j = cursorPosition - lineScrollOffset;
+        int k = selectionEnd - lineScrollOffset;
+        
+        int l = startX;
+        int i1 = startY;
+        
+        
+        startTextX = l;
+        if (lineNumbers) {
+            drawLineNumber();
+            startTextX = l + lineNumberOffset;
+            parentTextArea.textOffset = (startTextX - startX) / 4 - 2;
+            parentTextArea.lineNumberSeparatorPos = startTextX - 3;
+        }
+        
+        String s = fontRenderer.trimStringToWidth(text.substring(lineScrollOffset), getWidth());
+        int textLength = fontRenderer.getStringWidth(text);
+        
+        //System.out.println(textLength + lineNumberOffset > width - offset);
+        
+        boolean flag = j >= 0 && j <= s.length();
+        boolean drawCursor = hasFocus() && cursorCounter / 10 % 2 == 0 && flag;
+        
+        int j1 = startTextX + parentTextArea.textOffset;
+        
+        if (k > s.length()) { k = s.length(); }
+        if (s.length() > 0) {
+            String s1 = flag ? s.substring(0, j) : s;
+            j1 = fontRenderer.drawStringWithShadow(s1, j1, i1, drawColor);
+        }
+        
+        boolean flag2 = cursorPosition < text.length() || text.length() >= getMaxStringLength();
+        int k1 = j1;
+        
+        if (!flag) { k1 = j > 0 ? l + width : l; } 
+        else if (flag2) {
+            k1 = j1 - 1;
+            j1--;
+        }
+        
+        if (s.length() > 0 && flag && j < s.length()) {
+            j1 = fontRenderer.drawStringWithShadow(s.substring(j), j1, i1, drawColor);
+        }
+        
+        if (drawCursor) {
+            if (flag2) { parentGui.drawRect(k1, i1 - 1, k1 + 1, i1 + 1 + fontRenderer.FONT_HEIGHT, -3092272); } 
+            else { fontRenderer.drawStringWithShadow("_", k1, i1, 0xffffff); }
+        }
+        
+        if (k != j) {
+            int l1 = l + fontRenderer.getStringWidth(s.substring(0, k));
+            drawCursorVertical(k1, i1 - 1, l1 - 1, i1 + 1 + fontRenderer.FONT_HEIGHT);
+        }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        package com.Whodundid.main.util.enhancedGui.guiObjects;
+
+import com.Whodundid.main.util.enhancedGui.EnhancedGuiObject;
+import com.Whodundid.main.util.enhancedGui.guiUtil.IEnhancedGuiObject;
+import com.Whodundid.main.util.miscUtil.Resources;
+import com.Whodundid.main.util.storageUtil.Dimension;
+
+//Last edited: Dec 25, 2018
+//First Added: Dec 17, 2018
+//Author: Hunter Bragg
+
+public class EGuiHeader extends EnhancedGuiObject {
+    
+    public EGuiButton fileUpButton, moveButton, closeButton;
+    protected boolean isMoving = false;
+    public boolean drawDefault = true;
+    public boolean drawDisplayString = true;
+    public String displayString = "";
+    public int headerBorderColor = 0xff000000;
+    public int headerMainColor = 0xff2D2D2D;
+    public int headerStringColor = 0x00ffff;
+    private boolean drawHeader = true;
+    
+    public EGuiHeader(IEnhancedGuiObject parentIn) { this(parentIn, true, 19); }
+    public EGuiHeader(IEnhancedGuiObject parentIn, boolean drawDefaultIn, int headerHeight) {
+        if (parentIn != null) {
+            Dimension dim = parentIn.getDimensions();
+            init(parentIn, dim.startX, dim.startY - headerHeight, dim.width, headerHeight);
+        }
+        drawDefault = drawDefaultIn;
+        
+        if (drawDefault) {
+            fileUpButton = new EGuiButton(this, endX - 52, startY + 2, 16, 16, "") {
+                @Override
+                public void performAction() {
+                    if (getPressedButton() == 0) { playPressSound(); parentGui.closeGui(); }
+                    /*else {
+                        EGuiDropDownList history = new EGuiDropDownList(this, mX, mY);
+                        Stack<EnhancedGui> histList = parentGui.getGuiHistory();
+                        for (EnhancedGui g : histList) {
+                            history.addListEntry(new DropDownListEntry(g.getClass().getSimpleName(), g));
+                        }
+                        history.setZLevel(1);
+                        objectInstance.addObject(history);
+                    }*/
+                }
+            };
+            
+            moveButton = new EGuiButton(this, endX - 35, startY + 2, 16, 16, "") {
+                @Override
+                public void performAction() {
+                    playPressSound();
+                    if (!parent.getParent().isPositionLocked()) {
+                        if (getPressedButton() == 0) {
+                            parentGui.isMoving = !parentGui.isMoving;
+                            if (parentGui.isMoving) {
+                                parentGui.setMovingObject(parent.getParent());
+                                parentGui.mousePos.setValues(mX, mY);
+                            }
+                        } else if (getPressedButton() == 1) {
+                            parentGui.isMoving = false;
+                            parent.getParent().resetPosition();
+                        }
+                    }
+                }
+            };
+            
+            closeButton = new EGuiButton(this, endX - 18, startY + 2, 16, 16, "") {
+                @Override
+                public void performAction() {
+                    if (getPressedButton() == 0) {
+                        playPressSound();
+                        parent.getParent().close();
+                    }
+                }
+            };
+            
+            fileUpButton.setButtonTexture(Resources.guiFileUpButton).setButtonSelTexture(Resources.guiFileUpButtonSel).setRunActionOnPress(true).setVisible(false);
+            moveButton.setButtonTexture(Resources.guiMoveButton).setButtonSelTexture(Resources.guiMoveButtonSel).setRunActionOnPress(true).setPersistent(true);
+            closeButton.setButtonTexture(Resources.guiCloseButton).setButtonSelTexture(Resources.guiCloseButtonSel).setRunActionOnPress(true).setPersistent(true);
+            
+            displayString = parentGui != null ? parentGui.getClass().getSimpleName() : "missingno";
+            
+            addObject(fileUpButton, moveButton, closeButton);
+        }
+    }
+    
+    @Override
+    public void drawObject(int mX, int mY, float ticks) {
+        //System.out.println(moveButton.isVisible());
+        if (drawHeader) {
+            drawRect(startX, startY, endX, startY + height, headerBorderColor);
+            drawRect(startX + 1, startY + 1, endX - 1, startY + height, headerMainColor);
+            if (drawDisplayString) {
+                fontRenderer.drawString(displayString, startX + 4, startY + height / 2 - 3, headerStringColor);
+            }
+        }
+        super.drawObject(mX, mY, ticks);
+    }
+    
+    @Override
+    public void mousePressed(int mX, int mY, int button) {
+        if (moveButton != null && moveButton.checkDraw()) {
+            parentGui.mousePos.setValues(mX, mY);
+            if (button == 0) { parentGui.isMoving = true; }
+            else { parentGui.isMoving = false; }
+            parentGui.setMovingObject(parent);
+        }
+        super.mousePressed(mX, mY, button);
+    }
+    
+    @Override
+    public void mouseReleased(int mX, int mY, int button) {
+        super.mouseReleased(mX, mY, button);
+        parentGui.isMoving = false;
+    }
+    
+    @Override
+    public EGuiHeader setEnabled(boolean val) {
+        drawHeader = val;
+        if (drawDefault) {
+            moveButton.setVisible(val).setPersistent(val);
+            closeButton.setVisible(val).setPersistent(val);
+            fileUpButton.setVisible(val && parentGui.getGuiHistory() != null && !parentGui.getGuiHistory().isEmpty());
+        }
+        for (IEnhancedGuiObject o : getObjects()) { o.setVisible(val); }
+        return this;
+    }
+    
+    public EGuiHeader updateFileUpButtonVisibility() {
+        if (parentGui != null && parentGui.getGuiHistory() != null && !parentGui.getGuiHistory().isEmpty() && fileUpButton != null) { fileUpButton.setVisible(true); }
+        return this;
+    }
+    
+    public EGuiHeader setDisplayStringColor(int colorIn) { headerStringColor = colorIn; return this; }
+    public EGuiHeader setBorderColor(int colorIn) { headerBorderColor = colorIn; return this; }
+    public EGuiHeader setMainColor(int colorIn) { headerMainColor = colorIn; return this; }
+    public EGuiHeader setDisplayString(String stringIn) { displayString = stringIn; return this; }
+    public EGuiHeader drawDisplayString(boolean val) { drawDisplayString = val; return this; }
+    public int getStringColor() { return headerStringColor; }
+}
+
+
+
+
+
+
+
+
+if (mX >= startX && mX <= startX + 1) { left = true; }
+if (mX <= endX && mX >= endX - 1) { right = true; }
+if (mY >= rStartY && mY <= rStartY + 1) { top = true; }
+if (mY <= endY && mY >= endY - 1) { bottom = true; }
+        
+        
+    /*
+    @Override
+    public EGuiHeader resize(int xIn, int yIn, Direction areaIn) {
+        int x = 0, y = 0, w = 0, h = 0;
+        switch (areaIn) {
+        case N: x = startX; y = startY + yIn; w = width; h = height; break;
+        case E:
+        case SE: x = startX; y = startY; w = width + xIn; h = height; break;
+        case W: x = startX + xIn; y = startY; w = width - xIn; h = height; break;
+        case NE: x = startX; y = startY + yIn; w = width + xIn; h = height; break;
+        case NW: x = startX + xIn; y = startY + yIn; w = width - xIn; h = height; break;
+        case SW: x = startX + xIn; y = startY; w = width - xIn; h = height; break;
+        default: x = startX; y = startY; w = width; h = height; break;
+        }
+        if (w < getMinimumWidth()) {
+            w = getMinimumWidth();
+            switch (areaIn) {
+            case E: case NE: case SE: x = startX; break;
+            case W: case NW: case SW: x = endX - w; break;
+            default: break;
+            }
+        }
+        if (h < getMinimumHeight()) {
+            h = getMinimumHeight();
+            switch (areaIn) {
+            case N: case NE: case NW: y = endY - h; break;
+            case S: case SE: case SW: y = startY; break;
+            default: break;
+            }
+        }
+        setDimensions(x, y, w, h);
+        reInitObjects();
+        return this;
+    }
+    */
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    

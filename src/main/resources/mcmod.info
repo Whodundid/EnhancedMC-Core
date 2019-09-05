@@ -1,0 +1,17 @@
+[
+{
+  "modid": "enhancedchat",
+  "name": "Enhanced Chat",
+  "description": "Enhanced Chat sub mod for EnhancedMC",
+  "version": "0.9",
+  "mcversion": "[1.8,1.8.9]",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Whodundid"],
+  "credits": "Make sure to have EnhancedMC Core in order to run!",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": ["enhancedmccore"],
+  "parent": "enhancedmccore"
+}
+]
