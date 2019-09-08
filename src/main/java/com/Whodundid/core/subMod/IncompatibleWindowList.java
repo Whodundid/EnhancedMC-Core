@@ -42,9 +42,6 @@ public class IncompatibleWindowList extends EGuiDialogueBox {
 		
 		EGuiRect topLine;
 		
-		System.out.println(startY + 44);
-		System.out.println(problem.startY + problem.getTextHeight() + 2);
-		
 		topLine = new EGuiRect(this, startX + 1, problem.startY + problem.getTextHeight() + 2, endX - 1, problem.startY + problem.getTextHeight() + 3, 0xff000000);
 		addObject(topLine);
 		
@@ -61,6 +58,6 @@ public class IncompatibleWindowList extends EGuiDialogueBox {
 			}
 		} else { incompatibleList.addTextLine("None", 0xb2b2b2); }
 		
-		addObject(problem);
+		addObject(problem, incompatibleList);
 	}
 }
