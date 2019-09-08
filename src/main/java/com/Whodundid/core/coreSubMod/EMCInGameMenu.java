@@ -53,9 +53,10 @@ public class EMCInGameMenu extends EnhancedGui {
 	public boolean doesGuiPauseGame() { return true; }
 	
 	@Override
-	public void drawObject(int mX, int mY, float ticks) {
+	public void drawObject(int mXIn, int mYIn, float ticks) {
 		drawMenuGradient();
 		drawCenteredStringWithShadow(I18n.format("menu.game", new Object[0]), res.getScaledWidth() / 2, (height / 2 - 16) / 2, 16777215);
+		super.drawObject(mXIn, mYIn, ticks);
 	}
 	
 	@Override
