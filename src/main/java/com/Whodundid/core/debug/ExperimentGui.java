@@ -20,9 +20,19 @@ import com.Whodundid.core.enhancedGui.guiObjects.InnerEnhancedGui;
 import com.Whodundid.core.enhancedGui.guiObjects.KeyOverlay;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.settings.SettingsGuiMain;
+import com.Whodundid.core.subMod.RegisteredSubMods;
+import com.Whodundid.core.subMod.SubMod;
+import com.Whodundid.core.subMod.SubModErrorDialogueBox;
+import com.Whodundid.core.subMod.SubModErrorType;
+import com.Whodundid.core.subMod.SubModInfoDialogueBox;
+import com.Whodundid.core.subMod.SubModSettings;
+import com.Whodundid.core.subMod.SubModType;
 import com.Whodundid.core.util.miscUtil.ScreenLocation;
 import com.Whodundid.core.util.renderUtil.PlayerDrawer;
 import com.Whodundid.core.util.renderUtil.Resources;
+import com.Whodundid.core.util.storageUtil.EArrayList;
+import com.Whodundid.core.util.storageUtil.EDimension;
+import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
@@ -75,7 +85,7 @@ public class ExperimentGui extends EnhancedGui {
 		
 		header.setDisplayStringColor(0x000000);
 		
-		InnerEnhancedGui inner = new InnerEnhancedGui(this, endX + 15, midY - 5, 160, 210) {
+		InnerEnhancedGui inner = new InnerEnhancedGui(this, endX + 15, midY - 5, 219, 190) {
 			@Override
 			public void drawObject(int mXIn, int mYIn, float ticks) {
 				drawDefaultBackground();
@@ -86,21 +96,24 @@ public class ExperimentGui extends EnhancedGui {
 		inner.setHeader(new EGuiHeader(inner));
 		if (inner.getHeader() != null) { inner.getHeader().setDisplayString("New Window"); }
 		
-		scrollList = new EGuiScrollList(inner, endX + 20, midY, 150, 200);
-		scrollList.addObjectToList(new EGuiButton(scrollList, 10, 5, 50, 20, "button 1"));
-		scrollList.addObjectToList(new EGuiLabel(scrollList, 30, 50, "Scrolling Label Test!"));
-		scrollList.addObjectToList(new EGuiButton(scrollList, 10, 80, 90, 20, "button 2") {
-			{ setRunActionOnPress(true); }
-			@Override public void performAction() {
-				mc.displayGuiScreen(new SettingsGuiMain());
-				playPressSound();
-			}
-		});
-		scrollList.addObjectToList(new EGuiLabel(scrollList, 30, 370, "At bottom!"));
-		scrollList.addObjectToList(new EGuiButton(scrollList, 45, 152, 90, 20, "test button 3").setDisplayStringColor(0xf63233).setEnabled(false));
-		scrollList.addObjectToList(new KeyOverlay(scrollList, 5, 220));
+		scrollList = new EGuiScrollList(inner, endX + 20, midY, 210, 180);
 		
-		scrollList.setListHeight(scrollList.getDimensions().height + 200);
+		testMethod1();
+		
+		//scrollList.addObjectToList(new EGuiButton(scrollList, 10, 5, 50, 20, "button 1"));
+		//scrollList.addObjectToList(new EGuiLabel(scrollList, 30, 50, "Scrolling Label Test!"));
+		//scrollList.addObjectToList(new EGuiButton(scrollList, 10, 80, 90, 20, "button 2") {
+		//	{ setRunActionOnPress(true); }
+		//	@Override public void performAction() {
+		//		mc.displayGuiScreen(new SettingsGuiMain());
+		//		playPressSound();
+		//	}
+		//});
+		//scrollList.addObjectToList(new EGuiLabel(scrollList, 30, 370, "At bottom!"));
+		//scrollList.addObjectToList(new EGuiButton(scrollList, 45, 152, 90, 20, "test button 3").setDisplayStringColor(0xf63233).setEnabled(false));
+		//scrollList.addObjectToList(new KeyOverlay(scrollList, 5, 220));
+		
+		//scrollList.setListHeight(scrollList.getDimensions().height + 200);
 		
 		inner.addObject(scrollList);
 		
@@ -293,7 +306,30 @@ public class ExperimentGui extends EnhancedGui {
 	}
 	
 	public void testMethod1() {
+		scrollList.clearList();
+		scrollList.setListHeight(scrollList.height - 2);
 		
+		EDimension l = scrollList.getListDimensions();
+		
+		int size = 20;
+		
+		for (int i = 0; i < size; i++) {
+			
+			int dist = 22;
+			
+			EGuiButton modSettings = new EGuiButton(scrollList, l.startX + 5, l.startY + 2 + (i * dist), 110, 20, "name");
+			EGuiButton enabled = new EGuiButton(scrollList, l.endX - 79, l.startY + 2 + (i * dist), 50, 20, "enable");
+			EGuiButton info = new EGuiButton(scrollList, l.endX - 25, l.startY + 2 + (i * dist), 20, 20).setTextures(Resources.guiInfo, Resources.guiInfoSel);
+			
+			if (i >= 8) {
+				scrollList.setListHeight(scrollList.getListHeight() + 2 + modSettings.height);
+			}
+			
+			scrollList.addObjectToList(modSettings, enabled, info);
+		}
+		
+		//if (size > 8) { scrollList.setListHeight(scrollList.getListHeight() + 1); }
+		scrollList.renderScrollBarThumb(size > 8);
 	}
 	
 	public void testMethodWithArgs(String[] args) {

@@ -119,7 +119,7 @@ public class SettingsGuiMain extends EnhancedGui {
 		};
 		searchField.setTextWhenEmpty("Search mods...").setEnableBackgroundDrawing(true);
 		
-		if (RegisteredSubMods.getRegisteredModsList().isEmpty()) {
+		if (RegisteredSubMods.getRegisteredModsList().isEmpty()) { //THIS SHOULD BE IMPOSSIBLE!
 			scrollList.addObjectToList(new EGuiLabel(scrollList, (width - 10) / 2, 80, "No Enhanced MC Sub Mods Detected", 0xff5555).enableWordWrap(true, 125).setDrawCentered(true));
 		}
 		else { assembleList(); }
@@ -150,7 +150,7 @@ public class SettingsGuiMain extends EnhancedGui {
 		scrollList.setListHeight(scrollList.height - 2);
 		
 		//not important
-		if (searchField.getText().equals("important")) { mc.displayGuiScreen(new ImportantGui()); return; }
+		if (searchField.getText().toLowerCase().equals("whodundid")) { mc.displayGuiScreen(new ImportantGui()); return; }
 		
 		EArrayList<SubMod> filteredMods = new EArrayList();
 		if (searchField != null && !searchField.getText().equals("Search mods...")) {
@@ -164,7 +164,6 @@ public class SettingsGuiMain extends EnhancedGui {
 		
 		if (filteredMods.size() > 0) {
 			EDimension l = scrollList.getListDimensions();
-			//scrollList.addObjectToList(new EGuiRect(scrollList, l.getMidX() + 18, 0, l.getMidX() + 19, l.height + 10, 0xff000000));
 			
 			for (int i = 0; i < filteredMods.size(); i++) {
 				SubMod m = filteredMods.get(i);
@@ -242,14 +241,13 @@ public class SettingsGuiMain extends EnhancedGui {
 				};
 				
 				if (i >= 8) {
-					scrollList.setListHeight(scrollList.getListHeight() + 21);
-					//scrollList.addObjectToList(new EGuiRect(scrollList, l.getMidX() + 29, 4 + (i * dist), l.getMidX() + 30, 4 + dist + (i * dist), 0xff000000));
+					scrollList.setListHeight(scrollList.getListHeight() + 2 + modSettings.height);
 				}
 				
 				scrollList.addObjectToList(modSettings, enabled, info);
 			}
 			
-			if (filteredMods.size() > 8) { scrollList.setListHeight(scrollList.getListHeight() + 1); }
+			//if (filteredMods.size() > 8) { scrollList.setListHeight(scrollList.getListHeight() + 1); }
 			scrollList.renderScrollBarThumb(filteredMods.size() > 8);
 		}
 		else {
