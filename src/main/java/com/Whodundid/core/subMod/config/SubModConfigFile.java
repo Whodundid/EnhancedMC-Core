@@ -151,7 +151,7 @@ public abstract class SubModConfigFile {
 				if (block instanceof CreateIfExistsConfigBlock) {
 					//if the block is a 'CreateIfExistsConfigBlock', check if the config file exists -- if it does, check if the specific config line identifier exists in the file.
 					//if the file exists, but the file doesn't contain the identifier, remove this block from the lines that will be saved.
-					if (exists() && !doesFileContainIdentifier(((CreateIfExistsConfigBlock) block).getStringToCheckFor())) { configContentsIn.remove(block); }
+					if (!doesFileContainIdentifier(((CreateIfExistsConfigBlock) block).getStringToCheckFor())) { configContentsIn.remove(block); }
 				}
 			}
 			
