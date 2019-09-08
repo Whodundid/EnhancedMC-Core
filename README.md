@@ -1,4 +1,4 @@
 # EnhancedMC-Core
 
-Core mod and shared useful libraries for all of my mods.
-Required for use of any EnhancedMC subMod.
+The core mod of EnhancedMC which alos contains libraries shared by all EnhancedMC SubMods.
+Required for all EnhancedMC subMods to function properly.
