@@ -56,6 +56,7 @@ public class EGuiRightClickMenu extends EnhancedActionObject {
 						playPressSound();
 						instance.setSelectedObject(getDisplayString());
 						instance.getParent().actionPerformed(instance);
+						getTopParent().unregisterListener(instance);
 						instance.close();
 					}
 				}
@@ -134,9 +135,15 @@ public class EGuiRightClickMenu extends EnhancedActionObject {
 		if (e instanceof EventMouse) {
 			if (((EventMouse) e).getMouseType() == MouseType.Pressed) {
 				if (!isMouseInside(((EventMouse) e).getMouseX(), ((EventMouse) e).getMouseY())) {
+					getTopParent().unregisterListener(this);
 					close();
 				}
 			}
 		}
 	}
+	
+	public EGuiRightClickMenu setTitle(String titleIn) { title = titleIn; return this; }
+	public EGuiRightClickMenu setUseTitle(boolean val) { useTitle = val; return this; }
+	public String getTitle() { return title; }
+	public boolean usesTitle() { return useTitle; }
 }

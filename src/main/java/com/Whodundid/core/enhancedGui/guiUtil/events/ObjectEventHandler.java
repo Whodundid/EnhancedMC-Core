@@ -1,12 +1,16 @@
 package com.Whodundid.core.enhancedGui.guiUtil.events;
 
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.renderer.EnhancedMCRenderer;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
 public class ObjectEventHandler {
 	
 	IEnhancedGuiObject parent;
 	protected EArrayList<IEnhancedGuiObject> listeners = new EArrayList();
+	protected EArrayList<IEnhancedGuiObject> toBeAdded = new EArrayList();
+	protected EArrayList<IEnhancedGuiObject> toBeRemoved = new EArrayList();
+	boolean iterating = false;
 	
 	public ObjectEventHandler(IEnhancedGuiObject parentIn) {
 		parent = parentIn;
@@ -18,26 +22,37 @@ public class ObjectEventHandler {
 	}
 	
 	private void sendListenEvent(ObjectEvent e) {
-		synchronized (listeners) { listeners.forEach(o -> o.onListen(e)); }
+		iterating = true;
+		listeners.forEach(o -> o.onListen(e));
+		iterating = false;
+		updateList();
 	}
 	
 	public void unregisterAllObjects() {
-		synchronized (listeners) {
-			listeners.clear();
-		}
+		toBeRemoved.addAll(listeners);
+		updateList();
 	}
 	
 	public void registerObject(IEnhancedGuiObject object) {
-		synchronized (listeners) {
-			listeners.addIfNotNullAndNotContains(object);
+		if (object != null && listeners.notContains(object)) {
+			toBeAdded.add(object);
 		}
+		updateList();
 	}
 	
 	public void unregisterObject(IEnhancedGuiObject object) {
-		synchronized (listeners) {
-			listeners.remove(object);
+		if (object != null) {
+			toBeRemoved.add(object);
 		}
+		updateList();
 	}
 	
 	public EArrayList<IEnhancedGuiObject> getListenerObjects() { return listeners; }
+	
+	private void updateList() {
+		if (!iterating) {
+			if (toBeAdded.isNotEmpty()) { listeners.addAll(toBeAdded); toBeAdded.clear(); }
+			if (toBeRemoved.isNotEmpty()) { listeners.removeAll(toBeRemoved); toBeRemoved.clear(); }
+		}
+	}
 }
