@@ -1,13 +1,14 @@
 package com.Whodundid.core.enhancedGui.guiObjects;
 
 import com.Whodundid.core.enhancedGui.EnhancedActionObject;
-import com.Whodundid.core.enhancedGui.guiObjectUtil.EButtonGroup;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.ModSetting;
+import java.util.ArrayList;
+import java.util.Iterator;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
@@ -33,7 +34,6 @@ public class EGuiButton extends EnhancedActionObject implements IEnhancedActionO
 	protected boolean trueFalseButton = false;
 	protected boolean drawString = true;
 	protected boolean drawCentered = true;
-	protected EButtonGroup buttonGroup = null;
 	protected ResourceLocation btnTexture = Resources.guiButtonBase;
 	protected ResourceLocation btnSelTexture = Resources.guiButtonSel;
 	
@@ -60,7 +60,7 @@ public class EGuiButton extends EnhancedActionObject implements IEnhancedActionO
 		displayLabel.setDisplayStringColor(stringColor);
 		if (drawDefault) {
 			GlStateManager.color(1.0f, 1.0f, 1.0f);
-			if (mouseCheck) {
+			if (isMouseHover) {
 				if (btnSelTexture != null) { mc.renderEngine.bindTexture(btnSelTexture); }
 			} else {
 				if (btnTexture != null) { mc.renderEngine.bindTexture(btnTexture); }
@@ -138,7 +138,6 @@ public class EGuiButton extends EnhancedActionObject implements IEnhancedActionO
 				playPressSound();
 				if (actionReciever != null) { actionReciever.actionPerformed(this); }
 			}
-			if (buttonGroup != null) { buttonGroup.buttonPressed(this, button); }
 		}
 	}
 	
@@ -180,8 +179,6 @@ public class EGuiButton extends EnhancedActionObject implements IEnhancedActionO
 	public static void playPressSound() { mc.getSoundHandler().playSound(PositionedSoundRecord.create(Resources.buttonSound, 1.0F)); }
 	
 	public int getPressedButton() { return pressedButton; }
-	public EButtonGroup getButtonGroup() { return buttonGroup; }
-	public EGuiButton setButtonGroup(EButtonGroup groupIn) { buttonGroup = groupIn; return this; }
 	public EGuiButton setDisplayString(String stringIn) { displayLabel.setDisplayString(stringIn); return this; }
 	public EGuiButton setDisplayStringColor(int colorIn) { color = colorIn; return this; }
 	public EGuiButton setDisplayStringHoverColor(int colorIn) { textHoverColor = colorIn; return this; }
