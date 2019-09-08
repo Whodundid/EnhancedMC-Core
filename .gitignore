@@ -4,6 +4,7 @@
 /build
 /bin
 /gradle
+src/api
 .gradle
 .settings
 *.iml
