@@ -1,6 +1,7 @@
 package com.Whodundid.core.enhancedGui.guiUtil;
 
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.util.miscUtil.EFontRenderer;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -18,6 +19,7 @@ import net.minecraft.util.ResourceLocation;
 public class EGui {
 	
 	protected static Minecraft mc = Minecraft.getMinecraft();
+	protected EFontRenderer fontRenderer = EnhancedMC.getFontRenderer();
 	protected RenderItem renderItem = mc.getRenderItem();
 	public static final ResourceLocation optionsBackground = new ResourceLocation("textures/gui/options_background.png");
     public static final ResourceLocation statIcons = new ResourceLocation("textures/gui/container/stats_icons.png");

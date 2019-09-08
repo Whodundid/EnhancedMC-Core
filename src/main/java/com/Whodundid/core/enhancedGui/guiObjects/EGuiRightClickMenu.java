@@ -15,14 +15,14 @@ import net.minecraft.util.ResourceLocation;
 //First Added: Oct 26, 2018
 //Author: Hunter Bragg
 
-public class ERightClickMenu extends EnhancedActionObject {
+public class EGuiRightClickMenu extends EnhancedActionObject {
 	
-	ERightClickMenu instance = null;
+	EGuiRightClickMenu instance = null;
 	protected StorageBoxHolder<String, EGuiButton> options = new StorageBoxHolder();
 	public String title = "";
 	public boolean useTitle = false;
 	
-	public ERightClickMenu(IEnhancedGuiObject parentIn, int x, int y) {
+	public EGuiRightClickMenu(IEnhancedGuiObject parentIn, int x, int y) {
 		init(parentIn, x, y, 125, 15);
 		setZLevel(1000);
 		instance = this;

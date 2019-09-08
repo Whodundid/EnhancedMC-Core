@@ -1,4 +1,4 @@
-package com.Whodundid.core.enhancedGui.guiUtil;
+package com.Whodundid.core.enhancedGui.guiUtil.exceptions;
 
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
 

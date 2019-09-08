@@ -2,12 +2,13 @@ package com.Whodundid.core.enhancedGui.guiObjects;
 
 import com.Whodundid.core.enhancedGui.EnhancedGui;
 import com.Whodundid.core.enhancedGui.EnhancedGuiObject;
-import com.Whodundid.core.enhancedGui.guiUtil.HeaderAlreadyExistsException;
-import com.Whodundid.core.enhancedGui.guiUtil.ObjectInitException;
+import com.Whodundid.core.enhancedGui.InnerEnhancedGui;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventModify;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventObjects;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectEventType;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectModifyType;
+import com.Whodundid.core.enhancedGui.guiUtil.exceptions.HeaderAlreadyExistsException;
+import com.Whodundid.core.enhancedGui.guiUtil.exceptions.ObjectInitException;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.playerUtil.Direction;
 import com.Whodundid.core.util.storageUtil.EArrayList;
@@ -228,7 +229,6 @@ public class EGuiScrollList extends EnhancedGuiObject {
 		if (!objsToBeAdded.isEmpty()) { addObjects(); }
 		if (!listObjsToBeRemoved.isEmpty()) { removeListObjects(); }
 		if (!listObjsToBeAdded.isEmpty()) { addListObjects(); }
-		if (!newDrawOrder.isEmpty()) { drawOrder = new EArrayList(newDrawOrder); newDrawOrder.clear(); }
 		updateCursorImage();
 	}
 		

@@ -1,13 +1,13 @@
 package com.Whodundid.core.enhancedGui.guiObjects;
 
 import com.Whodundid.core.enhancedGui.EnhancedGuiObject;
-import com.Whodundid.core.enhancedGui.guiObjectUtil.DropDownListEntry;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.FocusType;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.renderUtil.Resources;
-import java.util.ArrayList;
+import com.Whodundid.core.util.storageUtil.EArrayList;
 import java.util.Iterator;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.renderer.GlStateManager;
 
@@ -17,7 +17,7 @@ import net.minecraft.client.renderer.GlStateManager;
 
 public class EGuiDropDownList extends EnhancedGuiObject {
 	
-	ArrayList<DropDownListEntry> listContents = new ArrayList();
+	EArrayList<DropDownListEntry> listContents = new EArrayList();
 	DropDownListEntry selectedEntry;
 	int entryHeight = 13;
 	boolean listOpen = false;
@@ -151,7 +151,7 @@ public class EGuiDropDownList extends EnhancedGuiObject {
 		}
 	}
 	
-	public ArrayList<DropDownListEntry> getEntries() { return listContents; }
+	public EArrayList<DropDownListEntry> getEntries() { return listContents; }
 	public DropDownListEntry getSelectedEntry() { return selectedEntry; }
 	public DropDownListEntry getEntryFromObject(Object objIn) {
 		for (DropDownListEntry e : listContents) { if (e.getEntryObject().equals(objIn)) { return e; } }
@@ -177,4 +177,45 @@ public class EGuiDropDownList extends EnhancedGuiObject {
 	public void playPressSound() { mc.getSoundHandler().playSound(PositionedSoundRecord.create(Resources.buttonSound, 1.0F)); }
 	
 	public void runGlobalAction() {}
+	
+}
+
+class DropDownListEntry<obj> {
+	
+	static Minecraft mc = Minecraft.getMinecraft();
+	protected int entryID = -1;
+	protected EGuiDropDownList parentList;
+	protected String displayString = "";
+	protected obj entryObject;
+	protected boolean visible = true;
+	protected boolean enabled = true;
+	protected boolean globalAction = false;
+	
+	public DropDownListEntry(String displayStringIn) { this(displayStringIn, null, false); }
+	public DropDownListEntry(String displayStringIn, obj objectIn) { this(displayStringIn, objectIn, false); }
+	public DropDownListEntry(String displayStringIn, obj objectIn, boolean globalActionDefined) {
+		displayString = displayStringIn;
+		entryObject = objectIn;
+		globalAction = globalActionDefined;
+	}
+	
+	public int getEntryID() { return entryID; }
+	public EGuiDropDownList getParentList() { return parentList; }
+	public String getDisplayString() { return displayString; }
+	public obj getEntryObject() { return entryObject; }
+	public boolean isVisible() { return visible; }
+	public boolean isEnabled() { return enabled; }
+	public boolean isThereGlobalAction() { return globalAction; }
+	
+	public DropDownListEntry setEntryID(int idIn) { entryID = idIn; return this; }
+	public DropDownListEntry setParentList(EGuiDropDownList parentIn) { parentList = parentIn; return this; }
+	public DropDownListEntry setDisplayString(String displayStringIn) { displayString = displayStringIn; return this; }
+	public DropDownListEntry setEntryObject(obj objectIn) { entryObject = objectIn; return this; }
+	public DropDownListEntry setVisibility(boolean val) { visible = val; return this; }
+	public DropDownListEntry setEnabled(boolean val) { enabled = val; return this; }
+	public DropDownListEntry setGlobalActionPresent(boolean val) { globalAction = val; return this; }
+	
+	public void runEntryAction() {
+		if (globalAction) { parentList.runGlobalAction(); }
+	}
 }

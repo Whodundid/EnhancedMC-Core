@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.EnhancedGui;
+import com.Whodundid.core.enhancedGui.InnerEnhancedGui;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiColorPicker;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiDialogueBox;
@@ -15,9 +16,8 @@ import com.Whodundid.core.enhancedGui.guiObjects.EGuiPlayerViewer;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiScrollList;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiSlider;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextArea;
-import com.Whodundid.core.enhancedGui.guiObjects.ERightClickMenu;
-import com.Whodundid.core.enhancedGui.guiObjects.InnerEnhancedGui;
-import com.Whodundid.core.enhancedGui.guiObjects.KeyOverlay;
+import com.Whodundid.core.enhancedGui.guiObjects.misc.KeyOverlay;
+import com.Whodundid.core.enhancedGui.guiObjects.EGuiRightClickMenu;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.settings.SettingsGuiMain;
 import com.Whodundid.core.subMod.RegisteredSubMods;
@@ -66,7 +66,7 @@ public class ExperimentGui extends EnhancedGui {
 	EGuiDialogueBox dialogueBox;
 	EGuiScrollList scrollList;
 	EGuiSlider slider, slider2;
-	ERightClickMenu rcm;
+	EGuiRightClickMenu rcm;
 	EGuiColorPicker colorPicker;
 	
 	public ExperimentGui() { super(); }

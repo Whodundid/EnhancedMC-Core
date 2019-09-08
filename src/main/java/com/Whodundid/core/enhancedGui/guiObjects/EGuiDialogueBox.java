@@ -1,5 +1,6 @@
 package com.Whodundid.core.enhancedGui.guiObjects;
 
+import com.Whodundid.core.enhancedGui.InnerEnhancedGui;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.miscUtil.EUtil;
 import com.Whodundid.core.util.storageUtil.EArrayList;
@@ -19,7 +20,6 @@ public class EGuiDialogueBox extends InnerEnhancedGui {
 	public enum DialogueBoxTypes { yesNo, ok, custom; }
 	
 	protected EGuiDialogueBox() {}
-	
 	public EGuiDialogueBox(IEnhancedGuiObject parentIn, int xPos, int yPos, int width, int height) {
 		this(parentIn, xPos, yPos, width, height, DialogueBoxTypes.yesNo);
 	}

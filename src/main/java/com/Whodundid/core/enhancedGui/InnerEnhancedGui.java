@@ -1,13 +1,13 @@
-package com.Whodundid.core.enhancedGui.guiObjects;
+package com.Whodundid.core.enhancedGui;
 
-import com.Whodundid.core.enhancedGui.EnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
 
 //Last edited: Jan 9, 2019
 //First Added: Sep 14, 2018
 //Author: Hunter Bragg
 
-public class InnerEnhancedGui extends EnhancedGuiObject {
+public abstract class InnerEnhancedGui extends EnhancedGuiObject {
 	
 	protected EGuiHeader header;
 	protected boolean moveWithParent = false;

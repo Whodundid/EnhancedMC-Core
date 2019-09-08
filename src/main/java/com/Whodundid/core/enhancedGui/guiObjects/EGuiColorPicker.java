@@ -1,5 +1,6 @@
 package com.Whodundid.core.enhancedGui.guiObjects;
 
+import com.Whodundid.core.enhancedGui.InnerEnhancedGui;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.renderUtil.HSLColor;
@@ -31,8 +32,6 @@ public class EGuiColorPicker extends InnerEnhancedGui {
 	public void initObjects() {
 		setHeader(new EGuiHeader(this));
 		header.setDisplayString("Color Picker");
-		
-		
 	}
 	
 	@Override

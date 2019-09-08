@@ -1,6 +1,5 @@
-package com.Whodundid.core.enhancedGui.guiUtil;
+package com.Whodundid.core.enhancedGui.guiUtil.events;
 
-import com.Whodundid.core.enhancedGui.guiUtil.events.ObjectEvent;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 

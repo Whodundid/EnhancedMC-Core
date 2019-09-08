@@ -1,5 +1,6 @@
 package com.Whodundid.core.enhancedGui.guiObjects;
 
+import com.Whodundid.core.enhancedGui.InnerEnhancedGui;
 import com.Whodundid.core.enhancedGui.guiObjectUtil.TextAreaLine;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
@@ -135,5 +136,4 @@ public class EGuiSelectionList extends InnerEnhancedGui implements IEnhancedActi
 	@Override public IEnhancedGuiObject getActionReciever() { return actionReciever; }
 	@Override public EGuiSelectionList setSelectedObject(Object objIn) { selectedObject = objIn; return this; }
 	@Override public Object getSelectedObject() { return selectedObject; }
-	
 }

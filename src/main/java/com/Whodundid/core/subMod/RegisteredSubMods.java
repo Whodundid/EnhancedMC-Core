@@ -62,7 +62,7 @@ public class RegisteredSubMods {
 			for (SubMod m : modsToRegister) {
 				if (m != null) {
 					if (m.isIncompatible()) {
-						EnhancedMC.log(Level.INFO, "Unable to fully register SubMod: " + SubModType.getModName(m.getModType()) + " is incompatible with other loaded SubMods.");
+						EnhancedMC.log(Level.INFO, "Unable to fully register SubMod: " + SubModType.getModName(m.getModType()) + " is incompatible with EMC Core.");
 						incompatibleMods.add(m);
 					}
 					else {

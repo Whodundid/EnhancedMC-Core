@@ -5,11 +5,7 @@ import com.Whodundid.core.enhancedGui.guiObjectUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiFocusLockBorder;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiLinkConfirmationDialogueBox;
-import com.Whodundid.core.enhancedGui.guiObjects.InnerEnhancedGui;
 import com.Whodundid.core.enhancedGui.guiUtil.EGui;
-import com.Whodundid.core.enhancedGui.guiUtil.HeaderAlreadyExistsException;
-import com.Whodundid.core.enhancedGui.guiUtil.ObjectEventHandler;
-import com.Whodundid.core.enhancedGui.guiUtil.ObjectInitException;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventAction;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventKeyboard;
@@ -18,11 +14,14 @@ import com.Whodundid.core.enhancedGui.guiUtil.events.EventMouse;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventObjects;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventRedraw;
 import com.Whodundid.core.enhancedGui.guiUtil.events.ObjectEvent;
+import com.Whodundid.core.enhancedGui.guiUtil.events.ObjectEventHandler;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.FocusType;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.KeyboardType;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.MouseType;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectEventType;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectModifyType;
+import com.Whodundid.core.enhancedGui.guiUtil.exceptions.HeaderAlreadyExistsException;
+import com.Whodundid.core.enhancedGui.guiUtil.exceptions.ObjectInitException;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedTopParent;
@@ -82,22 +81,18 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	public static final Logger LOGGER = LogManager.getLogger();
 	public static final Set<String> PROTOCOLS = Sets.newHashSet(new String[] {"http", "https"});
 	public static final Splitter NEWLINE_SPLITTER = Splitter.on('\n');
+	public URI clickedLinkURI;
 	public EnhancedGuiObject objectInstance;
 	protected ScaledResolution res;
-	protected EFontRenderer fontRenderer = EnhancedMC.getFontRenderer();
-	protected IEnhancedGuiObject parent, movingObject, focusObjectOnClose;
+	protected IEnhancedGuiObject parent, focusObjectOnClose;
 	protected EDimension boundaryDimension;
 	protected EGuiFocusLockBorder border;
 	protected EArrayList<IEnhancedGuiObject> guiObjects = new EArrayList();
-	protected EArrayList<IEnhancedGuiObject> newDrawOrder = new EArrayList();
-	protected EArrayList<IEnhancedGuiObject> drawOrder = new EArrayList();
 	protected EArrayList<IEnhancedGuiObject> objsToBeRemoved = new EArrayList();
 	protected EArrayList<IEnhancedGuiObject> objsToBeAdded = new EArrayList();
 	protected ObjectEventHandler eventHandler = new ObjectEventHandler(this);
-	protected StorageBox<Integer, Integer> mousePos = new StorageBox(0, 0);
 	protected ScreenLocation oldArea = ScreenLocation.out;
 	protected EObjectGroup objectGroup;
-	public URI clickedLinkURI;
 	protected boolean hasBeenInitialized = false;
 	protected boolean enabled = true;
 	protected boolean visible = true;
@@ -106,7 +101,6 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	protected boolean positionLocked = false;
 	protected boolean hasFocus = false;
 	protected boolean focusLock = false;
-	protected boolean isVanillaParent = false;
 	protected boolean persistent = false;
 	protected boolean resizeable = false;
 	protected int minWidth = 0;
@@ -384,6 +378,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 					}
 					try {
 						o.setParent(this).initObjects();
+						o.setZLevel(getZLevel() + 1);
 						if (o instanceof InnerEnhancedGui) { ((InnerEnhancedGui) o).initGui(); }
 						o.completeInitialization();
 					} catch (ObjectInitException e) { e.printStackTrace(); }
@@ -660,7 +655,6 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 		if (mouseEntered && !isMouseHover) { mouseEntered = false; mouseExited(mX, mY); }
 		if (!objsToBeRemoved.isEmpty()) { removeObjects(); }
 		if (!objsToBeAdded.isEmpty()) { addObjects(); }
-		if (!newDrawOrder.isEmpty()) { drawOrder = new EArrayList(newDrawOrder); newDrawOrder.clear(); }
 		updateCursorImage();
 	}
 	

@@ -42,6 +42,8 @@ public class EMCSettingsGui extends EnhancedGui {
 		drawCenteredStringWithShadow("Enhanced MC Settings", midX, startY + 6, 0xffbb00);
 		
 		drawStringWithShadow("Override Pause Menu", startX + 80, startY + 31, 0xb2b2b2);
+		
+		super.drawObject(mXIn, mYIn, ticks);
 	}
 	
 	@Override

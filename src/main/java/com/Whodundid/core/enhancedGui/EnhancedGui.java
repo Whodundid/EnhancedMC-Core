@@ -5,10 +5,6 @@ import com.Whodundid.core.enhancedGui.guiObjectUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiFocusLockBorder;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
-import com.Whodundid.core.enhancedGui.guiObjects.InnerEnhancedGui;
-import com.Whodundid.core.enhancedGui.guiUtil.HeaderAlreadyExistsException;
-import com.Whodundid.core.enhancedGui.guiUtil.ObjectEventHandler;
-import com.Whodundid.core.enhancedGui.guiUtil.ObjectInitException;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventAction;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventKeyboard;
@@ -17,11 +13,14 @@ import com.Whodundid.core.enhancedGui.guiUtil.events.EventMouse;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventObjects;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventRedraw;
 import com.Whodundid.core.enhancedGui.guiUtil.events.ObjectEvent;
+import com.Whodundid.core.enhancedGui.guiUtil.events.ObjectEventHandler;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.FocusType;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.KeyboardType;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.MouseType;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectEventType;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectModifyType;
+import com.Whodundid.core.enhancedGui.guiUtil.exceptions.HeaderAlreadyExistsException;
+import com.Whodundid.core.enhancedGui.guiUtil.exceptions.ObjectInitException;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedTopParent;
@@ -210,17 +209,6 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 			GlStateManager.enableBlend();
 			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 			drawObject(mXIn, mYIn, ticks);
-			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-			synchronized (guiObjects) {
-				for (IEnhancedGuiObject o : guiObjects) {
-					if (o.checkDraw()) {
-	    				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-	    	        	o.drawObject(mXIn, mYIn, ticks);
-	    			}
-				}
-				for (GuiButton b : buttonList) { b.drawButton(this.mc, mX, mY); }
-				for (GuiLabel l : labelList) { l.drawLabel(this.mc, mX, mY); }
-			}
 			GlStateManager.popMatrix();
 			if (EnhancedMC.isDebugMode() && !mc.gameSettings.showDebugInfo) {
 				drawStringWithShadow("TopParent: " + getTopParent(), 3, 52, 0xffffff);
@@ -423,7 +411,21 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override public void onObjectAddedToParent() {}
 	
 	//main draw
-	@Override public void drawObject(int mXIn, int mYIn, float ticks) {}
+	/** Call this super to draw objects when overriding! */
+	@Override
+	public void drawObject(int mXIn, int mYIn, float ticks) {
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		synchronized (guiObjects) {
+			for (IEnhancedGuiObject o : guiObjects) {
+				if (o.checkDraw()) {
+    				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+    	        	o.drawObject(mXIn, mYIn, ticks);
+    			}
+			}
+			for (GuiButton b : buttonList) { b.drawButton(this.mc, mX, mY); }
+			for (GuiLabel l : labelList) { l.drawLabel(this.mc, mX, mY); }
+		}
+	}
 	@Override
 	public void updateCursorImage() {
 		if (isResizeable()) {

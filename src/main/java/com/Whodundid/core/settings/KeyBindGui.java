@@ -71,7 +71,7 @@ public class KeyBindGui extends EnhancedGui {
 				else { resetValues(); }
 			}
 		};
-		keyList.setDrawLineNumbers(true);
+		keyList.setDrawLineNumbers(false);
 		
 		changeKey = new EGuiButton(this, keyList.endX + 20, endY - 120, 70, 20) {
 			@Override
@@ -134,6 +134,8 @@ public class KeyBindGui extends EnhancedGui {
 		
 		drawKeyValues();
 		GL11.glDisable(GL11.GL_SCISSOR_TEST);
+		
+		super.drawObject(mXIn, mYIn, ticks);
 	}
 	
 	protected void buildKeyList() {

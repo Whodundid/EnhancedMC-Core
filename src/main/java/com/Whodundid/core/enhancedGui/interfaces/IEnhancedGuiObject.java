@@ -2,10 +2,10 @@ package com.Whodundid.core.enhancedGui.interfaces;
 
 import com.Whodundid.core.enhancedGui.guiObjectUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
-import com.Whodundid.core.enhancedGui.guiUtil.ObjectEventHandler;
-import com.Whodundid.core.enhancedGui.guiUtil.ObjectInitException;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
 import com.Whodundid.core.enhancedGui.guiUtil.events.ObjectEvent;
+import com.Whodundid.core.enhancedGui.guiUtil.events.ObjectEventHandler;
+import com.Whodundid.core.enhancedGui.guiUtil.exceptions.ObjectInitException;
 import com.Whodundid.core.util.miscUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;

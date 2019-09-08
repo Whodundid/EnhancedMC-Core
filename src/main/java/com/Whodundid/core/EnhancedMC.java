@@ -158,7 +158,14 @@ public class EnhancedMC {
 	
 	public static void checkKeyBinds() {
 		if (openSettingsGui.isPressed()) { mc.displayGuiScreen(new SettingsGuiMain()); }
-		if (debugCommand.isPressed() && !RegisteredSubMods.isModRegistered(SubModType.HOTKEYS)) { DebugFunctions.runDebugFunction(0); }
+		if (debugCommand.isPressed()) {
+			if (!RegisteredSubMods.isModRegistered(SubModType.HOTKEYS)) {
+				DebugFunctions.runDebugFunction(0);
+			}
+			else if (!RegisteredSubMods.getMod(SubModType.HOTKEYS).isEnabled()) {
+				DebugFunctions.runDebugFunction(0);
+			}
+		}
 	}
 	
 	public static boolean isDebugMode() { return enableDebugFunctions; }

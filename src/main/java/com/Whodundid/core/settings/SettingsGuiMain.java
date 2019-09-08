@@ -23,6 +23,8 @@ import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.StorageBox;
+
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.EnumChatFormatting;
 
 //Dec 28, 2018
@@ -135,13 +137,15 @@ public class SettingsGuiMain extends EnhancedGui {
 	}
 	
 	@Override
-	public void drawObject(int mX, int mY, float ticks) {
+	public void drawObject(int mXIn, int mYIn, float ticks) {
 		drawDefaultBackground();
 		
 		drawRect(startX + 1, startY + 19, endX - 1, endY - 1, -0x00cfcfcf); //grey background
 		drawRect(startX, startY + 18, endX, startY + 19, 0xff000000); //top line
 		
 		drawCenteredStringWithShadow("Enhanced MC Sub Mods", midX, startY + 6, 0xffbb00);
+		
+		super.drawObject(mXIn, mYIn, ticks);
 	}
 	
 	private void assembleList() {

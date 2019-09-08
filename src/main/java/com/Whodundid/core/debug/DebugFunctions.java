@@ -4,18 +4,24 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.imageio.ImageIO;
+
+import org.apache.logging.log4j.Level;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.subMod.RegisteredSubMods;
+import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.subMod.SubModType;
 import com.Whodundid.core.util.mathUtil.HexMath;
 import com.Whodundid.core.util.mathUtil.NumberUtil;
 import com.Whodundid.core.util.playerUtil.PlayerFacing;
+import com.Whodundid.core.util.storageUtil.StorageBox;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiDisconnected;
 import net.minecraft.client.multiplayer.GuiConnecting;
@@ -29,6 +35,8 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.handshake.client.C00Handshake;
 import net.minecraft.network.login.client.C00PacketLoginStart;
 import net.minecraft.util.ChatComponentTranslation;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 
 //Last edited: 12-12-18
 //First Added: 9-14-18
@@ -55,6 +63,32 @@ public class DebugFunctions {
 	}
 
 	private static void debug_0() throws Throwable {
+		System.out.println("ho");
+		BigDecimal coreVersion = new BigDecimal(RegisteredSubMods.getMod(SubModType.CORE).getVersion());
+		for (ModContainer c : Loader.instance().getModList()) {
+			Object m = c.getMod();
+			if (m instanceof SubMod) {
+				//try to register the sub mod
+				SubMod instance = null;
+				boolean incompatible = false;
+				try {
+					//check for incompatibility
+					StorageBox<SubModType, BigDecimal> box = ((SubMod) m).getDependencies().getBoxWithObj(SubModType.CORE);
+					if (box != null) {
+						BigDecimal reqCoreVersion = box.getValue();
+						System.out.println("incompat: " + reqCoreVersion.compareTo(coreVersion));
+						if (reqCoreVersion.compareTo(coreVersion) < 0) {
+							incompatible = true;
+						}
+					}
+					
+					instance = ((SubMod) m).getInstance();
+				} catch (Exception q) {
+					q.printStackTrace();
+				}
+			}
+		}
+		
 		//System.out.println(RegisteredSubMods.getMod(SubModType.PARKOUR).getMainGui(false, null, null));
 		//RegisteredSubMods.unregisterSubMod(RegisteredSubMods.getMod(SubModType.PARKOUR));
 		//RegisteredSubMods.registerSubMod(new ParkourMod());
