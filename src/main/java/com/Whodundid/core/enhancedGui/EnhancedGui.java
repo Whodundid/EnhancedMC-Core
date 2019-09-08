@@ -243,7 +243,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 			}
 			else if (focusedObject != null && focusedObject != this) {
 				if (focusLockObject != null) {
-					if (underMouse.equals(focusLockObject) || underMouse.isChildOfObject(focusLockObject)) {
+					if (underMouse.equals(focusLockObject) || underMouse.isChildOfObject(focusLockObject) || underMouse instanceof EGuiHeader) {
 						focusQueue.add(new EventFocus(this, underMouse, FocusType.MousePress, button, mX, mY));
 					} else { focusLockObject.drawFocusLockBorder(); }
 				}
@@ -852,7 +852,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 			if (event.getFocusObject() != null) {
 				IEnhancedGuiObject obj = event.getFocusObject();
 				if (doesFocusLockExist()) {
-					if (obj.equals(focusLockObject) || obj.isChildOfObject(focusLockObject)) {
+					if (obj.equals(focusLockObject) || obj.isChildOfObject(focusLockObject) || obj instanceof EGuiHeader) {
 						focusedObject.onFocusLost(event);
 						focusedObject = obj;
 						focusedObject.onFocusGained(event);
