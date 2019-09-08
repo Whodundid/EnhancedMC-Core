@@ -195,9 +195,10 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	@Override public boolean isChildOfObject(IEnhancedGuiObject objIn) { return false; }
 	@Override
 	public EnhancedMCRenderer addObject(IEnhancedGuiObject... objsIn) {
+		EArrayList<IEnhancedGuiObject> addingObjects = new EArrayList();
 		for (IEnhancedGuiObject o : objsIn) {
 			if (o != null) {
-				if (o != this) {
+				if (o != this && guiObjects.notContains(o) && objsToBeAdded.notContains(o)) {
 					if (o instanceof EGuiHeader && hasHeader()) { 
 						try { throw new HeaderAlreadyExistsException(getHeader()); } catch (HeaderAlreadyExistsException e) { e.printStackTrace(); }
 					}
@@ -213,10 +214,11 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 						if (o instanceof InnerEnhancedGui) { ((InnerEnhancedGui) o).initGui(); }
 						o.completeInitialization();
 					} catch (ObjectInitException e) { e.printStackTrace(); }
+					addingObjects.add(o);
 				}
 			}
 		}
-		objsToBeAdded.addAll(objsIn);
+		objsToBeAdded.addAll(addingObjects);
 		return this;
 	}
 	@Override

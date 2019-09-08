@@ -364,9 +364,10 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	}
 	@Override
 	public EnhancedGuiObject addObject(IEnhancedGuiObject... objsIn) {
+		EArrayList<IEnhancedGuiObject> addingObjects = new EArrayList();
 		for (IEnhancedGuiObject o : objsIn) {
 			if (o != null) {
-				if (o != this) {
+				if (o != this && guiObjects.notContains(o) && objsToBeAdded.notContains(o)) {
 					if (o instanceof EGuiHeader && hasHeader()) { 
 						try { throw new HeaderAlreadyExistsException(getHeader()); } catch (HeaderAlreadyExistsException e) { e.printStackTrace(); }
 					}
@@ -382,16 +383,15 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 						if (o instanceof InnerEnhancedGui) { ((InnerEnhancedGui) o).initGui(); }
 						o.completeInitialization();
 					} catch (ObjectInitException e) { e.printStackTrace(); }
+					addingObjects.add(o);
 				}
 			}
 		}
-		//getTopParent().addObject(objsIn);
-		objsToBeAdded.addAll(objsIn);
+		objsToBeAdded.addAll(addingObjects);
 		return this;
 	}
 	@Override
 	public EnhancedGuiObject removeObject(IEnhancedGuiObject... objsIn) {
-		//getTopParent().removeObject(objsIn);
 		objsToBeRemoved.addAll(objsIn);
 		return this;
 	}

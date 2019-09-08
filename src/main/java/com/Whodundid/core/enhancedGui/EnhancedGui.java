@@ -583,9 +583,10 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	}
 	@Override
 	public EnhancedGui addObject(IEnhancedGuiObject... objsIn) {
+		EArrayList<IEnhancedGuiObject> addingObjects = new EArrayList();
 		for (IEnhancedGuiObject o : objsIn) {
 			if (o != null) {
-				if (o != this) {
+				if (o != this && guiObjects.notContains(o) && objsToBeAdded.notContains(o)) {
 					if (o instanceof EGuiHeader && hasHeader()) { 
 						try { throw new HeaderAlreadyExistsException(getHeader()); } catch (HeaderAlreadyExistsException e) { e.printStackTrace(); }
 					}
@@ -601,10 +602,11 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 						if (o instanceof InnerEnhancedGui) { ((InnerEnhancedGui) o).initGui(); }
 						o.completeInitialization();
 					} catch (ObjectInitException e) { e.printStackTrace(); }
+					addingObjects.add(o);
 				}
 			}
 		}
-		objsToBeAdded.addAll(objsIn);
+		objsToBeAdded.addAll(addingObjects);
 		return this;
 	}
 	@Override public EnhancedGui removeObject(IEnhancedGuiObject... objsIn) { objsToBeRemoved.addAll(objsIn); return this; }
