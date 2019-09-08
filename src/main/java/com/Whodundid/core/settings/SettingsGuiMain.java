@@ -9,7 +9,9 @@ import com.Whodundid.core.enhancedGui.guiObjects.EGuiLabel;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiRect;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiScrollList;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextField;
+import com.Whodundid.core.enhancedGui.guiObjects.EGuiWindow;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
+import com.Whodundid.core.subMod.IncompatibleWindowList;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.subMod.SubModErrorDialogueBox;
@@ -23,7 +25,6 @@ import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.StorageBox;
-
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.EnumChatFormatting;
 
@@ -36,8 +37,9 @@ import net.minecraft.util.EnumChatFormatting;
 
 public class SettingsGuiMain extends EnhancedGui {
 	
-	EGuiButton keyBindGui, reloadConfigs, experimentGui, disableDebugMode, hiddenButton1, hiddenButton2;
-	SubModErrorDialogueBox errorBox;
+	EGuiButton keyBindGui, reloadConfigs, problem;
+	EGuiButton experimentGui, disableDebugMode;
+	EGuiButton hiddenButton1, hiddenButton2;
 	EGuiScrollList scrollList;
 	EGuiTextField searchField;
 	protected int pageToBeLoaded = -1;
@@ -50,7 +52,6 @@ public class SettingsGuiMain extends EnhancedGui {
 	
 	@Override
 	public void initGui() {
-		//centerGuiWithDimensions(220, 256);
 		setGuiName("EMC Settings");
 		super.initGui();
 	}
@@ -61,6 +62,10 @@ public class SettingsGuiMain extends EnhancedGui {
 		keyBindGui = new EGuiButton(this, endX - 95, endY - 25, 90, 20, "MC KeyBinds");
 		experimentGui = new EGuiButton(this, 1, res.getScaledHeight() - 21, 85, 20, "ExperimentGui");
 		disableDebugMode = new EGuiButton(this, experimentGui.endX + 1, res.getScaledHeight() - 21, 85, 20, "Disable Debug");
+		problem = new EGuiButton(this, endX - 17, startY + 2, 15, 15).setTextures(Resources.guiProblemOpen, Resources.guiProblemOpenSel);
+		
+		problem.setVisible(RegisteredSubMods.getIncompatibleModsList().isNotEmpty());
+		problem.setDrawBackground(true).setBackgroundColor(0xffbb0000);
 		
 		experimentGui.setVisible(EnhancedMC.isDebugMode());
 		experimentGui.setPositionLocked(true);
@@ -92,7 +97,7 @@ public class SettingsGuiMain extends EnhancedGui {
 			}
 		};
 		
-		hiddenButton2 = new EGuiButton(this, endX - 11, startY + 1, 10, 10) {
+		hiddenButton2 = new EGuiButton(this, endX - (RegisteredSubMods.getIncompatibleModsList().isEmpty() ? 11 : 28), startY + 1, 10, 10) {
 			{
 				setRunActionOnPress(true);
 				setButtonTexture(Resources.emptyPixel);
@@ -129,9 +134,9 @@ public class SettingsGuiMain extends EnhancedGui {
 		EDimension l = scrollList.getDimensions();
 		EGuiRect separator = new EGuiRect(this, l.getMidX() + 16, l.startY, l.getMidX() + 17, l.endY, 0xff000000);
 		
+		addObject(scrollList, problem, searchField, keyBindGui, reloadConfigs);
 		addObject(hiddenButton1, hiddenButton2);
-		
-		addObject(scrollList, experimentGui, disableDebugMode, searchField, keyBindGui, reloadConfigs);
+		addObject(experimentGui, disableDebugMode);
 		
 		addObject(separator);
 	}
@@ -139,6 +144,10 @@ public class SettingsGuiMain extends EnhancedGui {
 	@Override
 	public void drawObject(int mXIn, int mYIn, float ticks) {
 		drawDefaultBackground();
+		
+		if (RegisteredSubMods.getIncompatibleModsList().isNotEmpty()) {
+			problem.setDrawBackground(EnhancedMC.updateCounter / 30 % 2 == 0);
+		}
 		
 		drawRect(startX + 1, startY + 19, endX - 1, endY - 1, -0x00cfcfcf); //grey background
 		drawRect(startX, startY + 18, endX, startY + 19, 0xff000000); //top line
@@ -184,8 +193,7 @@ public class SettingsGuiMain extends EnhancedGui {
 								EnhancedGui gui = m.getMainGui(true, potato, guiInstance);
 								if (gui != null) { mc.displayGuiScreen(gui); }
 								else {
-									errorBox = new SubModErrorDialogueBox(guiInstance, guiInstance.midX - 125, guiInstance.midY - 48, 250, 75, SubModErrorType.NOGUI, m);
-									guiInstance.addObject(errorBox);
+									guiInstance.addObject(new SubModErrorDialogueBox(guiInstance, guiInstance.midX - 125, guiInstance.midY - 48, 250, 75, SubModErrorType.NOGUI, m));
 								}
 							}
 						}
@@ -206,7 +214,7 @@ public class SettingsGuiMain extends EnhancedGui {
 									EArrayList<SubMod> disabledDependancies = new EArrayList();
 									allDependencies.forEach((t) -> { SubMod m = RegisteredSubMods.getMod(t); if (!m.isEnabled()) { disabledDependancies.add(m); } });
 									if (!disabledDependancies.isEmpty()) {
-										errorBox = new SubModErrorDialogueBox(guiInstance, guiInstance.midX - 125, guiInstance.midY - 48, 250, 75, SubModErrorType.ENABLE, m);
+										SubModErrorDialogueBox errorBox = new SubModErrorDialogueBox(guiInstance, guiInstance.midX - 125, guiInstance.midY - 48, 250, 75, SubModErrorType.ENABLE, m);
 										errorBox.createErrorMessage(disabledDependancies);
 										guiInstance.addObject(errorBox);
 										return;
@@ -216,7 +224,7 @@ public class SettingsGuiMain extends EnhancedGui {
 									EArrayList<SubMod> enabledDependants = new EArrayList();
 									allDependents.forEach(t -> { SubMod m = RegisteredSubMods.getMod(t); if (m.isEnabled()) { enabledDependants.add(m); } }); 
 									if (!enabledDependants.isEmpty()) {
-										errorBox = new SubModErrorDialogueBox(guiInstance, guiInstance.midX - 125, guiInstance.midY - 48, 250, 75, SubModErrorType.DISABLE, m);
+										SubModErrorDialogueBox errorBox = new SubModErrorDialogueBox(guiInstance, guiInstance.midX - 125, guiInstance.midY - 48, 250, 75, SubModErrorType.DISABLE, m);
 										errorBox.createErrorMessage(enabledDependants);
 										guiInstance.addObject(errorBox);
 										return;
@@ -251,7 +259,6 @@ public class SettingsGuiMain extends EnhancedGui {
 				scrollList.addObjectToList(modSettings, enabled, info);
 			}
 			
-			//if (filteredMods.size() > 8) { scrollList.setListHeight(scrollList.getListHeight() + 1); }
 			scrollList.renderScrollBarThumb(filteredMods.size() > 8);
 		}
 		else {
@@ -290,6 +297,13 @@ public class SettingsGuiMain extends EnhancedGui {
 				leftPress = 0;
 				rightPress = 0;
 			}
+			if (object == problem) {
+				addObject(new IncompatibleWindowList(this, midX - 120, midY - 80, 240, 160));
+				displayIncompatibleList();
+			}
 		}
+	}
+	
+	private void displayIncompatibleList() {
 	}
 }

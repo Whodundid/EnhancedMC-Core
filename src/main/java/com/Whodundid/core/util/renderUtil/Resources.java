@@ -51,6 +51,10 @@ public class Resources {
 	public final static ResourceLocation guiSettingsButtonSel;
 	public final static ResourceLocation guiInfo;
 	public final static ResourceLocation guiInfoSel;
+	public final static ResourceLocation guiProblem;
+	public final static ResourceLocation guiProblemSel;
+	public final static ResourceLocation guiProblemOpen;
+	public final static ResourceLocation guiProblemOpenSel;
 	//cursor
 	public final static ResourceLocation mouseIBeam;
 	public final static ResourceLocation mouseResizeNS;
@@ -126,6 +130,10 @@ public class Resources {
 		guiSettingsButtonSel = new ResourceLocation("enhancedgui", "gui_settingsBtn_sel.png");
 		guiInfo = new ResourceLocation("enhancedgui", "gui_info.png");
 		guiInfoSel = new ResourceLocation("enhancedgui", "gui_info_sel.png");
+		guiProblem = new ResourceLocation("enhancedgui", "gui_problem.png");
+		guiProblemSel = new ResourceLocation("enhancedgui", "gui_problem_sel.png");
+		guiProblemOpen = new ResourceLocation("enhancedgui", "gui_problem_open.png");
+		guiProblemOpenSel = new ResourceLocation("enhancedgui", "gui_problem_open_sel.png");
 		
 		//cursor
 		mouseIBeam = new ResourceLocation("cursor", "mouse_text_pos.png");
