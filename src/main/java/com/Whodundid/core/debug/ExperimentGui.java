@@ -176,7 +176,7 @@ public class ExperimentGui extends EnhancedGui {
 	}
 	
 	@Override
-	public void drawObject(int mX, int mY, float ticks) {
+	public void drawObject(int mXIn, int mYIn, float ticks) {
 		drawDefaultBackground();
 		//drawRect(startX + 69, startY + 89, endX - 69, endY - 59, 0xff000000);
 		//drawRect(startX + 70, startY + 90, endX - 70, endY - 60, 0xff1b1b1b);
@@ -267,6 +267,8 @@ public class ExperimentGui extends EnhancedGui {
         //GlStateManager.disableBlend();
         GlStateManager.popMatrix();
         */
+		
+		super.drawObject(mXIn, mYIn, ticks);
 	}
 	
 	@Override

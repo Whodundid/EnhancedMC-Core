@@ -18,7 +18,6 @@ public class SubModInfoDialogueBox extends EGuiDialogueBox {
 		addObject(header = new EGuiHeader(this));
 		requestFocus();
 		getTopParent().setFocusLockObject(this);
-		setDisplayStringColor(0xc2c2c2);
 		setDisplayString("Mod Info");
 		setZLevel(2);
 		

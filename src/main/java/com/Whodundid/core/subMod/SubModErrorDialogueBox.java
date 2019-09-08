@@ -24,7 +24,6 @@ public class SubModErrorDialogueBox extends EGuiDialogueBox {
 		addObject(header = new EGuiHeader(this));
 		requestFocus();
 		getTopParent().setFocusLockObject(this);
-		setDisplayStringColor(0xffbb00);
 		setMessageColor(0xff5555);
 		setZLevel(2);
 		
