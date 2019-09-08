@@ -633,7 +633,6 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	
 	//close object
 	@Override public void close() {
-		//System.out.println(this + " " + parent);
 		if (eventHandler != null) { eventHandler.processEvent(new EventObjects(this, this, ObjectEventType.Close)); }
 		if (getTopParent().doesFocusLockExist() && getTopParent().getFocusLockObject().equals(this)) { getTopParent().clearFocusLockObject(); }
 		if (getTopParent().getFocusedObject().equals(this)) { relinquishFocus(); }
