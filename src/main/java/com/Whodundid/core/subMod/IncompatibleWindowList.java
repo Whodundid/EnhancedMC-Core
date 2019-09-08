@@ -37,7 +37,7 @@ public class IncompatibleWindowList extends EGuiDialogueBox {
 		
 		EGuiLabel problem;
 		
-		problem = new EGuiLabel(this, midX, startY + 6, "The following EMC SubMods are incompatible with this core version: '" + EnhancedMC.VERSION + "'");
+		problem = new EGuiLabel(this, midX, startY + 6, "The following EMC SubMods are incompatible with this core version '" + EnhancedMC.VERSION + "'");
 		problem.enableWordWrap(true, width - 15).setLineGapHeight(3).enableShadow(true).setDrawCentered(true).setDisplayStringColor(0xffbb00);
 		
 		EGuiRect topLine;
