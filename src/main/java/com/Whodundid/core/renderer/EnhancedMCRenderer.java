@@ -210,7 +210,7 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 					}
 					try {
 						o.setParent(this).initObjects();
-						o.setZLevel(getZLevel() + 1);
+						o.setZLevel(getZLevel() + o.getZLevel() + 1);
 						if (o instanceof InnerEnhancedGui) { ((InnerEnhancedGui) o).initGui(); }
 						o.completeInitialization();
 					} catch (ObjectInitException e) { e.printStackTrace(); }
@@ -532,7 +532,7 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	}
 	
 	//close
-	@Override public void closeGui() {}
+	@Override public void closeGui(boolean fullClose) {}
 	@Override public EnhancedMCRenderer setCloseAndRecenter(boolean val) { return this; }
 	
 	//-------------------------

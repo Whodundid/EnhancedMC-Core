@@ -237,7 +237,7 @@ public class KeyBindGui extends EnhancedGui {
 	@Override
 	public void keyTyped(char typedChar, int keyCode) {
 		if (!changing) {
-			if (keyCode == 1) { closeGui(); }
+			if (keyCode == 1) { closeGui(true); }
 		}
 	}
 }

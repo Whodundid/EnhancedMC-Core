@@ -59,6 +59,6 @@ public interface IEnhancedTopParent extends IEnhancedGuiObject {
 	
 	//close
 	
-	public void closeGui();
+	public void closeGui(boolean fullClose);
 	public IEnhancedTopParent setCloseAndRecenter(boolean val);
 }

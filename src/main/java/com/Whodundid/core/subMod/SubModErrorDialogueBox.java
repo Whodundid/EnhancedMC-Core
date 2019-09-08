@@ -4,6 +4,7 @@ import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiDialogueBox;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.settings.SettingsGuiMain;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
 //Last edited: Dec 28, 2018
@@ -26,7 +27,9 @@ public class SubModErrorDialogueBox extends EGuiDialogueBox {
 		setDisplayStringColor(0xffbb00);
 		setMessageColor(0xff5555);
 		setZLevel(2);
+		
 		EGuiButton disableAll, enableAll, cancel, okButton;
+		
 		switch (type) {
 		case ENABLE:
 			setDisplayString("Mod Enable Error");
@@ -114,6 +117,6 @@ public class SubModErrorDialogueBox extends EGuiDialogueBox {
 	private void reloadSettings(boolean val) {
 		mods.forEach(m -> { SubModSettings.updateModState(m, val); });
 		SubModSettings.updateModState(mod, val);
-		//if (mc.currentScreen instanceof SubModGui) { ((SubModGui) mc.currentScreen).reloadCurrentPage(); }
+		if (mc.currentScreen instanceof SettingsGuiMain) { ((SettingsGuiMain) mc.currentScreen).updateList(); }
 	}
 }

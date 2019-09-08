@@ -379,7 +379,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 					}
 					try {
 						o.setParent(this).initObjects();
-						o.setZLevel(getZLevel() + 1);
+						o.setZLevel(getZLevel() + o.getZLevel() + 1);
 						if (o instanceof InnerEnhancedGui) { ((InnerEnhancedGui) o).initGui(); }
 						o.completeInitialization();
 					} catch (ObjectInitException e) { e.printStackTrace(); }

@@ -44,7 +44,7 @@ public class EGuiHeader extends EnhancedGuiObject {
 			fileUpButton = new EGuiButton(this, endX - 52, startY + 2, 16, 16, "") {
 				@Override
 				public void performAction() {
-					if (getPressedButton() == 0) { playPressSound(); if (getTopParent() != null) { getTopParent().closeGui(); } }
+					if (getPressedButton() == 0) { playPressSound(); if (getTopParent() != null) { getTopParent().closeGui(false); } }
 				}
 			};
 			

@@ -273,7 +273,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 		if (focusedObject != null) { focusedObject.mouseDragged(mX, mY, button, timeSinceLastClick); }
 		super.mouseClickMove(mX, mY, button, timeSinceLastClick);
 	}
-	@Override protected void keyTyped(char typedChar, int keyCode) throws IOException { if (keyCode == 1) { closeGui(); } }
+	@Override protected void keyTyped(char typedChar, int keyCode) throws IOException { if (keyCode == 1) { closeGui(false); } }
 	
 	//basic input handlers
 	@Override
@@ -598,7 +598,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 					}
 					try {
 						o.setParent(this).initObjects();
-						o.setZLevel(getZLevel() + 1);
+						o.setZLevel(getZLevel() + o.getZLevel() + 1);
 						if (o instanceof InnerEnhancedGui) { ((InnerEnhancedGui) o).initGui(); }
 						o.completeInitialization();
 					} catch (ObjectInitException e) { e.printStackTrace(); }
@@ -800,7 +800,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override
 	public void close() {
 		if (eventHandler != null) { eventHandler.processEvent(new EventObjects(this, this, ObjectEventType.Close)); }
-		closeGui();
+		closeGui(true);
 	}
 	@Override public EnhancedGui setFocusedObjectOnClose(IEnhancedGuiObject objIn) { focusObjectOnClose = objIn; return this; }
 	
@@ -937,8 +937,12 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	
 	//close
 	@Override
-	public void closeGui() {
-		if (isSpawned()) {
+	public void closeGui(boolean fullClose) {
+		if (fullClose) {
+			mc.displayGuiScreen(null);
+			if (mc.currentScreen == null) { mc.setIngameFocus(); }
+		}
+		else if (isSpawned()) {
 			if (oldGui != null) {
 				try {
 					GuiScreen newGui = ((GuiScreen) Class.forName(oldGui.getClass().getName()).getConstructor().newInstance());

@@ -299,11 +299,15 @@ public class SettingsGuiMain extends EnhancedGui {
 			}
 			if (object == problem) {
 				addObject(new IncompatibleWindowList(this, midX - 120, midY - 80, 240, 160));
-				displayIncompatibleList();
 			}
 		}
 	}
 	
-	private void displayIncompatibleList() {
+	public void updateList() {
+		if (scrollList != null) {
+			int curPos = scrollList.getScrollBar().getScrollPos();
+			assembleList();
+			scrollList.getScrollBar().setScrollBarPos(curPos);
+		}
 	}
 }

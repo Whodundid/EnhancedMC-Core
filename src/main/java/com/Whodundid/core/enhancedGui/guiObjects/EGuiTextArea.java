@@ -63,10 +63,10 @@ public class EGuiTextArea<obj> extends EnhancedGuiObject {
 		
 		addObject(verticalScroll, horizontalScroll);
 		
-		if (textDocument.isEmpty() && editable) {
-			TextAreaLine newLine = addTextLine();
-			setSelectedLine(newLine);
-		}
+		//if (textDocument.isEmpty() && editable) {
+		//	TextAreaLine newLine = addTextLine();
+		//	setSelectedLine(newLine);
+		//}
 	}
 	
 	@Override
