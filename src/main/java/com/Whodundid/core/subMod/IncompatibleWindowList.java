@@ -58,6 +58,6 @@ public class IncompatibleWindowList extends EGuiDialogueBox {
 			}
 		} else { incompatibleList.addTextLine("None", 0xb2b2b2); }
 		
-		addObject(problem, incompatibleList);
+		addObject(problem);
 	}
 }
