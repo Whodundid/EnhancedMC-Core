@@ -800,12 +800,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override
 	public void close() {
 		if (eventHandler != null) { eventHandler.processEvent(new EventObjects(this, this, ObjectEventType.Close)); }
-		if (focusObjectOnClose != null) {
-			if (getTopParent().getFocusLockObject() == this) { getTopParent().clearFocusedObject(); }
-			focusObjectOnClose.requestFocus();
-		}
-		mc.displayGuiScreen(null);
-        if (mc.currentScreen == null) { mc.setIngameFocus(); }
+		closeGui();
 	}
 	@Override public EnhancedGui setFocusedObjectOnClose(IEnhancedGuiObject objIn) { focusObjectOnClose = objIn; return this; }
 	
@@ -943,22 +938,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	//close
 	@Override
 	public void closeGui() {
-		if (backwardsTraverseable && !guiHistory.isEmpty() && guiHistory.peek() != null) {
-			try {
-				EnhancedGui oldGuiPass = guiHistory.pop();
-				EnhancedGui newGui = ((EnhancedGui) Class.forName(oldGuiPass.getClass().getName()).getConstructor().newInstance());
-				if (newGui instanceof SettingsGuiMain) {
-					//((SubModGui) newGui).setPageToBeLoaded(((SubModGui) oldGuiPass).getCurrentPageNum());
-				}
-				if (!closeAndRecenter) {
-					newGui.useCustomPosition = true;
-					newGui.setPosition(startX, startY);
-				}
-				newGui.sendGuiHistory(oldGuiPass.getGuiHistory());
-				mc.displayGuiScreen(newGui);
-				return;
-			} catch (Exception e) { e.printStackTrace(); }
-		} else {
+		if (isSpawned()) {
 			if (oldGui != null) {
 				try {
 					GuiScreen newGui = ((GuiScreen) Class.forName(oldGui.getClass().getName()).getConstructor().newInstance());
@@ -969,6 +949,22 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 				mc.displayGuiScreen(null);
 		        if (mc.currentScreen == null) { mc.setIngameFocus(); }
 			}
+		}
+		else if (backwardsTraverseable && !guiHistory.isEmpty() && guiHistory.peek() != null) {
+			try {
+				EnhancedGui oldGuiPass = guiHistory.pop();
+				EnhancedGui newGui = ((EnhancedGui) Class.forName(oldGuiPass.getClass().getName()).getConstructor().newInstance());
+				if (!closeAndRecenter) {
+					newGui.useCustomPosition = true;
+					newGui.setPosition(startX, startY);
+				}
+				newGui.sendGuiHistory(oldGuiPass.getGuiHistory());
+				mc.displayGuiScreen(newGui);
+				return;
+			} catch (Exception e) { e.printStackTrace(); }
+		} else {
+			mc.displayGuiScreen(null);
+			if (mc.currentScreen == null) { mc.setIngameFocus(); }
 		}
 	}
 	@Override public EnhancedGui setCloseAndRecenter(boolean val) { closeAndRecenter = val; return this; }
