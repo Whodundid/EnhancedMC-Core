@@ -31,16 +31,15 @@ public class EGuiLabel extends EnhancedGuiObject {
 	
 	@Override
 	public void drawObject(int mX, int mY, float ticks) {
-		super.drawObject(mX, mY, ticks);
 		if (wordWrap && wordWrappedLines != null) {
 			int i = 0;
 			for (String s : wordWrappedLines) {
 				if (centered) {
-					if (shadow) { drawCenteredStringWithShadow(s, startX, startY + (i * 9) + (i > 0 ? gapSize : 0), displayStringColor); }
-					else { drawCenteredString(s, startX, startY + (i * 9) + (i > 0 ? gapSize : 0), displayStringColor); }
+					if (shadow) { drawCenteredStringWithShadow(s, startX, startY + (i * 9) + (i > 0 ? i * gapSize : 0), displayStringColor); }
+					else { drawCenteredString(s, startX, startY + (i * 9) + (i > 0 ? i * gapSize : 0), displayStringColor); }
 				} else {
-					if (shadow) { drawStringWithShadow(s, startX, startY + (i * 9) + (i > 0 ? gapSize : 0), displayStringColor); }
-					else { drawString(s, startX, startY + (i * 9) + (i > 0 ? gapSize : 0), displayStringColor); }
+					if (shadow) { drawStringWithShadow(s, startX, startY + (i * 9) + (i > 0 ? i * gapSize : 0), displayStringColor); }
+					else { drawString(s, startX, startY + (i * 9) + (i > 0 ? i * gapSize : 0), displayStringColor); }
 				}
 				i++;
 			}
@@ -53,9 +52,10 @@ public class EGuiLabel extends EnhancedGuiObject {
 				else { drawString(displayString, startX, startY, displayStringColor); }
 			}
 		}
+		super.drawObject(mX, mY, ticks);
 	}
 	
-	public int getTextHeight() { return wordWrap ? (wordWrappedLines.size() * 9 + wordWrappedLines.size() * gapSize) : 9; }
+	public int getTextHeight() { return wordWrap ? (wordWrappedLines.size() * 9 + wordWrappedLines.size() * gapSize) : fontRenderer.FONT_HEIGHT; }
 	public int getDisplayStringColor() { return displayStringColor; }
 	public EGuiLabel setLineGapHeight(int heightIn) { gapSize = heightIn; return this; }
 	public EGuiLabel setDisplayString(String stringIn) {
