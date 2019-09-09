@@ -21,7 +21,8 @@ public class CoreConfig extends SubModConfigFile {
 		
 		EArrayList<ConfigBlock> configLines = new EArrayList();
 		configLines.add(new CommentConfigBlock().addLine("EMC Core Config"));
-		configLines.add(new ConfigBlock("Menu Override:", mod.emcMenuOverride.get()).createEmptyLine(!doesFileContainIdentifier("enable debug:")));
+		configLines.add(new ConfigBlock("Menu Override:", mod.emcMenuOverride.get()).createEmptyLine(false));
+		configLines.add(new ConfigBlock("Use Debug Key:", mod.useDebugKey.get()).createEmptyLine(!doesFileContainIdentifier("enable debug:")));
 		configLines.add(new CreateIfExistsConfigBlock("enable debug:", Boolean.toString(EnhancedMC.isDebugMode())));
 		
 		return createConfig(configLines);
@@ -31,7 +32,8 @@ public class CoreConfig extends SubModConfigFile {
 	public boolean loadConfig() {
 		try {
 			if (getConfigContents().size() > 0) {
-				mod.emcMenuOverride.set(getConfigVal("Menu Override:", Boolean.class));
+				mod.emcMenuOverride.set(getConfigVal("Menu Override:", Boolean.class, true));
+				mod.useDebugKey.set(getConfigVal("Use Debug Key:", Boolean.class, false));
 				EnhancedMC.setDebugMode(getConfigVal("enable debug:", Boolean.class, false));
 				
 				return true;
