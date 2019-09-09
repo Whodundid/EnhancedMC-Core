@@ -54,6 +54,12 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	protected IEnhancedGuiObject modifyingObject;
 	protected IEnhancedGuiObject objectRequestingFocus, focusedObject, defaultFocusObject, focusLockObject;
 	protected IEnhancedGuiObject toFront, toBack;
+	protected IEnhancedGuiObject hoveringTextObject;
+	public boolean drawHoverText = false;
+	public String hoverText = "";
+	public long mouseHoverTime = 0l;
+	public long hoverRefTime = 0l;
+	public StorageBox<Integer, Integer> oldMousePos = new StorageBox();
 	protected EArrayList<IEnhancedGuiObject> guiObjects = new EArrayList();
 	protected EArrayList<IEnhancedGuiObject> objsToBeAdded = new EArrayList();
 	protected EArrayList<IEnhancedGuiObject> objsToBeRemoved = new EArrayList();
@@ -422,6 +428,10 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	@Override public EnhancedMCRenderer bringObjectToFront(IEnhancedGuiObject objIn) { toFront = objIn; return this; }
 	@Override public EnhancedMCRenderer sendObjectToBack(IEnhancedGuiObject objIn) { toBack = objIn; return this; }
 	
+	//hovering text
+	@Override public IEnhancedTopParent setObjectWithHoveringText(IEnhancedGuiObject objIn) { hoveringTextObject = objIn; return this; }
+	@Override public IEnhancedGuiObject getObjectWithHoveringText() { return hoveringTextObject; }
+	
 	//focus
 	@Override public IEnhancedGuiObject getDefaultFocusObject() { return defaultFocusObject; }
 	@Override public EnhancedMCRenderer setDefaultFocusObject(IEnhancedGuiObject objIn) { defaultFocusObject = objIn; return this; }
@@ -541,13 +551,15 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	
 	protected void updateBeforeNextDraw(int mXIn, int mYIn) {
 		if (eventHandler != null) { eventHandler.processEvent(new EventRedraw(this)); }
+		res = new ScaledResolution(mc);
 		if (proxy != null) { mX = proxy.getMX(); mY = proxy.getMY(); }
 		else if (mc.currentScreen instanceof EnhancedGui) { 
 			EnhancedGui gui = (EnhancedGui) mc.currentScreen;
 			mX = gui.mX; mY = gui.mY;
 		}
 		else { mX = mXIn; mY = mYIn; }
-		res = new ScaledResolution(mc);
+		checkMouseHover();
+		oldMousePos.setValues(mXIn, mYIn);
 		if (!objsToBeRemoved.isEmpty()) { removeObjects(); }
 		if (!objsToBeAdded.isEmpty()) { addObjects(); }
 		updateZLayers();
@@ -559,6 +571,24 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 			case Resize: modifyingObject.resize(mX - mousePos.getObject(), mY - mousePos.getValue(), resizingDir); mousePos.setValues(mX, mY); break;
 			default: break;
 			}
+		}
+	}
+	
+	public void checkMouseHover() {
+		if (getTopParent().getHighestZObjectUnderMouse() != null) {
+			if (mX == oldMousePos.getObject() && mY == oldMousePos.getValue()) {
+				mouseHoverTime = (System.currentTimeMillis() - hoverRefTime);
+				if (mouseHoverTime >= 1000) {
+					getTopParent().setObjectWithHoveringText(getTopParent().getHighestZObjectUnderMouse());
+				}
+			}
+			else {
+				mouseHoverTime = 0l;
+				hoverRefTime = System.currentTimeMillis();
+			}
+		}
+		else if (mouseHoverTime > 0l) {
+			mouseHoverTime = 0l;
 		}
 	}
 	

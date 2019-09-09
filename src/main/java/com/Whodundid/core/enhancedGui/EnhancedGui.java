@@ -108,12 +108,16 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	public int objectId = -1;
 	public boolean drawHoverText = false;
 	public String hoverText = "";
+	public long mouseHoverTime = 0l;
+	public long hoverRefTime = 0l;
+	public StorageBox<Integer, Integer> oldMousePos = new StorageBox();
 	protected Stack<EnhancedGui> guiHistory = new Stack();
 	protected Deque<EventFocus> focusQueue = new ArrayDeque();
 	public EFontRenderer fontRenderer;
 	public RenderItem itemRenderer;
 	protected IEnhancedGuiObject focusedObject, defaultFocusObject, focusLockObject, focusObjectOnClose;
 	protected IEnhancedGuiObject toFront, toBack;
+	protected IEnhancedGuiObject hoveringTextObject;
 	protected EArrayList<IEnhancedGuiObject> guiObjects = new EArrayList();
 	protected EArrayList<IEnhancedGuiObject> objsToBeRemoved = new EArrayList();
 	protected EArrayList<IEnhancedGuiObject> objsToBeAdded = new EArrayList();
@@ -821,6 +825,10 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override public EnhancedGui bringObjectToFront(IEnhancedGuiObject objIn) { toFront = objIn; return this; }
 	@Override public EnhancedGui sendObjectToBack(IEnhancedGuiObject objIn) { toBack = objIn; return this; }
 	
+	//hovering text
+	@Override public IEnhancedTopParent setObjectWithHoveringText(IEnhancedGuiObject objIn) { hoveringTextObject = objIn; return this; }
+	@Override public IEnhancedGuiObject getObjectWithHoveringText() { return hoveringTextObject; }
+	
 	//focus
 	@Override public IEnhancedGuiObject getDefaultFocusObject() { return defaultFocusObject; }
 	@Override public EnhancedGui setDefaultFocusObject(IEnhancedGuiObject objIn) { defaultFocusObject = objIn; return this; }
@@ -979,9 +987,11 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	
 	protected void updateBeforeNextDraw(int mXIn, int mYIn) {
 		if (eventHandler != null) { eventHandler.processEvent(new EventRedraw(this)); }
-		this.mX = mXIn; this.mY = mYIn;
 		res = new ScaledResolution(mc);
+		mX = mXIn; mY = mYIn;
 		isMouseHover = isMouseInside(mX, mY) && getTopParent().getHighestZObjectUnderMouse() != null && getTopParent().getHighestZObjectUnderMouse().equals(this);
+		checkMouseHover();
+		oldMousePos.setValues(mXIn, mYIn);
 		if (!mouseEntered && isMouseHover) { mouseEntered = true; mouseEntered(mX, mY); }
 		if (mouseEntered && !isMouseHover) { mouseEntered = false; mouseExited(mX, mY); }
 		if (!objsToBeRemoved.isEmpty()) { removeObjects(); }
@@ -997,6 +1007,24 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 			}
 		}
 		updateCursorImage();
+	}
+	
+	public void checkMouseHover() {
+		if (getTopParent().getHighestZObjectUnderMouse() != null) {
+			if (mX == oldMousePos.getObject() && mY == oldMousePos.getValue()) {
+				mouseHoverTime = (System.currentTimeMillis() - hoverRefTime);
+				if (mouseHoverTime >= 1000) {
+					getTopParent().setObjectWithHoveringText(getTopParent().getHighestZObjectUnderMouse());
+				}
+			}
+			else {
+				mouseHoverTime = 0l;
+				hoverRefTime = System.currentTimeMillis();
+			}
+		}
+		else if (mouseHoverTime > 0l) {
+			mouseHoverTime = 0l;
+		}
 	}
 	
 	protected void updateZLayers() {

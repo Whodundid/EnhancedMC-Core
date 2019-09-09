@@ -24,6 +24,10 @@ public interface IEnhancedTopParent extends IEnhancedGuiObject {
 	public IEnhancedTopParent bringObjectToFront(IEnhancedGuiObject objIn);
 	public IEnhancedTopParent sendObjectToBack(IEnhancedGuiObject objIn);
 	
+	//hovering text
+	public IEnhancedTopParent setObjectWithHoveringText(IEnhancedGuiObject objIn);
+	public IEnhancedGuiObject getObjectWithHoveringText();
+	
 	//focus
 	
 	public IEnhancedGuiObject getDefaultFocusObject();
