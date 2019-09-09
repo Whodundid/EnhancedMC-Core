@@ -2,6 +2,7 @@ package com.Whodundid.core.util.storageUtil;
 
 /**
  * Essentially, a boolean holder so that boolean values can be modified on a 'pass by reference' basis.
+ * Defaults to true.
  * @author Hunter Bragg
  *
  */
