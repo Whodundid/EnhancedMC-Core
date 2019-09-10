@@ -71,7 +71,6 @@ import org.lwjgl.input.Mouse;
 
 public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParent {
 	
-	public static final Logger LOGGER = LogManager.getLogger();
 	public static final Set<String> PROTOCOLS = Sets.newHashSet(new String[] {"http", "https"});
 	public static final Splitter NEWLINE_SPLITTER = Splitter.on('\n');
 	public EnhancedGui guiInstance;
