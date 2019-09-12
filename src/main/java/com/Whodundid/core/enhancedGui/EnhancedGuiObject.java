@@ -61,6 +61,7 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.ClientCommandHandler;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
@@ -78,7 +79,6 @@ import tv.twitch.chat.ChatUserInfo;
 
 public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObject {
 	
-	public static final Logger LOGGER = LogManager.getLogger();
 	public static final Set<String> PROTOCOLS = Sets.newHashSet(new String[] {"http", "https"});
 	public static final Splitter NEWLINE_SPLITTER = Splitter.on('\n');
 	public URI clickedLinkURI;
@@ -719,9 +719,6 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 
     protected void drawHoveringText(List<String> textLines, int mX, int mY) {
     	if (!textLines.isEmpty()) {
-            //GlStateManager.disableRescaleNormal();
-            //RenderHelper.disableStandardItemLighting();
-            //GlStateManager.disableLighting();
             GlStateManager.disableDepth();
             int i = 0;
 
@@ -763,10 +760,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 
             zLevel = 0.0F;
             renderItem.zLevel = 0.0F;
-            //GlStateManager.enableLighting();
             GlStateManager.enableDepth();
-            //RenderHelper.enableStandardItemLighting();
-            //GlStateManager.enableRescaleNormal();
         }
     }
 	
@@ -861,7 +855,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 			        else { openWebLink(clickevent.getValue()); }
 			    }
 			    catch (URISyntaxException urisyntaxexception) {
-			        LOGGER.error("Can\'t open url for " + clickevent, urisyntaxexception);
+			        EnhancedMC.error("Can\'t open url for " + clickevent, urisyntaxexception);
 			    }
 			}
 			else if (clickevent.getAction() == ClickEvent.Action.OPEN_FILE) {
@@ -880,9 +874,9 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 			    if (chatuserinfo != null) {
 			        mc.displayGuiScreen(new GuiTwitchUserMode(mc.getTwitchStream(), chatuserinfo));
 			    }
-			    else { LOGGER.error("Tried to handle twitch user but couldn\'t find them!"); }
+			    else { EnhancedMC.error("Tried to handle twitch user but couldn\'t find them!"); }
 			}
-			else { LOGGER.error("Don\'t know how to handle " + clickevent); }
+			else { EnhancedMC.error("Don\'t know how to handle " + clickevent); }
 
 			return true;
 		}
@@ -897,7 +891,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	            Object object = oclass.getMethod("getDesktop", new Class[0]).invoke((Object)null, new Object[0]);
 	            oclass.getMethod("browse", new Class[] {URI.class}).invoke(object, new Object[] {uri});
 	        }
-	        catch (Throwable throwable) { LOGGER.error("Couldn\'t open link", throwable); }
+	        catch (Throwable throwable) { EnhancedMC.error("Couldn\'t open link", throwable); }
 		}
     }
 	

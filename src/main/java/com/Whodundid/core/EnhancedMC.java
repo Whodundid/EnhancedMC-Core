@@ -177,5 +177,8 @@ public class EnhancedMC {
 	public static EnhancedMCRenderer getRenderer() { return renderer; }
 	public static boolean isInitialized() { return isInitialized; }
 	public static void log(Level levelIn, String msg) { EMCLogger.log(levelIn, msg); }
+	public static void info(String msg) { EMCLogger.log(Level.INFO, msg); }
+	public static void error(String msg) { EMCLogger.log(Level.ERROR, msg); }
+	public static void error(String msg, Throwable throwableIn) { EMCLogger.log(Level.ERROR, msg, throwableIn); }
 	protected static void createdByHunterBragg() {}
 }
