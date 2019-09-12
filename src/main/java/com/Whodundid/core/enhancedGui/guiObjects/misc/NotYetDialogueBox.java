@@ -1,7 +1,6 @@
 package com.Whodundid.core.enhancedGui.guiObjects.misc;
 
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiDialogueBox;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiDialogueBox.DialogueBoxTypes;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
 
 //Last edited: Feb 18, 2019

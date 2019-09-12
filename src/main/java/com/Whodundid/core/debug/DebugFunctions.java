@@ -14,6 +14,8 @@ import org.apache.logging.log4j.Level;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.enhancedGui.EnhancedGui;
+import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.subMod.SubModType;
@@ -63,31 +65,19 @@ public class DebugFunctions {
 	}
 
 	private static void debug_0() throws Throwable {
-		System.out.println("ho");
-		BigDecimal coreVersion = new BigDecimal(RegisteredSubMods.getMod(SubModType.CORE).getVersion());
-		for (ModContainer c : Loader.instance().getModList()) {
-			Object m = c.getMod();
-			if (m instanceof SubMod) {
-				//try to register the sub mod
-				SubMod instance = null;
-				boolean incompatible = false;
-				try {
-					//check for incompatibility
-					StorageBox<SubModType, BigDecimal> box = ((SubMod) m).getDependencies().getBoxWithObj(SubModType.CORE);
-					if (box != null) {
-						BigDecimal reqCoreVersion = box.getValue();
-						System.out.println("incompat: " + reqCoreVersion.compareTo(coreVersion));
-						if (reqCoreVersion.compareTo(coreVersion) < 0) {
-							incompatible = true;
-						}
-					}
-					
-					instance = ((SubMod) m).getInstance();
-				} catch (Exception q) {
-					q.printStackTrace();
-				}
+		/*
+		System.out.println();
+		
+		if (mc.currentScreen instanceof EnhancedGui) {
+			EnhancedGui g = (EnhancedGui) mc.currentScreen;
+			
+			for (IEnhancedGuiObject o : g.getAllChildren()) {
+				System.out.println(o.getClass().getTypeName());
 			}
 		}
+		
+		System.out.println();
+		*/
 		
 		//System.out.println(RegisteredSubMods.getMod(SubModType.PARKOUR).getMainGui(false, null, null));
 		//RegisteredSubMods.unregisterSubMod(RegisteredSubMods.getMod(SubModType.PARKOUR));
@@ -220,12 +210,12 @@ public class DebugFunctions {
                 }
                 catch (UnknownHostException unknownhostexception) {
 
-                    EnhancedMC.EMCLogger.error((String)"Couldn\'t connect to server", (Throwable)unknownhostexception);
+                    EnhancedMC.EMCLogger.error("Couldn\'t connect to server", unknownhostexception);
                     mc.displayGuiScreen(new GuiDisconnected(null, "connect.failed", new ChatComponentTranslation("disconnect.genericReason", new Object[] {"Unknown host"})));
                 }
                 catch (Exception exception) {
 
-                	EnhancedMC.EMCLogger.error((String)"Couldn\'t connect to server", (Throwable)exception);
+                	EnhancedMC.EMCLogger.error("Couldn\'t connect to server", exception);
                     String s = exception.toString();
 
                     if (inetaddress != null) {

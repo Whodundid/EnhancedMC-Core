@@ -1,6 +1,7 @@
 package com.Whodundid.core.enhancedGui;
 
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.debug.DebugFunctions;
 import com.Whodundid.core.enhancedGui.guiObjectUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiFocusLockBorder;
@@ -24,7 +25,6 @@ import com.Whodundid.core.enhancedGui.guiUtil.exceptions.ObjectInitException;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedTopParent;
-import com.Whodundid.core.settings.SettingsGuiMain;
 import com.Whodundid.core.util.chatUtil.EChatUtil;
 import com.Whodundid.core.util.miscUtil.EFontRenderer;
 import com.Whodundid.core.util.miscUtil.ScreenLocation;
@@ -54,8 +54,6 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraftforge.client.ClientCommandHandler;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -315,13 +313,8 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override
 	public void handleKeyboardInput() throws IOException {
 		if (Keyboard.getEventKeyState()) {
-			if (Keyboard.getEventKey() == 41) {
-				if (focusedObject instanceof EGuiButton) {
-					System.out.println("FocuedObject: " + (((EGuiButton) focusedObject).getDisplayString().isEmpty() ? focusedObject : "EGuiButton: " + ((EGuiButton) focusedObject).getDisplayString()));
-				}
-				else { System.out.println("FocuedObject: " + focusedObject); }
-				System.out.println("GuiHistory: " + guiHistory);
-				System.out.println("ModifyingObject & type: " + modifyingObject + " " + modifyType);
+			if (Keyboard.getEventKey() == EnhancedMC.debugCommand.getKeyCode()) {
+				DebugFunctions.runDebugFunction(0);
 			}
 			keyTyped(Keyboard.getEventCharacter(), Keyboard.getEventKey());
 			if (focusedObject != null) {
@@ -631,7 +624,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 				foundObjs.addAll(workList);
 				objsWithChildren.clear();
 				workList.stream().filter(o -> !o.getImmediateChildren().isEmpty()).forEach(objsWithChildren::add);
-				//EnhancedGui.workList.forEach((o) -> { if (!o.getObjects().isEmpty()) { objsWithChildren.add(o); } });
+				//workList.forEach((o) -> { if (!o.getImmediateChildren().isEmpty()) { objsWithChildren.add(o); } });
 				workList.clear();
 				objsWithChildren.forEach((c) -> { c.getImmediateChildren().forEach((q) -> { workList.add(q); }); });
 			} else { break; }

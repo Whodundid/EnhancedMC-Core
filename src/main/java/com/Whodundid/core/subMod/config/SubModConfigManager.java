@@ -20,7 +20,7 @@ public class SubModConfigManager {
 		mod = modIn;
 		
 		//check if directory exists
-		File basePath = RegisteredSubMods.getModConfigBaseFileLocation(mod.getModType());
+		File basePath = RegisteredSubMods.getModConfigBaseFileLocation(mod.getName());
 		if (!basePath.exists()) { basePath.mkdirs(); }
 	}
 	

@@ -82,7 +82,7 @@ public class SubModSettings {
 							if (!line.equals("END")) {
 								if (lineReader.hasNext()) {
 									String readMod = lineReader.next();
-									SubModType type = SubModType.getSubModFromString(readMod);
+									SubModType type = SubModType.getTypeFromString(readMod);
 									String valIn = lineReader.next();
 									boolean val = false;
 									try {

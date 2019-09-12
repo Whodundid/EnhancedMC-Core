@@ -51,8 +51,8 @@ public class SubModInfoDialogueBox extends EGuiDialogueBox {
 		addObject(dependencyList);
 		
 		if (mod.getDependencies().getObjects().isNotEmpty()) {
-			for (SubModType t : mod.getDependencies().getObjects()) {
-				dependencyList.addTextLine(SubModType.getModName(t), 0x55ff55);
+			for (String t : mod.getDependencies().getObjects()) {
+				dependencyList.addTextLine(t, 0x55ff55);
 			}
 		} else { dependencyList.addTextLine("None", 0xb2b2b2); }
 		

@@ -9,7 +9,6 @@ import com.Whodundid.core.enhancedGui.guiObjects.EGuiRect;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextArea;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.storageUtil.StorageBox;
-import java.math.BigDecimal;
 import net.minecraft.util.EnumChatFormatting;
 
 public class IncompatibleWindowList extends EGuiDialogueBox {
@@ -50,11 +49,11 @@ public class IncompatibleWindowList extends EGuiDialogueBox {
 		
 		if (RegisteredSubMods.getIncompatibleModsList().isNotEmpty()) {
 			for (SubMod s : RegisteredSubMods.getIncompatibleModsList()) {
-				StorageBox<SubModType, BigDecimal> box = s.getDependencies().getBoxWithObj(SubModType.CORE);
-				if (box != null) {
-					incompatibleList.addTextLine(EnumChatFormatting.GRAY + s.getName() + " : " + 
-												 EnumChatFormatting.RED + "requires version '" + box.getValue() + "'", 0x55ff55);
-				}
+				//StorageBox<String, BigDecimal> box = s.getDependencies().getBoxWithObj(SubModType.CORE);
+				//if (box != null) {
+				//	incompatibleList.addTextLine(EnumChatFormatting.GRAY + s.getName() + " : " + 
+				//								 EnumChatFormatting.RED + "requires version '" + box.getValue() + "'", 0x55ff55);
+				//}
 			}
 		} else { incompatibleList.addTextLine("None", 0xb2b2b2); }
 		

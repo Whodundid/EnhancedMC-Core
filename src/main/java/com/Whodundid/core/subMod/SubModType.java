@@ -44,29 +44,15 @@ public enum SubModType {
 	public static String getModName(SubModType modIn) { return modIn.modName; }
 	public static String getModid(SubModType modIn) { return modIn.modid; }
 	
-	public static SubModType getSubModFromString(String modIn) {
+	public static SubModType getTypeFromString(String modIn) {
 		try {
 			return valueOf(modIn);
 		} catch (IllegalArgumentException e) {}
 		
-		switch (modIn.toLowerCase()) {
-		case "cmdautocorrect": return AUTOCORRECT;
-		case "autogm3": return AUTOGM3;
-		case "blinks": return BLINK;
-		case "enhancedchat": return ENHANCEDCHAT;
-		case "clearvisuals": return CLEARVISUALS;
-		case "core": return CORE;
-		case "hotkeys": return HOTKEYS;
-		case "minimap": return MINIMAP;
-		case "multihotbar": return MULTIHOTBAR;
-		case "namehistory": return NAMEHISTORY;
-		case "parkourai": return PARKOUR;
-		case "pingdisplay": return PING;
-		case "scripts": return SCRIPTS;
-		case "skinlayercontrol": return SLC;
-		case "worldeditor": return WORLDEDITOR;
-		case "unknown": return UNKNOWN;
-		default: return null;
+		for (SubModType t : SubModType.values()) {
+			if (modIn.equals(t.modid) || modIn.equals(t.modName)) { return t; }
 		}
+		
+		return null;
 	}
 }

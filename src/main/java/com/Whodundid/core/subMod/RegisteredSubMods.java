@@ -62,11 +62,11 @@ public class RegisteredSubMods {
 			for (SubMod m : modsToRegister) {
 				if (m != null) {
 					if (m.isIncompatible()) {
-						EnhancedMC.log(Level.INFO, "Unable to fully register SubMod: " + SubModType.getModName(m.getModType()) + " is incompatible with EMC Core.");
+						EnhancedMC.log(Level.INFO, "Unable to fully register SubMod: " + m.getName() + " is incompatible with EMC Core.");
 						incompatibleMods.add(m);
 					}
 					else {
-						EnhancedMC.log(Level.INFO, "Registering SubMod: " + SubModType.getModName(m.getModType()));
+						EnhancedMC.log(Level.INFO, "Registering SubMod: " + m.getName());
 						registeredMods.add(m);
 					}
 					allMods.add(m);
@@ -89,11 +89,11 @@ public class RegisteredSubMods {
 			for (SubMod m : modsToUnregister) {
 				if (m != null) {
 					if (m.isIncompatible()) {
-						EnhancedMC.log(Level.INFO, "Removing incompatible SubMod: " + SubModType.getModName(m.getModType()));
+						EnhancedMC.log(Level.INFO, "Removing incompatible SubMod: " + m.getName());
 						incompatibleMods.remove(m);
 					}
 					else {
-						EnhancedMC.log(Level.INFO, "Unregistering SubMod: " + SubModType.getModName(m.getModType()));
+						EnhancedMC.log(Level.INFO, "Unregistering SubMod: " + m.getName());
 						registeredMods.remove(m);
 					}
 					allMods.remove(m);
@@ -157,19 +157,19 @@ public class RegisteredSubMods {
 	}
 	
 	//returns a list of submodtypes which are direct dependencies of the given submod
-	public static EArrayList<SubModType> getAllModDependencies(SubMod modIn) {
-		EArrayList<SubModType> allDependencies = new EArrayList(modIn.getDependencies().getObjects());
-		EArrayList<SubModType> withDep = new EArrayList();
-		EArrayList<SubModType> workList = new EArrayList();
+	public static EArrayList<String> getAllModDependencies(SubMod modIn) {
+		EArrayList<String> allDependencies = new EArrayList(modIn.getDependencies().getObjects());
+		EArrayList<String> withDep = new EArrayList();
+		EArrayList<String> workList = new EArrayList();
 		
-		allDependencies.forEach(t -> { SubMod m = getMod(t); if (!m.getDependencies().isEmpty()) { withDep.add(m.getModType()); } });
+		allDependencies.forEach(t -> { SubMod m = getMod(t); if (!m.getDependencies().isEmpty()) { withDep.add(m.getName()); } });
 		withDep.forEach(t -> { getMod(t).getDependencies().getObjects().forEach(d -> { workList.add(d); }); });
 		
 		while (true) {
 			if (!workList.isEmpty()) {
 				allDependencies.addAll(workList);
 				withDep.clear();
-				workList.forEach(t -> { SubMod m = getMod(t); if (!m.getDependencies().isEmpty()) { withDep.add(m.getModType()); } });
+				workList.forEach(t -> { SubMod m = getMod(t); if (!m.getDependencies().isEmpty()) { withDep.add(m.getName()); } });
 				workList.clear();
 				withDep.forEach(t -> { getMod(t).getDependencies().forEach(d -> { workList.add(d.getObject()); }); });
 			} else { break; }
@@ -177,15 +177,15 @@ public class RegisteredSubMods {
 		return allDependencies;
 	}
 	
-	//returns a list of submodtypes which are dependant on the given submod
-	public static EArrayList<SubModType> getAllDependantsOfMod(SubMod modIn) {
-		EArrayList<SubModType> dependants = new EArrayList();
-		EArrayList<SubModType> workList = new EArrayList();
-		registeredMods.forEach(m -> { m.getDependencies().forEach(t -> { if (t.getObject().equals(modIn.getModType())) { dependants.add(m.getModType()); } }); });
+	//returns a list of submod names which are dependant on the given submod
+	public static EArrayList<String> getAllDependantsOfMod(SubMod modIn) {
+		EArrayList<String> dependants = new EArrayList();
+		EArrayList<String> workList = new EArrayList();
+		registeredMods.forEach(m -> { m.getDependencies().forEach(t -> { if (t.getObject().equals(modIn.getName())) { dependants.add(m.getName()); } }); });
 		for (SubMod m : registeredMods) {
-			for (SubModType t : m.getDependencies().getObjects()) {
-				for (SubModType d : dependants) {
-					if (t.equals(d)) { if (!dependants.contains(m.getModType())) { workList.add(m.getModType()); } }
+			for (String t : m.getDependencies().getObjects()) {
+				for (String s : dependants) {
+					if (t.equals(s)) { if (!dependants.contains(m.getName())) { workList.add(m.getName()); } }
 				}
 			}
 		}
@@ -193,24 +193,27 @@ public class RegisteredSubMods {
 		return dependants;
 	}
 	
-	//returns a list of submodtypes which have a dependency to the given mod
-	public static EArrayList<SubModType> getAllModsWithDepenency(SubModType typeIn) {
-		EArrayList<SubModType> mods = new EArrayList();
-		getRegisteredModsList().forEach(m -> { if (m.getDependencies().contains(typeIn)) { mods.add(m.getModType()); } });
+	//returns a list of submod names which have a dependency to the given mod
+	public static EArrayList<String> getAllModsWithDependency(SubModType typeIn) { return getAllModsWithDependency(typeIn.modName); }
+	public static EArrayList<String> getAllModsWithDependency(String modNameIn) {
+		EArrayList<String> mods = new EArrayList();
+		getRegisteredModsList().forEach(m -> { if (m.getDependencies().contains(modNameIn)) { mods.add(m.getName()); } });
 		return mods;
 	}
 	
-	//returns a list of submodtypes which are currently enabled that have a dependency to the given mod
-	public static EArrayList<SubModType> getAllEnabledModsWithDepenency(SubModType typeIn) {
-		EArrayList<SubModType> mods = new EArrayList();
-		getEnabledModsList().forEach(m -> { if (m.getDependencies().contains(typeIn)) { mods.add(m.getModType()); } });
+	//returns a list of submod names which are currently enabled that have a dependency to the given mod
+	public static EArrayList<String> getAllEnabledModsWithDependency(SubModType typeIn) { return getAllEnabledModsWithDependency(typeIn.modName); }
+	public static EArrayList<String> getAllEnabledModsWithDependency(String modNameIn) {
+		EArrayList<String> mods = new EArrayList();
+		getEnabledModsList().forEach(m -> { if (m.getDependencies().contains(modNameIn)) { mods.add(m.getName()); } });
 		return mods;
 	}
 	
-	//returns a list of submodtypes which are currently disabled that have a dependency to the given mod
-	public static EArrayList<SubModType> getAllDisabledModsWithDepenency(SubModType typeIn) {
-		EArrayList<SubModType> mods = new EArrayList();
-		getDisabledModsList().forEach(m -> { if (m.getDependencies().contains(typeIn)) { mods.add(m.getModType()); } });
+	//returns a list of submod names which are currently disabled that have a dependency to the given mod
+	public static EArrayList<String> getAllDisabledModsWithDependency(SubModType typeIn) { return getAllDisabledModsWithDependency(typeIn.modName); }
+	public static EArrayList<String> getAllDisabledModsWithDependency(String modNameIn) {
+		EArrayList<String> mods = new EArrayList();
+		getDisabledModsList().forEach(m -> { if (m.getDependencies().contains(modNameIn)) { mods.add(m.getName()); } });
 		return mods;
 	}
 	

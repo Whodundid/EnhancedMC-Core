@@ -9,7 +9,6 @@ import com.Whodundid.core.enhancedGui.guiObjects.EGuiLabel;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiRect;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiScrollList;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextField;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiWindow;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.subMod.IncompatibleWindowList;
 import com.Whodundid.core.subMod.RegisteredSubMods;
@@ -25,7 +24,6 @@ import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.StorageBox;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.EnumChatFormatting;
 
 //Dec 28, 2018
@@ -210,7 +208,7 @@ public class SettingsGuiMain extends EnhancedGui {
 							playPressSound();
 							if (m != null) {
 								if (!m.isEnabled()) {
-									EArrayList<SubModType> allDependencies = RegisteredSubMods.getAllModDependencies(m);
+									EArrayList<String> allDependencies = RegisteredSubMods.getAllModDependencies(m);
 									EArrayList<SubMod> disabledDependancies = new EArrayList();
 									allDependencies.forEach((t) -> { SubMod m = RegisteredSubMods.getMod(t); if (!m.isEnabled()) { disabledDependancies.add(m); } });
 									if (!disabledDependancies.isEmpty()) {
@@ -220,7 +218,7 @@ public class SettingsGuiMain extends EnhancedGui {
 										return;
 									}
 								} else {
-									EArrayList<SubModType> allDependents = RegisteredSubMods.getAllDependantsOfMod(m);
+									EArrayList<String> allDependents = RegisteredSubMods.getAllDependantsOfMod(m);
 									EArrayList<SubMod> enabledDependants = new EArrayList();
 									allDependents.forEach(t -> { SubMod m = RegisteredSubMods.getMod(t); if (m.isEnabled()) { enabledDependants.add(m); } }); 
 									if (!enabledDependants.isEmpty()) {

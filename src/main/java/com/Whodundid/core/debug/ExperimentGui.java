@@ -98,7 +98,7 @@ public class ExperimentGui extends EnhancedGui {
 		
 		scrollList = new EGuiScrollList(inner, endX + 20, midY, 210, 180);
 		
-		testMethod1();
+		//testMethod1();
 		
 		//scrollList.addObjectToList(new EGuiButton(scrollList, 10, 5, 50, 20, "button 1"));
 		//scrollList.addObjectToList(new EGuiLabel(scrollList, 30, 50, "Scrolling Label Test!"));

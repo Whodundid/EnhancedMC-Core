@@ -13,6 +13,7 @@ import com.Whodundid.core.util.ModdedInGameGui;
 import com.Whodundid.core.util.miscUtil.EFontRenderer;
 import com.Whodundid.core.util.renderUtil.CursorHelper;
 import com.Whodundid.core.util.renderUtil.Resources;
+import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IReloadableResourceManager;
@@ -27,16 +28,12 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import java.math.BigDecimal;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 
-//Jan 10, 2019
-//Last edited: Feb 18, 2019
-//Edit note: added 'isInitialized' boolean flag which indicates if all of EnhancedMC's dependancies have fully loaded.
 //First Added: Nov 16, 2017
 //Author: Hunter Bragg
 
@@ -58,6 +55,7 @@ public class EnhancedMC {
 	public static int updateCounter = 0;
 	public static boolean enableDebugFunctions = false;
 	public final EnhancedMCMod modInstance = new EnhancedMCMod();
+	public final Resources resources = new Resources();
 	
 	@EventHandler
     private void init(FMLInitializationEvent event) {
@@ -69,7 +67,6 @@ public class EnhancedMC {
     	ClientRegistry.registerKeyBinding(debugCommand);
     	
     	//initialize client resources
-    	new Resources();
     	CursorHelper.init();
     	fontRenderer = new EFontRenderer(mc.gameSettings, new ResourceLocation("textures/font/ascii.png"), mc.renderEngine, false);
 		if (mc.gameSettings.language != null) {
@@ -92,37 +89,49 @@ public class EnhancedMC {
 			Display.setTitle("Alt Acc");
 		}
 		
-		//register core subMod instance
-    	RegisteredSubMods.registerSubMod(modInstance);
+		EArrayList<SubMod> foundMods = new EArrayList();
+		foundMods.add(modInstance);
 		
-		BigDecimal coreVersion = new BigDecimal(VERSION);
-		//find and register EMC sub mods into EMC core
+		//find any EMC SubMods in forge loaded mods
 		for (ModContainer c : Loader.instance().getModList()) {
 			Object m = c.getMod();
 			if (m instanceof SubMod) {
-				//try to register the sub mod
-				SubMod instance = null;
+				c.getMetadata().parent = MODID; //assign the subMod as a child of EMC to fore
+				foundMods.add((SubMod) m);
+			}
+		}
+		
+		//process found mods
+		for (SubMod m : foundMods) {
+			try {
+				//check for incompatibility
 				boolean incompatible = false;
-				try {
-					//check for incompatibility
-					StorageBox<SubModType, BigDecimal> box = ((SubMod) m).getDependencies().getBoxWithObj(SubModType.CORE);
-					if (box != null) {
-						BigDecimal reqCoreVersion = box.getValue();
-						if (reqCoreVersion.compareTo(coreVersion) != 0) {
-							incompatible = true;
-						}
-					}
+				
+				int numDeps = m.getDependencies().size();
+				int foundDepMods = 0;
+				int matchingVers = 0;
+				
+				for (StorageBox<String, String> box : m.getDependencies()) {
+					String modName = box.getObject();
+					String modVer = box.getValue();
 					
-					instance = ((SubMod) m).getInstance();
-				} catch (Exception q) {
-					log(Level.INFO, "Error trying to read submod: " + m + "!");
-					q.printStackTrace();
+					SubMod dep = getMod(modName, foundMods);
+					if (dep != null) {
+						foundDepMods += 1;
+						if (modVer.equals(dep.getVersion())) { matchingVers += 1; }
+					}
 				}
-				if (instance != null) {
-					instance.setIncompatible(incompatible);
-					RegisteredSubMods.registerSubMod(instance);
-					c.getMetadata().parent = MODID; //assign the subMod as a child of EMC to fore
-				}
+				
+				if (foundDepMods != numDeps || matchingVers != numDeps) { incompatible = true; }
+				
+				//set incompatibility state
+				m.setIncompatible(incompatible);
+				//register the subMod into core
+				RegisteredSubMods.registerSubMod(m);
+			}
+			catch (Exception q) {
+				log(Level.INFO, "Error trying to read submod: " + m + "!");
+				q.printStackTrace();
 			}
 		}
 		
@@ -180,5 +189,13 @@ public class EnhancedMC {
 	public static void info(String msg) { EMCLogger.log(Level.INFO, msg); }
 	public static void error(String msg) { EMCLogger.log(Level.ERROR, msg); }
 	public static void error(String msg, Throwable throwableIn) { EMCLogger.log(Level.ERROR, msg, throwableIn); }
+	
+	private static SubMod getMod(String modNameIn, EArrayList<SubMod> checkList) {
+		for (SubMod m : checkList) {
+			if (m.getName().equals(modNameIn)) { return m; }
+		}
+		return null;
+	}
+	
 	protected static void createdByHunterBragg() {}
 }

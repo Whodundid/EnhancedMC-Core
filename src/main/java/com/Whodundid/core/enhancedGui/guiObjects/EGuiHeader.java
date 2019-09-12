@@ -159,6 +159,7 @@ public class EGuiHeader extends EnhancedGuiObject {
 	}
 	
 	protected void headerClick(int button) {
+		getParent().bringToFront();
 		if (moveButton != null && moveButton.checkDraw()) {
 			IEnhancedTopParent topParent = getTopParent();
 			if (button == 0) {

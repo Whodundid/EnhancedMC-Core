@@ -7,8 +7,6 @@ import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.ModSetting;
-import java.util.ArrayList;
-import java.util.Iterator;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;

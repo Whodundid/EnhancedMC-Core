@@ -7,7 +7,6 @@ import com.Whodundid.core.subMod.config.SubModConfigManager;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
-import java.math.BigDecimal;
 import java.util.Iterator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -25,7 +24,6 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
 
-//Last edited: Dec 27, 2018
 //First Added: Oct 15, 2018
 //Author: Hunter Bragg
 
@@ -34,8 +32,8 @@ public abstract class SubMod {
 	protected Minecraft mc = Minecraft.getMinecraft();
 	protected EnhancedGui mainGui;
 	protected EArrayList<GuiScreen> guis = new EArrayList();
-	protected StorageBoxHolder<SubModType, BigDecimal> dependencies = new StorageBoxHolder();
-	protected StorageBoxHolder<SubModType, BigDecimal> softDependencies = new StorageBoxHolder();
+	protected StorageBoxHolder<String, String> dependencies = new StorageBoxHolder().setAllowDuplicates(false);
+	protected StorageBoxHolder<String, String> softDependencies = new StorageBoxHolder().setAllowDuplicates(false);
 	protected String modName = "noname";
 	protected SubModConfigManager configManager;
 	protected boolean enabled = false;
@@ -44,23 +42,22 @@ public abstract class SubMod {
 	protected String versionDate = "unspecified";
 	protected boolean isDisableable = true;
 	protected boolean incompatible = false;
-	private SubModType mod;
 	
-	public SubMod(SubModType modIn) {
-		mod = modIn;
-		modName = SubModType.getModName(modIn);
+	public SubMod(SubModType modIn) { this(SubModType.getModName(modIn)); }
+	public SubMod(String modNameIn) {
+		modName = modNameIn;
 		configManager = new SubModConfigManager(this);
 	}
 	
 	public abstract SubMod getInstance();
-	public SubModType getModType() { return mod; }
+	public SubModType getModType() { return SubModType.getTypeFromString(modName); }
 	public boolean isEnabled() { return enabled; }
 	public boolean hasConfig() { return configManager.getNumberOfConfigFiles() > 0; }
 	public boolean isDisableable() { return isDisableable; }
 	public boolean isIncompatible() { return incompatible; }
 	public EArrayList<GuiScreen> getGuis() { return guis; }
-	public StorageBoxHolder<SubModType, BigDecimal> getDependencies() { return dependencies; }
-	public StorageBoxHolder<SubModType, BigDecimal> getSoftDependencies() { return softDependencies; }
+	public StorageBoxHolder<String, String> getDependencies() { return dependencies; }
+	public StorageBoxHolder<String, String> getSoftDependencies() { return softDependencies; }
 	public EnhancedGui getMainGui(boolean setPosition, StorageBox<Integer, Integer> pos, EnhancedGui oldGui) { return mainGui; }
 	public SubModConfigManager getConfig() { return configManager; }
 	public SubMod setEnabled(boolean valueIn) { enabled = valueIn; return this; }
@@ -69,6 +66,12 @@ public abstract class SubMod {
 	public String getName() { return modName; }
 	public String getAuthor() { return author; }
 	public String getVersionDate() { return versionDate; }
+	
+	public SubMod addDependency(SubModType typeIn, String versionIn) { return addDependency(SubModType.getModName(typeIn), versionIn); }
+	public SubMod addDependency(String nameIn, String versionIn) {
+		dependencies.add(nameIn, versionIn);
+		return this;
+	}
 	
 	protected SubMod setMainGui(EnhancedGui guiIn) {
 		EnhancedGui oldGui = mainGui;

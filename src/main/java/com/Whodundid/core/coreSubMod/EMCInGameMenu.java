@@ -15,7 +15,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.realms.RealmsBridge;
 import net.minecraftforge.fml.client.GuiModList;
 
-//Last edited: Dec 14, 2018
 //First Added: Dec 14, 2018
 //Author: Hunter Bragg
 
