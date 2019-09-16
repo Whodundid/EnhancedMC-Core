@@ -697,7 +697,7 @@ public class Matrix {
 	 * @return {@code Boolean}
 	 */
 	public static boolean multiplyCheck(Matrix m1, Matrix m2) {
-		return m1 != null && m2 != null ? (m1.getRowLength() == m2.getColumnLength()) : false;
+		return m1 != null && m2 != null ? (m1.getColumnLength() == m2.getRowLength()) : false;
 	}
 	
 	
