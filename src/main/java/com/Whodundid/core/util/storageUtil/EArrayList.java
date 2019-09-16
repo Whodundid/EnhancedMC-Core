@@ -24,9 +24,8 @@ import java.util.stream.Collectors;
 //First Added: Dec 12, 2018
 //Author: Hunter Bragg
 
-public class EArrayList<E> extends ArrayList<E> {
+public class EArrayList<E> extends AbstractList<E> {
 	
-	private static final long serialVersionUID = 8683452361122892285L;
 	protected transient Object[] elementData;
 	private int size;
 	private boolean allowDuplicates = true;
@@ -197,6 +196,11 @@ public class EArrayList<E> extends ArrayList<E> {
 		return this;
 	}
 	
+	public EArrayList addA(E[] e) {
+		add(e);
+		return this;
+	}
+	
 	public boolean add(E e) {
 		if (contains(e)) {
 			if (allowDuplicates) {
@@ -232,13 +236,13 @@ public class EArrayList<E> extends ArrayList<E> {
 	
 	public void addIfNotContains(E... e) {
 		for (E entry : e) {
-			if (!contains(e)) { add(e); }
+			if (!contains(entry)) { add(entry); }
 		}
 	}
 	
 	public void addIfNotNullAndNotContains(E... e) {
 		for (E entry : e) {
-			if (e != null && !contains(e)) { add(e); }
+			if (entry != null && !contains(entry)) { add(entry); }
 		}
 	}
 	
@@ -305,7 +309,7 @@ public class EArrayList<E> extends ArrayList<E> {
 	
 	public void removeIfPresent(E... e) {
 		for (E entry : e) {
-			if (contains(e)) { remove(e); }
+			if (contains(entry)) { remove(entry); }
 		}
 	}
 	
