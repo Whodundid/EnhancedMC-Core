@@ -12,7 +12,7 @@ public class NumberUtil {
 	public static int returnSmaller(int a, int b) { return (a < b) ? a : b; }
 	public static boolean isInteger(String s) { return s.matches("-?\\d+"); }
 	
-	private static boolean isInteger(String s, int radix) {
+	public static boolean isInteger(String s, int radix) {
 		if (s.isEmpty()) { return false; }
 		for (int i = 0; i < s.length(); i++) {
 			System.out.println(s.charAt(i));
