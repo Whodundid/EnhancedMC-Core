@@ -71,6 +71,18 @@ public class StorageBoxHolder<Obj, Val> implements Iterable<StorageBox<Obj, Val>
 		return returnList;
 	}
 	
+	public synchronized StorageBoxHolder<Obj, Val> setValueInBox(Obj obj, Val newVal) {
+		StorageBox<Obj, Val> box = getBoxWithObj(obj);
+		if (box != null) { box.setValue(newVal); }
+		return this;
+	}
+	
+	public synchronized StorageBoxHolder<Obj, Val> setObjectInBox(Obj obj, Obj newObj) {
+		StorageBox<Obj, Val> box = getBoxWithObj(obj);
+		if (box != null) { box.setObject(newObj); }
+		return this;
+	}
+	
 	public synchronized boolean contains(Obj obj) {
 		for (StorageBox<Obj, Val> getBox : createdList) {
 			if (getBox.contains(obj)) { return true; }
