@@ -78,30 +78,18 @@ public class Matrix {
 	 * @param columnSizeIn {@code Integer}
 	 * @param vals {@code Integer[]}
 	 */
-	public Matrix(int rowSizeIn, int columnSizeIn, int... vals) {
+	public Matrix(int rowSizeIn, int columnSizeIn, Number... vals) {
 		create(rowSizeIn, columnSizeIn);
 		if (vals.length == rowSizeIn * columnSizeIn) {
 			int q = 0;
 			for (int j = 0; j < rSize; j++) {
 				for (int i = 0; i < cSize; i++) {
-					setVal(j, i, vals[q]);
+					setVal(j, i, vals[q].doubleValue());
 					q++;
 				}
 			}
 		}
 	}
-	
-	/**
-	 * Initializes a {@code Matrix} with specified int values for rows and columns and attempts to fill it with provided double values.
-	 * 
-	 * <p>If the number of given vals does not match the intended matrix size of (rowSizeIn * columnSizeIn), the initialization
-	 * process will ignore the provided arguments.
-	 * 
-	 * @param rowSizeIn {@code Integer}
-	 * @param columnSizeIn {@code Integer}
-	 * @param vals {@code Double[]}
-	 */
-	public Matrix(int rowSizeIn, int columnSizeIn, Double... vals) { this(rowSizeIn, columnSizeIn, new EArrayList().addA(vals)); }
 	
 	/**
 	 * Initializes a {@code Matrix} with specified int values for rows and columns and attempts to fill it with a provided list containing double values.

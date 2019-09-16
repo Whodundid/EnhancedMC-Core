@@ -78,30 +78,18 @@ public class MatrixInt {
 	 * @param columnSizeIn {@code Integer}
 	 * @param vals {@code Double[]}
 	 */
-	public MatrixInt(int rowSizeIn, int columnSizeIn, double... vals) {
+	public MatrixInt(int rowSizeIn, int columnSizeIn, Number... vals) {
 		create(rowSizeIn, columnSizeIn);
 		if (vals.length == rowSizeIn * columnSizeIn) {
 			int q = 0;
 			for (int j = 0; j < rSize; j++) {
 				for (int i = 0; i < cSize; i++) {
-					setVal(j, i, (int) vals[q]);
+					setVal(j, i, (int) vals[q].intValue());
 					q++;
 				}
 			}
 		}
 	}
-	
-	/**
-	 * Initializes a {@code MatrixInt} with specified int values for rows and columns and attempts to fill it with provided int values.
-	 * 
-	 * <p>If the number of given vals does not match the intended matrix size of (rowSizeIn * columnSizeIn), the initialization
-	 * process will ignore the provided arguments.
-	 * 
-	 * @param rowSizeIn {@code Integer}
-	 * @param columnSizeIn {@code Integer}
-	 * @param vals {@code Integer[]}
-	 */
-	public MatrixInt(int rowSizeIn, int columnSizeIn, Integer... vals) { this(rowSizeIn, columnSizeIn, new EArrayList().addA(vals)); }
 	
 	/**
 	 * Initializes a {@code MatrixInt} with specified int values for rows and columns and attempts to fill it with a provided list containing Integer values.
@@ -368,7 +356,7 @@ public class MatrixInt {
 		Matrix m = new Matrix(rSize, cSize);
 		for (int i = 0; i < rSize; i++) {
 			for (int j = 0; j < cSize; j++) {
-				m.setVal(i, j, getVal(i, j));
+				m.setVal(i, j, (double) getVal(i, j));
 			}
 		}
 		return m;
@@ -657,7 +645,7 @@ public class MatrixInt {
 			Matrix m = new Matrix(matrixIn.getDimensions());
 			for (int i = 0; i < matrixIn.getRowLength(); i++) {
 				for (int j = 0; j < matrixIn.getColumnLength(); j++) {
-					m.setVal(i, j, matrixIn.getVal(i, j));
+					m.setVal(i, j, (double) matrixIn.getVal(i, j));
 				}
 			}
 			return m;
