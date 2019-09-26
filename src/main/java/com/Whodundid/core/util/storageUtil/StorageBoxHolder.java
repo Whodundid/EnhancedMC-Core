@@ -3,6 +3,7 @@ package com.Whodundid.core.util.storageUtil;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 //Last edited: Jan 23, 2019
 //First Added: May 14, 2018
@@ -13,16 +14,10 @@ public class StorageBoxHolder<Obj, Val> implements Iterable<StorageBox<Obj, Val>
 	List<StorageBox<Obj, Val>> createdList = new ArrayList();
 	public boolean allowDuplicates = false;
 	
-	public synchronized int size() { return this.createdList.size(); }
-	public synchronized StorageBox<Obj, Val> get(int pointNumber) { return createdList.get(pointNumber); }
-	public synchronized boolean isEmpty() { return createdList.isEmpty(); }
-	public synchronized boolean isNotEmpty() { return !createdList.isEmpty(); }
-	public synchronized void clear() { this.createdList.clear(); }
-	public synchronized boolean remove(int pointNumber) { return createdList.remove(pointNumber) != null; }
-	public synchronized Obj getObject(int pointNumber) { return createdList.get(pointNumber).getObject(); }
-	public synchronized Val getValue(int pointNumber) { return createdList.get(pointNumber).getValue(); }
-	
-	@Override public Iterator<StorageBox<Obj, Val>> iterator() { return createdList.iterator(); }
+	public StorageBoxHolder() { this(false); }
+	public StorageBoxHolder(boolean allowDuplicatesIn) {
+		allowDuplicates = allowDuplicatesIn;
+	}
 	
 	public synchronized boolean add(Obj obj, Val value) {
 		return (allowDuplicates || !contains(obj)) ? createdList.add(new StorageBox<Obj, Val>(obj, value)) : false;
@@ -55,20 +50,16 @@ public class StorageBoxHolder<Obj, Val> implements Iterable<StorageBox<Obj, Val>
 	}
 	
 	/** Retrieves the first box that contains the specified object */
-	public synchronized StorageBox<Obj, Val> getBoxWithObj(Obj obj) {
+	public synchronized StorageBox<Obj, Val> getBoxWithObj(Obj objIn) {
 		for (StorageBox<Obj, Val> getBox : createdList) {
-			if (getBox.getObject().equals(obj)) { return getBox; }
+			if (getBox.compareObject(objIn)) { return getBox; }
 		}
 		return null;
 	}
 	
 	/** Retrieves all boxes that contain the specified object */
-	public synchronized EArrayList<StorageBox<Obj, Val>> getAllBoxesWithObj(Obj obj) {
-		EArrayList<StorageBox<Obj, Val>> returnList = new EArrayList();
-		for (StorageBox<Obj, Val> getBox : createdList) {
-			if (getBox.getObject().equals(obj)) { returnList.add(getBox); }
-		}
-		return returnList;
+	public synchronized List<StorageBox<Obj, Val>> getAllBoxesWithObj(Obj obj) {
+		return createdList.stream().filter(b -> b.getObject().equals(obj)).collect(Collectors.toList());
 	}
 	
 	public synchronized StorageBoxHolder<Obj, Val> setValueInBox(Obj obj, Val newVal) {
@@ -97,6 +88,7 @@ public class StorageBoxHolder<Obj, Val> implements Iterable<StorageBox<Obj, Val>
 		return false;
 	}
 	
+	public StorageBoxHolder<Obj, Val> noDuplicates() { allowDuplicates = false; return this; }
 	public StorageBoxHolder<Obj, Val> setAllowDuplicates(boolean val) { allowDuplicates = val; return this; }
 	
 	public static <thing1, thing2> StorageBoxHolder<thing1, thing2> createBox(EArrayList<thing1> objectsIn, EArrayList<thing2> valuesIn) {
@@ -110,19 +102,15 @@ public class StorageBoxHolder<Obj, Val> implements Iterable<StorageBox<Obj, Val>
 		return null;
 	}
 	
-	public EArrayList<Obj> getObjects() {
+	public List<Obj> getObjects() {
 		EArrayList<Obj> objects = new EArrayList();
-		for (StorageBox<Obj, Val> b : createdList) {
-			objects.add(b.getObject());
-		}
+		createdList.forEach(b -> objects.add(b.getObject()));
 		return objects;
 	}
 	
-	public EArrayList<Val> getValues() {
+	public List<Val> getValues() {
 		EArrayList<Val> values = new EArrayList();
-		for (StorageBox<Obj, Val> b : createdList) {
-			values.add(b.getValue());
-		}
+		createdList.forEach(b -> values.add(b.getValue()));
 		return values;
 	}
 	
@@ -131,11 +119,24 @@ public class StorageBoxHolder<Obj, Val> implements Iterable<StorageBox<Obj, Val>
 		return boxes;
 	}
 	
+	public synchronized int size() { return this.createdList.size(); }
+	public synchronized StorageBox<Obj, Val> get(int pointNumber) { return createdList.get(pointNumber); }
+	public synchronized boolean isEmpty() { return createdList.isEmpty(); }
+	public synchronized boolean isNotEmpty() { return !createdList.isEmpty(); }
+	public synchronized void clear() { this.createdList.clear(); }
+	public synchronized boolean remove(int pointNumber) { return createdList.remove(pointNumber) != null; }
+	public synchronized Obj getObject(int pointNumber) { return createdList.get(pointNumber).getObject(); }
+	public synchronized Val getValue(int pointNumber) { return createdList.get(pointNumber).getValue(); }
+	
+	//object overrides
+	
+	@Override public Iterator<StorageBox<Obj, Val>> iterator() { return createdList.iterator(); }
+	
 	@Override
 	public String toString() {
 		String returnString = "[";
 		for (int i = 0; i < createdList.size(); i++) {
-			returnString += (this.getValue(i) + " " + this.getObject(i));
+			returnString += (this.getObject(i) + ", " + this.getValue(i));
 		}
 		returnString += "]";
 		return returnString;
