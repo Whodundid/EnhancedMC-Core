@@ -57,7 +57,7 @@ public class TextAreaLine<obj> extends EGuiTextField {
 		updateValues();
 		
 		if (highlighted || lineEquals) {
-			drawRect(startX - (parentTextArea.getDrawLineNumbers() ? 3 : 2), startY, parentTextArea.endX - 1, endY, 0x20666666);
+			drawRect(startX - (parentTextArea.getDrawLineNumbers() ? 3 : 2), startY, parentTextArea.endX - 1, endY, 0x20909090);
 		}
 		
 		if (parentTextArea.getDrawLineNumbers()) { drawLineNumber(); }
