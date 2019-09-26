@@ -565,6 +565,29 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	}
 	@Override public StorageBox<Integer, Integer> getInitialPosition() { return new StorageBox<Integer, Integer>(startXPos, startYPos); }
 	@Override public EnhancedGui setInitialPosition(int startXIn, int startYIn) { startXPos = startXIn; startYPos = startYIn; return this; }
+	@Override
+	public EnhancedGui centerObjectWithSize(int widthIn, int heightIn) {
+		ScaledResolution res = new ScaledResolution(mc);
+		int sWidth = res.getScaledWidth();
+		int sHeight = res.getScaledHeight();
+		if (sWidth >= widthIn) {
+			startX = (sWidth - widthIn) / 2;
+			width = widthIn;
+		} else {
+			startX = 0;
+			width = sWidth;
+		};
+		if (sHeight >= heightIn) {
+			startY = (sHeight - heightIn) / 2;
+			height = heightIn;
+		} else {
+			startY = 0;
+			height = sHeight;
+		}
+		useCustomPosition = true;
+		setCloseAndRecenter(true);
+		return this;
+	}
 	@Override public EDimension getDimensions() { return new EDimension(startX, startY, endX, endY); }
 	
 	//objects
@@ -1039,29 +1062,6 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 			}
 			toBack = null;
 		}
-	}
-	
-	public EnhancedGui centerGuiWithDimensions(int widthIn, int heightIn) {
-		ScaledResolution res = new ScaledResolution(mc);
-		int sWidth = res.getScaledWidth();
-		int sHeight = res.getScaledHeight();
-		if (sWidth >= widthIn) {
-			startX = (sWidth - widthIn) / 2;
-			width = widthIn;
-		} else {
-			startX = 0;
-			width = sWidth;
-		};
-		if (sHeight >= heightIn) {
-			startY = (sHeight - heightIn) / 2;
-			height = heightIn;
-		} else {
-			startY = 0;
-			height = sHeight;
-		}
-		useCustomPosition = true;
-		setCloseAndRecenter(true);
-		return this;
 	}
 	
 	public EnhancedGui enableHeader(boolean val) {

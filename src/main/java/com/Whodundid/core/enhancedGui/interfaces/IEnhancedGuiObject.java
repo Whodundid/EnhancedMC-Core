@@ -129,6 +129,7 @@ public interface IEnhancedGuiObject {
 	public IEnhancedGuiObject setDimensions(int startXIn, int startYIn, int widthIn, int heightIn);
 	public IEnhancedGuiObject setInitialPosition(int startXIn, int startYIn);
 	public StorageBox<Integer, Integer> getInitialPosition();
+	public IEnhancedGuiObject centerObjectWithSize(int widthIn, int heightIn);
 	/** Returns the current dimensions of this object. */
 	public EDimension getDimensions();
 	

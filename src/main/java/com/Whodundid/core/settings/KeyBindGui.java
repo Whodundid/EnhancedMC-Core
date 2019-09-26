@@ -36,7 +36,7 @@ public class KeyBindGui extends EnhancedGui {
 	@Override
 	public void initGui() {
 		setGuiName("Minecraft Controls");
-		centerGuiWithDimensions(380, 256);
+		centerObjectWithSize(380, 256);
 		super.initGui();
 	}
 	
@@ -157,9 +157,8 @@ public class KeyBindGui extends EnhancedGui {
 		}
 		
 		for (String s : categories) {
-			EArrayList<StorageBox<String, KeyBinding>> catKeys = keys.getAllBoxesWithObj(s);
 			keyList.addTextLine(s).setLineNumberColor(0xb2b2b2).setTextColor(0xffffff);
-			for (StorageBox<String, KeyBinding> b : catKeys) {
+			for (StorageBox<String, KeyBinding> b : keys.getAllBoxesWithObj(s)) {
 				KeyBinding k = b.getValue();
 				keyList.addTextLine("   " +	I18n.format(k.getKeyDescription(), new Object[0]), (k.getKeyCodeDefault() != k.getKeyCode() ? 0x55ff55 : 0xb2b2b2), k).setLineNumberColor(0xb2b2b2);
 			}

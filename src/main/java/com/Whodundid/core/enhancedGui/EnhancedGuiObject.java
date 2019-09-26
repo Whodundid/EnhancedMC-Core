@@ -113,6 +113,11 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	public int midX, midY;
 	public int mX, mY;
 	
+	public void init(IEnhancedGuiObject objIn) {
+		parent = objIn;
+		objectInstance = this;
+	}
+	
 	public void init(IEnhancedGuiObject objIn, int xIn, int yIn) {
 		parent = objIn;
 		startX = xIn;
@@ -345,6 +350,31 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	}
 	@Override public EnhancedGuiObject setInitialPosition(int startXIn, int startYIn) { startXPos = startXIn; startYPos = startYIn; return this; }
 	@Override public StorageBox<Integer, Integer> getInitialPosition() { return new StorageBox<Integer, Integer>(startXPos, startYPos); }
+	@Override
+	public EnhancedGuiObject centerObjectWithSize(int widthIn, int heightIn) {
+		ScaledResolution res = new ScaledResolution(mc);
+		int sWidth = res.getScaledWidth();
+		int sHeight = res.getScaledHeight();
+		if (sWidth >= widthIn) {
+			startX = (sWidth - widthIn) / 2;
+			width = widthIn;
+		} else {
+			startX = 0;
+			width = sWidth;
+		};
+		if (sHeight >= heightIn) {
+			startY = (sHeight - heightIn) / 2;
+			height = heightIn;
+		} else {
+			startY = 0;
+			height = sHeight;
+		}
+		endX = startX + width;
+		endY = startY + height;
+		midX = startX + width / 2;
+		midY = startY + height / 2;
+		return this;
+	}
 	@Override public EDimension getDimensions() { return new EDimension(startX, startY, endX, endY); }
 	
 	//objects

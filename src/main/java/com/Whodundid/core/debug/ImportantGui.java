@@ -15,7 +15,7 @@ public class ImportantGui extends EnhancedGui {
 	@Override
 	public void initGui() {
 		ScaledResolution res = new ScaledResolution(mc);
-		centerGuiWithDimensions(res.getScaledWidth(), res.getScaledHeight());
+		centerObjectWithSize(res.getScaledWidth(), res.getScaledHeight());
 		holder = new importantHolder();
 		super.initGui();
 	}
