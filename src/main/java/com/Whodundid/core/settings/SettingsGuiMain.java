@@ -1,6 +1,7 @@
 package com.Whodundid.core.settings;
 
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.coreSubMod.EnhancedMCMod;
 import com.Whodundid.core.debug.ExperimentGui;
 import com.Whodundid.core.debug.ImportantGui;
 import com.Whodundid.core.enhancedGui.EnhancedGui;
@@ -10,20 +11,17 @@ import com.Whodundid.core.enhancedGui.guiObjects.EGuiRect;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiScrollList;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextField;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
-import com.Whodundid.core.subMod.IncompatibleWindowList;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubMod;
-import com.Whodundid.core.subMod.SubModErrorDialogueBox;
-import com.Whodundid.core.subMod.SubModErrorType;
-import com.Whodundid.core.subMod.SubModInfoDialogueBox;
 import com.Whodundid.core.subMod.SubModSettings;
 import com.Whodundid.core.subMod.SubModType;
+import com.Whodundid.core.subMod.gui.IncompatibleWindowList;
+import com.Whodundid.core.subMod.gui.SubModMenuContainer;
 import com.Whodundid.core.util.miscUtil.ChatBuilder;
 import com.Whodundid.core.util.miscUtil.EUtil;
 import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
-import com.Whodundid.core.util.storageUtil.StorageBox;
 import net.minecraft.util.EnumChatFormatting;
 
 //Dec 28, 2018
@@ -137,6 +135,8 @@ public class SettingsGuiMain extends EnhancedGui {
 		addObject(experimentGui, disableDebugMode);
 		
 		addObject(separator);
+		
+		searchField.bringToFront();
 	}
 	
 	@Override
@@ -164,104 +164,48 @@ public class SettingsGuiMain extends EnhancedGui {
 		if (searchField.getText().toLowerCase().equals("whodundid")) { mc.displayGuiScreen(new ImportantGui()); return; }
 		
 		EArrayList<SubMod> filteredMods = new EArrayList();
+		EArrayList<SubMod> incompats = new EArrayList();
 		if (searchField != null && !searchField.getText().equals("Search mods...")) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) {
-				if (SubModType.getModName(m.getModType()).toLowerCase().contains(searchField.getText().toLowerCase())) { filteredMods.add(m); }
+			for (SubMod m : RegisteredSubMods.getModsList()) {
+				if (SubModType.getModName(m.getModType()).toLowerCase().contains(searchField.getText().toLowerCase())) {
+					if (m.isIncompatible()) { incompats.add(m); }
+					else { filteredMods.add(m); }
+				}
 			}
 		}
-		else { filteredMods.addAll(RegisteredSubMods.getRegisteredModsList()); }
+		else {
+			for (SubMod m : RegisteredSubMods.getModsList()) {
+				if (m.isIncompatible()) { incompats.add(m); }
+				else { filteredMods.add(m); }
+			}
+		}
 		
-		found = filteredMods.size();
+		EDimension l = scrollList.getListDimensions();
+		int size = filteredMods.size() + (EnhancedMCMod.showIncompats.get() ? incompats.size() : 0);
 		
-		if (filteredMods.size() > 0) {
-			EDimension l = scrollList.getListDimensions();
-			
+		if (size > 0) {
+			int count = 0;
 			for (int i = 0; i < filteredMods.size(); i++) {
 				SubMod m = filteredMods.get(i);
 				
-				int dist = 22;
-				
-				EGuiButton modSettings = new EGuiButton(scrollList, l.startX + 5, l.startY + 2 + (i * dist), 110, 20, SubModType.getModName(m.getModType())) {
-					{ setRunActionOnPress(true); }
-					@Override public void performAction() {
-						if (getPressedButton() == 0) {
-							playPressSound();
-							if (m != null) {
-								StorageBox potato = new StorageBox(guiInstance.startX, guiInstance.startY);
-								EnhancedGui gui = m.getMainGui(true, potato, guiInstance);
-								if (gui != null) { mc.displayGuiScreen(gui); }
-								else {
-									guiInstance.addObject(new SubModErrorDialogueBox(guiInstance, guiInstance.midX - 125, guiInstance.midY - 48, 250, 75, SubModErrorType.NOGUI, m));
-								}
-							}
-						}
-					}
-				};
-				EGuiButton enabled = new EGuiButton(scrollList, l.endX - 79, l.startY + 2 + (i * dist), 50, 20, m.isDisableable() ? (m.isEnabled() ? "Enabled" : "Disabled") : "Enabled") {
-					{
-						setRunActionOnPress(true);
-						setEnabled(m.isDisableable());
-						setDisplayStringColor(m.isEnabled() ? 0x55ff55 : 0xff5555);
-					}
-					@Override public void performAction() {
-						if (getPressedButton() == 0) {
-							playPressSound();
-							if (m != null) {
-								if (!m.isEnabled()) {
-									EArrayList<String> allDependencies = RegisteredSubMods.getAllModDependencies(m);
-									EArrayList<SubMod> disabledDependancies = new EArrayList();
-									allDependencies.forEach((t) -> { SubMod m = RegisteredSubMods.getMod(t); if (!m.isEnabled()) { disabledDependancies.add(m); } });
-									if (!disabledDependancies.isEmpty()) {
-										SubModErrorDialogueBox errorBox = new SubModErrorDialogueBox(guiInstance, guiInstance.midX - 125, guiInstance.midY - 48, 250, 75, SubModErrorType.ENABLE, m);
-										errorBox.createErrorMessage(disabledDependancies);
-										guiInstance.addObject(errorBox);
-										return;
-									}
-								} else {
-									EArrayList<String> allDependents = RegisteredSubMods.getAllDependantsOfMod(m);
-									EArrayList<SubMod> enabledDependants = new EArrayList();
-									allDependents.forEach(t -> { SubMod m = RegisteredSubMods.getMod(t); if (m.isEnabled()) { enabledDependants.add(m); } }); 
-									if (!enabledDependants.isEmpty()) {
-										SubModErrorDialogueBox errorBox = new SubModErrorDialogueBox(guiInstance, guiInstance.midX - 125, guiInstance.midY - 48, 250, 75, SubModErrorType.DISABLE, m);
-										errorBox.createErrorMessage(enabledDependants);
-										guiInstance.addObject(errorBox);
-										return;
-									}
-								}
-							}
-							SubModSettings.updateModState(m, !m.isEnabled());
-							setDisplayString(m.isEnabled() ? "Enabled" : "Disabled");
-							setDisplayStringColor(m.isEnabled() ? 0x55ff55 : 0xff4444);
-						}
-					}
-				};
-				EGuiButton info = new EGuiButton(scrollList, l.endX - 25, l.startY + 2 + (i * dist), 20, 20) {
-					{
-						setRunActionOnPress(true);
-						setButtonTexture(Resources.guiInfo);
-						setButtonSelTexture(Resources.guiInfoSel);
-					}
-					@Override public void performAction() {
-						if (getPressedButton() == 0) {
-							playPressSound();
-							SubModInfoDialogueBox infoBox = new SubModInfoDialogueBox(guiInstance, guiInstance.midX - 75, guiInstance.midY - 101, 150, 202, m);
-							guiInstance.addObject(infoBox);
-						}
-					}
-				};
-				
-				if (i >= 8) {
-					scrollList.setListHeight(scrollList.getListHeight() + 2 + modSettings.height);
-				}
-				
-				scrollList.addObjectToList(modSettings, enabled, info);
+				SubModMenuContainer container = new SubModMenuContainer(scrollList, m, count);
+				scrollList.addObjectToList(container);
+				count++;
 			}
 			
-			scrollList.renderScrollBarThumb(filteredMods.size() > 8);
+			if (EnhancedMCMod.showIncompats.get()) {
+				for (int i = 0; i < incompats.size(); i++) {
+					SubMod m = incompats.get(i);
+					
+					SubModMenuContainer container = new SubModMenuContainer(scrollList, m, count);
+					scrollList.addObjectToList(container);
+					count++;
+				}
+			}
 		}
-		else {
-			scrollList.addObjectToList(new EGuiLabel(scrollList, (width - 10) / 2, 80, "No matches found", 0xff5555).enableWordWrap(true, 125).setDrawCentered(true));
-		}
+		
+		if (size >= 8) { scrollList.setListHeight(scrollList.getListHeight() + ((22) * (size - 8))); }
+		scrollList.renderScrollBarThumb(size > 8);
 	}
 	
 	@Override
@@ -296,7 +240,7 @@ public class SettingsGuiMain extends EnhancedGui {
 				rightPress = 0;
 			}
 			if (object == problem) {
-				addObject(new IncompatibleWindowList(this, midX - 120, midY - 80, 240, 160));
+				addObject(new IncompatibleWindowList(this));
 			}
 		}
 	}

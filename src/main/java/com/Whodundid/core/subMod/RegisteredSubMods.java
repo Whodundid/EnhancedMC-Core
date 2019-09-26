@@ -6,6 +6,8 @@ import java.io.File;
 import java.util.List;
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.util.storageUtil.EArrayList;
+import com.Whodundid.core.util.storageUtil.StorageBox;
+import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 
 //Dec 28, 2018
 //Last edited: Feb 17, 2019
@@ -62,7 +64,8 @@ public class RegisteredSubMods {
 			for (SubMod m : modsToRegister) {
 				if (m != null) {
 					if (m.isIncompatible()) {
-						EnhancedMC.log(Level.INFO, "Unable to fully register SubMod: " + m.getName() + " is incompatible with EMC Core.");
+						EArrayList<SubMod> incompats = new EArrayList();
+						EnhancedMC.log(Level.INFO, "Unable to fully register SubMod: " + m.getName() + " is incompatible with one or more EMC SubMods.");
 						incompatibleMods.add(m);
 					}
 					else {
@@ -106,12 +109,12 @@ public class RegisteredSubMods {
 	
 	//returns a submod object from a given submodtype if it is currently registered
 	public static SubMod getMod(SubModType typeIn) {
-		for (SubMod m : registeredMods) { if (m.getModType().equals(typeIn)) { return m; } }
+		for (SubMod m : allMods) { if (m.getModType().equals(typeIn)) { return m; } }
 		return null;
 	}
 	
 	public static SubMod getMod(String modName) {
-		for (SubMod m : registeredMods) { if (m.getName().equals(modName)) { return m; } }
+		for (SubMod m : allMods) { if (m.getName().equals(modName)) { return m; } }
 		return null;
 	}
 	
@@ -158,39 +161,51 @@ public class RegisteredSubMods {
 	
 	//returns a list of submodtypes which are direct dependencies of the given submod
 	public static EArrayList<String> getAllModDependencies(SubMod modIn) {
-		EArrayList<String> allDependencies = new EArrayList(modIn.getDependencies().getObjects());
-		EArrayList<String> withDep = new EArrayList();
-		EArrayList<String> workList = new EArrayList();
-		
-		allDependencies.forEach(t -> { SubMod m = getMod(t); if (!m.getDependencies().isEmpty()) { withDep.add(m.getName()); } });
-		withDep.forEach(t -> { getMod(t).getDependencies().getObjects().forEach(d -> { workList.add(d); }); });
-		
-		while (true) {
-			if (!workList.isEmpty()) {
-				allDependencies.addAll(workList);
-				withDep.clear();
-				workList.forEach(t -> { SubMod m = getMod(t); if (!m.getDependencies().isEmpty()) { withDep.add(m.getName()); } });
-				workList.clear();
-				withDep.forEach(t -> { getMod(t).getDependencies().forEach(d -> { workList.add(d.getObject()); }); });
-			} else { break; }
-		}
-		return allDependencies;
+		try {
+			EArrayList<String> allDependencies = new EArrayList(modIn.getDependencies().getObjects());
+			EArrayList<String> withDep = new EArrayList();
+			EArrayList<String> workList = new EArrayList();
+			
+			allDependencies.forEach(t -> { SubMod m = getMod(t); if (!m.getDependencies().isEmpty()) { withDep.add(m.getName()); } });
+			withDep.forEach(t -> { getMod(t).getDependencies().getObjects().forEach(d -> { workList.add(d); }); });
+			
+			while (true) {
+				if (!workList.isEmpty()) {
+					allDependencies.addAll(workList);
+					withDep.clear();
+					workList.forEach(t -> {
+						SubMod m = getMod(t); if (m != null && !m.getDependencies().isEmpty()) { withDep.add(m.getName()); }
+					});
+					workList.clear();
+					withDep.forEach(t -> { getMod(t).getDependencies().forEach(d -> { workList.add(d.getObject()); }); });
+				} else { break; }
+			}
+			return allDependencies;
+		} catch (Exception e) { e.printStackTrace(); }
+		return new EArrayList();
 	}
 	
 	//returns a list of submod names which are dependant on the given submod
 	public static EArrayList<String> getAllDependantsOfMod(SubMod modIn) {
-		EArrayList<String> dependants = new EArrayList();
-		EArrayList<String> workList = new EArrayList();
-		registeredMods.forEach(m -> { m.getDependencies().forEach(t -> { if (t.getObject().equals(modIn.getName())) { dependants.add(m.getName()); } }); });
-		for (SubMod m : registeredMods) {
-			for (String t : m.getDependencies().getObjects()) {
-				for (String s : dependants) {
-					if (t.equals(s)) { if (!dependants.contains(m.getName())) { workList.add(m.getName()); } }
+		try {
+			EArrayList<String> dependants = new EArrayList();
+			EArrayList<String> workList = new EArrayList();
+			registeredMods.forEach(m -> {
+				if (m.getDependencies() != null) {
+					m.getDependencies().forEach(t -> { if (t.getObject().equals(modIn.getName())) { dependants.add(m.getName()); } });
+				}
+			});
+			for (SubMod m : registeredMods) {
+				for (String t : m.getDependencies().getObjects()) {
+					for (String s : dependants) {
+						if (t.equals(s)) { if (!dependants.contains(m.getName())) { workList.add(m.getName()); } }
+					}
 				}
 			}
-		}
-		dependants.addAll(workList);
-		return dependants;
+			dependants.addAll(workList);
+			return dependants;
+		} catch (Exception e) { e.printStackTrace(); }
+		return new EArrayList();
 	}
 	
 	//returns a list of submod names which have a dependency to the given mod
@@ -224,5 +239,17 @@ public class RegisteredSubMods {
 			for (GuiScreen g : m.getGuis()) { if (g != null) { guis.add(g.getClass()); } }
 		}
 		return guis;
+	}
+	
+	public static StorageBoxHolder<SubMod, String> getModImcompatibility(SubMod modIn) {
+		StorageBoxHolder<SubMod, String> mods = new StorageBoxHolder();
+		for (StorageBox<String, String> box : modIn.getDependencies()) {
+			SubMod foundMod = getMod(box.getObject());
+			if (foundMod != null) {
+				if (!foundMod.getVersion().equals(box.getValue())) { mods.add(foundMod, box.getValue()); }
+				else if (foundMod.isIncompatible()) { mods.add(foundMod, box.getValue()); }
+			}
+		}
+		return mods;
 	}
 }

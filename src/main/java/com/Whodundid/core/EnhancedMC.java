@@ -90,6 +90,8 @@ public class EnhancedMC {
 		}
 		
 		EArrayList<SubMod> foundMods = new EArrayList();
+		EArrayList<SubMod> coreCheck = new EArrayList();
+		EArrayList<SubMod> depCheck = new EArrayList();
 		foundMods.add(modInstance);
 		
 		//find any EMC SubMods in forge loaded mods
@@ -108,6 +110,7 @@ public class EnhancedMC {
 				boolean incompatible = false;
 				
 				int numDeps = m.getDependencies().size();
+				boolean incompatDep = false;
 				int foundDepMods = 0;
 				int matchingVers = 0;
 				
@@ -126,13 +129,33 @@ public class EnhancedMC {
 				
 				//set incompatibility state
 				m.setIncompatible(incompatible);
+				
 				//register the subMod into core
-				RegisteredSubMods.registerSubMod(m);
+				coreCheck.add(m);
 			}
 			catch (Exception q) {
 				log(Level.INFO, "Error trying to read submod: " + m + "!");
 				q.printStackTrace();
 			}
+		}
+		
+		//check processed mods for subMod incompatibilities
+		for (SubMod m : coreCheck) {
+			//check if the processed mod was found incompatible with the core
+			for (StorageBox<String, String> box : m.getDependencies()) {
+				SubMod dep = getMod(box.getObject(), coreCheck);
+				if (dep != null) {
+					//set the mod incompat if one of it's dependencies was incompat too
+					if (dep.isIncompatible()) { m.setIncompatible(true); }
+				}
+			}
+			
+			depCheck.add(m);
+		}
+		
+		//finally register each processed mod
+		for (SubMod m : depCheck) {
+			RegisteredSubMods.registerSubMod(m);
 		}
 		
 		//attempt to load each of the found subMod's config files (if they exist)
@@ -169,10 +192,10 @@ public class EnhancedMC {
 		if (openSettingsGui.isPressed()) { mc.displayGuiScreen(new SettingsGuiMain()); }
 		if (debugCommand.isPressed()) {
 			if (!RegisteredSubMods.isModRegistered(SubModType.HOTKEYS)) {
-				DebugFunctions.runDebugFunction(0);
+				if (EnhancedMCMod.useDebugKey.get()) { DebugFunctions.runDebugFunction(0); }
 			}
 			else if (!RegisteredSubMods.getMod(SubModType.HOTKEYS).isEnabled()) {
-				DebugFunctions.runDebugFunction(0);
+				if (EnhancedMCMod.useDebugKey.get()) { DebugFunctions.runDebugFunction(0); }
 			}
 		}
 	}

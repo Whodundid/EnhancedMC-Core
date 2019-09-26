@@ -16,6 +16,7 @@ public class EGuiDialogueBox extends InnerEnhancedGui {
 	protected EArrayList<String> wordWrappedLines;
 	protected IEnhancedGuiObject primaryObject;
 	protected EGuiButton yes, no, okButton;
+	private DialogueBoxTypes type;
 	
 	public enum DialogueBoxTypes { yesNo, ok, custom; }
 	
@@ -26,12 +27,18 @@ public class EGuiDialogueBox extends InnerEnhancedGui {
 	
 	public EGuiDialogueBox(IEnhancedGuiObject parentIn, int xPos, int yPos, int width, int height, DialogueBoxTypes typeIn) {
 		init(parentIn, xPos, yPos, width, height);
-		setHeader(new EGuiHeader(this));
-		//bringToFront();
+		type = typeIn;
 		requestFocus();
 		getTopParent().setFocusLockObject(this);
+		setResizeable(true);
+		setMinimumWidth(101).setMinimumHeight(101);
+	}
+	
+	@Override
+	public void initObjects() {
+		setHeader(new EGuiHeader(this));
 		
-		switch (typeIn) {
+		switch (type) {
 		case yesNo:
 			yes = new EGuiButton(this, midX - 100, midY + 10, 65, 20, "Yes");
 			no = new EGuiButton(this, midX + 25, midY + 10, 65, 20, "No");

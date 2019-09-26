@@ -80,11 +80,6 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 		initObjects();
 	}
 	
-	private void updateMouse() {
-		//mX = (Mouse.getEventX() * res.getScaledWidth() / mc.displayWidth);
-        //mY = (res.getScaledHeight() - Mouse.getEventY() * res.getScaledHeight() / mc.displayHeight - 1);
-	}
-	
 	public void onRenderTick(RenderGameOverlayEvent e) {
 		drawObject(0, 0, e.partialTicks);
 	}
@@ -195,6 +190,7 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	@Override public EnhancedMCRenderer setDimensions(int startXIn, int startYIn, int widthIn, int heightIn) { return this; }
 	@Override public StorageBox<Integer, Integer> getInitialPosition() { return new StorageBox<Integer, Integer>(0, 0); }
 	@Override public EnhancedMCRenderer setInitialPosition(int startXIn, int startYIn) { return this; }
+	@Override public EnhancedMCRenderer centerObjectWithSize(int widthIn, int heightIn) { return this; }
 	@Override public EDimension getDimensions() { return new EDimension(0, 0, res.getScaledWidth(), res.getScaledWidth()); }
 	
 	//objects
@@ -381,13 +377,6 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	@Override
 	public void keyPressed(char typedChar, int keyCode) {
 		if (eventHandler != null) { eventHandler.processEvent(new EventKeyboard(this, typedChar, keyCode, KeyboardType.Pressed)); }
-		if (keyCode == 41) {
-			if (focusedObject instanceof EGuiButton) {
-				System.out.println("FocuedObject: " + (((EGuiButton) focusedObject).getDisplayString().isEmpty() ? focusedObject : "EGuiButton: " + ((EGuiButton) focusedObject).getDisplayString()));
-			}
-			else { System.out.println("FocuedObject: " + focusedObject); }
-			System.out.println("ModifyingObject & type: " + modifyingObject + " " + modifyType);
-		}
 		if (focusedObject != null && focusedObject != this) { focusedObject.keyPressed(Keyboard.getEventCharacter(), Keyboard.getEventKey()); }
 	}
 	@Override public void keyReleased(char typedChar, int keyCode) {

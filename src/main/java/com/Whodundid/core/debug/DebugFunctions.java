@@ -65,6 +65,8 @@ public class DebugFunctions {
 	}
 
 	private static void debug_0() throws Throwable {
+		
+		System.out.println(RegisteredSubMods.getMod(SubModType.HOTKEYS).isEnabled());
 		/*
 		System.out.println();
 		
