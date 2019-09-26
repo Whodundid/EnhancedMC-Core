@@ -19,8 +19,10 @@ public class StorageBox<Obj, Val> {
 		if (obj == null) { return storedObj == null || storedVal == null; }
 		return ((storedObj != null ? storedObj.equals(obj) : false) || (storedVal != null ? storedVal.equals(obj) : false));
 	}
-	public void clear() { this.storedObj = null; storedVal = null; }	
-	public boolean compareContents(Object inObj, Object inVal) { return (storedObj.equals(inObj) && storedVal.equals(inVal)); }
+	public void clear() { storedObj = null; storedVal = null; }
+	public boolean compareObject(Object objIn) { return objIn != null ? storedObj != null ? storedObj.equals(objIn) : false : storedObj == null; }
+	public boolean compareValue(Object valIn) { return valIn != null ? storedVal != null ? storedVal.equals(valIn) : false : storedVal == null; }
 	public boolean compareContents(StorageBox<?, ?> boxIn) { return compareContents(boxIn.getObject(), boxIn.getValue()); }
+	public boolean compareContents(Object inObj, Object inVal) { return (storedObj.equals(inObj) && storedVal.equals(inVal)); }
 	@Override public String toString() { return "[" + storedObj + ", " + storedVal + "]"; }
 }
