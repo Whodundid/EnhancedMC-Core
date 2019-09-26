@@ -3,6 +3,7 @@ package com.Whodundid.core.subMod.config;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Scanner;
 
 import com.Whodundid.core.subMod.SubMod;
@@ -158,10 +159,10 @@ public abstract class SubModConfigFile {
 			//move on to creating/overwriting the original file
 			saver = new PrintWriter(mod.getConfig().getConfigFileLocation(configName), "UTF-8");
 			for (ConfigBlock block : configContentsIn) {
-				StorageBoxHolder<String, EArrayList<String>> blockContents = block.getBlockContents();
-				for (StorageBox<String, EArrayList<String>> line : blockContents) {
+				StorageBoxHolder<String, List<String>> blockContents = block.getBlockContents();
+				for (StorageBox<String, List<String>> line : blockContents) {
 					saver.print(line.getObject() + " ");
-					EArrayList<String> values = line.getValue();
+					List<String> values = line.getValue();
 					for (int i = 0; i < values.size(); i++) {
 						if (i != values.size() - 1) { saver.print(values.get(i) + " "); }
 						else { saver.print(values.get(i)); }

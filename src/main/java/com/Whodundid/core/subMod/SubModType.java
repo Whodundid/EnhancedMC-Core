@@ -41,6 +41,9 @@ public enum SubModType {
 		modid = modidIn;
 	}
 	
+	public String getModName() { return modName; }
+	public String getModid() { return modid; }
+	
 	public static String getModName(SubModType modIn) { return modIn.modName; }
 	public static String getModid(SubModType modIn) { return modIn.modid; }
 	

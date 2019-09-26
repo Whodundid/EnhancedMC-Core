@@ -32,8 +32,8 @@ public abstract class SubMod {
 	protected Minecraft mc = Minecraft.getMinecraft();
 	protected EnhancedGui mainGui;
 	protected EArrayList<GuiScreen> guis = new EArrayList();
-	protected StorageBoxHolder<String, String> dependencies = new StorageBoxHolder().setAllowDuplicates(false);
-	protected StorageBoxHolder<String, String> softDependencies = new StorageBoxHolder().setAllowDuplicates(false);
+	protected StorageBoxHolder<String, String> dependencies = new StorageBoxHolder().noDuplicates();
+	protected StorageBoxHolder<String, String> softDependencies = new StorageBoxHolder().noDuplicates();
 	protected String modName = "noname";
 	protected SubModConfigManager configManager;
 	protected boolean enabled = false;
@@ -41,7 +41,7 @@ public abstract class SubMod {
 	protected String author = "unspecified";
 	protected String versionDate = "unspecified";
 	protected boolean isDisableable = true;
-	protected boolean incompatible = false;
+	protected boolean incompatible = false; //a flag stating that this submod is incompatible with at least one other loaded emc submod
 	
 	public SubMod(SubModType modIn) { this(SubModType.getModName(modIn)); }
 	public SubMod(String modNameIn) {
