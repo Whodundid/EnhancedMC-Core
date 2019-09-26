@@ -38,4 +38,14 @@ public class NumberUtil {
 		}
 		return 0;
 	}
+	
+	public static NumType getType(Class<? extends Number> c) {
+		if (c == Byte.class || c == byte.class) { return NumType.b; }
+		if (c == Short.class || c == short.class) { return NumType.s; }
+		if (c == Integer.class || c == int.class) { return NumType.i; }
+		if (c == Long.class || c == long.class) { return NumType.l; }
+		if (c == Float.class || c == float.class) { return NumType.f; }
+		if (c == Double.class || c == double.class) { return NumType.d; }
+		return NumType.n;
+	}
 }
