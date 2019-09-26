@@ -2,6 +2,7 @@ package com.Whodundid.core.subMod.config;
 
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
+import java.util.List;
 
 //Last edited: Dec 12, 2018
 //First Added: Dec 12, 2018
@@ -10,7 +11,7 @@ import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 public class CommentConfigBlock extends ConfigBlock {
 	
 	public CommentConfigBlock() { super(); }
-	public CommentConfigBlock(StorageBoxHolder<String, EArrayList<String>> elementsIn) { super(elementsIn); }
+	public CommentConfigBlock(StorageBoxHolder<String, List<String>> elementsIn) { super(elementsIn); }
 	
 	public CommentConfigBlock addLine(String... comments) {
 		for (String s : comments) { addLine(s); }

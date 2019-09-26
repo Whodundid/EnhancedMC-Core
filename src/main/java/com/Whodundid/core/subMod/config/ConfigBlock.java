@@ -2,6 +2,7 @@ package com.Whodundid.core.subMod.config;
 
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
+import java.util.List;
 
 //Last edited: Dec 12, 2018
 //First Added: Dec 12, 2018
@@ -9,11 +10,11 @@ import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 
 public class ConfigBlock {
 	
-	protected StorageBoxHolder<String, EArrayList<String>> blockContents;
+	protected StorageBoxHolder<String, List<String>> blockContents;
 	protected boolean createEmptyLine = true;
 	
-	public ConfigBlock() { blockContents = new StorageBoxHolder<String, EArrayList<String>>().setAllowDuplicates(true); }
-	public ConfigBlock(StorageBoxHolder<String, EArrayList<String>> elementsIn) { blockContents = elementsIn; }
+	public ConfigBlock() { blockContents = new StorageBoxHolder<String, List<String>>().setAllowDuplicates(true); }
+	public ConfigBlock(StorageBoxHolder<String, List<String>> elementsIn) { blockContents = elementsIn; }
 	
 	public ConfigBlock(String identifier, int... val) {
 		this();
@@ -57,7 +58,7 @@ public class ConfigBlock {
 		blockContents.add(identifier, list);
 	}
 	
-	public ConfigBlock(String identifier, EArrayList vals) {
+	public ConfigBlock(String identifier, List vals) {
 		this();
 		blockContents.add(identifier, vals);
 	}
@@ -66,5 +67,5 @@ public class ConfigBlock {
 	public ConfigBlock nl() { return noEmptyLine(); }
 	public ConfigBlock noEmptyLine() { createEmptyLine = false; return this; }
 	public boolean createEmptyLineAfterBlock() { return createEmptyLine; }
-	public StorageBoxHolder<String, EArrayList<String>> getBlockContents() { return blockContents; }
+	public StorageBoxHolder<String, List<String>> getBlockContents() { return blockContents; }
 }
