@@ -54,6 +54,8 @@ public class EArrayList<E> extends AbstractList<E> {
 		for (E e : objs) { add(e); }
 	}
 	
+	public EArrayList<E> noDuplicates() { return setAllowDuplicates(false); }
+	
 	/** Sets whether this list will allow duplicate entries or not. If no, the list removes duplicates. */
 	public EArrayList<E> setAllowDuplicates(boolean val) {
 		if (!val) {
