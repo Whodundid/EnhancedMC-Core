@@ -98,7 +98,7 @@ public class ExperimentGui extends EnhancedGui {
 		
 		scrollList = new EGuiScrollList(inner, endX + 20, midY, 210, 180);
 		
-		//testMethod1();
+		testMethod1();
 		
 		//scrollList.addObjectToList(new EGuiButton(scrollList, 10, 5, 50, 20, "button 1"));
 		//scrollList.addObjectToList(new EGuiLabel(scrollList, 30, 50, "Scrolling Label Test!"));
@@ -148,11 +148,6 @@ public class ExperimentGui extends EnhancedGui {
 		//}
 		
 		//addObject(textArea);
-		
-		slider = new EGuiSlider(this, startX + 69, endY - 60, 82, 12, 0, 720, false).setDrawDefault(false).setDisplayString("Rotate H");
-		slider2 = new EGuiSlider(this, slider.endX - 1, slider.startY - 82, 12, 82, -180, 180, true);
-		
-		//addObject(slider, slider2);
 		
 		addObject(inner);
 		//https://hypixel.net/my2018/?5c2a973544f4e2a67393289c

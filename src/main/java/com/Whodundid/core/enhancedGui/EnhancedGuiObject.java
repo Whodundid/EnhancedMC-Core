@@ -8,19 +8,14 @@ import com.Whodundid.core.enhancedGui.guiObjects.EGuiLinkConfirmationDialogueBox
 import com.Whodundid.core.enhancedGui.guiUtil.EGui;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventAction;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventKeyboard;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventModify;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventMouse;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventObjects;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventRedraw;
 import com.Whodundid.core.enhancedGui.guiUtil.events.ObjectEvent;
 import com.Whodundid.core.enhancedGui.guiUtil.events.ObjectEventHandler;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.FocusType;
-import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.KeyboardType;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.MouseType;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectEventType;
-import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectModifyType;
-import com.Whodundid.core.enhancedGui.guiUtil.exceptions.HeaderAlreadyExistsException;
 import com.Whodundid.core.enhancedGui.guiUtil.exceptions.ObjectInitException;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
@@ -31,14 +26,12 @@ import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.StorageBox;
-import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import net.minecraft.client.Minecraft;
@@ -92,7 +85,6 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	protected boolean hasBeenInitialized = false;
 	protected boolean enabled = true;
 	protected boolean visible = true;
-	public boolean isMouseHover = false;
 	public boolean mouseEntered = false;
 	protected boolean positionLocked = false;
 	protected boolean hasFocus = false;
@@ -127,10 +119,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 		objectInstance = this;
 	}
 	
-	public void init(IEnhancedGuiObject objIn, int xIn, int yIn, int widthIn, int heightIn) {
-		init(objIn, xIn, yIn, widthIn, heightIn, -1);
-	}
-	
+	public void init(IEnhancedGuiObject objIn, int xIn, int yIn, int widthIn, int heightIn) { init(objIn, xIn, yIn, widthIn, heightIn, -1); }
 	public void init(IEnhancedGuiObject objIn, int xIn, int yIn, int widthIn, int heightIn, int objectIdIn) {
 		parent = objIn;
 		objectId = objectIdIn;
@@ -166,7 +155,6 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 			if (children.contains(p.getFocusLockObject())) { p.clearFocusLockObject(); }
 			if (children.contains(p.getModifyingObject())) { p.clearModifyingObject(); }
 		}
-		//for (IEnhancedGuiObject o : children) { o.getImmediateChildren().clear(); }
 		guiObjects.clear();
 		
 		initObjects();
@@ -182,12 +170,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 			if (checkDraw()) {
 				GlStateManager.pushMatrix();
 				GlStateManager.enableBlend();
-				for (IEnhancedGuiObject o : guiObjects) {
-					if (o.checkDraw()) {
-	    				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-	    	        	o.drawObject(mXIn, mYIn, ticks);
-	    			}
-				}
+				guiObjects.stream().filter(o -> o.checkDraw()).forEach(o -> { GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F); o.drawObject(mX, mY, ticks); });
 				GlStateManager.popMatrix();
 			}
 		} catch (Exception e) { e.printStackTrace(); }
@@ -235,6 +218,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	@Override public EnhancedGuiObject setVisible(boolean val) { visible = val; return this; }
 	@Override public EnhancedGuiObject setPersistent(boolean val) { persistent = val; return this; }
 	@Override public EnhancedGuiObject setBoundaryEnforcer(EDimension dimIn) { boundaryDimension = dimIn; return this; }
+	@Override public EDimension getBoundaryEnforcer() { return boundaryDimension; }
 	
 	//size
 	@Override public boolean hasHeader() { for (IEnhancedGuiObject o : guiObjects) { if (o instanceof EGuiHeader) { return true; } } return false; }
@@ -249,92 +233,18 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	@Override public EnhancedGuiObject setMaximumWidth(int widthIn) { maxWidth = widthIn; return this; }
 	@Override public EnhancedGuiObject setMaximumHeight(int heightIn) { maxHeight = heightIn; return this; }
 	@Override public EnhancedGuiObject setResizeable(boolean val) { resizeable = val; return this; }
-	@Override
-	public EnhancedGuiObject resize(int xIn, int yIn, ScreenLocation areaIn) {
-		if (eventHandler != null) { eventHandler.processEvent(new EventModify(this, this, ObjectModifyType.Resize)); }
-		if (xIn != 0 || yIn != 0) {
-			int x = 0, y = 0, w = 0, h = 0;
-			boolean e = false, s = false;
-			switch (areaIn) {
-			case top: x = startX; y = startY + yIn; w = width; h = height - yIn; break;
-			case bot: x = startX; y = startY; w = width; h = height + yIn; break;
-			case right: x = startX; y = startY; w = width + xIn; h = height; break;
-			case left: x = startX + xIn; y = startY; w = width - xIn; h = height; break;
-			case topRight: x = startX; y = startY + yIn; w = width + xIn; h = height - yIn; break;
-			case botRight: x = startX; y = startY; w = width + xIn; h = height + yIn; break;
-			case topLeft: x = startX + xIn; y = startY + yIn; w = width - xIn; h = height - yIn; break;
-			case botLeft: x = startX + xIn; y = startY; w = width - xIn; h = height + yIn; break;
-			default: break;
-			}
-			if (w < getMinimumWidth()) {
-				w = getMinimumWidth();
-				switch (areaIn) {
-				case right: case topRight: case botRight: x = startX; break;
-				case left: case topLeft: case botLeft: x = endX - w; break;
-				default: break;
-				}
-			}
-			if (h < getMinimumHeight()) {
-				h = getMinimumHeight();
-				switch (areaIn) {
-				case top: case topRight: case topLeft: y = endY - h; break;
-				case bot: case botRight: case botLeft: y = startY; break;
-				default: break;
-				}
-			}
-			setDimensions(x, y, w, h);
-			try {
-				reInitObjects();
-			} catch (ObjectInitException q) { q.printStackTrace(); }
-		}
-		return this;
-	}
+	@Override public EnhancedGuiObject resize(int xIn, int yIn, ScreenLocation areaIn) { StaticEGuiObject.resize(this, xIn, yIn, areaIn); return this; }
 	
 	//position
-	@Override
-	public void move(int newX, int newY) {
-		if (eventHandler != null) { eventHandler.processEvent(new EventModify(this, this, ObjectModifyType.Move)); }
-		if (!positionLocked) {
-			EArrayList<IEnhancedGuiObject> objs = new EArrayList(guiObjects);
-			objs.addAll(objsToBeAdded);
-			Iterator<IEnhancedGuiObject> it = objs.iterator();
-			while (it.hasNext()) {
-				IEnhancedGuiObject o = it.next();
-				if (!o.isPositionLocked()) {
-					if (o instanceof InnerEnhancedGui) {
-						if (((InnerEnhancedGui) o).movesWithParent()) { o.move(newX, newY); }
-					} else { o.move(newX, newY); }
-				}
-			}
-			startX += newX;
-			startY += newY;
-			if (boundaryDimension != null) {
-				boundaryDimension.setPosition(boundaryDimension.startX += newX, boundaryDimension.startY += newY);
-			}
-			setDimensions(startX, startY, width, height);
-		}
-	}
+	@Override public void move(int newX, int newY) { StaticEGuiObject.move(this, newX, newY); }
 	@Override public boolean isPositionLocked() { return positionLocked; }
 	@Override
 	public EnhancedGuiObject resetPosition() {
 		setDimensions(startXPos, startYPos, startWidth, startHeight);
-		for (IEnhancedGuiObject o : guiObjects) { o.resetPosition(); }
+		guiObjects.forEach(o -> o.resetPosition());
 		return this;
 	}
-	@Override
-	public EnhancedGuiObject setPosition(int newX, int newY) {
-		StorageBox<Integer, Integer> loc = new StorageBox(startX, startY);
-		StorageBoxHolder<IEnhancedGuiObject, StorageBox<Integer, Integer>> previousLocations = new StorageBoxHolder();
-		for (IEnhancedGuiObject o : getImmediateChildren()) {
-			previousLocations.add(o, new StorageBox(o.getDimensions().startX - loc.getObject(), o.getDimensions().startY - loc.getValue()));
-		}
-		setDimensions(newX, newY, width, height);
-		for (IEnhancedGuiObject o : getImmediateChildren()) {
-			StorageBox<Integer, Integer> oldLoc = previousLocations.getBoxWithObj(o).getValue();
-			o.setPosition(newX + oldLoc.getObject(), newY + oldLoc.getValue());
-		}
-		return this;
-	}
+	@Override public EnhancedGuiObject setPosition(int newX, int newY) { StaticEGuiObject.setPosition(this, newX, newY); return this; }
 	@Override public EnhancedGuiObject setPositionLocked(boolean val) { positionLocked = val; return this; }
 	@Override public EnhancedGuiObject setDimensions(EDimension dimIn) { return setDimensions(dimIn.startX, dimIn.startY, dimIn.width, dimIn.height); }
 	@Override public EnhancedGuiObject setDimensions(int startXIn, int startYIn, int widthIn, int heightIn) {
@@ -350,126 +260,26 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	}
 	@Override public EnhancedGuiObject setInitialPosition(int startXIn, int startYIn) { startXPos = startXIn; startYPos = startYIn; return this; }
 	@Override public StorageBox<Integer, Integer> getInitialPosition() { return new StorageBox<Integer, Integer>(startXPos, startYPos); }
-	@Override
-	public EnhancedGuiObject centerObjectWithSize(int widthIn, int heightIn) {
-		ScaledResolution res = new ScaledResolution(mc);
-		int sWidth = res.getScaledWidth();
-		int sHeight = res.getScaledHeight();
-		if (sWidth >= widthIn) {
-			startX = (sWidth - widthIn) / 2;
-			width = widthIn;
-		} else {
-			startX = 0;
-			width = sWidth;
-		};
-		if (sHeight >= heightIn) {
-			startY = (sHeight - heightIn) / 2;
-			height = heightIn;
-		} else {
-			startY = 0;
-			height = sHeight;
-		}
-		endX = startX + width;
-		endY = startY + height;
-		midX = startX + width / 2;
-		midY = startY + height / 2;
-		return this;
-	}
+	@Override public EnhancedGuiObject centerObjectWithSize(int widthIn, int heightIn) { StaticEGuiObject.centerObjectWithSize(this, widthIn, heightIn); return this; }
 	@Override public EDimension getDimensions() { return new EDimension(startX, startY, endX, endY); }
 	
 	//objects
-	@Override
-	public boolean isChildOfObject(IEnhancedGuiObject objIn) {
-		IEnhancedGuiObject curObj = this;
-		while (curObj != null && curObj.getParent() != null) {
-			if (curObj.getParent().equals(curObj)) { return false; }
-			if (curObj.getParent().equals(objIn)) { return true; }
-			curObj = curObj.getParent();
-		}
-		return false;
-	}
-	@Override
-	public EnhancedGuiObject addObject(IEnhancedGuiObject... objsIn) {
-		EArrayList<IEnhancedGuiObject> addingObjects = new EArrayList();
-		for (IEnhancedGuiObject o : objsIn) {
-			if (o != null) {
-				if (o != this && guiObjects.notContains(o) && objsToBeAdded.notContains(o)) {
-					if (o instanceof EGuiHeader && hasHeader()) { 
-						try { throw new HeaderAlreadyExistsException(getHeader()); } catch (HeaderAlreadyExistsException e) { e.printStackTrace(); }
-					}
-					if (o instanceof EnhancedGui) {
-						ScaledResolution scaledresolution = new ScaledResolution(mc);
-			            int i = scaledresolution.getScaledWidth();
-			            int j = scaledresolution.getScaledHeight();
-			            ((EnhancedGui) o).setWorldAndResolution(mc, i, i);
-					}
-					try {
-						o.setParent(this).initObjects();
-						o.setZLevel(getZLevel() + o.getZLevel() + 1);
-						if (o instanceof InnerEnhancedGui) { ((InnerEnhancedGui) o).initGui(); }
-						o.completeInitialization();
-					} catch (ObjectInitException e) { e.printStackTrace(); }
-					addingObjects.add(o);
-				}
-			}
-		}
-		objsToBeAdded.addAll(addingObjects);
-		return this;
-	}
-	@Override
-	public EnhancedGuiObject removeObject(IEnhancedGuiObject... objsIn) {
-		objsToBeRemoved.addAll(objsIn);
-		return this;
-	}
+	@Override public boolean isChildOfObject(IEnhancedGuiObject objIn) { return StaticEGuiObject.isChildOfObject(this, objIn); }
+	@Override public EnhancedGuiObject addObject(IEnhancedGuiObject... objsIn) { StaticEGuiObject.addObject(this, objsIn); return this; }
+	@Override public EnhancedGuiObject removeObject(IEnhancedGuiObject... objsIn) { StaticEGuiObject.removeObject(this, objsIn); return this; }
 	@Override public EObjectGroup getObjectGroup() { return objectGroup; }
 	@Override public EnhancedGuiObject setObjectGroup(EObjectGroup groupIn) { objectGroup = groupIn; return this; }
 	@Override public void onGroupNotification(ObjectEvent e) {}
 	@Override public EArrayList<IEnhancedGuiObject> getImmediateChildren() { return guiObjects; }
-	@Override
-	public EArrayList<IEnhancedGuiObject> getAllChildren() {
-		EArrayList<IEnhancedGuiObject> foundObjs = new EArrayList();
-		EArrayList<IEnhancedGuiObject> objsWithChildren = new EArrayList();
-		EArrayList<IEnhancedGuiObject> workList = new EArrayList();
-		
-		getImmediateChildren().forEach((o) -> { foundObjs.add(o); if (!o.getImmediateChildren().isEmpty()) { objsWithChildren.add(o); } });
-		objsWithChildren.forEach((c) -> { c.getImmediateChildren().forEach((q) -> { workList.add(q); }); });
-		
-		while (true) {
-			if (!workList.isEmpty()) {
-				foundObjs.addAll(workList);
-				objsWithChildren.clear();
-				workList.forEach((o) -> { if (!o.getImmediateChildren().isEmpty()) { objsWithChildren.add(o); } });
-				workList.clear();
-				objsWithChildren.forEach((c) -> { c.getImmediateChildren().forEach((q) -> { workList.add(q); }); });
-			} else { break; }
-		}
-		
-		return foundObjs;
-	}
-	@Override
-	public EArrayList<IEnhancedGuiObject> getAllChildrenUnderMouse() {
-		EArrayList<IEnhancedGuiObject> foundObjs = getAllChildren();
-		EArrayList<IEnhancedGuiObject> underMouse = new EArrayList();
-		for (IEnhancedGuiObject o : foundObjs) {
-			if (o.checkDraw() && o.isMouseInside(mX, mY)) {
-				underMouse.add(o);
-			}
-		}
-		return underMouse;
-	}
+	@Override public EArrayList<IEnhancedGuiObject> getObjectsToBeAdded() { return objsToBeAdded; }
+	@Override public EArrayList<IEnhancedGuiObject> getObjectsToBeRemoved() { return objsToBeRemoved; }
+	@Override public EArrayList<IEnhancedGuiObject> getAllChildren() { return StaticEGuiObject.getAllChildren(this); }
+	@Override public EArrayList<IEnhancedGuiObject> getAllChildrenUnderMouse() { return StaticEGuiObject.getAllChildrenUnderMouse(this, mX, mY); }
 	
 	//parents
 	@Override public IEnhancedGuiObject getParent() { return parent; }
 	@Override public EnhancedGuiObject setParent(IEnhancedGuiObject parentIn) { parent = parentIn; return this; }
-	@Override
-	public IEnhancedTopParent getTopParent() {
-		IEnhancedGuiObject parentObj = getParent();
-		while (parentObj != null) {
-			if (parentObj instanceof IEnhancedTopParent) { return (IEnhancedTopParent) parentObj; }
-			if (parentObj.getParent() != null) { parentObj = parentObj.getParent(); }
-		}
-		return null;
-	}
+	@Override public IEnhancedTopParent getTopParent() { return StaticEGuiObject.getTopParent(this); }
 	
 	//zLevel
 	@Override
@@ -485,16 +295,8 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 		return zLevel;
 	}
 	@Override public EnhancedGuiObject setZLevel(int zLevelIn) { objZLevel = zLevelIn; return this; }
-	@Override
-	public EnhancedGuiObject bringToFront() {
-		getTopParent().bringObjectToFront(this);
-		return this;
-	}
-	@Override
-	public EnhancedGuiObject sendToBack() {
-		getTopParent().sendObjectToBack(this);
-		return this;
-	}
+	@Override public EnhancedGuiObject bringToFront() { getTopParent().bringObjectToFront(this); return this; }
+	@Override public EnhancedGuiObject sendToBack() { getTopParent().sendObjectToBack(this); return this; }
 	
 	//focus
 	@Override public boolean hasFocus() { if (getTopParent().getFocusedObject() != null) { return getTopParent().getFocusedObject().equals(this); } return false; }
@@ -512,13 +314,10 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	}
 	@Override
 	public void onFocusGained(EventFocus eventIn) {
-		if (eventHandler != null) { eventHandler.processEvent(new EventFocus(this, this, FocusType.Gained)); }
+		postEvent(new EventFocus(this, this, FocusType.Gained));
 		if (eventIn.getFocusType().equals(FocusType.MousePress)) { mousePressed(eventIn.getMouseX(), eventIn.getMouseY(), eventIn.getActionCode()); }
 	}
-	@Override
-	public void onFocusLost(EventFocus eventIn) {
-		if (eventHandler != null) { eventHandler.processEvent(new EventFocus(this, this, FocusType.Lost)); }
-	}
+	@Override public void onFocusLost(EventFocus eventIn) { postEvent(new EventFocus(this, this, FocusType.Lost)); }
 	@Override
 	public void transferFocus(IEnhancedGuiObject objIn) {
 		if (getTopParent().doesFocusLockExist() && getTopParent().getFocusLockObject().equals(this)) {
@@ -543,36 +342,9 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	
 	//mouse checks
 	@Override public boolean isMouseOnObjEdge(int mX, int mY) { return checkDraw() && !getEdgeAreaMouseIsOn().equals(ScreenLocation.out); }
-	@Override
-	public ScreenLocation getEdgeAreaMouseIsOn() {
-		boolean left = false, right = false, top = false, bottom = false;
-		int rStartY = hasHeader() ? getHeader().startY : startY;
-		if (mX >= startX && mX <= startX + 1) { left = true; }
-		if (mX <= endX && mX >= endX - 1) { right = true; }
-		if (mY >= rStartY && mY <= rStartY + 1) { top = true; }
-		if (mY <= endY && mY >= endY - 1) { bottom = true; }
-		if (checkDraw() && !(left || right || top || bottom)) { return ScreenLocation.out; }
-		if (left) {
-			if (top) { return ScreenLocation.topLeft; }
-			else if (bottom) { return ScreenLocation.botLeft; }
-			else { return ScreenLocation.left; }
-		} 
-		else if (right) {
-			if (top) { return ScreenLocation.topRight; }
-			else if (bottom) { return ScreenLocation.botRight; }
-			else { return ScreenLocation.right; }
-		} 
-		else if (top) { return ScreenLocation.top; }
-		else { return ScreenLocation.bot; }
-	}
-	@Override
-	public void mouseEntered(int mX, int mY) {
-		if (eventHandler != null) { eventHandler.processEvent(new EventMouse(this, mX, mY, -1, MouseType.Entered)); }
-	}
-	@Override
-	public void mouseExited(int mX, int mY) {
-		if (eventHandler != null) { eventHandler.processEvent(new EventMouse(this, mX, mY, -1, MouseType.Exited)); }
-	}
+	@Override public ScreenLocation getEdgeAreaMouseIsOn() { return StaticEGuiObject.getEdgeAreaMouseIsOn(this, mX, mY); }
+	@Override public void mouseEntered(int mX, int mY) { postEvent(new EventMouse(this, mX, mY, -1, MouseType.Entered)); }
+	@Override public void mouseExited(int mX, int mY) { postEvent(new EventMouse(this, mX, mY, -1, MouseType.Exited)); }
 	@Override
 	public boolean isMouseInside(int mX, int mY) {
 		if (isBoundaryEnforced()) {
@@ -581,85 +353,33 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 		}
 		return mX >= startX && mX <= endX && mY >= startY && mY <= endY;
 	}
+	@Override public boolean isMouseHover(int mX, int mY) { return isMouseInside(mX, mY) && this.equals(getTopParent().getHighestZObjectUnderMouse()); }
 	
 	//basic inputs
-	@Override public void parseMousePosition(int mX, int mY) {}
-	@Override
-	public void mousePressed(int mX, int mY, int button) {
-		if (eventHandler != null) { eventHandler.processEvent(new EventMouse(this, mX, mY, button, MouseType.Pressed)); }
-		if (isMouseHover) { requestFocus(); }
-		if (button == 0 && isResizeable() && !getEdgeAreaMouseIsOn().equals(ScreenLocation.out)) {
-			getTopParent().setResizingDir(getEdgeAreaMouseIsOn());
-			getTopParent().setModifyMousePos(mX, mY);
-			getTopParent().setModifyingObject(this, ObjectModifyType.Resize);
-		}
-	}
-	@Override
-	public void mouseReleased(int mX, int mY, int button) {
-		if (eventHandler != null) { eventHandler.processEvent(new EventMouse(this, mX, mY, button, MouseType.Released)); }
-		if (getTopParent().isResizing()) { getTopParent().clearModifyingObject(); }
-		if (getTopParent().getDefaultFocusObject() != null) { getTopParent().getDefaultFocusObject().requestFocus(); }
-	}
+	@Override public void parseMousePosition(int mX, int mY) { StaticEGuiObject.parseMousePosition(this, mX, mY); }
+	@Override public void mousePressed(int mX, int mY, int button) { StaticEGuiObject.mousePressed(this, mX, mY, button); }
+	@Override public void mouseReleased(int mX, int mY, int button) { StaticEGuiObject.mouseReleased(this, mX, mY, button); }
 	@Override public void mouseDragged(int mX, int mY, int button, long timeSinceLastClick) {}
-	@Override
-	public void mouseScrolled(int change) {
-		if (eventHandler != null) { eventHandler.processEvent(new EventMouse(this, mX, mY, -1, MouseType.Scrolled)); }
-	}
-	@Override
-	public void keyPressed(char typedChar, int keyCode) {
-		if (eventHandler != null) { eventHandler.processEvent(new EventKeyboard(this, typedChar, keyCode, KeyboardType.Pressed)); }
-		if (getTopParent() != null && keyCode == 15) {
-			if (guiObjects != null) {
-				if (guiObjects.isEmpty()) {
-					int thisObjPos = 0;
-					for (int i = 0; i < getTopParent().getImmediateChildren().size(); i++) {
-						if (getTopParent().getImmediateChildren().get(i).equals(this)) { thisObjPos = i; }
-					}
-					if (thisObjPos < getTopParent().getImmediateChildren().size() - 1) {
-						getTopParent().getImmediateChildren().get(thisObjPos + 1).requestFocus();
-					}
-				} else {
-					EnhancedGuiObject selectedChild = null;
-					for (IEnhancedGuiObject o : getTopParent().getImmediateChildren()) {
-						if (guiObjects.contains(o) && o instanceof EnhancedGuiObject) { selectedChild = (EnhancedGuiObject) o; }
-					}
-					if (selectedChild != null) {
-						int childPos = 0;
-						for (int i = 0; i < guiObjects.size(); i++) {
-							if (selectedChild.equals(guiObjects.get(i))) { childPos = i; }
-						}
-						if (childPos < guiObjects.size() - 1) { guiObjects.get(childPos + 1).requestFocus(); }
-					}
-				}
-			}
-		}
-	}
-	@Override
-	public void keyReleased(char typedChar, int keyCode) {
-		if (eventHandler != null) { eventHandler.processEvent(new EventKeyboard(this, typedChar, keyCode, KeyboardType.Released)); }
-	}
+	@Override public void mouseScrolled(int change) { StaticEGuiObject.mouseScolled(this, mX, mY, change); }
+	@Override public void keyPressed(char typedChar, int keyCode) { StaticEGuiObject.keyPressed(this, typedChar, keyCode); }
+	@Override public void keyReleased(char typedChar, int keyCode) { StaticEGuiObject.keyReleased(this, typedChar, keyCode); }
 	
 	//updateScreen
-	@Override
-	public void updateScreen() {
-		for (IEnhancedGuiObject o : guiObjects) { o.updateScreen(); }
-	}
+	@Override public void updateScreen() { guiObjects.forEach(o -> o.updateScreen()); }
 	
 	//events
 	@Override public ObjectEventHandler getEventHandler() { return eventHandler; }
 	@Override public EnhancedGuiObject registerListener(IEnhancedGuiObject objIn) { if (eventHandler != null) { eventHandler.registerObject(objIn); } return this; }
 	@Override public EnhancedGuiObject unregisterListener(IEnhancedGuiObject objIn) { if (eventHandler != null) { eventHandler.unregisterObject(objIn); } return this; }
+	@Override public EnhancedGuiObject postEvent(ObjectEvent e) { if (eventHandler != null) { eventHandler.processEvent(e); } return this; }
 	@Override public void onListen(ObjectEvent e) {}
 	
 	//action object
-	@Override
-	public void actionPerformed(IEnhancedActionObject object) {
-		if (eventHandler != null) { eventHandler.processEvent(new EventAction(this, object)); }
-	}
+	@Override public void actionPerformed(IEnhancedActionObject object) { postEvent(new EventAction(this, object)); }
 	
 	//close object
 	@Override public void close() {
-		if (eventHandler != null) { eventHandler.processEvent(new EventObjects(this, this, ObjectEventType.Close)); }
+		postEvent(new EventObjects(this, this, ObjectEventType.Close));
 		if (getTopParent().doesFocusLockExist() && getTopParent().getFocusLockObject().equals(this)) { getTopParent().clearFocusLockObject(); }
 		if (getTopParent().getFocusedObject().equals(this)) { relinquishFocus(); }
 		if (focusObjectOnClose != null) { focusObjectOnClose.requestFocus(); }
@@ -672,14 +392,13 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	//-------------------------
 	
 	protected void updateBeforeNextDraw(int mXIn, int mYIn) {
-		if (eventHandler != null) { eventHandler.processEvent(new EventRedraw(this)); }
+		postEvent(new EventRedraw(this));
 		res = new ScaledResolution(mc);
 		mX = mXIn; mY = mYIn;
-		isMouseHover = isMouseInside(mXIn, mYIn) && getTopParent().getHighestZObjectUnderMouse() != null && getTopParent().getHighestZObjectUnderMouse().equals(this);
-		if (!mouseEntered && isMouseHover) { mouseEntered = true; mouseEntered(mX, mY); }
-		if (mouseEntered && !isMouseHover) { mouseEntered = false; mouseExited(mX, mY); }
-		if (!objsToBeRemoved.isEmpty()) { removeObjects(); }
-		if (!objsToBeAdded.isEmpty()) { addObjects(); }
+		if (!mouseEntered && isMouseHover(mX, mY)) { mouseEntered = true; mouseEntered(mX, mY); }
+		if (mouseEntered && !isMouseHover(mX, mY)) { mouseEntered = false; mouseExited(mX, mY); }
+		if (!objsToBeRemoved.isEmpty()) { StaticEGuiObject.removeObjects(this, objsToBeRemoved); }
+		if (!objsToBeAdded.isEmpty()) { StaticEGuiObject.addObjects(this, objsToBeAdded); }
 		updateCursorImage();
 	}
 	
@@ -691,43 +410,6 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 		if (msg.startsWith("/") && ClientCommandHandler.instance.executeCommand(mc.thePlayer, msg) != 0) { return; }
 		mc.thePlayer.sendChatMessage(msg);
     }
-	
-	protected void removeObjects() {
-		synchronized (guiObjects) {
-			objsToBeRemoved.forEach(o -> {
-				if (o != null) {
-					Iterator it = guiObjects.iterator();
-					while (it.hasNext()) {
-						if (o.equals(it.next())) {
-							if (!o.equals(getTopParent().getFocusedObject())) {
-								for (IEnhancedGuiObject child : o.getImmediateChildren()) {
-									if (child.equals(getTopParent().getFocusedObject())) { child.relinquishFocus(); }
-								}
-							} else { o.relinquishFocus(); }
-							if (o instanceof InnerEnhancedGui) { ((InnerEnhancedGui) o).onInnerGuiClose(); }
-							if (o.equals(border)) { border = null; }
-							if (eventHandler != null) { eventHandler.processEvent(new EventObjects(this, o, ObjectEventType.ObjectRemoved)); }
-							it.remove();
-						}
-					}
-				}
-			});
-			objsToBeRemoved.clear();
-		}
-	}
-	
-	protected void addObjects() {
-		objsToBeAdded.forEach(o -> {
-			if (o != null) {
-				if (o != this) {
-					guiObjects.add(o);
-					o.onObjectAddedToParent();
-					if (eventHandler != null) { eventHandler.processEvent(new EventObjects(this, o, ObjectEventType.ObjectAdded)); }
-				}
-			}
-		});
-		objsToBeAdded.clear();
-	}
 	
 	protected void renderToolTip(ItemStack stack, int x, int y) {
         List<String> list = stack.getTooltip(mc.thePlayer, mc.gameSettings.advancedItemTooltips);

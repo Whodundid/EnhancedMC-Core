@@ -11,6 +11,11 @@ public class NotYetDialogueBox extends EGuiDialogueBox {
 	
 	public NotYetDialogueBox(IEnhancedGuiObject parentIn) {
 		super(parentIn, parentIn.getDimensions().getMidX() - 125, parentIn.getDimensions().getMidY() - 48, 250, 75, DialogueBoxTypes.ok);
+		setResizeable(false);
+	}
+	
+	@Override
+	public void onObjectAddedToParent() {
 		setMessage("This feature is not ready yet.. Be on the lookout for future EnhancedMC releases!").setMessageColor(0xff5555);
 		setDisplayString("Error");
 	}

@@ -3,6 +3,7 @@ package com.Whodundid.core.enhancedGui.guiObjects;
 import com.Whodundid.core.enhancedGui.EnhancedGui;
 import com.Whodundid.core.enhancedGui.EnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.StaticEGuiObject;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventModify;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventObjects;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectEventType;
@@ -62,7 +63,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 				GlStateManager.enableBlend();
 				
 				//draw list contents scissored
-				GL11.glEnable(GL11.GL_SCISSOR_TEST);
+				//GL11.glEnable(GL11.GL_SCISSOR_TEST);
 				GL11.glScissor(
 						((startX + 1) * scale),
 						(Display.getHeight() - startY * scale) - (height - 1) * scale,
@@ -83,7 +84,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 		    			}
 					}
 				}
-				GL11.glDisable(GL11.GL_SCISSOR_TEST);
+				//GL11.glDisable(GL11.GL_SCISSOR_TEST);
 				
 				//draw non list contents as normal
 				synchronized (guiObjects) {
@@ -180,11 +181,12 @@ public class EGuiScrollList extends EnhancedGuiObject {
 			            ((EnhancedGui) o).setWorldAndResolution(mc, i, i);
 					}
 					
+					EDimension bounds = new EDimension(startX + 1, startY + 1, endX - scrollBar.width - 1, endY - 1);
+					
 					//apply offset to all added objects so their location is relative to this scrollList
 					EDimension dims = o.getDimensions();
 					o.setDimensions(startX + 1 + dims.startX, startY + 1 + dims.startY, dims.width, dims.height);
 					//limit the boundary of each object to the list's boundary
-					EDimension bounds = new EDimension(startX + 1, startY + 1, endX - scrollBar.width - 1, endY - 1);
 					o.setBoundaryEnforcer(bounds);
 					//replace the original intial position coordinates with the relative ones
 					o.setInitialPosition(o.getDimensions().startX, o.getDimensions().startY);
@@ -222,11 +224,10 @@ public class EGuiScrollList extends EnhancedGuiObject {
 	protected void updateBeforeNextDraw(int mXIn, int mYIn) {
 		res = new ScaledResolution(mc);
 		mX = mXIn; mY = mYIn;
-		isMouseHover = isMouseInside(mXIn, mYIn) && getTopParent().getHighestZObjectUnderMouse() != null && getTopParent().getHighestZObjectUnderMouse().equals(this);
-		if (!mouseEntered && isMouseHover) { mouseEntered = true; mouseEntered(mX, mY); }
-		if (mouseEntered && !isMouseHover) { mouseEntered = false; mouseExited(mX, mY); }
-		if (!objsToBeRemoved.isEmpty()) { removeObjects(); }
-		if (!objsToBeAdded.isEmpty()) { addObjects(); }
+		if (!mouseEntered && isMouseHover(mX, mY)) { mouseEntered = true; mouseEntered(mX, mY); }
+		if (mouseEntered && !isMouseHover(mX, mY)) { mouseEntered = false; mouseExited(mX, mY); }
+		if (!objsToBeRemoved.isEmpty()) { StaticEGuiObject.removeObjects(this, objsToBeRemoved); }
+		if (!objsToBeAdded.isEmpty()) { StaticEGuiObject.addObjects(this, objsToBeAdded); }
 		if (!listObjsToBeRemoved.isEmpty()) { removeListObjects(); }
 		if (!listObjsToBeAdded.isEmpty()) { addListObjects(); }
 		updateCursorImage();

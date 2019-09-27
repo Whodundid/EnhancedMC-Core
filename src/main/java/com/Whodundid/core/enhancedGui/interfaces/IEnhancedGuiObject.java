@@ -80,6 +80,8 @@ public interface IEnhancedGuiObject {
 	public IEnhancedGuiObject setPersistent(boolean val);
 	/** Specifies a region that this object will adhere to for mouse checks. */
 	public IEnhancedGuiObject setBoundaryEnforcer(EDimension dimIn);
+	/** Returns an EDimension object containing the boundary this object is bounded by */
+	public EDimension getBoundaryEnforcer();
 	
 	//size
 	
@@ -149,6 +151,10 @@ public interface IEnhancedGuiObject {
 	public void onGroupNotification(ObjectEvent e);
 	/** Returns a list of all objects that are directly children of this object. */
 	public EArrayList<IEnhancedGuiObject> getImmediateChildren();
+	/** Returns a list of all objects that are going to be added on the next draw cycle */
+	public EArrayList<IEnhancedGuiObject> getObjectsToBeAdded();
+	/** Returns a list of all objects that are going to be removed on the next draw cycle */
+	public EArrayList<IEnhancedGuiObject> getObjectsToBeRemoved();
 	/** Returns a list of all objects that descend from this parent. */
 	public EArrayList<IEnhancedGuiObject> getAllChildren();
 	/** Returns a list of all children from 'getAllChildren()' that are currently under the mouse. */
@@ -202,6 +208,8 @@ public interface IEnhancedGuiObject {
 	public void mouseExited(int mX, int mY);
 	/** Returns true if the mouse is currently inside this object. If a boundary enforcer is set, this method will return true if the mouse is inside of the the specified boundary. */
 	public boolean isMouseInside(int mX, int mY);
+	/** Returns true if the mouse is currently inside this object and that this is the top most object insideo fthe parent. */
+	public boolean isMouseHover(int mX, int mY);
 	
 	//basic inputs
 	
@@ -227,13 +235,15 @@ public interface IEnhancedGuiObject {
 	
 	//events
 	
-	/** Gets the EventHandler */
+	/** Gets the EventHandler. */
 	public ObjectEventHandler getEventHandler();
-	/** Register an object that listens to this object's events */
+	/** Register an object that listens to this object's events. */
 	public IEnhancedGuiObject registerListener(IEnhancedGuiObject objIn);
-	/** Unregister a listener Object */
+	/** Unregister a listener Object. */
 	public IEnhancedGuiObject unregisterListener(IEnhancedGuiObject objIn);
-	/** Called on ObjectEvents */
+	/** Broadcasts an ObjectEvent on this object. */
+	public IEnhancedGuiObject postEvent(ObjectEvent e);
+	/** Called on ObjectEvents. */
 	public void onListen(ObjectEvent e);
 	
 	//action

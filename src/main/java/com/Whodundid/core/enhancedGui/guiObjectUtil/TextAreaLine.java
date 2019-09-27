@@ -6,7 +6,7 @@ import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextField;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectModifyType;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
-import com.Whodundid.core.util.playerUtil.Direction;
+import com.Whodundid.core.util.miscUtil.ScreenLocation;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ChatAllowedCharacters;
@@ -175,11 +175,11 @@ public class TextAreaLine<obj> extends EGuiTextField {
 	@Override 
 	public void mousePressed(int mX, int mY, int button) {
 		try {
-			if (isMouseHover) { requestFocus(); }
+			if (isMouseHover(mX, mY)) { requestFocus(); }
 			if (button == 0) {
 				if (clicked && System.currentTimeMillis() - doubleClickTimer < doubleClickThreshold) { onDoubleClick(); clicked = false; doubleClickTimer = 0l; }
 				if (!clicked) { clicked = true; doubleClickTimer = System.currentTimeMillis(); }
-				if (isResizeable() && !getEdgeAreaMouseIsOn().equals(Direction.OUT)) {
+				if (isResizeable() && !getEdgeAreaMouseIsOn().equals(ScreenLocation.out)) {
 					getTopParent().setModifyingObject(this, ObjectModifyType.Resize);
 					getTopParent().setResizingDir(getEdgeAreaMouseIsOn());
 					getTopParent().setModifyMousePos(mX, mY);

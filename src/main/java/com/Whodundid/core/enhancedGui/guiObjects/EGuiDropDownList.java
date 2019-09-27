@@ -81,7 +81,7 @@ public class EGuiDropDownList extends EnhancedGuiObject {
 	@Override public void onFocusLost(EventFocus eventin) { closeList(); }
 	
 	protected void openList(int button) {
-		if (checkDraw() && isMouseHover && button == 0) {
+		if (checkDraw() && isMouseHover(mX, mY) && button == 0) {
 			listOpen = true;
 			playPressSound();
 			int newHeight = entryHeight + (listContents.size() * entryHeight) - 1;
