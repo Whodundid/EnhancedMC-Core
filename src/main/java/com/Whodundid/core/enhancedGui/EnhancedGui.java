@@ -51,6 +51,8 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraftforge.client.ClientCommandHandler;
+import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -349,7 +351,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 		fontRendererObj = mc.fontRendererObj;
 		sWidth = width;
 		sHeight = height;
-		if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Pre(this, this.buttonList))) {
+		if (!MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.InitGuiEvent.Pre(this, this.buttonList))) {
 			buttonList.clear();
 			guiObjects.clear();
 			objsToBeAdded.clear();
@@ -362,7 +364,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 			setObjectRequestingFocus(null);
 			initGui();
 		}
-		net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Post(this, this.buttonList));
+		MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.InitGuiEvent.Post(this, this.buttonList));
 	}
 	
 	//resize
@@ -600,18 +602,9 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	public void mouseScrolled(int change) {
 		postEvent(new EventMouse(this, mX, mY, -1, MouseType.Scrolled));
 		if (isMouseInsideObject(mX, mY)) {
-			for (IEnhancedGuiObject o : getAllChildrenUnderMouse()) {
-				if (o.isMouseInside(mX, mY) && o.checkDraw()) { o.mouseScrolled(change); }
-			}
-		}
-		else { EnhancedMC.getRenderer().mouseScrolled(change); }
-		/*
-		postEvent(new EventMouse(this, mX, mY, -1, MouseType.Scrolled));
-		if (isMouseInsideObject(mX, mY)) {
 			getAllChildrenUnderMouse().stream().filter(o -> o.isMouseInside(mX, mY) && o.checkDraw()).forEach(o -> o.mouseScrolled(change));
 		}
 		else { EnhancedMC.getRenderer().mouseScrolled(change); }
-		*/
 	}
 	@Override public void keyPressed(char typedChar, int keyCode) { postEvent(new EventKeyboard(this, typedChar, keyCode, KeyboardType.Pressed)); }
 	@Override public void keyReleased(char typedChar, int keyCode) { postEvent(new EventKeyboard(this, typedChar, keyCode, KeyboardType.Released)); }

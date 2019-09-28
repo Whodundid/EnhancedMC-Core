@@ -22,6 +22,17 @@ public class EDimension {
 		midY = getMidY();
 	}
 	
+	public EDimension(EDimension dimIn) {
+		startX = dimIn.startX;
+		startY = dimIn.startY;
+		endX = dimIn.endX;
+		endY = dimIn.endY;
+		width = endX - startX;
+		height = endY - startY;
+		midX = getMidX();
+		midY = getMidY();
+	}
+	
 	public EDimension move(int changeX, int changeY) {
 		startX += changeX;
 		startY += changeY;

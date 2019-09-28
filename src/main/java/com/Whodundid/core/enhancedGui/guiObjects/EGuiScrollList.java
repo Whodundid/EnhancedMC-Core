@@ -63,7 +63,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 				GlStateManager.enableBlend();
 				
 				//draw list contents scissored
-				//GL11.glEnable(GL11.GL_SCISSOR_TEST);
+				GL11.glEnable(GL11.GL_SCISSOR_TEST);
 				GL11.glScissor(
 						((startX + 1) * scale),
 						(Display.getHeight() - startY * scale) - (height - 1) * scale,
@@ -84,7 +84,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 		    			}
 					}
 				}
-				//GL11.glDisable(GL11.GL_SCISSOR_TEST);
+				GL11.glDisable(GL11.GL_SCISSOR_TEST);
 				
 				//draw non list contents as normal
 				synchronized (guiObjects) {
@@ -188,6 +188,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 					o.setDimensions(startX + 1 + dims.startX, startY + 1 + dims.startY, dims.width, dims.height);
 					//limit the boundary of each object to the list's boundary
 					o.setBoundaryEnforcer(bounds);
+					for (IEnhancedGuiObject q : o.getObjectsToBeAdded()) { q.setBoundaryEnforcer(bounds); }
 					//replace the original intial position coordinates with the relative ones
 					o.setInitialPosition(o.getDimensions().startX, o.getDimensions().startY);
 					

@@ -217,7 +217,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	@Override public EnhancedGuiObject setEnabled(boolean val) { enabled = val; return this; }
 	@Override public EnhancedGuiObject setVisible(boolean val) { visible = val; return this; }
 	@Override public EnhancedGuiObject setPersistent(boolean val) { persistent = val; return this; }
-	@Override public EnhancedGuiObject setBoundaryEnforcer(EDimension dimIn) { boundaryDimension = dimIn; return this; }
+	@Override public EnhancedGuiObject setBoundaryEnforcer(EDimension dimIn) { boundaryDimension = new EDimension(dimIn); return this; }
 	@Override public EDimension getBoundaryEnforcer() { return boundaryDimension; }
 	
 	//size

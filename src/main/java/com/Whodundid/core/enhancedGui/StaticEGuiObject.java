@@ -24,29 +24,6 @@ import net.minecraft.client.gui.ScaledResolution;
 
 public class StaticEGuiObject {
 	
-	public static ScreenLocation getEdgeAreaMouseIsOn(IEnhancedGuiObject objIn, int mX, int mY) {
-		boolean left = false, right = false, top = false, bottom = false;
-		EDimension d = objIn.getDimensions();
-		int rStartY = objIn.hasHeader() ? objIn.getHeader().startY : d.startY;
-		if (mX >= d.startX && mX <= d.startX + 1) { left = true; }
-		if (mX <= d.endX && mX >= d.endX - 1) { right = true; }
-		if (mY >= rStartY && mY <= rStartY + 1) { top = true; }
-		if (mY <= d.endY && mY >= d.endY - 1) { bottom = true; }
-		if (objIn.checkDraw() && !(left || right || top || bottom)) { return ScreenLocation.out; }
-		if (left) {
-			if (top) { return ScreenLocation.topLeft; }
-			else if (bottom) { return ScreenLocation.botLeft; }
-			else { return ScreenLocation.left; }
-		} 
-		else if (right) {
-			if (top) { return ScreenLocation.topRight; }
-			else if (bottom) { return ScreenLocation.botRight; }
-			else { return ScreenLocation.right; }
-		} 
-		else if (top) { return ScreenLocation.top; }
-		else { return ScreenLocation.bot; }
-	}
-	
 	//size
 	public static void resize(IEnhancedGuiObject obj, int xIn, int yIn, ScreenLocation areaIn) {
 		obj.postEvent(new EventModify(obj, obj, ObjectModifyType.Resize));
@@ -106,7 +83,8 @@ public class StaticEGuiObject {
 			EDimension d = obj.getDimensions();
 			obj.setDimensions(d.startX + newX, d.startY + newY, d.width, d.height);
 			if (obj.isBoundaryEnforced()) {
-				obj.getBoundaryEnforcer().setPosition(obj.getBoundaryEnforcer().startX += newX, obj.getBoundaryEnforcer().startY += newY);
+				EDimension b = obj.getBoundaryEnforcer();
+				obj.getBoundaryEnforcer().setPosition(b.startX + newX, b.startY + newY);
 			}
 		}
 	}
@@ -224,6 +202,30 @@ public class StaticEGuiObject {
 			if (parentObj.getParent() != null) { parentObj = parentObj.getParent(); }
 		}
 		return obj instanceof IEnhancedTopParent ? (IEnhancedTopParent) obj : null;
+	}
+	
+	//mouse checks
+	public static ScreenLocation getEdgeAreaMouseIsOn(IEnhancedGuiObject objIn, int mX, int mY) {
+		boolean left = false, right = false, top = false, bottom = false;
+		EDimension d = objIn.getDimensions();
+		int rStartY = objIn.hasHeader() ? objIn.getHeader().startY : d.startY;
+		if (mX >= d.startX && mX <= d.startX + 1) { left = true; }
+		if (mX <= d.endX && mX >= d.endX - 1) { right = true; }
+		if (mY >= rStartY && mY <= rStartY + 1) { top = true; }
+		if (mY <= d.endY && mY >= d.endY - 1) { bottom = true; }
+		if (objIn.checkDraw() && !(left || right || top || bottom)) { return ScreenLocation.out; }
+		if (left) {
+			if (top) { return ScreenLocation.topLeft; }
+			else if (bottom) { return ScreenLocation.botLeft; }
+			else { return ScreenLocation.left; }
+		}
+		else if (right) {
+			if (top) { return ScreenLocation.topRight; }
+			else if (bottom) { return ScreenLocation.botRight; }
+			else { return ScreenLocation.right; }
+		} 
+		else if (top) { return ScreenLocation.top; }
+		else { return ScreenLocation.bot; }
 	}
 	
 	//basic inputs
