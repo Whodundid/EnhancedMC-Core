@@ -10,9 +10,12 @@ import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.util.chatUtil.EChatUtil;
 import com.Whodundid.core.util.playerUtil.PlayerFacing;
+import com.Whodundid.core.util.renderUtil.BlockDrawer;
 import com.Whodundid.core.util.renderUtil.CursorHelper;
 import com.Whodundid.core.util.worldUtil.WorldEditListener;
 import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.client.event.RenderWorldEvent;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiIngameMenu;
@@ -163,6 +166,11 @@ public class EventListener {
 				GL11.glPopMatrix();
 			}
 		}
+	}
+	
+	@SubscribeEvent
+	public void onLastWorldRender(RenderWorldLastEvent e) {
+		BlockDrawer.draw(e);
 	}
 	
 	@SubscribeEvent
