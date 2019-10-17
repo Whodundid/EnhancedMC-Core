@@ -1,5 +1,6 @@
 package com.Whodundid.core.util.storageUtil;
 
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 import net.minecraft.util.Vec3i;
 
@@ -59,6 +60,10 @@ public class Vector3D {
 	 */
 	public Vector3D(Vec3i vecIn) {
 		set(vecIn.getX(), vecIn.getY(), vecIn.getZ());
+	}
+	
+	public Vector3D(BlockPos posIn) {
+		set(posIn.getX(), posIn.getY(), posIn.getZ());
 	}
 	
 	/**
