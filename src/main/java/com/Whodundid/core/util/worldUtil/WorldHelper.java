@@ -40,6 +40,7 @@ public abstract class WorldHelper {
 	
 	public static int getBlockID(int x, int y, int z) { return getBlockID(getBlockPos(x, y, z)); }
 	public static int getBlockID(double x, double y, double z) { return getBlockID(getBlock(x, y, z)); }
+	public static int getBlockID(IBlockState state) { return getBlockID(state.getBlock()); }
 	public static int getBlockID(Vector3DInt vecIn) { return getBlockID(getBlock(vecIn)); }
 	public static int getBlockID(Vector3D vecIn) { return getBlockID(getBlock(vecIn)); }
 	public static int getBlockID(Vec3 vecIn) { return getBlockID(getBlock(vecIn)); }
