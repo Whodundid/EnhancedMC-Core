@@ -1,5 +1,6 @@
 package com.Whodundid.core.subMod.gui;
 
+import com.Whodundid.core.enhancedGui.guiObjectUtil.TextAreaLine;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiDialogueBox;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
@@ -20,6 +21,7 @@ public class IncompatibleWindowList extends EGuiDialogueBox {
 	EGuiLabel problem;
 	EGuiRect topLine;
 	EGuiTextArea incompatibleList;
+	int longest = 0;
 	
 	public IncompatibleWindowList(IEnhancedGuiObject parentIn) {
 		init(parentIn);
@@ -72,7 +74,7 @@ public class IncompatibleWindowList extends EGuiDialogueBox {
 				
 				for (StorageBox<SubMod, String> box : incompatMods) {
 					SubMod m = box.getObject();
-					incompatibleList.addTextLine("     - " + EnumChatFormatting.RED + "requires " + EnumChatFormatting.YELLOW + 
+					incompatibleList.addTextLine("   - " + EnumChatFormatting.RED + "requires " + EnumChatFormatting.YELLOW + 
 												 m.getName() + EnumChatFormatting.RED + " version '" + box.getValue() + "'", 0xb2b2b2);
 												 //+ EnumChatFormatting.GRAY + " :" + EnumChatFormatting.WHITE + " (" + (m.isIncompatible() ? "Incompatible" : m.getVersion()) + ")", 0xb2b2b2);
 				}
@@ -83,12 +85,17 @@ public class IncompatibleWindowList extends EGuiDialogueBox {
 		
 		addObject(problem);
 		
+		TextAreaLine l = incompatibleList.getLongestLine();
+		longest = l != null ? fontRenderer.getStringWidth(l.getText()) : 0;
+		
+		
 		setDisplayStringColor(0xc2c2c2);
 		setDisplayString("SubMod Incompatibility");
 	}
 	
 	@Override
-	public void onObjectAddedToParent() {
-		//centerObjectWithSize(295, 202);
+	public void onAdded() {
+		int diffX = width - longest;
+		//resize(diffX, 0, ScreenLocation.right);
 	}
 }

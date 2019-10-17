@@ -52,7 +52,7 @@ public class EGuiButton extends EnhancedActionObject implements IEnhancedActionO
 	@Override
 	public void drawObject(int mX, int mY, float ticks) {
 		if (drawBackground) { drawRect(startX, startY, endX, endY, backgroundColor); }
-		boolean mouseHover = isMouseInside(mX, mY);
+		boolean mouseHover = isMouseHover(mX, mY);
 		boolean mouseCheck = !Mouse.isButtonDown(0) && mouseHover;
 		//int stringColor = isEnabled() ? (isMouseHover ? (color == 14737632 ? textHoverColor : color) : color) : 0x979797;
 		int stringColor = isEnabled() ? (mouseCheck ? (color == 14737632 ? textHoverColor : color) : color) : color + 0xbbbbbb;
@@ -113,8 +113,8 @@ public class EGuiButton extends EnhancedActionObject implements IEnhancedActionO
 	
 	@Override
 	public void mousePressed(int mX, int mY, int button) {
-		super.mousePressed(mX, mY, button);
 		if (hasFocus()) { pressButton(button); }
+		super.mousePressed(mX, mY, button);
     }
 	
 	@Override
@@ -130,7 +130,7 @@ public class EGuiButton extends EnhancedActionObject implements IEnhancedActionO
 	//------------------
 	
 	protected void pressButton(int button) {
-		if (enabled && checkDraw() && isMouseHover(mX, mY)) {
+		if (enabled && checkDraw()) {
 			pressedButton = button;
 			if (runActionOnPress) { performAction(); }
 			else if (button == 0) {

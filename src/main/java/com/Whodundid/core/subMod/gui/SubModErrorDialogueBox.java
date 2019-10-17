@@ -1,5 +1,6 @@
 package com.Whodundid.core.subMod.gui;
 
+import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiDialogueBox;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
@@ -129,6 +130,9 @@ public class SubModErrorDialogueBox extends EGuiDialogueBox {
 	private void reloadSettings(boolean val) {
 		mods.forEach(m -> { SubModSettings.updateModState(m, val); });
 		SubModSettings.updateModState(mod, val);
-		if (mc.currentScreen instanceof SettingsGuiMain) { ((SettingsGuiMain) mc.currentScreen).updateList(); }
+		IEnhancedGuiObject window = EnhancedMC.getWindowInstance(SettingsGuiMain.class);
+		if (EnhancedMC.getWindowInstance(SettingsGuiMain.class) != null) {
+			((SettingsGuiMain) window).updateList();
+		}
 	}
 }

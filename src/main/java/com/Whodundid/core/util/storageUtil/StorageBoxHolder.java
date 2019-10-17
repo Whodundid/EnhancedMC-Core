@@ -1,6 +1,5 @@
 package com.Whodundid.core.util.storageUtil;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class StorageBoxHolder<Obj, Val> implements Iterable<StorageBox<Obj, Val>> {
 	
-	List<StorageBox<Obj, Val>> createdList = new ArrayList();
+	List<StorageBox<Obj, Val>> createdList = new EArrayList();
 	public boolean allowDuplicates = false;
 	
 	public StorageBoxHolder() { this(false); }
@@ -19,18 +18,29 @@ public class StorageBoxHolder<Obj, Val> implements Iterable<StorageBox<Obj, Val>
 		allowDuplicates = allowDuplicatesIn;
 	}
 	
-	public synchronized boolean add(Obj obj, Val value) {
+	public void add(int pos, Obj obj, Val value) {
+		if (allowDuplicates || !contains(obj)) { createdList.add(pos, new StorageBox<Obj, Val>(obj, value)); }
+	}
+	
+	public boolean add(Obj obj, Val value) {
 		return (allowDuplicates || !contains(obj)) ? createdList.add(new StorageBox<Obj, Val>(obj, value)) : false;
 	}
 	
-	public synchronized void put(Obj obj, Val value) {
-		StorageBox<Obj, Val> box = this.getBoxWithObj(obj);
-		if (box != null) { box.setValue(value); }
-		else { this.add(obj, value); }
+	public StorageBoxHolder<Obj, Val> addAll(StorageBoxHolder<Obj, Val> in) {
+		for (StorageBox<Obj, Val> box : in) {
+			add(box.getObject(), box.getValue());
+		}
+		return this;
 	}
 	
-	public synchronized List<StorageBox<Obj, Val>> removeBoxesContainingObj(Obj obj) {
-		List<StorageBox<Obj, Val>> returnList = new ArrayList();
+	public void put(Obj obj, Val value) {
+		StorageBox<Obj, Val> box = this.getBoxWithObj(obj);
+		if (box != null) { box.setValue(value); }
+		else { add(obj, value); }
+	}
+	
+	public List<StorageBox<Obj, Val>> removeBoxesContainingObj(Obj obj) {
+		List<StorageBox<Obj, Val>> returnList = new EArrayList();
 		Iterator<StorageBox<Obj, Val>> i = createdList.iterator();
 		while (i.hasNext()) {
 			StorageBox<Obj, Val> getBox = i.next();
@@ -39,8 +49,8 @@ public class StorageBoxHolder<Obj, Val> implements Iterable<StorageBox<Obj, Val>
 		return returnList;
 	}
 	
-	public synchronized List<StorageBox<Obj, Val>> removeBoxesWithSaidValues(Obj obj1, Val obj2) {
-		List<StorageBox<Obj, Val>> returnList = new ArrayList();
+	public List<StorageBox<Obj, Val>> removeBoxesWithSaidValues(Obj obj1, Val obj2) {
+		List<StorageBox<Obj, Val>> returnList = new EArrayList();
 		Iterator<StorageBox<Obj, Val>> i = createdList.iterator();
 		while (i.hasNext()) {
 			StorageBox<Obj, Val> getBox = i.next();
@@ -50,7 +60,7 @@ public class StorageBoxHolder<Obj, Val> implements Iterable<StorageBox<Obj, Val>
 	}
 	
 	/** Retrieves the first box that contains the specified object */
-	public synchronized StorageBox<Obj, Val> getBoxWithObj(Obj objIn) {
+	public StorageBox<Obj, Val> getBoxWithObj(Obj objIn) {
 		for (StorageBox<Obj, Val> getBox : createdList) {
 			if (getBox.compareObject(objIn)) { return getBox; }
 		}
@@ -58,30 +68,30 @@ public class StorageBoxHolder<Obj, Val> implements Iterable<StorageBox<Obj, Val>
 	}
 	
 	/** Retrieves all boxes that contain the specified object */
-	public synchronized List<StorageBox<Obj, Val>> getAllBoxesWithObj(Obj obj) {
+	public List<StorageBox<Obj, Val>> getAllBoxesWithObj(Obj obj) {
 		return createdList.stream().filter(b -> b.getObject().equals(obj)).collect(Collectors.toList());
 	}
 	
-	public synchronized StorageBoxHolder<Obj, Val> setValueInBox(Obj obj, Val newVal) {
+	public StorageBoxHolder<Obj, Val> setValueInBox(Obj obj, Val newVal) {
 		StorageBox<Obj, Val> box = getBoxWithObj(obj);
 		if (box != null) { box.setValue(newVal); }
 		return this;
 	}
 	
-	public synchronized StorageBoxHolder<Obj, Val> setObjectInBox(Obj obj, Obj newObj) {
+	public StorageBoxHolder<Obj, Val> setObjectInBox(Obj obj, Obj newObj) {
 		StorageBox<Obj, Val> box = getBoxWithObj(obj);
 		if (box != null) { box.setObject(newObj); }
 		return this;
 	}
 	
-	public synchronized boolean contains(Obj obj) {
+	public boolean contains(Obj obj) {
 		for (StorageBox<Obj, Val> getBox : createdList) {
 			if (getBox.contains(obj)) { return true; }
 		}
 		return false;
 	}
 	
-	public synchronized boolean containsABoxWithBoth(Obj obj1, Val obj2) {
+	public boolean containsABoxWithBoth(Obj obj1, Val obj2) {
 		for (StorageBox<Obj, Val> getBox : createdList) {
 			if (getBox.compareContents(obj1, obj2)) { return true; }
 		}
@@ -90,17 +100,6 @@ public class StorageBoxHolder<Obj, Val> implements Iterable<StorageBox<Obj, Val>
 	
 	public StorageBoxHolder<Obj, Val> noDuplicates() { allowDuplicates = false; return this; }
 	public StorageBoxHolder<Obj, Val> setAllowDuplicates(boolean val) { allowDuplicates = val; return this; }
-	
-	public static <thing1, thing2> StorageBoxHolder<thing1, thing2> createBox(EArrayList<thing1> objectsIn, EArrayList<thing2> valuesIn) {
-		if (objectsIn != null && valuesIn != null) {
-			if (objectsIn.size() == valuesIn.size()) {
-				StorageBoxHolder<thing1, thing2> newHolder = new StorageBoxHolder();
-				for (int i = 0; i < objectsIn.size(); i++) { newHolder.add(objectsIn.get(i), valuesIn.get(i)); }
-				return newHolder;
-			}
-		}
-		return null;
-	}
 	
 	public List<Obj> getObjects() {
 		EArrayList<Obj> objects = new EArrayList();
@@ -119,14 +118,38 @@ public class StorageBoxHolder<Obj, Val> implements Iterable<StorageBox<Obj, Val>
 		return boxes;
 	}
 	
-	public synchronized int size() { return this.createdList.size(); }
-	public synchronized StorageBox<Obj, Val> get(int pointNumber) { return createdList.get(pointNumber); }
-	public synchronized boolean isEmpty() { return createdList.isEmpty(); }
-	public synchronized boolean isNotEmpty() { return !createdList.isEmpty(); }
-	public synchronized void clear() { this.createdList.clear(); }
-	public synchronized boolean remove(int pointNumber) { return createdList.remove(pointNumber) != null; }
-	public synchronized Obj getObject(int pointNumber) { return createdList.get(pointNumber).getObject(); }
-	public synchronized Val getValue(int pointNumber) { return createdList.get(pointNumber).getValue(); }
+	public int size() { return this.createdList.size(); }
+	public StorageBox<Obj, Val> get(int pointNumber) { return createdList.get(pointNumber); }
+	public boolean isEmpty() { return createdList.isEmpty(); }
+	public boolean isNotEmpty() { return !createdList.isEmpty(); }
+	public void clear() { this.createdList.clear(); }
+	public boolean remove(int pointNumber) { return createdList.remove(pointNumber) != null; }
+	public Obj getObject(int pointNumber) { return createdList.get(pointNumber).getObject(); }
+	public Val getValue(int pointNumber) { return createdList.get(pointNumber).getValue(); }
+	
+	//static methods
+	
+	public static <thing1, thing2> StorageBoxHolder<thing1, thing2> createBox(EArrayList<thing1> objectsIn, EArrayList<thing2> valuesIn) {
+		if (objectsIn != null && valuesIn != null) {
+			if (objectsIn.size() == valuesIn.size()) {
+				StorageBoxHolder<thing1, thing2> newHolder = new StorageBoxHolder();
+				for (int i = 0; i < objectsIn.size(); i++) { newHolder.add(objectsIn.get(i), valuesIn.get(i)); }
+				return newHolder;
+			}
+		}
+		return null;
+	}
+	
+	public static <T, V> StorageBoxHolder<T, V> createBox(int size, Object... dataIn) {
+		if (size % 2 == 0) {
+			StorageBoxHolder<T, V> newHolder = new StorageBoxHolder();
+			for (int i = 0; i < size; i++) {
+				newHolder.add((T) dataIn[i], (V) dataIn[i + 1]);
+			}
+			return newHolder;
+		}
+		return null;
+	}
 	
 	//object overrides
 	

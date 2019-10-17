@@ -1,15 +1,13 @@
 package com.Whodundid.core.subMod;
 
-import com.Whodundid.core.enhancedGui.EnhancedGui;
+import com.Whodundid.core.enhancedGui.InnerEnhancedGui;
 import com.Whodundid.core.events.emcEvents.ChatLineCreatedEvent;
 import com.Whodundid.core.events.emcEvents.ModCalloutEvent;
 import com.Whodundid.core.subMod.config.SubModConfigManager;
 import com.Whodundid.core.util.storageUtil.EArrayList;
-import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 import java.util.Iterator;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -30,8 +28,8 @@ import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
 public abstract class SubMod {
 	
 	protected Minecraft mc = Minecraft.getMinecraft();
-	protected EnhancedGui mainGui;
-	protected EArrayList<GuiScreen> guis = new EArrayList();
+	protected InnerEnhancedGui mainGui;
+	protected EArrayList<InnerEnhancedGui> guis = new EArrayList();
 	protected StorageBoxHolder<String, String> dependencies = new StorageBoxHolder().noDuplicates();
 	protected StorageBoxHolder<String, String> softDependencies = new StorageBoxHolder().noDuplicates();
 	protected String modName = "noname";
@@ -55,10 +53,10 @@ public abstract class SubMod {
 	public boolean hasConfig() { return configManager.getNumberOfConfigFiles() > 0; }
 	public boolean isDisableable() { return isDisableable; }
 	public boolean isIncompatible() { return incompatible; }
-	public EArrayList<GuiScreen> getGuis() { return guis; }
+	public EArrayList<InnerEnhancedGui> getGuis() { return guis; }
 	public StorageBoxHolder<String, String> getDependencies() { return dependencies; }
 	public StorageBoxHolder<String, String> getSoftDependencies() { return softDependencies; }
-	public EnhancedGui getMainGui(boolean setPosition, StorageBox<Integer, Integer> pos, EnhancedGui oldGui) { return mainGui; }
+	public InnerEnhancedGui getMainGui() throws Exception { return mainGui != null ? mainGui.getClass().newInstance() : null; }
 	public SubModConfigManager getConfig() { return configManager; }
 	public SubMod setEnabled(boolean valueIn) { enabled = valueIn; return this; }
 	public SubMod setIncompatible(boolean valueIn) { incompatible = valueIn; return this; }
@@ -73,12 +71,11 @@ public abstract class SubMod {
 		return this;
 	}
 	
-	protected SubMod setMainGui(EnhancedGui guiIn) {
-		EnhancedGui oldGui = mainGui;
+	protected SubMod setMainGui(InnerEnhancedGui guiIn) {
+		InnerEnhancedGui oldGui = mainGui;
 		if (oldGui != null) {
-			if (mc.currentScreen.equals(oldGui)) { mc.displayGuiScreen(null); }
 			if (guis.contains(oldGui)) {
-				Iterator<GuiScreen> it = guis.iterator();
+				Iterator<InnerEnhancedGui> it = guis.iterator();
 				while (it.hasNext()) {
 					if (oldGui.equals(it.next())) { it.remove(); break; } 
 				}
@@ -90,8 +87,8 @@ public abstract class SubMod {
 		return this;
 	}
 	
-	protected SubMod addGui(EnhancedGui... guiIn) {
-		for (EnhancedGui gui : guiIn) { if (!guis.contains(gui)) { guis.add(gui); } }
+	protected SubMod addGui(InnerEnhancedGui... guiIn) {
+		for (InnerEnhancedGui gui : guiIn) { if (!guis.contains(gui)) { guis.add(gui); } }
 		return this;
 	}
 	

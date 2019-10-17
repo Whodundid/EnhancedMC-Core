@@ -25,7 +25,6 @@ public class EGuiSelectionList extends InnerEnhancedGui implements IEnhancedActi
 	String headerString = "Make A Selection..";
 	IEnhancedGuiObject actionReciever;
 	int headerStringColor = 0xb2b2b2;
-	private EGuiSelectionList instance = null;
 	
 	public EGuiSelectionList(IEnhancedGuiObject parentIn, StorageBoxHolder<String, ?> objectListIn) { this(parentIn, true, objectListIn, null); }
 	public EGuiSelectionList(IEnhancedGuiObject parentIn, StorageBoxHolder<String, ?> objectListIn, Object selObjIn) { this(parentIn, true, objectListIn, selObjIn); }
@@ -37,7 +36,6 @@ public class EGuiSelectionList extends InnerEnhancedGui implements IEnhancedActi
 		listContents = objectListIn;
 		defaultSelectionObject = selObjIn;
 		actionReciever = getParent();
-		instance = this;
 	}
 	protected EGuiSelectionList(IEnhancedGuiObject parentIn, boolean noPos, StorageBoxHolder<String, ?> objectListIn, Object selObjIn) {
 		ScaledResolution res = new ScaledResolution(mc);
@@ -45,7 +43,6 @@ public class EGuiSelectionList extends InnerEnhancedGui implements IEnhancedActi
 		listContents = objectListIn;
 		defaultSelectionObject = selObjIn;
 		actionReciever = getParent();
-		instance = this;
 	}
 	
 	@Override
@@ -61,7 +58,18 @@ public class EGuiSelectionList extends InnerEnhancedGui implements IEnhancedActi
 		select = new EGuiButton(this, startX + 10, endY - 28, 80, 20, "Select");
 		cancelSel = new EGuiButton(this, endX - 90, endY - 28, 80, 20, "Cancel");
 		
-		selectionList = new EGuiTextArea(this, startX + 10, startY + 10, width - 20, height - 45, false).setDrawLineNumbers(true);
+		selectionList = new EGuiTextArea(this, startX + 10, startY + 10, width - 20, height - 45, false) {
+			@Override
+			public void keyPressed(char typedChar, int keyCode) {
+				super.keyPressed(typedChar, keyCode);
+				if (keyCode == 28) {
+					if (getCurrentLine() != null && getCurrentLine().getStoredObj() != null) {
+						selectOptionAndClose(getCurrentLine().getStoredObj());
+					}
+				}
+			}
+		};
+		selectionList.setDrawLineNumbers(true);
 		
 		addObject(select, cancelSel, selectionList);
 		
@@ -71,6 +79,15 @@ public class EGuiSelectionList extends InnerEnhancedGui implements IEnhancedActi
 				public void onDoubleClick() {
 					if (selectionList.getCurrentLine() != null && getStoredObj() != null) {
 						selectOptionAndClose(getStoredObj());
+					}
+				}
+				@Override
+				public void keyPressed(char typedChar, int keyCode) {
+					super.keyPressed(typedChar, keyCode);
+					if (keyCode == 28) {
+						if (selectionList.getCurrentLine() != null && selectionList.getCurrentLine().getStoredObj() != null) {
+							selectOptionAndClose(selectionList.getCurrentLine().getStoredObj());
+						}
 					}
 				}
 			};
@@ -95,7 +112,7 @@ public class EGuiSelectionList extends InnerEnhancedGui implements IEnhancedActi
 	public EArrayList<Object> getAdditionalValues() { return additionalValues; }
 	
 	@Override
-	public void onObjectAddedToParent() {
+	public void onAdded() {
 		bringToFront();
 	}
 	
@@ -116,6 +133,11 @@ public class EGuiSelectionList extends InnerEnhancedGui implements IEnhancedActi
 	public void keyPressed(char typedChar, int keyCode) {
 		if (keyCode == 1) {
 			close();
+		}
+		if (keyCode == 28) {
+			if (selectionList.getCurrentLine() != null && selectionList.getCurrentLine().getStoredObj() != null) {
+				selectOptionAndClose(selectionList.getCurrentLine().getStoredObj());
+			}
 		}
 	}
 	

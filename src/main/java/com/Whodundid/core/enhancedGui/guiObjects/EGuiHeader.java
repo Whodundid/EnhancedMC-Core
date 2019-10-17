@@ -1,10 +1,11 @@
 package com.Whodundid.core.enhancedGui.guiObjects;
 
-import com.Whodundid.core.enhancedGui.EnhancedGui;
 import com.Whodundid.core.enhancedGui.EnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.InnerEnhancedGui;
 import com.Whodundid.core.enhancedGui.guiObjectUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectModifyType;
+import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedTopParent;
 import com.Whodundid.core.util.miscUtil.ScreenLocation;
@@ -32,8 +33,9 @@ public class EGuiHeader extends EnhancedGuiObject {
 	protected boolean drawHeader = true;
 	
 	protected EGuiHeader() {}
-	public EGuiHeader(IEnhancedGuiObject parentIn) { this(parentIn, true, 19); }
-	public EGuiHeader(IEnhancedGuiObject parentIn, boolean drawDefaultIn, int headerHeight) {
+	public EGuiHeader(IEnhancedGuiObject parentIn) { this(parentIn, true, 19, ""); }
+	public EGuiHeader(IEnhancedGuiObject parentIn, boolean drawDefaultIn, int headerHeight) { this(parentIn, drawDefaultIn, headerHeight, ""); }
+	public EGuiHeader(IEnhancedGuiObject parentIn, boolean drawDefaultIn, int headerHeight, String titleIn) {
 		if (parentIn != null) {
 			EDimension dim = parentIn.getDimensions();
 			init(parentIn, dim.startX, dim.startY - headerHeight, dim.width, headerHeight);
@@ -41,63 +43,39 @@ public class EGuiHeader extends EnhancedGuiObject {
 		drawDefault = drawDefaultIn;
 		
 		if (drawDefault) {
-			fileUpButton = new EGuiButton(this, endX - 52, startY + 2, 16, 16, "") {
-				@Override
-				public void performAction() {
-					if (getPressedButton() == 0) { playPressSound(); if (getTopParent() != null) { getTopParent().closeGui(false); } }
-				}
-			};
+			addFileUpButton();
+			addMoveButton();
+			addCloseButton();
 			
-			moveButton = new EGuiButton(this, endX - 35, startY + 2, 16, 16, "") {
-				@Override
-				public void performAction() {
-					playPressSound();
-					if (!parent.getParent().isPositionLocked()) {
-						IEnhancedTopParent topParent = getTopParent();
-						if (getPressedButton() == 0) {
-							if (topParent.isMoving()) { topParent.clearModifyingObject(); }
-							else {
-								topParent.setModifyingObject(parent.getParent(), ObjectModifyType.Move);
-								topParent.setModifyMousePos(mX, mY);
-							}
-						} else if (getPressedButton() == 1) {
-							topParent.clearModifyingObject();
-							parent.getParent().resetPosition();
-						}
-					}
-				}
-			};
-			
-			closeButton = new EGuiButton(this, endX - 18, startY + 2, 16, 16, "") {
-				@Override
-				public void performAction() {
-					if (getPressedButton() == 0) {
-						playPressSound();
-						if (fullClose) {
-							mc.displayGuiScreen(closingGui);
-							if (mc.currentScreen == null) { mc.setIngameFocus(); }
-						} else { parent.getParent().close(); }
-					}
-				}
-			};
-			
-			fileUpButton.setButtonTexture(Resources.guiFileUpButton).setButtonSelTexture(Resources.guiFileUpButtonSel).setRunActionOnPress(true).setVisible(false);
-			moveButton.setButtonTexture(Resources.guiMoveButton).setButtonSelTexture(Resources.guiMoveButtonSel).setRunActionOnPress(true).setPersistent(true);
-			closeButton.setButtonTexture(Resources.guiCloseButton).setButtonSelTexture(Resources.guiCloseButtonSel).setRunActionOnPress(true).setPersistent(true);
-			
-			if (displayString.isEmpty()) {
-				if (getParent() instanceof EnhancedGui) { displayString = ((EnhancedGui) getParent()).getGuiName(); }
-				else {
-					displayString = getTopParent() != null ? getTopParent().getClass().getSimpleName() : "missingno";
-				}
+			if (titleIn.isEmpty()) {
+				displayString = getParent().getObjectName();
 			}
 			
 			EObjectGroup group = new EObjectGroup(getParent());
 			group.addObject(this, fileUpButton, moveButton, closeButton);
 			setObjectGroup(group);
-			
-			addObject(fileUpButton, moveButton, closeButton);
 		}
+	}
+	
+	protected EGuiHeader addFileUpButton() {
+		fileUpButton = new EGuiButton(this, endX - 52, startY + 2, 16, 16, "");
+		fileUpButton.setTextures(Resources.guiFileUpButton, Resources.guiFileUpButtonSel).setVisible(false);
+		addObject(fileUpButton);
+		return this;
+	}
+	
+	protected EGuiHeader addMoveButton() {
+		moveButton = new EGuiButton(this, endX - 35, startY + 2, 16, 16, "");
+		moveButton.setTextures(Resources.guiMoveButton, Resources.guiMoveButtonSel).setPersistent(true);
+		addObject(moveButton);
+		return this;
+	}
+	
+	protected EGuiHeader addCloseButton() {
+		closeButton = new EGuiButton(this, endX - 18, startY + 2, 16, 16, "");
+		closeButton.setTextures(Resources.guiCloseButton, Resources.guiCloseButtonSel).setPersistent(true);
+		addObject(closeButton);
+		return this;
 	}
 	
 	@Override
@@ -171,8 +149,51 @@ public class EGuiHeader extends EnhancedGuiObject {
 	}
 	
 	public EGuiHeader updateFileUpButtonVisibility() {
-		if (getTopParent() != null && getTopParent().getGuiHistory() != null && !getTopParent().getGuiHistory().isEmpty() && fileUpButton != null) { fileUpButton.setVisible(true); }
+		if (getParent() instanceof InnerEnhancedGui) {
+			InnerEnhancedGui gui = (InnerEnhancedGui) getParent();
+			if (gui != null && gui.getGuiHistory() != null && !gui.getGuiHistory().isEmpty() && fileUpButton != null) {
+				fileUpButton.setVisible(true);
+			}
+		}
+		else if (getTopParent() != null && getTopParent().getGuiHistory() != null && !getTopParent().getGuiHistory().isEmpty() && fileUpButton != null) { fileUpButton.setVisible(true); }
 		return this;
+	}
+	
+	@Override
+	public void actionPerformed(IEnhancedActionObject object) {
+		if (object == closeButton) { handleClose(); }
+		if (object == moveButton) { handleMove(); }
+		if (object == fileUpButton) { handleFileUp(); }
+	}
+	
+	protected void handleClose() {
+		if (fullClose) {
+			mc.displayGuiScreen(closingGui);
+			if (mc.currentScreen == null) { mc.setIngameFocus(); }
+		} else { parent.close(); }
+	}
+	
+	protected void handleMove() {
+		if (!parent.isPositionLocked()) {
+			IEnhancedTopParent topParent = getTopParent();
+			if (moveButton.getPressedButton() == 0) {
+				if (topParent.isMoving()) { topParent.clearModifyingObject(); }
+				else {
+					topParent.setModifyingObject(parent, ObjectModifyType.Move);
+					topParent.setModifyMousePos(mX, mY);
+				}
+			} else if (moveButton.getPressedButton() == 1) {
+				topParent.clearModifyingObject();
+				parent.resetPosition();
+			}
+		}
+	}
+	
+	protected void handleFileUp() {
+		if (getParent() instanceof InnerEnhancedGui) {
+			if (getParent() != null) { getParent().close(); }
+		}
+		else if (getTopParent() != null) { getTopParent().closeGui(false); }
 	}
 	
 	public EGuiHeader setClosingGui(GuiScreen guiIn) { closingGui = guiIn; return this; }

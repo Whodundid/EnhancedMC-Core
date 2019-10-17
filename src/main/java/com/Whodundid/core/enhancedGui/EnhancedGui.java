@@ -26,8 +26,6 @@ import com.Whodundid.core.enhancedGui.interfaces.IEnhancedTopParent;
 import com.Whodundid.core.util.chatUtil.EChatUtil;
 import com.Whodundid.core.util.miscUtil.EFontRenderer;
 import com.Whodundid.core.util.miscUtil.ScreenLocation;
-import com.Whodundid.core.util.renderUtil.CursorHelper;
-import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.StorageBox;
@@ -42,7 +40,6 @@ import java.util.Set;
 import java.util.Stack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
@@ -102,6 +99,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	protected int maxHeight = 0;
 	public int objZLevel = 0;
 	public int objectId = -1;
+	protected String objectName = "noname";
 	public boolean drawHoverText = false;
 	public String hoverText = "";
 	public long mouseHoverTime = 0l;
@@ -218,13 +216,6 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 				drawStringWithShadow("Object under mouse: " + getHighestZObjectUnderMouse(), 3, 92, 0xffbb00);
 			}
 		}
-	}
-	
-	//updateScreen
-	@Override
-	public void updateScreen() {
-		for (IEnhancedGuiObject o : guiObjects) { o.updateScreen(); }
-		super.updateScreen();
 	}
 	
 	//basic inputs
@@ -399,15 +390,21 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 		
 		initObjects();
 	}
-	@Override public void onObjectAddedToParent() {}
+	@Override public void onAdded() {}
 	
 	//main draw
 	/** Call this super to draw objects when overriding! */
 	@Override
 	public void drawObject(int mXIn, int mYIn, float ticks) {
-		guiObjects.stream().filter(o -> o.checkDraw()).forEach(o -> { GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F); o.drawObject(mX, mY, ticks); });
-		for (GuiButton b : buttonList) { b.drawButton(this.mc, mX, mY); }
-		for (GuiLabel l : labelList) { l.drawLabel(this.mc, mX, mY); }
+		try {
+			if (checkDraw()) {
+				GlStateManager.pushMatrix();
+				GlStateManager.enableBlend();
+				//EArrayList<IEnhancedGuiObject> instanceObjects = new EArrayList(guiObjects);
+				guiObjects.stream().filter(o -> o.checkDraw()).forEach(o -> { GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F); o.drawObject(mX, mY, ticks); });
+				GlStateManager.popMatrix();
+			}
+		} catch (Exception e) { e.printStackTrace(); }
 	}
 	@Override
 	public void updateCursorImage() {
@@ -420,16 +417,20 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 					oldArea = newArea;
 					switch (newArea) {
 					case top:
-					case bot: if (inside) { CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeNS)); } break;
+					//case bot: if (inside) { CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeNS)); } break;
 					case left:
-					case right: if (inside) { CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeEW)); } break;
+					//case right: if (inside) { CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeEW)); } break;
 					case topRight:
-					case botLeft: if (inside) { CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeDL)); } break;
+					//case botLeft: if (inside) { CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeDL)); } break;
 					case topLeft:
-					case botRight: if (inside) { CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeDR)); } break;
-					default: CursorHelper.setCursor(null); break;
+					//case botRight: if (inside) { CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeDR)); } break;
+					default:
+						//CursorHelper.setCursor(null);
+					break;
 					}
-				} else { CursorHelper.setCursor(null); }				
+				} else {
+					//CursorHelper.setCursor(null);
+				}				
 			}
 		}
 	}
@@ -441,6 +442,8 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	//obj ids
 	@Override public int getObjectID() { return objectId; }
 	@Override public EnhancedGui setObjectID(int idIn) { objectId = idIn; return this; }
+	@Override public String getObjectName() { return objectName; }
+	@Override public EnhancedGui setObjectName(String nameIn) { objectName = nameIn; return this; }
 	
 	//drawing checks
 	@Override public boolean checkDraw() { return persistent || visible; }
@@ -537,6 +540,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override public IEnhancedGuiObject getParent() { return parent; }
 	@Override public EnhancedGui setParent(IEnhancedGuiObject parentIn) { parent = parentIn; return this; }
 	@Override public IEnhancedTopParent getTopParent() { return StaticEGuiObject.getTopParent(this); }
+	@Override public IEnhancedGuiObject getWindowParent() { return StaticEGuiObject.getWindowParent(this); }
 	
 	//zLevel
 	@Override public int getZLevel() { return objZLevel; }
@@ -621,6 +625,8 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	
 	//close object
 	@Override public void close() { postEvent(new EventObjects(this, this, ObjectEventType.Close)); closeGui(true); }
+	@Override public void closeFull() { closeGui(true); }
+	@Override public void onClosed() {}
 	@Override public EnhancedGui setFocusedObjectOnClose(IEnhancedGuiObject objIn) { focusObjectOnClose = objIn; return this; }
 	
 	//-------------------------

@@ -31,6 +31,7 @@ public class EGuiLabel extends EnhancedGuiObject {
 	
 	@Override
 	public void drawObject(int mX, int mY, float ticks) {
+		//System.out.println(displayString);
 		if (wordWrap && wordWrappedLines != null) {
 			int i = 0;
 			for (String s : wordWrappedLines) {

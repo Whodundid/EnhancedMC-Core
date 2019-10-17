@@ -36,7 +36,7 @@ public interface IEnhancedGuiObject {
 	/** Removes all children and re-runs the initObjects method. */
 	public void reInitObjects() throws ObjectInitException;
 	/** Event called when this object has actually been added to its parent. */
-	public void onObjectAddedToParent();
+	public void onAdded();
 	
 	//main draw
 	
@@ -59,6 +59,10 @@ public interface IEnhancedGuiObject {
 	public int getObjectID();
 	/** Designates this object with the specified ID number. Useful for ordering objects and referencing objects by shorthand calls. */
 	public IEnhancedGuiObject setObjectID(int idIn);
+	/** Returns the name of this object. */
+	public String getObjectName();
+	/** Sets the name of this object. */
+	public IEnhancedGuiObject setObjectName(String nameIn);
 	
 	//drawing checks
 	
@@ -168,6 +172,8 @@ public interface IEnhancedGuiObject {
 	public IEnhancedGuiObject setParent(IEnhancedGuiObject parentIn);
 	/** Returns the top most parent object in the parent chain. */
 	public IEnhancedTopParent getTopParent();
+	/** Returns the first instance of an InnerEnhancedGui in the parent chain. */
+	public IEnhancedGuiObject getWindowParent();
 	
 	//zLevel
 	
@@ -228,11 +234,6 @@ public interface IEnhancedGuiObject {
 	/** Event fired when a pressed key is released on this object. */
 	public void keyReleased(char typedChar, int keyCode);
 	
-	//updateScreen
-	
-	/** Passing the updateScreen event from GuiScreen. */
-	public void updateScreen();
-	
 	//events
 	
 	/** Gets the EventHandler. */
@@ -255,6 +256,10 @@ public interface IEnhancedGuiObject {
 	
 	/** Removes this object and all of it's children from the immeadiate a parent. Removes any present focus locks on this object and returns focus back to the top parent. */
 	public void close();
+	/** Closes fully */
+	public void closeFull();
+	/** Event fired when object is closed. */
+	public void onClosed();
 	/** Upon closing, this object will attempt to transfer it's focus to the specified object if possible. */
 	public IEnhancedGuiObject setFocusedObjectOnClose(IEnhancedGuiObject objIn);
 }

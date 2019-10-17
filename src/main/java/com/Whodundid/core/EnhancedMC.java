@@ -2,8 +2,10 @@ package com.Whodundid.core;
 
 import com.Whodundid.core.coreSubMod.EnhancedMCMod;
 import com.Whodundid.core.debug.DebugFunctions;
+import com.Whodundid.core.enhancedGui.InnerEnhancedGui;
 import com.Whodundid.core.events.EventListener;
 import com.Whodundid.core.renderer.EnhancedMCRenderer;
+import com.Whodundid.core.renderer.RendererProxyGui;
 import com.Whodundid.core.settings.SettingsGuiMain;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubMod;
@@ -38,7 +40,7 @@ import org.lwjgl.opengl.Display;
 //Author: Hunter Bragg
 
 @Mod(modid = EnhancedMC.MODID, version = EnhancedMC.VERSION, name = EnhancedMC.NAME)
-public class EnhancedMC {
+public final class EnhancedMC {
 	
 	public static final String MODID = "enhancedmccore";
 	public static final String VERSION = "1.0";
@@ -48,14 +50,15 @@ public class EnhancedMC {
 	public static final KeyBinding debugCommand = new KeyBinding("Debug key", Keyboard.KEY_GRAVE, "EnhancedMC");
 	public static final Logger EMCLogger = LogManager.getLogger("EnhancedMC");
 	public static EFontRenderer fontRenderer;
-	private static final EnhancedMCRenderer renderer = new EnhancedMCRenderer();
+	private static final EnhancedMCRenderer renderer = EnhancedMCRenderer.getInstance();
 	public static ModdedInGameGui enhancedMCGui;
-	private EventListener eventListener;
+	private static EventListener eventListener;
 	static boolean isInitialized = false;
 	public static int updateCounter = 0;
 	public static boolean enableDebugFunctions = false;
 	public final EnhancedMCMod modInstance = new EnhancedMCMod();
 	public final Resources resources = new Resources();
+	public static boolean safeRemoteDesktopMode = false;
 	
 	@EventHandler
     private void init(FMLInitializationEvent event) {
@@ -189,13 +192,13 @@ public class EnhancedMC {
 	}
 	
 	public static void checkKeyBinds() {
-		if (openSettingsGui.isPressed()) { mc.displayGuiScreen(new SettingsGuiMain()); }
+		if (openSettingsGui.isPressed()) { openSettingsGui(); }
 		if (debugCommand.isPressed()) {
 			if (!RegisteredSubMods.isModRegistered(SubModType.HOTKEYS)) {
 				if (EnhancedMCMod.useDebugKey.get()) { DebugFunctions.runDebugFunction(0); }
 			}
-			else if (!RegisteredSubMods.getMod(SubModType.HOTKEYS).isEnabled()) {
-				if (EnhancedMCMod.useDebugKey.get()) { DebugFunctions.runDebugFunction(0); }
+			else if (EnhancedMCMod.useDebugKey.get()) {
+				DebugFunctions.runDebugFunction(0);
 			}
 		}
 	}
@@ -203,7 +206,7 @@ public class EnhancedMC {
 	public static boolean isDebugMode() { return enableDebugFunctions; }
 	public static void setDebugMode(boolean val) { enableDebugFunctions = val; }
 	
-	public EventListener getEventListener() { return eventListener; }
+	public static EventListener getEventListener() { return eventListener; }
 	public static EFontRenderer getFontRenderer() { return fontRenderer; }
 	public static ModdedInGameGui getInGameGui() { return enhancedMCGui; }
 	public static EnhancedMCRenderer getRenderer() { return renderer; }
@@ -212,6 +215,23 @@ public class EnhancedMC {
 	public static void info(String msg) { EMCLogger.log(Level.INFO, msg); }
 	public static void error(String msg) { EMCLogger.log(Level.ERROR, msg); }
 	public static void error(String msg, Throwable throwableIn) { EMCLogger.log(Level.ERROR, msg, throwableIn); }
+	public static void openSettingsGui() { displayEGui(new SettingsGuiMain()); }
+	
+	public static <T extends InnerEnhancedGui> boolean isEGuiOpen(Class<T> guiIn) {
+		return guiIn != null ? renderer.getAllChildren().stream().anyMatch(o -> o.getClass().equals(guiIn)) : false;
+	}
+	
+	public static <T extends InnerEnhancedGui> InnerEnhancedGui getWindowInstance(Class<T> guiIn) {
+		return guiIn != null ? (InnerEnhancedGui) renderer.getAllChildren().stream().filter(o -> o.getClass().equals(guiIn)).findFirst().get() : null;
+	}
+	
+	public static void displayEGui(InnerEnhancedGui guiIn) {
+		if (guiIn == null) { mc.displayGuiScreen(null); }
+		if (mc.currentScreen == null || !(mc.currentScreen instanceof RendererProxyGui)) {
+			mc.displayGuiScreen(new RendererProxyGui());
+		}
+		renderer.addObject(guiIn);
+	}
 	
 	private static SubMod getMod(String modNameIn, EArrayList<SubMod> checkList) {
 		for (SubMod m : checkList) {
@@ -219,6 +239,10 @@ public class EnhancedMC {
 		}
 		return null;
 	}
+	
+	public boolean isModRegistered(SubMod modIn) { return RegisteredSubMods.isModRegistered(modIn); }
+	public boolean isModRegistered(SubModType typeIn) { return RegisteredSubMods.isModRegistered(typeIn); }
+	public boolean isModRegistered(String modName) { return RegisteredSubMods.isModRegEn(modName); }
 	
 	protected static void createdByHunterBragg() {}
 }

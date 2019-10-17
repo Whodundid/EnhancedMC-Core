@@ -44,7 +44,14 @@ public class EGuiSlider extends EnhancedActionObject implements IEnhancedActionO
 		vertical = verticalIn;
 		defaultVal = startVal;
 		
-		if (verticalIn) {
+		setThumb();
+		thumbSize = vertical ? height / 9 : width / 9;
+		
+		setSliderValue(defaultVal);
+	}
+	
+	private void setThumb() {
+		if (vertical) {
 			thumbStartX = startX + 1;
 			thumbStartY = startY + 1;
 			thumbEndX = endX;
@@ -55,10 +62,6 @@ public class EGuiSlider extends EnhancedActionObject implements IEnhancedActionO
 			thumbEndX = startX + thumbSize;
 			thumbEndY = endY - 1;
 		}
-		
-		thumbSize = vertical ? height / 9 : width / 9;
-		
-		setSliderValue(defaultVal);
 	}
 	
 	@Override
@@ -78,9 +81,6 @@ public class EGuiSlider extends EnhancedActionObject implements IEnhancedActionO
 		
 		if (vertical && mc.fontRendererObj.getStringWidth(displayValue) > width) {
 			GlStateManager.pushMatrix();
-			//GlStateManager.translate(midX, midY, 0);
-			//System.out.println(midX + " " + midY);
-			
 			int xPos = midX;
 			int yPos = midY;
 			GlStateManager.translate(xPos, yPos, 0);
@@ -97,12 +97,26 @@ public class EGuiSlider extends EnhancedActionObject implements IEnhancedActionO
 	}
 	
 	@Override
+	public EGuiSlider resetPosition() {
+		super.resetPosition();
+		setSliderValue(sliderValue);
+		return this;
+	}
+	
+	@Override
 	public void move(int newX, int newY) {
 		thumbStartX += newX;
 		thumbStartY += newY;
 		thumbEndX += newX;
 		thumbEndY += newY;
 		super.move(newX, newY);
+	}
+	
+	@Override
+	public EGuiSlider setPosition(int newX, int newY) {
+		super.setPosition(newX, newY);
+		setSliderValue(sliderValue);
+		return this;
 	}
 	
 	@Override

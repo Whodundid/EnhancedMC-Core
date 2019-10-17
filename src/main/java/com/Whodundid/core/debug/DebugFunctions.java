@@ -21,7 +21,9 @@ import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.subMod.SubModType;
 import com.Whodundid.core.util.mathUtil.HexMath;
 import com.Whodundid.core.util.mathUtil.NumberUtil;
+import com.Whodundid.core.util.playerUtil.Direction;
 import com.Whodundid.core.util.playerUtil.PlayerFacing;
+import com.Whodundid.core.util.playerUtil.PlayerMovement;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 
 import net.minecraft.client.Minecraft;
@@ -65,8 +67,61 @@ public class DebugFunctions {
 	}
 
 	private static void debug_0() throws Throwable {
+		EnhancedMC.getRenderer().reInitObjects();
+		/*
+		Thread t = new Thread() {
+			@Override
+			public void run() {
+				try {
+					float start = mc.thePlayer.prevRotationYaw;
+					float diff = PlayerFacing.getCompassFacingDir().getDegree() - start;
+					for (int i = 0; i < 10; i++) {
+						Thread.sleep(200 / 10);
+						PlayerFacing.setFacingDir(PlayerFacing.getDegreeFacingDir() + diff / 10);
+					}
+					Thread.sleep(50);
+					
+					PlayerMovement.pressMovementKey(Direction.N);
+					PlayerMovement.setSprinting();
+					
+					Thread.sleep(100);
+					
+					for (int i = 0; i < 10; i++) {
+						Thread.sleep(120 / 10);
+						if (i == 4) { PlayerMovement.setJumping(); }
+						PlayerFacing.setFacingDir(PlayerFacing.getDegreeFacingDir() + (12.5f / 10));
+					}
+					
+					Thread.sleep(80);
+					
+					for (int i = 0; i < 20; i++) {
+						Thread.sleep(100 / 20);
+						PlayerFacing.setFacingDir(PlayerFacing.getDegreeFacingDir() + (-60.5f / 20));
+					}
+					
+					Thread.sleep(20);
+					
+					for (int i = 0; i < 100; i++) {
+						Thread.sleep(100 / 25);
+						PlayerFacing.setFacingDir(PlayerFacing.getDegreeFacingDir() + (48.0f / 100));
+						if (i == 40) {
+							PlayerMovement.setSprinting(false);
+							PlayerMovement.setJumping(false);
+						}
+						if (i == 45) {
+							PlayerMovement.unpressMovementKey(Direction.N);
+							PlayerMovement.setSneaking();
+						}
+					}
+					PlayerMovement.setSneaking(false);
+				}
+				catch (InterruptedException e) { e.printStackTrace(); }
+			}
+		};
+		t.start();
+		*/
 		
-		System.out.println(RegisteredSubMods.getMod(SubModType.HOTKEYS).isEnabled());
+		//System.out.println(RegisteredSubMods.getMod(SubModType.HOTKEYS).isEnabled());
 		/*
 		System.out.println();
 		
@@ -176,6 +231,22 @@ public class DebugFunctions {
 	}
 
 	private static void debug_1() throws Throwable {
+		Thread t = new Thread() {
+			@Override
+			public void run() {
+				try {
+					float start = mc.thePlayer.prevRotationYaw;
+					float diff = PlayerFacing.getCompassFacingDir().getDegree() - start;
+					for (int i = 0; i < 10; i++) {
+						Thread.sleep(200 / 10);
+						PlayerFacing.setFacingDir(PlayerFacing.getDegreeFacingDir() + diff / 10);
+					}
+				}
+				catch (InterruptedException e) { e.printStackTrace(); }
+			}
+		};
+		t.start();
+		
 		/*
 		 * for (int i = 0; i < mc.thePlayer.inventory.getSizeInventory(); i++) {
 		 * System.out.print(i + ": "); if (mc.thePlayer.inventory.getStackInSlot(i) !=
@@ -185,6 +256,7 @@ public class DebugFunctions {
 		 * 
 		 * }
 		 */
+		/*
 		try {
 			DisplayMode m = new DisplayMode(1918, 1013);
 			Display.setDisplayMode(m);
@@ -192,6 +264,7 @@ public class DebugFunctions {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		*/
 	}
 
 	private static void debug_2() throws Throwable {

@@ -55,7 +55,7 @@ public class EGuiRightClickMenu extends EnhancedActionObject {
 					if (getPressedButton() == 0) {
 						playPressSound();
 						instance.setSelectedObject(getDisplayString());
-						instance.getParent().actionPerformed(instance);
+						instance.actionReciever.actionPerformed(instance);
 						getTopParent().unregisterListener(instance);
 						instance.close();
 					}

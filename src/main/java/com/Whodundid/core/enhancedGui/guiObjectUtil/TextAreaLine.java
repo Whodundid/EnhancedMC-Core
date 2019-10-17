@@ -1,6 +1,7 @@
 package com.Whodundid.core.enhancedGui.guiObjectUtil;
 
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.enhancedGui.guiObjects.EGuiLabel;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextArea;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextField;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
@@ -18,6 +19,7 @@ import net.minecraft.util.ChatAllowedCharacters;
 public class TextAreaLine<obj> extends EGuiTextField {
 	
 	EGuiTextArea parentTextArea;
+	EGuiLabel numberLabel;
 	public int lineNumberColor = 0xb2b2b2;
 	public String visibleText = "";
 	protected int lineNumber = 0;
@@ -197,11 +199,6 @@ public class TextAreaLine<obj> extends EGuiTextField {
 	@Override
 	public void mouseScrolled(int change) {
 		//parentTextArea.mouseScrolled(change);
-	}
-	
-	@Override
-	public void updateScreen() {
-		super.updateScreen();
 	}
 	
 	@Override

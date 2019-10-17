@@ -52,18 +52,11 @@ public abstract class PlayerFacing {
 	}
 	
 	/**
-	 * Gets the exact degree the player is facing in from 0 to 360.
+	 * Gets the exact degree the player is facing.
 	 * @return float
 	 */
 	public static float getDegreeFacingDir() {
-		if (mc.thePlayer != null) {
-			float rotation = (mc.thePlayer.rotationYaw) % 360;
-			if (rotation < 0) {
-	            rotation += 360.0;
-	        }
-			return rotation;
-		}
-		return -1f;
+		return mc.thePlayer != null ? mc.thePlayer.rotationYaw : -1f;
 	}
 	
 	/**
@@ -208,12 +201,36 @@ public abstract class PlayerFacing {
      * Sets the players facing direction instantaneously.
      * @param float
      */
-    public static void setFacingDir(float dir) {
+    public static void setFacingDir(double dir) {
     	try {
-    		mc.getRenderViewEntity().rotationYaw = dir;
+    		mc.getRenderViewEntity().rotationYaw = (float) dir;
     	} catch (Exception e) {
     		e.printStackTrace();
-    	}    	
+    	}
+    	/*
+    	if (mc.thePlayer != null) {
+    		double curRot = mc.thePlayer.rotationYaw;
+    		double rotMod = curRot % 360;
+    		double diff = 0;
+    		dir = dir % 360;
+    		//System.out.println(dir);
+    		boolean toZero = Math.abs(rotMod) - 180 < 0;
+    		boolean isFullRot = (dir == 0 || dir == 360);
+    		
+    		if (rotMod < 0) {
+    			rotMod += 360;
+    			diff = isFullRot ? (toZero ? (360 - rotMod) : -rotMod) : dir - rotMod;
+    		}
+    		else {
+    			diff = isFullRot ? (toZero ? -rotMod : (360 - rotMod)) : dir - rotMod;
+    		}
+    		
+    		curRot += diff;
+    		
+    		System.out.println("diff: " + diff + " ; " + dir + " ; " + rotMod + " ; " + isFullRot + " " + toZero);
+    		mc.thePlayer.rotationYaw = (float) curRot;
+    	}
+    	*/
     }    
     
     public static void graduallyFaceDir(Direction dir, int speed) {

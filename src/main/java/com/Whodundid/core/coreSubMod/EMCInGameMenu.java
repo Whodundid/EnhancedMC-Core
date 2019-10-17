@@ -1,10 +1,9 @@
 package com.Whodundid.core.coreSubMod;
 
+import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.EnhancedGui;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
-import com.Whodundid.core.settings.SettingsGuiMain;
-
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.client.gui.GuiOptions;
@@ -66,7 +65,7 @@ public class EMCInGameMenu extends EnhancedGui {
 		if (object.equals(openToLan)) { mc.displayGuiScreen(new GuiShareToLan(guiInstance)); }
 		if (object.equals(options)) { mc.displayGuiScreen(new GuiOptions(guiInstance, mc.gameSettings)); }
 		if (object.equals(modOptions)) { mc.displayGuiScreen(new GuiModList(guiInstance)); }
-		if (object.equals(eSettings)) { mc.displayGuiScreen(new SettingsGuiMain()); }
+		if (object.equals(eSettings)) { EnhancedMC.openSettingsGui(); }
 		
 		if (object.equals(quitToMenu)) {
 			boolean flag = mc.isIntegratedServerRunning();

@@ -1,6 +1,5 @@
 package com.Whodundid.core.util.miscUtil;
 
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
@@ -116,8 +115,4 @@ public class EUtil {
 		} catch (Exception e) { e.printStackTrace(); }
 		return -1;
 	}
-	
-	public static void setObjectEnabled(boolean val, IEnhancedGuiObject... objs) { for (IEnhancedGuiObject o : objs) { o.setEnabled(val); } }
-	public static void setObjectVisibility(boolean val, IEnhancedGuiObject... objs) {for (IEnhancedGuiObject o : objs) { o.setVisible(val); } }
-	public static void setObjectPersistence(boolean val, IEnhancedGuiObject... objs) {for (IEnhancedGuiObject o : objs) { o.setPersistent(val); } }
 }

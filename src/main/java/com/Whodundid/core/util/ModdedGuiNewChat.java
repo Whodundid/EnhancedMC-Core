@@ -20,6 +20,7 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MathHelper;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.LogManager;
@@ -147,7 +148,7 @@ public class ModdedGuiNewChat extends GuiNewChat {
 			chatHistory.add(0, new TimedChatLine(updateCounter, chatComponent, chatLineId));
 			while (totalLines.size() > historyLength) { totalLines.remove(totalLines.size() - 1); }
 		}
-		net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new ChatLineCreatedEvent(new TimedChatLine(updateCounter, chatComponent, chatLineId)));
+		MinecraftForge.EVENT_BUS.post(new ChatLineCreatedEvent(new TimedChatLine(updateCounter, chatComponent, chatLineId)));
 	}
 
 	public void refreshChat() {

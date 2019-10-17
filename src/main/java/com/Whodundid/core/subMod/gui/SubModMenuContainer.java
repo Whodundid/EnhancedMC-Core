@@ -1,8 +1,10 @@
 package com.Whodundid.core.subMod.gui;
 
-import com.Whodundid.core.enhancedGui.EnhancedGui;
+import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.EnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.InnerEnhancedGui;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
+import com.Whodundid.core.enhancedGui.guiObjects.EGuiScrollList;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedTopParent;
@@ -12,7 +14,6 @@ import com.Whodundid.core.subMod.SubModSettings;
 import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
-import com.Whodundid.core.util.storageUtil.StorageBox;
 
 public class SubModMenuContainer extends EnhancedGuiObject {
 	
@@ -21,19 +22,21 @@ public class SubModMenuContainer extends EnhancedGuiObject {
 	EGuiButton settings, enable, info;
 	int pos = 0;
 	
-	public SubModMenuContainer(IEnhancedGuiObject parentIn, SubMod modIn, int posIn) {
+	public SubModMenuContainer(EGuiScrollList parentIn, SubMod modIn, int posIn) { this(parentIn, modIn, posIn, 0); }
+	public SubModMenuContainer(EGuiScrollList parentIn, SubMod modIn, int posIn, int offset) {
 		init(parentIn);
 		mod = modIn;
 		pos = posIn;
 		
 		topParent = getTopParent();
 		
-		EDimension d = parent.getDimensions();
+		EDimension d = parentIn.getListDimensions();
+		
 		int dist = 22;
 		
-		settings = new EGuiButton(this, d.startX + 6, d.startY + 3 + (pos * dist), 110, 20, mod != null ? mod.getName() : "ERROR");
-		enable = new EGuiButton(this, settings.endX + 11, d.startY + 3 + (pos * dist), 50, 20, mod != null ? mod.isDisableable() ? (mod.isEnabled() ? "Enabled" : "Disabled") : "Enabled" : "ERROR");
-		info = new EGuiButton(this, enable.endX + 4, d.startY + 3 + (pos * dist), 20, 20);
+		settings = new EGuiButton(this, d.startX + 6, d.startY + 3 + (pos * dist) + offset, 110, 20, mod != null ? mod.getName() : "ERROR");
+		enable = new EGuiButton(this, settings.endX + 11, d.startY + 3 + (pos * dist) + offset, 50, 20, mod != null ? mod.isDisableable() ? (mod.isEnabled() ? "Enabled" : "Disabled") : "Enabled" : "ERROR");
+		info = new EGuiButton(this, enable.endX + 4, d.startY + 3 + (pos * dist) + offset, 20, 20);
 		
 		info.setTextures(Resources.guiInfo, Resources.guiInfoSel);
 		
@@ -43,7 +46,7 @@ public class SubModMenuContainer extends EnhancedGuiObject {
 		enable.setDisplayStringColor(mod != null ? (mod.isEnabled() ? 0x55ff55 : 0xff5555) : 0xff5555);
 		enable.setDisplayString(mod.isIncompatible() ? "Error" : enable.getDisplayString());
 		
-		addObject(settings, enable, info);
+		parentIn.addObjectToList(settings, enable, info);
 	}
 	
 	@Override
@@ -56,10 +59,20 @@ public class SubModMenuContainer extends EnhancedGuiObject {
 	public int getHeight() { return settings.height; }
 	
 	private void openSettings() {
-		EDimension d = topParent.getDimensions();
-		EnhancedGui gui = mod.getMainGui(true, new StorageBox(d.startX, d.startY), mc.currentScreen != null && mc.currentScreen instanceof EnhancedGui ? (EnhancedGui) mc.currentScreen : null);
-		if (gui != null) { mc.displayGuiScreen(gui); }
-		else { displayError(SubModErrorType.NOGUI); }
+		try {
+			EDimension d = topParent.getDimensions();
+			InnerEnhancedGui gui = mod.getMainGui();
+			IEnhancedGuiObject windowObj = getWindowParent();
+			if (gui != null && windowObj instanceof InnerEnhancedGui) {
+				InnerEnhancedGui window = (InnerEnhancedGui) windowObj;
+				window.close();
+				window.getGuiHistory().add(window);
+				gui.setGuiHistory(window.getGuiHistory());
+				EnhancedMC.displayEGui(gui);
+				gui.setPosition(window.startX, window.startY);
+			}
+			else { displayError(SubModErrorType.NOGUI); }
+		} catch (Exception e) { System.out.println("Unable to open: " + mod.getName() + "'s main gui!"); displayError(SubModErrorType.NOGUI, e); }
 	}
 	
 	private void toggleEnable() {

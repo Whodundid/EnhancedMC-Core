@@ -28,6 +28,7 @@ public class ModCalloutEvent extends Event {
 	public ModCalloutEvent setResponseObject(Object objectIn) { responseObject = objectIn; return this; }
 	
 	public boolean check() { return hasResponded; }
+	public boolean checkMessage(String testIn) { return callerMessage.equals(testIn); }
 	public String getResponse() { return response; }
 	public String getCallerMessage() { return callerMessage; }
 	public Object getResponseObject() { return responseObject; }

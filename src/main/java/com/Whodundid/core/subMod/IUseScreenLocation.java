@@ -1,6 +1,6 @@
 package com.Whodundid.core.subMod;
 
-import com.Whodundid.core.enhancedGui.EnhancedGui;
+import com.Whodundid.core.enhancedGui.InnerEnhancedGui;
 import com.Whodundid.core.util.miscUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 
@@ -14,5 +14,5 @@ public interface IUseScreenLocation {
 	public void setLocation(int xIn, int yIn);
 	public StorageBox<Integer, Integer> getLocation();
 	public ScreenLocation getScreenLocation();
-	public EnhancedGui getScreenLocationGui();
+	public InnerEnhancedGui getScreenLocationGui();
 }

@@ -93,10 +93,11 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	protected boolean resizeable = false;
 	protected int minWidth = 0;
 	protected int minHeight = 0;
-	protected int maxWidth = 0;
-	protected int maxHeight = 0;
+	protected int maxWidth = Integer.MAX_VALUE;
+	protected int maxHeight = Integer.MAX_VALUE;
 	public int objZLevel = 0;
 	public int objectId = -1;
+	protected String objectName = "noname";
 	public boolean drawHoverText = false;
 	public String hoverText = "";
 	public int startXPos, startYPos, startWidth, startHeight;
@@ -108,6 +109,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	public void init(IEnhancedGuiObject objIn) {
 		parent = objIn;
 		objectInstance = this;
+		res = new ScaledResolution(mc);
 	}
 	
 	public void init(IEnhancedGuiObject objIn, int xIn, int yIn) {
@@ -117,6 +119,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 		startXPos = startX;
 		startYPos = startY;
 		objectInstance = this;
+		res = new ScaledResolution(mc);
 	}
 	
 	public void init(IEnhancedGuiObject objIn, int xIn, int yIn, int widthIn, int heightIn) { init(objIn, xIn, yIn, widthIn, heightIn, -1); }
@@ -129,6 +132,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 		startHeight = heightIn;
 		setDimensions(xIn, yIn, widthIn, heightIn);
 		objectInstance = this;
+		res = new ScaledResolution(mc);
 	}
 	
 	//----------------
@@ -160,7 +164,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 		initObjects();
 		hasBeenInitialized = true;
 	}
-	@Override public void onObjectAddedToParent() {}
+	@Override public void onAdded() {}
 	
 	//main draw
 	@Override
@@ -170,6 +174,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 			if (checkDraw()) {
 				GlStateManager.pushMatrix();
 				GlStateManager.enableBlend();
+				//EArrayList<IEnhancedGuiObject> instanceObjects = new EArrayList(guiObjects);
 				guiObjects.stream().filter(o -> o.checkDraw()).forEach(o -> { GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F); o.drawObject(mX, mY, ticks); });
 				GlStateManager.popMatrix();
 			}
@@ -177,7 +182,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	}
 	@Override
 	public void updateCursorImage() {
-		if (isResizeable()) {
+		if (isResizeable() && !EnhancedMC.safeRemoteDesktopMode) {
 			int rStartY = hasHeader() ? getHeader().startY : startY;
 			boolean inside = (mX >= startX && mX <= endX && mY >= rStartY && mY <= endY);
 			ScreenLocation newArea = getEdgeAreaMouseIsOn();
@@ -186,16 +191,22 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 					oldArea = newArea;
 					switch (newArea) {
 					case top:
-					case bot: if (inside) { CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeNS)); } break;
+					case bot: if (inside) { CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeNS)); }
+					break;
 					case left:
-					case right: if (inside) { CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeEW)); } break;
+					case right: if (inside) { CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeEW)); }
+					break;
 					case topRight:
-					case botLeft: if (inside) { CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeDL)); } break;
+					case botLeft: if (inside) { CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeDL)); }
+					break;
 					case topLeft:
-					case botRight: if (inside) { CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeDR)); } break;
+					case botRight: if (inside) { CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeDR)); }
+					break;
 					default: CursorHelper.setCursor(null); break;
 					}
-				} else { CursorHelper.setCursor(null); }				
+				} else {
+					CursorHelper.setCursor(null);
+				}				
 			}
 		}
 	}
@@ -207,6 +218,8 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	//obj ids
 	@Override public int getObjectID() { return objectId; }
 	@Override public EnhancedGuiObject setObjectID(int idIn) { objectId = idIn; return this; }
+	@Override public String getObjectName() { return objectName; }
+	@Override public EnhancedGuiObject setObjectName(String nameIn) { objectName = nameIn; return this; }
 	
 	//drawing checks
 	@Override public boolean checkDraw() { return persistent || visible; }
@@ -280,6 +293,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	@Override public IEnhancedGuiObject getParent() { return parent; }
 	@Override public EnhancedGuiObject setParent(IEnhancedGuiObject parentIn) { parent = parentIn; return this; }
 	@Override public IEnhancedTopParent getTopParent() { return StaticEGuiObject.getTopParent(this); }
+	@Override public IEnhancedGuiObject getWindowParent() { return StaticEGuiObject.getWindowParent(this); }
 	
 	//zLevel
 	@Override
@@ -364,9 +378,6 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	@Override public void keyPressed(char typedChar, int keyCode) { StaticEGuiObject.keyPressed(this, typedChar, keyCode); }
 	@Override public void keyReleased(char typedChar, int keyCode) { StaticEGuiObject.keyReleased(this, typedChar, keyCode); }
 	
-	//updateScreen
-	@Override public void updateScreen() { guiObjects.forEach(o -> o.updateScreen()); }
-	
 	//events
 	@Override public ObjectEventHandler getEventHandler() { return eventHandler; }
 	@Override public EnhancedGuiObject registerListener(IEnhancedGuiObject objIn) { if (eventHandler != null) { eventHandler.registerObject(objIn); } return this; }
@@ -385,6 +396,12 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 		if (focusObjectOnClose != null) { focusObjectOnClose.requestFocus(); }
 		parent.removeObject(this);
 	}
+	@Override
+	public void closeFull() {
+		mc.displayGuiScreen(null);
+		EnhancedMC.getRenderer().reInitObjects();
+	}
+	@Override public void onClosed() {}
 	@Override public EnhancedGuiObject setFocusedObjectOnClose(IEnhancedGuiObject objIn) { focusObjectOnClose = objIn; return this; }
 	
 	//-------------------------

@@ -3,7 +3,7 @@ package com.Whodundid.core.enhancedGui.guiObjects;
 import com.Whodundid.core.enhancedGui.EnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
-import com.Whodundid.core.util.playerUtil.Direction;
+import com.Whodundid.core.util.miscUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import net.minecraft.util.MathHelper;
@@ -16,7 +16,7 @@ import net.minecraft.util.MathHelper;
 
 public class EGuiScrollBar extends EnhancedGuiObject {
 	
-	public boolean vertical = true;
+	public boolean vertical = false;
 	public int scrollBarThickness = 3;
 	public int thumbSize = 50;
 	public int scrollPos = 0;
@@ -31,35 +31,38 @@ public class EGuiScrollBar extends EnhancedGuiObject {
 	private StorageBox<Integer, Integer> mousePos = new StorageBox(0, 0);
 	
 	public EGuiScrollBar(IEnhancedGuiObject parentIn, int visibleAmountIn, int highValIn) {
-		this(parentIn, visibleAmountIn, highValIn, 0, 0, true, Direction.E, false); 
+		this(parentIn, visibleAmountIn, highValIn, -1, -1, ScreenLocation.right); 
 	}
 	public EGuiScrollBar(IEnhancedGuiObject parentIn, int visibleAmountIn, int highValIn, int widthIn, int heightIn) {
-		this(parentIn, visibleAmountIn, highValIn, widthIn, heightIn, true, Direction.E, true);
+		this(parentIn, visibleAmountIn, highValIn, widthIn, heightIn, ScreenLocation.right);
 	}
-	public EGuiScrollBar(IEnhancedGuiObject parentIn, int visibleAmountIn, int highValIn, boolean verticalIn, Direction sideIn) {
-		this(parentIn, visibleAmountIn, highValIn, 0, 0, verticalIn, sideIn, false);
+	public EGuiScrollBar(IEnhancedGuiObject parentIn, int visibleAmountIn, int highValIn, ScreenLocation sideIn) {
+		this(parentIn, visibleAmountIn, highValIn, -1, -1, sideIn);
 	}
-	public EGuiScrollBar(IEnhancedGuiObject parentIn, int visibleAmountIn, int highValIn, int widthIn, int heightIn, boolean verticalIn, Direction sideIn) {
-		this(parentIn, visibleAmountIn, highValIn, widthIn, heightIn, true, sideIn, true);
-	}
-	protected EGuiScrollBar(IEnhancedGuiObject parentIn, int visibleAmountIn, int highValIn, int widthIn, int heightIn, boolean verticalIn, Direction sideIn, boolean customPosition) {
+	public EGuiScrollBar(IEnhancedGuiObject parentIn, int visibleAmountIn, int highValIn, int widthIn, int heightIn, ScreenLocation sideIn) {
 		EDimension dim = parentIn.getDimensions();
-		if (verticalIn) {
-			scrollBarThickness = customPosition ? widthIn : scrollBarThickness;
-			switch (sideIn) {
-			case E: init(parentIn, dim.endX - scrollBarThickness - 1, dim.startY + 1, scrollBarThickness, (customPosition ? heightIn : dim.height) - 2); break;
-			case W: init(parentIn, dim.startX + 1, dim.startY + 1, scrollBarThickness, (customPosition ? heightIn : dim.height) - 5); break;
-			default: init(parentIn, dim.endX - scrollBarThickness - 1, dim.startY + 1, scrollBarThickness, dim.height - 2 - scrollBarThickness); break;
-			}
-		} else {
-			switch (sideIn) {
-			case N: init(parentIn, dim.startX + 1, dim.startY + 1, dim.width - 2 - scrollBarThickness, scrollBarThickness); break;
-			case S: init(parentIn, dim.startX + 1, dim.endY - scrollBarThickness - 1, dim.width - 2 - scrollBarThickness, scrollBarThickness); break;
-			default: init(parentIn, dim.startX + 1, dim.endY - scrollBarThickness - 1, dim.width - 2 - scrollBarThickness, scrollBarThickness); break;
-			}
+		
+		if (sideIn == ScreenLocation.top || sideIn == ScreenLocation.bot) { vertical = false; }
+		else { vertical = true; }
+		
+		int sWidth = vertical ? (widthIn < 0 ? scrollBarThickness : widthIn) : dim.width - 2;
+		int sHeight = vertical ? (heightIn < 0 ? dim.height - 2 : heightIn) : scrollBarThickness;
+		
+		switch (sideIn) {
+		case top: init(parentIn, dim.startX + 1, dim.startY + 1, sWidth, sHeight); break;
+		case bot: init(parentIn, dim.startX + 1, dim.endY - scrollBarThickness - 1, sWidth, sHeight); break;
+		case right: init(parentIn, dim.endX - scrollBarThickness - 1, dim.startY + 1, sWidth, sHeight); break;
+		case left: init(parentIn, dim.startX + 1, dim.startY + 1, sWidth, sHeight); break;
+		default: init(parentIn, dim.endX - scrollBarThickness - 1, dim.startY + 1, sWidth, sHeight); break;
 		}
 		
-		if (verticalIn) {
+		setThumb();
+		
+		setScrollBarValues(visibleAmountIn, highValIn, vertical ? height : width);
+	}
+	
+	private void setThumb() {
+		if (vertical) {
 			thumbStartX = endX - scrollBarThickness;
 			thumbStartY = startY;
 			thumbEndX = endX;
@@ -70,10 +73,6 @@ public class EGuiScrollBar extends EnhancedGuiObject {
 			thumbEndX = startX + thumbSize;
 			thumbEndY = startY + scrollBarThickness;
 		}
-		
-		vertical = verticalIn;
-		
-		setScrollBarValues(visibleAmountIn, highValIn, verticalIn ? height : width);
 	}
 	
 	@Override
@@ -90,6 +89,13 @@ public class EGuiScrollBar extends EnhancedGuiObject {
 		thumbEndX += newX;
 		thumbEndY += newY;
 		super.move(newX, newY);
+	}
+	
+	@Override
+	public EGuiScrollBar setPosition(int newX, int newY) {
+		super.setPosition(newX, newY);
+		setScrollBarPos(scrollPos);
+		return this;
 	}
 	
 	@Override
@@ -159,6 +165,7 @@ public class EGuiScrollBar extends EnhancedGuiObject {
 		return (mX >= thumbStartX && mX <= thumbEndX && mY >= thumbStartY && mY <= thumbEndY);
 	}
 	
+	public EGuiScrollBar reset() { setScrollBarPos(0); return this; }
 	public boolean drawVertical() { return vertical; }
 	public boolean isThumbRendered() { return renderThumb; }
 	public int getScrollBarThickness() { return scrollBarThickness; }
@@ -194,10 +201,15 @@ public class EGuiScrollBar extends EnhancedGuiObject {
 	}
 	
 	private void calculateScrollPos() {
-		double relativeThumbPos = MathHelper.clamp_double((double)(thumbStartY - startY) / (height - thumbSize), 0f, 1f);
+		double relativeThumbPos = 0;
+		if (vertical) {
+			relativeThumbPos = MathHelper.clamp_double((double)(thumbStartY - startY) / (height - thumbSize), 0f, 1f);
+		}
+		else {
+			relativeThumbPos = MathHelper.clamp_double((double)(thumbStartX - startX) / (width - thumbSize), 0f, 1f);
+		}
 		double val = visibleAmount + (highVal - visibleAmount) * relativeThumbPos;
 		scrollPos = (int) Math.ceil(val);
-		//System.out.println("hello: " + scrollPos);
 	}
 	
 	private void recalculateInterval() {
@@ -211,7 +223,7 @@ public class EGuiScrollBar extends EnhancedGuiObject {
 	
 	private void setScrollBarValues(int visibleAmountIn, int highValIn, int visibleSize) {
 		visibleAmount = visibleAmountIn;
-		highVal = Math.max(highValIn, visibleAmount + 1);
+		highVal = Math.max(highValIn, visibleAmount);
 		double val = 1.0;
 		if (highVal > visibleAmount) { val = (double) visibleAmount / (double) highVal; }
 		thumbSize = (int) ((vertical ? height : width) * val);
@@ -221,9 +233,5 @@ public class EGuiScrollBar extends EnhancedGuiObject {
 		blockIncrement = Math.max((int)(visibleSize * 0.9), 1);
 		recalculateInterval();
 		setScrollBarPos(scrollPos);
-	}
-	
-	private void adjustThumbSize() {
-		
 	}
 }

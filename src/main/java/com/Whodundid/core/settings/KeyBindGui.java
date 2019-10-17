@@ -2,27 +2,29 @@ package com.Whodundid.core.settings;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
-import com.Whodundid.core.enhancedGui.EnhancedGui;
+import com.Whodundid.core.enhancedGui.InnerEnhancedGui;
 import com.Whodundid.core.enhancedGui.guiObjectUtil.TextAreaLine;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextArea;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
+import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
 
-public class KeyBindGui extends EnhancedGui {
+public class KeyBindGui extends InnerEnhancedGui {
 	
 	public KeyBindGui() { super(); }
-	public KeyBindGui(GuiScreen oldGui) { super(oldGui); }
-	public KeyBindGui(int posX, int posY) { super(posX, posY); }
-	public KeyBindGui(int posX, int posY, GuiScreen oldGui) { super(posX, posY, oldGui); }
+	public KeyBindGui(Object oldGuiIn) { super(oldGuiIn); }
+	public KeyBindGui(IEnhancedGuiObject parentIn) { super(parentIn); }
+	public KeyBindGui(IEnhancedGuiObject parentIn, Object oldGuiIn) { super(parentIn, oldGuiIn); }
+	public KeyBindGui(IEnhancedGuiObject parentIn, int posX, int posY) { super(parentIn, posX, posY); }
+	public KeyBindGui(IEnhancedGuiObject parentIn, int posX, int posY, Object oldGuiIn) { super(parentIn, posX, posY, oldGuiIn); }
 	
 	EGuiTextArea keyList;
 	String description = "";
@@ -35,7 +37,7 @@ public class KeyBindGui extends EnhancedGui {
 	
 	@Override
 	public void initGui() {
-		setGuiName("Minecraft Controls");
+		setObjectName("Minecraft Controls");
 		centerObjectWithSize(380, 256);
 		super.initGui();
 	}
@@ -230,13 +232,8 @@ public class KeyBindGui extends EnhancedGui {
 	
 	@Override
 	public void keyPressed(char typedChar, int keyCode) {
-		
-	}
-	
-	@Override
-	public void keyTyped(char typedChar, int keyCode) {
 		if (!changing) {
-			if (keyCode == 1) { closeGui(true); }
+			if (keyCode == 1) { close(); }
 		}
 	}
 }

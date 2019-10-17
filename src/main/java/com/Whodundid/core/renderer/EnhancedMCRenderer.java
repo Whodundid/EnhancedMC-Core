@@ -12,19 +12,18 @@ import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventKeyboard;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventModify;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventMouse;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventObjects;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventRedraw;
 import com.Whodundid.core.enhancedGui.guiUtil.events.ObjectEvent;
 import com.Whodundid.core.enhancedGui.guiUtil.events.ObjectEventHandler;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.FocusType;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.KeyboardType;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.MouseType;
-import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectEventType;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectModifyType;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedTopParent;
 import com.Whodundid.core.events.emcEvents.ModCalloutEvent;
+import com.Whodundid.core.settings.SettingsGuiMain;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubModType;
 import com.Whodundid.core.util.miscUtil.ScreenLocation;
@@ -47,7 +46,7 @@ import org.lwjgl.input.Keyboard;
 public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	
 	protected static Minecraft mc = Minecraft.getMinecraft();
-	public EnhancedMCRenderer instance;
+	public static EnhancedMCRenderer instance;
 	protected ScaledResolution res;
 	protected IEnhancedGuiObject modifyingObject;
 	protected IEnhancedGuiObject objectRequestingFocus, focusedObject, defaultFocusObject, focusLockObject;
@@ -72,8 +71,13 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	public int mX = 0, mY = 0;
 	protected boolean hasProxy = false;
 	protected IRendererProxy proxy;
+	protected RendererRCM rcm = null;
 	
-	public EnhancedMCRenderer() {
+	public static EnhancedMCRenderer getInstance() {
+		return instance == null ? instance = new EnhancedMCRenderer() : instance;
+	}
+	
+	private EnhancedMCRenderer() {
 		res = new ScaledResolution(mc);
 		initObjects();
 	}
@@ -104,9 +108,10 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	@Override
 	public void reInitObjects() {
 		guiObjects.clear();
+		addObject(new SettingsGuiMain(this));
 		initObjects();
 	}
-	@Override public void onObjectAddedToParent() {}
+	@Override public void onAdded() {}
 	
 	//main draw
 	@Override
@@ -115,6 +120,7 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 		updateBeforeNextDraw(mXIn, mYIn);
 		GlStateManager.pushMatrix();
 		GlStateManager.enableBlend();
+		//EArrayList<IEnhancedGuiObject> instanceObjects = new EArrayList(guiObjects);
 		guiObjects.stream().filter(o -> o.checkDraw()).forEach(o -> { GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F); o.drawObject(mX, mY, ticks); });
 		if (EnhancedMC.isDebugMode() && !mc.gameSettings.showDebugInfo) {
 			drawStringWithShadow("TopParent: " + getTopParent(), 3, 2, 0x70f3ff);
@@ -123,8 +129,16 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 														((EGuiButton) focusedObject).getDisplayString()), 3, 12, 0x70f3ff);
 			}
 			else { drawStringWithShadow("FocuedObject: " + focusedObject, 3, 12, 0x70f3ff); }
-			drawStringWithShadow("objs: " + guiObjects, 3, 22, 0x70f3ff);
-			drawStringWithShadow("ModifyingObject & type: (" + modifyingObject + " : " + modifyType + ")", 3, 32, 0x70f3ff);
+			if (focusLockObject instanceof EGuiButton) {
+				drawStringWithShadow("FocusLockObject: " + (((EGuiButton) focusLockObject).getDisplayString().isEmpty() ? focusedObject : "EGuiButton: " +
+														((EGuiButton) focusLockObject).getDisplayString()), 3, 22, 0x70f3ff);
+			}
+			else { drawStringWithShadow("FocusLockObject: " + focusLockObject, 3, 22, 0x70f3ff); }
+			drawStringWithShadow("objs: " + guiObjects, 3, 32, 0x70f3ff);
+			drawStringWithShadow("ModifyingObject & type: (" + modifyingObject + " : " + modifyType + ")", 3, 42, 0x70f3ff);
+			drawStringWithShadow("Object under mouse: " + getHighestZObjectUnderMouse(), 3, 52, 0xffbb00);
+			
+			drawStringWithShadow("(" + mX + ", " + mY + ")", 3, 62, 0xffbb00);
 		}
 		GlStateManager.popMatrix();
 	}
@@ -137,6 +151,8 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	//obj ids;
 	@Override public int getObjectID() { return 0; }
 	@Override public EnhancedMCRenderer setObjectID(int idIn) { return this; }
+	@Override public String getObjectName() { return "EMC Renderer"; }
+	@Override public EnhancedMCRenderer setObjectName(String nameIn) { return this; }
 	
 	//drawing checks
 	@Override public boolean checkDraw() { return visible; }
@@ -195,6 +211,7 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	@Override public IEnhancedGuiObject getParent() { return this; }
 	@Override public EnhancedMCRenderer setParent(IEnhancedGuiObject parentIn) { return this; }
 	@Override public IEnhancedTopParent getTopParent() { return this; }
+	@Override public IEnhancedGuiObject getWindowParent() { return this; }
 	
 	//zLevel
 	@Override public int getZLevel() { return 0; }
@@ -257,7 +274,16 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 				focusQueue.add(new EventFocus(this, underMouse, FocusType.MousePress, button, mX, mY));
 			}
 		}
-		else { clearFocusedObject(); }
+		else {
+			clearFocusedObject();
+			if (button == 0) {
+				if (rcm != null) { removeObject(rcm); rcm = null; }
+			}
+			if (button == 1) {
+				if (rcm != null) { removeObject(rcm); }
+				addObject(rcm = new RendererRCM(this, mX, mY));
+			}
+		}
 	}
 	@Override
 	public void mouseReleased(int mX, int mY, int button) {
@@ -286,9 +312,10 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 				}
 			}
 		}
-	}
+	} 
 	@Override
 	public void keyPressed(char typedChar, int keyCode) {
+		if (keyCode == 1) { guiObjects.clear(); }
 		if (eventHandler != null) { eventHandler.processEvent(new EventKeyboard(this, typedChar, keyCode, KeyboardType.Pressed)); }
 		if (focusedObject != null && focusedObject != this) { focusedObject.keyPressed(Keyboard.getEventCharacter(), Keyboard.getEventKey()); }
 	}
@@ -296,9 +323,6 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 		if (eventHandler != null) { eventHandler.processEvent(new EventKeyboard(this, typedChar, keyCode, KeyboardType.Released)); }
 		if (focusedObject != null && focusedObject != this) { focusedObject.keyReleased(Keyboard.getEventCharacter(), Keyboard.getEventKey()); }
 	}
-	
-	//updateScreen
-	@Override public void updateScreen() { for (IEnhancedGuiObject o : guiObjects) { o.updateScreen(); } }
 	
 	//events
 	@Override public ObjectEventHandler getEventHandler() { return eventHandler; }
@@ -311,7 +335,9 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	@Override public void actionPerformed(IEnhancedActionObject object) { postEvent(new EventAction(this, object)); }
 	
 	//close object
-	@Override public void close() { postEvent(new EventObjects(this, this, ObjectEventType.Close)); }
+	@Override public void close() {}
+	@Override public void closeFull() {}
+	@Override public void onClosed() {}
 	@Override public EnhancedMCRenderer setFocusedObjectOnClose(IEnhancedGuiObject objIn) { System.out.println("FOOL! Dagoth Ur cannot be closed, I am a god!"); return this; }
 	
 	//-------------------------

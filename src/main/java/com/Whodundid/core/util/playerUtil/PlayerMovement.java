@@ -36,7 +36,10 @@ public class PlayerMovement {
 	public static void setJumping(boolean state) { KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), state); }
 	
 	public static void setSprinting() { setSprinting(true); }	
-	public static void setSprinting(boolean state) { isSprinting = state; }
+	public static void setSprinting(boolean state) {
+		isSprinting = state;
+		KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), state);
+	}
 	
 	public static void stopMovement() {
 		KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), false);

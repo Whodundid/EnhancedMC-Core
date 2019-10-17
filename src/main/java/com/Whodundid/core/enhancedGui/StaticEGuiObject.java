@@ -50,8 +50,24 @@ public class StaticEGuiObject {
 				default: break;
 				}
 			}
+			if (w > obj.getMaximumWidth()) {
+				w = obj.getMaximumWidth();
+				switch (areaIn) {
+				case right: case topRight: case botRight: x = d.startX; break;
+				case left: case topLeft: case botLeft: x = d.endX - w; break;
+				default: break;
+				}
+			}
 			if (h < obj.getMinimumHeight()) {
 				h = obj.getMinimumHeight();
+				switch (areaIn) {
+				case top: case topRight: case topLeft: y = d.endY - h; break;
+				case bot: case botRight: case botLeft: y = d.startY; break;
+				default: break;
+				}
+			}
+			if (h > obj.getMaximumHeight()) {
+				h = obj.getMaximumHeight();
 				switch (areaIn) {
 				case top: case topRight: case topLeft: y = d.endY - h; break;
 				case bot: case botRight: case botLeft: y = d.startY; break;
@@ -92,11 +108,14 @@ public class StaticEGuiObject {
 		EDimension d = obj.getDimensions();
 		StorageBox<Integer, Integer> loc = new StorageBox(d.startX, d.startY);
 		StorageBoxHolder<IEnhancedGuiObject, StorageBox<Integer, Integer>> previousLocations = new StorageBoxHolder();
-		for (IEnhancedGuiObject o : obj.getImmediateChildren()) {
+		EArrayList<IEnhancedGuiObject> objs = new EArrayList();
+		objs.addAll(obj.getImmediateChildren());
+		objs.addAll(obj.getObjectsToBeAdded());
+		for (IEnhancedGuiObject o : objs) {
 			previousLocations.add(o, new StorageBox(o.getDimensions().startX - loc.getObject(), o.getDimensions().startY - loc.getValue()));
 		}
 		obj.setDimensions(newX, newY, d.width, d.height);
-		for (IEnhancedGuiObject o : obj.getImmediateChildren()) {
+		for (IEnhancedGuiObject o : objs) {
 			StorageBox<Integer, Integer> oldLoc = previousLocations.getBoxWithObj(o).getValue();
 			o.setPosition(newX + oldLoc.getObject(), newY + oldLoc.getValue());
 		}
@@ -136,31 +155,42 @@ public class StaticEGuiObject {
 	public static void addObject(IEnhancedGuiObject parent, IEnhancedGuiObject... objsIn) {
 		EArrayList<IEnhancedGuiObject> addingObjects = new EArrayList();
 		for (IEnhancedGuiObject o : objsIn) {
-			if (o != null) {
-				if (o != parent && parent.getImmediateChildren().notContains(o) && parent.getObjectsToBeAdded().notContains(o)) {
-					if (o instanceof EGuiHeader && parent.hasHeader()) { 
-						try { throw new HeaderAlreadyExistsException(parent.getHeader()); } catch (HeaderAlreadyExistsException e) { e.printStackTrace(); }
+			try {
+				if (o != null) {
+					if (o != parent && parent.getImmediateChildren().notContains(o) && parent.getObjectsToBeAdded().notContains(o)) {
+					//if (o != parent && parent.getImmediateChildren().notContains(o)) {
+						if (o instanceof EnhancedGui) { continue; }
+						if (o instanceof EGuiHeader && parent.hasHeader()) { 
+							throw new HeaderAlreadyExistsException(parent.getHeader());
+						}
+						try {
+							if (o instanceof InnerEnhancedGui) { ((InnerEnhancedGui) o).initGui(); }
+							o.setParent(parent).initObjects();
+							o.setZLevel(parent.getZLevel() + o.getZLevel() + 1);
+							if (parent.isBoundaryEnforced()) { o.setBoundaryEnforcer(parent.getBoundaryEnforcer()); }
+							o.completeInitialization();
+						} catch (ObjectInitException e) { e.printStackTrace(); }
+						addingObjects.add(o);
+						//parent.getImmediateChildren().add(o);
+						//o.onAdded();
+						//parent.postEvent(new EventObjects(parent, o, ObjectEventType.ObjectAdded));
 					}
-					if (o instanceof EnhancedGui) {
-						ScaledResolution scaledresolution = new ScaledResolution(Minecraft.getMinecraft());
-			            int i = scaledresolution.getScaledWidth();
-			            int j = scaledresolution.getScaledHeight();
-			            ((EnhancedGui) o).setWorldAndResolution(Minecraft.getMinecraft(), i, i);
-					}
-					try {
-						o.setParent(parent).initObjects();
-						o.setZLevel(parent.getZLevel() + o.getZLevel() + 1);
-						if (o instanceof InnerEnhancedGui) { ((InnerEnhancedGui) o).initGui(); }
-						if (parent.isBoundaryEnforced()) { o.setBoundaryEnforcer(parent.getBoundaryEnforcer()); }
-						o.completeInitialization();
-					} catch (ObjectInitException e) { e.printStackTrace(); }
-					addingObjects.add(o);
 				}
-			}
+			} catch (HeaderAlreadyExistsException e) { e.printStackTrace(); }
 		}
 		parent.getObjectsToBeAdded().addAll(addingObjects);
 	}
-	public static void removeObject(IEnhancedGuiObject parent, IEnhancedGuiObject... objsIn) { parent.getObjectsToBeRemoved().addAll(objsIn); }
+	public static void removeObject(IEnhancedGuiObject parent, IEnhancedGuiObject... objsIn) {
+		//for (IEnhancedGuiObject o : objsIn) {
+		//	if (o != null && parent.getImmediateChildren().contains(o)) {
+		//		o.onClosed();
+		//		o.getImmediateChildren().remove(o);
+		//		o.postEvent(new EventObjects(parent, o, ObjectEventType.ObjectRemoved));
+		//	}
+		//}
+		
+		parent.getObjectsToBeRemoved().addAll(objsIn);
+	}
 	public static EArrayList<IEnhancedGuiObject> getAllChildren(IEnhancedGuiObject obj) {
 		EArrayList<IEnhancedGuiObject> foundObjs = new EArrayList();
 		EArrayList<IEnhancedGuiObject> objsWithChildren = new EArrayList();
@@ -203,6 +233,14 @@ public class StaticEGuiObject {
 		}
 		return obj instanceof IEnhancedTopParent ? (IEnhancedTopParent) obj : null;
 	}
+	public static IEnhancedGuiObject getWindowParent(IEnhancedGuiObject obj) {
+		IEnhancedGuiObject parentObject = obj.getParent();
+		while (parentObject != null && !(parentObject instanceof IEnhancedTopParent)) {
+			if (parentObject instanceof InnerEnhancedGui) { return parentObject; }
+			if (parentObject.getParent() != null) { parentObject = parentObject.getParent(); }
+		}
+		return obj instanceof InnerEnhancedGui ? obj : obj.getTopParent();
+	}
 	
 	//mouse checks
 	public static ScreenLocation getEdgeAreaMouseIsOn(IEnhancedGuiObject objIn, int mX, int mY) {
@@ -238,6 +276,8 @@ public class StaticEGuiObject {
 			objIn.getTopParent().setModifyMousePos(mX, mY);
 			objIn.getTopParent().setModifyingObject(objIn, ObjectModifyType.Resize);
 		}
+		IEnhancedGuiObject window = objIn.getWindowParent();
+		if (window instanceof InnerEnhancedGui) { window.bringToFront(); }
 	}
 	public static void mouseReleased(IEnhancedGuiObject objIn, int mX, int mY, int button) {
 		objIn.postEvent(new EventMouse(objIn, mX, mY, button, MouseType.Released));
@@ -245,7 +285,10 @@ public class StaticEGuiObject {
 		if (objIn.getTopParent().getDefaultFocusObject() != null) { objIn.getTopParent().getDefaultFocusObject().requestFocus(); }
 	}
 	public static void mouseDragged(IEnhancedGuiObject objIn, int mX, int mY, int button, long timeSinceLastClick) {}
-	public static void mouseScolled(IEnhancedGuiObject objIn, int mX, int mY, int change) { objIn.postEvent(new EventMouse(objIn, mX, mY, -1, MouseType.Scrolled)); }
+	public static void mouseScolled(IEnhancedGuiObject objIn, int mX, int mY, int change) {
+		objIn.postEvent(new EventMouse(objIn, mX, mY, -1, MouseType.Scrolled));
+		objIn.getImmediateChildren().forEach(o -> o.mouseScrolled(change));
+	}
 	public static void keyPressed(IEnhancedGuiObject objIn, char typedChar, int keyCode) {
 		objIn.postEvent(new EventKeyboard(objIn, typedChar, keyCode, KeyboardType.Pressed));
 		if (objIn.getTopParent() != null && keyCode == 15) {
@@ -279,30 +322,34 @@ public class StaticEGuiObject {
 	}
 	
 	public static void addObjects(IEnhancedGuiObject objIn, EArrayList<IEnhancedGuiObject> toBeAdded) {
-		toBeAdded.forEach(o -> {
+		for (IEnhancedGuiObject o : toBeAdded) {
 			if (o != null) {
 				if (o != objIn) {
 					objIn.getImmediateChildren().add(o);
-					o.onObjectAddedToParent();
+					o.onAdded();
 					objIn.postEvent(new EventObjects(objIn, o, ObjectEventType.ObjectAdded));
 				}
 			}
-		});
+		}
 		toBeAdded.clear();
 	}
 
 	public static void removeObjects(IEnhancedGuiObject objIn, EArrayList<IEnhancedGuiObject> toBeRemoved) {
-		toBeRemoved.forEach(o -> {
+		for (IEnhancedGuiObject o : toBeRemoved) {
 			if (o != null) {
 				if (o != objIn) {
 					if (objIn.getImmediateChildren().contains(o)) {
-						if (o instanceof InnerEnhancedGui) { ((InnerEnhancedGui) o).onInnerGuiClose(); }
+						objIn.onClosed();
 						objIn.getImmediateChildren().remove(o);
 						objIn.postEvent(new EventObjects(objIn, o, ObjectEventType.ObjectRemoved));
 					}
 				}
 			}
-		});
+		}
 		toBeRemoved.clear();
 	}
+	
+	public static void setEnabled(boolean val, IEnhancedGuiObject... objs) { for (IEnhancedGuiObject o : objs) { o.setEnabled(val); } }
+	public static void setVisibility(boolean val, IEnhancedGuiObject... objs) { for (IEnhancedGuiObject o : objs) { o.setVisible(val); } }
+	public static void setPersistence(boolean val, IEnhancedGuiObject... objs) { for (IEnhancedGuiObject o : objs) { o.setPersistent(val); } }
 }

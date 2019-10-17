@@ -41,7 +41,7 @@ public class KeyOverlay extends EnhancedGuiObject {
 				super.drawObject(mXIn, mYIn, ticks);
 			}
 			@Override
-			public void onObjectAddedToParent() {
+			public void onAdded() {
 				movementHeader.setDrawButtons(false);
 				movementHeader.setDrawDisplayString(false);
 			}

@@ -1,13 +1,12 @@
 package com.Whodundid.core.enhancedGui.guiObjects;
 
+import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.EnhancedActionObject;
-import com.Whodundid.core.enhancedGui.EnhancedGui;
+import com.Whodundid.core.enhancedGui.InnerEnhancedGui;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.subMod.IUseScreenLocation;
 import com.Whodundid.core.util.miscUtil.ScreenLocation;
-
-import java.util.Stack;
 
 //Last edited: Jan 2, 2019
 //First Added: Dec 14, 2018
@@ -72,11 +71,12 @@ public class EGuiScreenLocationSelector extends EnhancedActionObject {
 		if (object.equals(tRight)) { obj.setLocation(ScreenLocation.topRight); }
 		if (object.equals(center)) { obj.setLocation(ScreenLocation.center); }
 		if (object.equals(custom)) {
-			EnhancedGui newGui = obj.getScreenLocationGui();
-			Stack<EnhancedGui> history = getTopParent().getGuiHistory();
-			if (mc.currentScreen instanceof EnhancedGui) { history.push((EnhancedGui) mc.currentScreen); }
-			if (history != null) { newGui.sendGuiHistory(history); }
-			mc.displayGuiScreen(newGui);
+			InnerEnhancedGui newGui = obj.getScreenLocationGui();
+			//Stack<InnerEnhancedGui> history = getTopParent().getGuiHistory();
+			//if (mc.currentScreen instanceof EnhancedGui) { history.push((EnhancedGui) mc.currentScreen); }
+			//if (history != null) { newGui.sendGuiHistory(history); }
+			//mc.displayGuiScreen(newGui);
+			EnhancedMC.displayEGui(newGui);
 		}
 		if (actionReciever != null) { actionReciever.actionPerformed(this); }
 	}

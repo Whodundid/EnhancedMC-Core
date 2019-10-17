@@ -1,12 +1,12 @@
 package com.Whodundid.core.enhancedGui.guiObjects;
 
-import com.Whodundid.core.enhancedGui.EnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.guiObjectUtil.TextAreaLine;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
-import com.Whodundid.core.util.playerUtil.Direction;
+import com.Whodundid.core.util.miscUtil.ScreenLocation;
 import com.Whodundid.core.util.renderUtil.CursorHelper;
 import com.Whodundid.core.util.storageUtil.EArrayList;
+import com.Whodundid.core.util.storageUtil.EDimension;
 import java.util.Iterator;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.MathHelper;
@@ -18,15 +18,15 @@ import org.lwjgl.opengl.GL11;
 //First Added: Oct 2, 2018
 //Author: Hunter Bragg
 
-public class EGuiTextArea<obj> extends EnhancedGuiObject {
+public class EGuiTextArea<obj> extends EGuiScrollList {
 	
 	EArrayList<TextAreaLine> textDocument, drawnLines;
 	TextAreaLine currentLine, longestLine;
-	EGuiScrollBar verticalScroll, horizontalScroll;
 	protected boolean editable = true;
 	protected int currentDrawnLine = -1;
 	protected int currentPosY = 0;
 	protected int currentPosX = 0;
+	protected int maxHorizontal = 0;
 	protected int previousPosY = -1;
 	protected int previousPosX = -1;
 	protected int lineHeight = 12;
@@ -37,98 +37,53 @@ public class EGuiTextArea<obj> extends EnhancedGuiObject {
 		this(parentIn, x, y, widthIn, heightIn, false);
 	}
 	public EGuiTextArea(IEnhancedGuiObject parentIn, int x, int y, int widthIn, int heightIn, boolean editableIn) {
-		init(parentIn, x, y, widthIn, heightIn);
+		this(parentIn, x, y, widthIn, heightIn, false, false);
+	}
+	public EGuiTextArea(IEnhancedGuiObject parentIn, int x, int y, int widthIn, int heightIn, boolean editableIn, boolean addLine) {
+		super(parentIn, x, y, widthIn, heightIn);
 		editable = editableIn;
 		textDocument = new EArrayList();
 		drawnLines = new EArrayList();
 		Keyboard.enableRepeatEvents(true);
 		
-		verticalScroll = new EGuiScrollBar(this, getLineCount(), textDocument.size() + getLineCount(), true, Direction.E) {
+		/*
+		horizontalScroll = new EGuiScrollBar(this, getDrawWidth(), longestLine != null ? fontRenderer.getStringWidth(longestLine.getText()) : 0, ScreenLocation.bot) {
 			@Override
 			public void mouseReleased(int mX, int mY, int button) {
 				getParent().requestFocus();
 				super.mouseReleased(mX, mY, button);
 			}
 		};
-		horizontalScroll = new EGuiScrollBar(this, getDrawWidth(), longestLine != null ? fontRenderer.getStringWidth(longestLine.getText()) : getDrawWidth(), false, Direction.S) {
+		
+		verticalScroll = new EGuiScrollBar(this, getLineCount(), textDocument.size() + getLineCount(), ScreenLocation.right) {
 			@Override
 			public void mouseReleased(int mX, int mY, int button) {
 				getParent().requestFocus();
 				super.mouseReleased(mX, mY, button);
 			}
 		};
+		*/
 		
-		verticalScroll.setVisible(false);
-		horizontalScroll.setVisible(false);
+		//System.out.println()
+		//210 366
 		
-		addObject(verticalScroll, horizontalScroll);
+		//verticalScroll.setVisible(false);
+		//horizontalScroll.setVisible(false);
 		
-		//if (textDocument.isEmpty() && editable) {
-		//	TextAreaLine newLine = addTextLine();
-		//	setSelectedLine(newLine);
-		//}
+		//addObject(verticalScroll, horizontalScroll);
+		
+		if (addLine) {
+			TextAreaLine newLine = addTextLine();
+			setSelectedLine(newLine);
+		}
 	}
 	
 	@Override
 	public void drawObject(int mXIn, int mYIn, float ticks) {
-		try {
-			updateBeforeNextDraw(mXIn, mYIn);
-			
-			drawRect(startX, startY, endX, endY, 0xff000000); //black
-			drawRect(startX + 1, startY + 1, endX - 1, endY - 1, 0xff2D2D2D); //grey
-			
-			if (drawLineNumbers && drawnLines.size() > 0) {
-				drawRect(startX + lineNumberSeparatorPos, startY + 1, startX + lineNumberSeparatorPos + 1, endY - 1, 0xff000000);
-			}
-			
-			//verticalScroll.setVisible(true);
-			verticalScroll.setVisible(textDocument.size() > getLineCount());
-			horizontalScroll.setVisible(
-					longestLine != null ? fontRenderer.getStringWidth(longestLine.getText()) > width - (drawLineNumbers ? lineNumberSeparatorPos : 0) :
-					false);
-			
-			try {
-				if (verticalScroll.getScrollPos() - getLineCount() != currentPosY) {
-					currentPosY = verticalScroll.getScrollPos() - getLineCount();
-					//System.out.println(currentPosY + " " + getLineCount() + " " + verticalScroll.getScrollPos());
-					currentPosY = currentPosY < 0 ? 0 : currentPosY;
-					recreateDrawnLines(currentPosY);
-				}
-				
-			} catch (Exception e) { e.printStackTrace(); }
-			
-			//CursorHelper.setCursor(isMouseInside(mX, mY) ? CursorHelper.iBeamCursor : null);
-			
-			int scale = res.getScaleFactor();
-			GL11.glEnable(GL11.GL_SCISSOR_TEST);
-			GL11.glScissor(
-					((startX + 1) * scale),
-					(Display.getHeight() - startY * scale) - (height - 1) * scale,
-					(width - 2) * scale,
-					(height - 2) * scale);
-			
-			for (TextAreaLine l : drawnLines) {
-				if (l != null && l.checkDraw()) {
-					GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-					l.drawObject(mX, mY, ticks);
-				}
-			}
-			GL11.glDisable(GL11.GL_SCISSOR_TEST);
-			
-			if (checkDraw()) {
-				GlStateManager.pushMatrix();
-				GlStateManager.enableBlend();
-				synchronized (guiObjects) {
-					for (IEnhancedGuiObject o : guiObjects) {
-						if (o.checkDraw() && !drawnLines.contains(o)) {
-		    				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-		    	        	o.drawObject(mXIn, mYIn, ticks);
-		    			}
-					}
-				}
-				GlStateManager.popMatrix();
-			}
-		} catch (Exception e) { e.printStackTrace(); }
+		//drawRect(startX, startY, endX, endY, 0xff000000); //black
+		//drawRect(startX + 1, startY + 1, endX - 1, endY - 1, 0xff2D2D2D); //grey
+		super.drawObject(mXIn, mYIn, ticks);
+		
 	}
 	
 	@Override
@@ -146,7 +101,7 @@ public class EGuiTextArea<obj> extends EnhancedGuiObject {
 			if (currentPosY - change >= 0 && textDocument.size() > getLineCount()) {
 				//currentPosY -= change;
 				//System.out.println("Scrolled2: " + currentPosY);
-				setDocumentVerticalPos(currentPosY -= change);
+				//setDocumentVerticalPos(currentPosY -= change);
 				//verticalScroll.setScrollBarPos(currentPosY + getLineCount());
 			}
 		}
@@ -229,20 +184,19 @@ public class EGuiTextArea<obj> extends EnhancedGuiObject {
 		l.setTextColor(colorIn);
 		l.setStoredObj(objectIn);
 		l.setLineNumber(textDocument.size() - currentPosY);
-		calculateLongestLine();
 		return addTextLine(l, moveDown);
 	}
 	public TextAreaLine addTextLine(TextAreaLine lineIn) { return addTextLine(lineIn, false); }
 	public TextAreaLine addTextLine(TextAreaLine lineIn, boolean moveDown) {
-		//int moveArg = (textDocument.size() + 1) * lineHeight > height ? 1 : 0;
 		int moveArg = moveDown ? 1 : 0;
+		if (lineIn != null) { lineIn.setBoundaryEnforcer(getDimensions()); }
 		addObject(lineIn);
 		textDocument.add(lineIn);
+		//lineIn.setDimensions(0, (i * lineHeight) + (startY + 1), widthVal, lineHeight);
 		lineIn.setLineNumber(textDocument.size());
 		int val = MathHelper.clamp_int(textDocument.size() - getLineCount(), 0, Integer.MAX_VALUE);
-		verticalScroll.setHighVal(val + getLineCount());
-		//verticalScroll.setScrollBarPos(currentPosY + 1 + getLineCount());
-		setDocumentVerticalPos(currentPosY + moveArg);
+		//verticalScroll.setHighVal(val + getLineCount());
+		//setListHeight(getListHeight() + (currentPosY + moveArg));
 		calculateLongestLine();
 		return lineIn;
 	}
@@ -291,7 +245,7 @@ public class EGuiTextArea<obj> extends EnhancedGuiObject {
 			guiObjects.remove(lineIn);
 			textDocument.remove(lineIn);
 			int val = MathHelper.clamp_int(textDocument.size() - getLineCount(), 0, Integer.MAX_VALUE);
-			verticalScroll.setHighVal(val + getLineCount());
+			//verticalScroll.setHighVal(val + getLineCount());
 			if (previousLine != null) { previousLine.requestFocus(); }
 			//System.out.println("go up check: " + lineIn.getDrawnLineNumber() + " " + currentPosY);
 			//verticalScroll.setScrollBarPos((currentPosY - 1) + getLineCount());
@@ -300,6 +254,7 @@ public class EGuiTextArea<obj> extends EnhancedGuiObject {
 				else { setDocumentVerticalPos(0); }
 			}
 			calculateLongestLine();
+			//setListHeight(getListHeight() + (currentPosY + moveArg));
 		}
 		return this; 
 	}
@@ -307,7 +262,7 @@ public class EGuiTextArea<obj> extends EnhancedGuiObject {
 	public EGuiTextArea setDocumentVerticalPos(int posIn) {
 		posIn = posIn < 0 ? 0 : posIn;
 		currentPosY = posIn;
-		verticalScroll.setScrollBarPos(currentPosY + getLineCount());
+		//verticalScroll.setScrollBarPos(currentPosY + getLineCount());
 		recreateDrawnLines(currentPosY);
 		return this;
 	}
@@ -315,7 +270,7 @@ public class EGuiTextArea<obj> extends EnhancedGuiObject {
 	public EGuiTextArea setDocumentHorizontalPos(int posIn) {
 		if (posIn >= 0 && posIn <= longestLine.getText().length()) {
 			currentPosX = posIn;
-			horizontalScroll.setScrollBarPos(currentPosX);
+			//horizontalScroll.setScrollBarPos(currentPosX);
 		}
 		return this;
 	}
@@ -323,22 +278,29 @@ public class EGuiTextArea<obj> extends EnhancedGuiObject {
 	protected void recreateDrawnLines(int posIn) {
 		try {
 			if (currentPosY > textDocument.size()) { currentPosY--; }
-			drawnLines.clear();
+			//drawnLines.clear();
 			for (TextAreaLine l : textDocument) { l.setDrawnLineNumber(-1); l.setVisible(false); }
 			calculateLineNumberSeparatorPos();
 			int pos = currentPosY;
 			int i = 0;
 			//System.out.println("Pos: " + pos + " " + currentPosY);
+			EDimension d = getListDimensions();
+			clearList();
 			while (pos < textDocument.size() && pos < (currentPosY + getLineCount())) {
 				TextAreaLine l = getTextLineWithLineNumber(pos + 1);
+				System.out.println(i);
 				if (l != null) {
-					int xPos = drawLineNumbers ? startX + lineNumberSeparatorPos + 4 : startX + 3;
+					
+					
+					//int xPos = drawLineNumbers ? startX + lineNumberSeparatorPos + 4 : startX + 3;
 					int widthVal = drawLineNumbers ? width - lineNumberSeparatorPos - 9 : width - 9;
-					l.setDimensions(xPos, (i * lineHeight) + (startY + 1), widthVal, lineHeight);
+					l.setDimensions(0, (i * lineHeight) + (startY + 1), widthVal, lineHeight);
+					//System.out.println(l.getDimensions());
 					l.setDrawnLineNumber(i);
 					l.setVisible(true);
 					//System.out.println(l.getDimensions());
-					drawnLines.add(l);
+					//drawnLines.add(l);
+					addObjectToList(l);
 				}
 				pos++;
 				i++;
@@ -349,8 +311,8 @@ public class EGuiTextArea<obj> extends EnhancedGuiObject {
 	public void moveCurrentLineUp() {
 		TextAreaLine upLine = getTextLineWithLineNumber(currentLine.getLineNumber() - 1);
 		if (upLine != null) {
-			if (currentLine.getDrawnLineNumber() == 0) { setDocumentVerticalPos(currentPosY - 1); }
-			if (currentLine.getDrawnLineNumber() < 0) { setDocumentVerticalPos(upLine.getLineNumber() - getLineCount()); }
+			//if (currentLine.getDrawnLineNumber() == 0) { setDocumentVerticalPos(currentPosY - 1); }
+			//if (currentLine.getDrawnLineNumber() < 0) { setDocumentVerticalPos(upLine.getLineNumber() - getLineCount()); }
 			upLine.setCursorPosition(currentLine.getCursorPosition());
 			upLine.requestFocus();
 		}
@@ -359,8 +321,8 @@ public class EGuiTextArea<obj> extends EnhancedGuiObject {
 	public void moveCurrentLineDown() {
 		TextAreaLine downLine = getTextLineWithLineNumber(currentLine.getLineNumber() + 1);
 		if (downLine != null) {
-			if (currentLine.getDrawnLineNumber() == getLineCount() - 1) { setDocumentVerticalPos(currentPosY + 1); }
-			if (currentLine.getDrawnLineNumber() < 0) { setDocumentVerticalPos(downLine.getLineNumber() - 1); }
+			//if (currentLine.getDrawnLineNumber() == getLineCount() - 1) { setDocumentVerticalPos(currentPosY + 1); }
+			//if (currentLine.getDrawnLineNumber() < 0) { setDocumentVerticalPos(downLine.getLineNumber() - 1); }
 			downLine.setCursorPosition(currentLine.getCursorPosition());
 			downLine.requestFocus();
 		}
@@ -373,8 +335,8 @@ public class EGuiTextArea<obj> extends EnhancedGuiObject {
 	public void makeLineNumberDrawn(int lineNumIn) {
 		if (lineNumIn >= 1 && lineNumIn <= textDocument.size()) {
 			TextAreaLine l = getTextLineWithLineNumber(lineNumIn);
-			if (lineNumIn < currentPosY) { setDocumentVerticalPos(lineNumIn - 1); }
-			else if (lineNumIn >= currentPosY + getLineCount()) { setDocumentVerticalPos(lineNumIn - getLineCount()); }
+			//if (lineNumIn < currentPosY) { setDocumentVerticalPos(lineNumIn - 1); }
+			//else if (lineNumIn >= currentPosY + getLineCount()) { setDocumentVerticalPos(lineNumIn - getLineCount()); }
 		}
 	}
 	
@@ -392,8 +354,8 @@ public class EGuiTextArea<obj> extends EnhancedGuiObject {
 	}
 	
 	public EGuiTextArea clear() {
-		verticalScroll.setVisible(false);
-		horizontalScroll.setVisible(false);
+		//verticalScroll.setVisible(false);
+		//horizontalScroll.setVisible(false);
 		Iterator it = guiObjects.iterator();
 		while (it.hasNext()) {
 			if (it.next() instanceof TextAreaLine) { it.remove(); }
@@ -405,6 +367,7 @@ public class EGuiTextArea<obj> extends EnhancedGuiObject {
 	}
 	
 	/** SIMPLIFY THIS, THERE'S NO NEED FOR 2 */
+	/** I disagree, there could be an instance where you want to select a line but then not go to it. */
 	public EGuiTextArea setSelectedLine(TextAreaLine lineIn) { return setSelectedLine(lineIn, true); }
 	public EGuiTextArea setSelectedLine(TextAreaLine lineIn, boolean makeDrawn) {
 		currentLine = lineIn;
@@ -431,6 +394,18 @@ public class EGuiTextArea<obj> extends EnhancedGuiObject {
 		lineNumberSeparatorPos = longestNum + 6;
 	}
 	
+	public TextAreaLine getLongestLine() {
+		return updateAndGetLongestLine();
+	}
+	
+	public int getLongestLineLength() {
+		TextAreaLine l = updateAndGetLongestLine();
+		if (l != null) {
+			return l.getText().length();
+		}
+		return 0;
+	}
+	
 	public TextAreaLine updateAndGetLongestLine() {
 		calculateLongestLine();
 		return longestLine;
@@ -444,7 +419,10 @@ public class EGuiTextArea<obj> extends EnhancedGuiObject {
 			else if (val > q.getText().length()) { q = l; }
 		}
 		longestLine = q;
-		//horizontalScroll.setHighVal(valIn)
+		if (longestLine != null) {
+			//horizontalScroll.setHighVal(fontRenderer.getStringWidth(longestLine.getText()));
+			maxHorizontal = longestLine.getText().length();
+		}
 	}
 	
 	protected void disableLineNumbers() {
@@ -469,7 +447,6 @@ public class EGuiTextArea<obj> extends EnhancedGuiObject {
 	
 	public TextAreaLine getLineWithText(String textIn) {
 		for (TextAreaLine l : textDocument) {
-			//System.out.println(l.getText());
 			if (l.getText().equals(textIn)) { return l; }
 		}
 		return null;
@@ -493,7 +470,7 @@ public class EGuiTextArea<obj> extends EnhancedGuiObject {
 		return null;
 	}
 	
-	public int getLineCount() { return height / lineHeight; }
+	public int getLineCount() { return (height - horizontalScroll.height) / lineHeight; }
 	public int getCurrentDrawnLine() { return currentLine != null ? currentLine.getDrawnLineNumber() : -1; }
 	public int getDrawWidth() { return width - (drawLineNumbers ? lineNumberSeparatorPos : 0); }
 	public int getLineNumberSeparatorPos() { return lineNumberSeparatorPos; }

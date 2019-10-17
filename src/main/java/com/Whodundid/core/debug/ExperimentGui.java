@@ -19,6 +19,8 @@ import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextArea;
 import com.Whodundid.core.enhancedGui.guiObjects.misc.KeyOverlay;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiRightClickMenu;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
+import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.settings.KeyBindGui;
 import com.Whodundid.core.settings.SettingsGuiMain;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubMod;
@@ -54,7 +56,7 @@ import net.minecraft.util.ResourceLocation;
 //Author: Hunter Bragg
 
 @SuppressWarnings("unused")
-public class ExperimentGui extends EnhancedGui {
+public class ExperimentGui extends InnerEnhancedGui {
 	
 	static Minecraft mc = Minecraft.getMinecraft();
 	ArrayList<Integer> values = new ArrayList();
@@ -70,9 +72,11 @@ public class ExperimentGui extends EnhancedGui {
 	EGuiColorPicker colorPicker;
 	
 	public ExperimentGui() { super(); }
-	public ExperimentGui(GuiScreen oldGui) { super(oldGui); }
-	public ExperimentGui(int posX, int posY) { super(posX, posY); }
-	public ExperimentGui(int posX, int posY, GuiScreen oldGui) { super(posX, posY, oldGui); }
+	public ExperimentGui(Object oldGuiIn) { super(oldGuiIn); }
+	public ExperimentGui(IEnhancedGuiObject parentIn) { super(parentIn); }
+	public ExperimentGui(IEnhancedGuiObject parentIn, Object oldGuiIn) { super(parentIn, oldGuiIn); }
+	public ExperimentGui(IEnhancedGuiObject parentIn, int posX, int posY) { super(parentIn, posX, posY); }
+	public ExperimentGui(IEnhancedGuiObject parentIn, int posX, int posY, Object oldGuiIn) { super(parentIn, posX, posY, oldGuiIn); }
 	
 	@Override
 	public void initGui() {
@@ -81,8 +85,7 @@ public class ExperimentGui extends EnhancedGui {
 	
 	@Override
 	public void initObjects() {
-		setFocusLockObject(this);
-		
+		setHeader(new EGuiHeader(this));
 		header.setDisplayStringColor(0x000000);
 		
 		InnerEnhancedGui inner = new InnerEnhancedGui(this, endX + 15, midY - 5, 219, 190) {
@@ -117,6 +120,21 @@ public class ExperimentGui extends EnhancedGui {
 		
 		inner.addObject(scrollList);
 		
+		InnerEnhancedGui window2 = new InnerEnhancedGui(this, endX + 15, 35, 219, 190) {
+			@Override
+			public void drawObject(int mXIn, int mYIn, float ticks) {
+				drawDefaultBackground();
+				super.drawObject(mXIn, mYIn, ticks);
+			}
+		};
+		
+		window2.setHeader(new EGuiHeader(window2));
+		
+		EGuiTextArea textArea32 = new EGuiTextArea(this, endX + 20, 40, 210, 180, true, false).setDrawLineNumbers(true);
+		textArea32.addTextLine("this is an intentionally very long line of text to test horizontal scrolling!");
+		for (int i = 0; i < 20; i++) { textArea32.addTextLine("cow"); }
+		addObject(textArea32);
+		
 		//enableHeader(false);
 		//EScreenLocationSelector selector = new EScreenLocationSelector(this, wPos - 300, hPos - 200, 100);
 		//EGuiHeader header = new EGuiHeader(this);
@@ -149,7 +167,8 @@ public class ExperimentGui extends EnhancedGui {
 		
 		//addObject(textArea);
 		
-		addObject(inner);
+		//addObject(inner, window2);
+		//addObject(window2);
 		//https://hypixel.net/my2018/?5c2a973544f4e2a67393289c
 		
 		//addObject(new EGuiLinkConfirmationDialogueBox(this, "https://www.google.com"));
@@ -161,13 +180,11 @@ public class ExperimentGui extends EnhancedGui {
 		colorPicker = new EGuiColorPicker(this, 150, 150);
 		
 		EGuiPlayerViewer viewer = new EGuiPlayerViewer(colorPicker, startX + 35, startY + 30, 150, 200);
-		addObject(viewer);
+		//addObject(viewer);
 		//viewer.setHSliderOrientation(ScreenLocation.top);
 		//viewer.setVSliderOrientation(ScreenLocation.left);
 		
-		addObject(colorPicker);
-		
-		clearFocusLockObject();
+		//addObject(colorPicker);
 	}
 	
 	@Override
@@ -262,21 +279,19 @@ public class ExperimentGui extends EnhancedGui {
         //GlStateManager.disableBlend();
         GlStateManager.popMatrix();
         */
-		
+		updateColor();
 		super.drawObject(mXIn, mYIn, ticks);
 	}
 	
-	@Override
-	public void updateScreen() {
-		super.updateScreen();
+	public void updateColor() {
 		color = Color.HSBtoRGB(System.currentTimeMillis() % 10000L / 10000.0f, 0.8f, 1f);
 		if (label != null) { label.setDisplayStringColor(-color + 0xff222222); }
 		header.setMainColor(color);
 	}
 	
 	@Override
-	public void mouseClicked(int mX, int mY, int button) throws IOException {
-		super.mouseClicked(mX, mY, button);
+	public void mousePressed(int mX, int mY, int button) {
+		super.mousePressed(mX, mY, button);
 	}
 	
 	@Override
@@ -290,8 +305,13 @@ public class ExperimentGui extends EnhancedGui {
 	}
 	
 	@Override
-	public void keyTyped(char typedChar, int keyCode) throws IOException {
-		super.keyTyped(typedChar, keyCode);
+	public void keyPressed(char typedChar, int keyCode) {
+		super.keyPressed(typedChar, keyCode);
+	}
+	
+	@Override
+	public void keyReleased(char typedChar, int keyCode) {
+		super.keyReleased(typedChar, keyCode);
 	}
 	
 	@Override
@@ -326,7 +346,7 @@ public class ExperimentGui extends EnhancedGui {
 		}
 		
 		//if (size > 8) { scrollList.setListHeight(scrollList.getListHeight() + 1); }
-		scrollList.renderScrollBarThumb(size > 8);
+		scrollList.renderVScrollBarThumb(size > 8);
 	}
 	
 	public void testMethodWithArgs(String[] args) {

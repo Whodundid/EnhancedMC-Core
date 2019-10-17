@@ -1,30 +1,36 @@
 package com.Whodundid.core.coreSubMod;
 
-import com.Whodundid.core.enhancedGui.EnhancedGui;
+import com.Whodundid.core.enhancedGui.InnerEnhancedGui;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
+import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
 import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
+import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubModType;
-import net.minecraft.client.gui.GuiScreen;
 
-public class EMCSettingsGui extends EnhancedGui {
+public class EMCSettingsGui extends InnerEnhancedGui {
 	
 	EnhancedMCMod mod = (EnhancedMCMod) RegisteredSubMods.getMod(SubModType.CORE);
 	EGuiButton menuOverride, showIncompats, useDebugKey;
 	
 	public EMCSettingsGui() { super(); }
-	public EMCSettingsGui(int x, int y) { super(x, y); }
-	public EMCSettingsGui(GuiScreen guiIn) { super(guiIn); }
-	public EMCSettingsGui(int x, int y, GuiScreen guiIn) { super(x, y, guiIn); }
+	public EMCSettingsGui(Object oldGuiIn) { super(oldGuiIn); }
+	public EMCSettingsGui(IEnhancedGuiObject parentIn) { super(parentIn); }
+	public EMCSettingsGui(IEnhancedGuiObject parentIn, Object oldGuiIn) { super(parentIn, oldGuiIn); }
+	public EMCSettingsGui(IEnhancedGuiObject parentIn, int posX, int posY) { super(parentIn, posX, posY); }
+	public EMCSettingsGui(IEnhancedGuiObject parentIn, int posX, int posY, Object oldGuiIn) { super(parentIn, posX, posY, oldGuiIn); }
 	
 	@Override
 	public void initGui() {
-		setGuiName("EMC Core Mod Settings");
+		setObjectName("EMC Core Mod Settings");
+		centerObjectWithSize(defaultWidth, defaultHeight);
 		super.initGui();
 	}
 	
 	@Override
 	public void initObjects() {
+		setHeader(new EGuiHeader(this));
+		
 		menuOverride = new EGuiButton(this, startX + 11, startY + 25, 60, 20).setTrueFalseButton(true, EnhancedMCMod.emcMenuOverride);
 		showIncompats = new EGuiButton(this, startX + 11, menuOverride.endY + 5, 60, 20).setTrueFalseButton(true, EnhancedMCMod.showIncompats);
 		useDebugKey = new EGuiButton(this, startX + 11, showIncompats.endY + 5, 60, 20).setTrueFalseButton(true, EnhancedMCMod.useDebugKey);

@@ -172,11 +172,6 @@ public class EGuiTextField extends EnhancedGuiObject {
 	}
 	
 	@Override
-	public void updateScreen() {
-		super.updateScreen();
-	}
-	
-	@Override
 	public void onFocusGained(EventFocus eventIn) {
 		if (!alwaysDrawCursor) { EnhancedMC.updateCounter = 0; }
 		if (text.equals(textWhenEmpty)) { text = ""; setTextColor(enabledColor); setCursorPosition(0); }

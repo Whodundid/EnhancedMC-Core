@@ -18,8 +18,8 @@ public class PlayerDrawer {
 		if (ent != null) {
 			GlStateManager.enableColorMaterial();
 	        GlStateManager.pushMatrix();
-	        GlStateManager.translate((float) posX, (float) posY, 50.0F);
-	        GlStateManager.scale((float) (-scale), (float) scale, (float) scale);
+	        GlStateManager.translate(posX, posY, 50.0F);
+	        GlStateManager.scale((-scale), scale, scale);
 	        GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
 	        float f = ent.renderYawOffset;
 	        float f1 = ent.rotationYaw;
@@ -29,10 +29,10 @@ public class PlayerDrawer {
 	        GlStateManager.rotate(135.0F, 0.0F, 1.0F, 0.0F);
 	        RenderHelper.enableStandardItemLighting();
 	        GlStateManager.rotate(-135.0F, 0.0F, 1.0F, 0.0F);
-	        GlStateManager.rotate(-((float) Math.atan((double) (vRot / 250.0F))) * 20.0F, 1.0F, 0.0F, 0.0F);
+	        GlStateManager.rotate(-((float) Math.atan(vRot / 250.0F)) * 20.0F, 1.0F, 0.0F, 0.0F);
 	        ent.renderYawOffset = hRot / 2;
 	        ent.rotationYaw = hRot / 2;
-	        ent.rotationPitch = -((float) Math.atan((double) (vRot / 250.0F))) * 20.0F;
+	        ent.rotationPitch = -((float) Math.atan(vRot / 250.0F)) * 20.0F;
 	        ent.rotationYawHead = ent.rotationYaw;
 	        ent.prevRotationYawHead = ent.rotationYaw;
 	        GlStateManager.translate(0.0F, 0.0F, 0.0F);

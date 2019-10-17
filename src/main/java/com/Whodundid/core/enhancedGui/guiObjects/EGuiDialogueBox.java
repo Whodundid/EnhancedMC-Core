@@ -11,8 +11,8 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 
 public class EGuiDialogueBox extends InnerEnhancedGui {
 	
-	public int messageColor = 0xffffff;
-	public String message = "";
+	public int messageColor = 0xffffff, displayColor = 0xffffff;
+	public String message = "", displayString = "";
 	protected EArrayList<String> wordWrappedLines;
 	protected IEnhancedGuiObject primaryObject;
 	protected EGuiButton yes, no, okButton;
@@ -36,7 +36,10 @@ public class EGuiDialogueBox extends InnerEnhancedGui {
 	
 	@Override
 	public void initObjects() {
-		setHeader(new EGuiHeader(this));
+		EGuiHeader h = new EGuiHeader(this);
+		h.setDisplayString(displayString);
+		h.setDisplayStringColor(displayColor);
+		setHeader(h);
 		
 		switch (type) {
 		case yesNo:
@@ -88,8 +91,8 @@ public class EGuiDialogueBox extends InnerEnhancedGui {
 	public IEnhancedGuiObject getPrimaryObject() { return primaryObject; }
 	public EGuiDialogueBox setPrimaryObject(IEnhancedGuiObject objIn) { primaryObject = objIn; return this; }
 	public EGuiDialogueBox addButtonOption(EGuiButton buttonIn) { addObject(buttonIn); return this; }
-	public EGuiDialogueBox setDisplayString(String stringIn) { header.setDisplayString(stringIn); return this; }
-	public EGuiDialogueBox setDisplayStringColor(int colorIn) { header.setDisplayStringColor(colorIn); return this; }
+	public EGuiDialogueBox setDisplayString(String stringIn) { displayString = stringIn; return this; }
+	public EGuiDialogueBox setDisplayStringColor(int colorIn) { displayColor = colorIn; return this; }
 	public EGuiDialogueBox setMessage(String stringIn) { message = stringIn; wordWrappedLines = EUtil.createWordWrapString(message, width - 20); return this; }
 	public EGuiDialogueBox setMessageColor(int colorIn) { messageColor = colorIn; return this; }
 	public EGuiDialogueBox setMoveable(boolean val) { if (header.moveButton != null) { header.moveButton.setPersistent(false).setVisible(false); } return this; }

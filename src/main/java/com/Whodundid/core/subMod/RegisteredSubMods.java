@@ -1,10 +1,10 @@
 package com.Whodundid.core.subMod;
 
-import net.minecraft.client.gui.GuiScreen;
 import org.apache.logging.log4j.Level;
 import java.io.File;
 import java.util.List;
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.enhancedGui.InnerEnhancedGui;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
@@ -15,7 +15,7 @@ import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 //First Added: Oct 16, 2018
 //Author: Hunter Bragg
 
-public class RegisteredSubMods {
+public final class RegisteredSubMods {
 	
 	private static EArrayList<SubMod> allMods = new EArrayList();
 	private static EArrayList<SubMod> registeredMods = new EArrayList();
@@ -138,6 +138,15 @@ public class RegisteredSubMods {
 		return false;
 	}
 	
+	public static boolean isModRegEn(SubMod modIn) { return isModRegEn(modIn.getName()); }
+	public static boolean isModRegEn(SubModType typeIn) { return isModRegEn(typeIn.modName); }
+	public static boolean isModRegEn(String nameIn) {
+		for (SubMod m : registeredMods) {
+			if (m.getName().equals(nameIn) && m.isEnabled()) { return true; }
+		}
+		return false;
+	}
+	
 	//returns a copy of the current list of registered mods at the called instant
 	public static EArrayList<SubMod> getRegisteredModsList() {return new EArrayList(registeredMods); }
 	//returns a copy of the current incompatible subMods
@@ -236,7 +245,7 @@ public class RegisteredSubMods {
 	public static EArrayList<Class> getAllGuiClasses() {
 		EArrayList<Class> guis = new EArrayList();
 		for (SubMod m : RegisteredSubMods.getRegisteredModsList()) {
-			for (GuiScreen g : m.getGuis()) { if (g != null) { guis.add(g.getClass()); } }
+			for (InnerEnhancedGui g : m.getGuis()) { if (g != null) { guis.add(g.getClass()); } }
 		}
 		return guis;
 	}
