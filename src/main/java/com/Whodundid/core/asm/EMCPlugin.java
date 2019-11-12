@@ -9,7 +9,7 @@ public class EMCPlugin implements IFMLLoadingPlugin {
 	
 	@Override
 	public String[] getASMTransformerClass() {
-		return new String[] {"com.Whodundid.core.asm.ChatCommandFixerTransformer"};
+		return new String[] {"com.Whodundid.core.asm.EMCTransformer"};
 	}
 	
 	@Override public String getModContainerClass() { return null; }

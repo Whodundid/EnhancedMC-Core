@@ -1,8 +1,5 @@
-package com.Whodundid.core.asm;
+package com.Whodundid.core.asm.transformers;
 
-import java.util.Arrays;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
@@ -12,47 +9,17 @@ import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
-import net.minecraft.launchwrapper.IClassTransformer;
-
 import static org.objectweb.asm.Opcodes.*;
 
-public class ChatCommandFixerTransformer implements IClassTransformer {
+import com.Whodundid.core.asm.IETransformer;
 
-	private static final String[] classes = {
-		"net.minecraft.client.gui.GuiScreen"
-	};
+public class ChatCommandFixer extends IETransformer {
 	
 	@Override
-	public byte[] transform(String name, String transformedName, byte[] classBeingTransformed) {
-		boolean isObfuscated = !name.equals(transformedName);
-		int index = Arrays.asList(classes).indexOf(transformedName);
-		return index != -1 ? transform(index, classBeingTransformed, isObfuscated) : classBeingTransformed;
-	}
+	public String getClassName() { return "net.minecraft.client.gui.GuiScreen"; }
 	
-	private static byte[] transform(int index, byte[] classBeingTransformed, boolean isObfuscated) {
-		System.out.println("transforming: " + classes[index]);
-		
-		try {
-			ClassNode node = new ClassNode();
-			ClassReader reader = new ClassReader(classBeingTransformed);
-			reader.accept(node, 0);
-			
-			switch (index) {
-			case 0: transformGuiScreenChatSender(node, isObfuscated); break;
-			default: System.out.println("broke!"); break;
-			}
-			
-			ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-			node.accept(writer);
-			byte[] ar = writer.toByteArray();
-			return ar;
-		}
-		catch (Exception e) { e.printStackTrace(); }
-		
-		return classBeingTransformed;
-	}
-	
-	private static void transformGuiScreenChatSender(ClassNode guiScreenClass, boolean isObfuscated) {
+	@Override
+	protected void transform(ClassNode guiScreenClass) {
 		final String CHATMETHOD = isObfuscated ? "b" : "sendChatMessage";
 		final String CHATMETHOD_DESC = isObfuscated ? "(Ljava/lang/String;Z)V" : "(Ljava/lang/String;Z)V";
 		
@@ -60,11 +27,8 @@ public class ChatCommandFixerTransformer implements IClassTransformer {
 			if (method.name.equals(CHATMETHOD) && method.desc.equals(CHATMETHOD_DESC)) {
 				AbstractInsnNode targetNode = null;
 				for (AbstractInsnNode instruction : method.instructions.toArray()) {
-					//System.out.println(instruction);
 					if (instruction.getOpcode() == ALOAD) {
-						if (((VarInsnNode) instruction).var == 0 &&
-								instruction.getPrevious().getOpcode() == GETSTATIC &&
-								instruction.getNext().getOpcode() == GETFIELD) {
+						if (((VarInsnNode) instruction).var == 0 && instruction.getPrevious().getOpcode() == GETSTATIC && instruction.getNext().getOpcode() == GETFIELD) {
 							targetNode = instruction.getPrevious();
 							break;
 						}
@@ -94,10 +58,7 @@ public class ChatCommandFixerTransformer implements IClassTransformer {
 					*/
 					
 					AbstractInsnNode afterReturn = targetNode;
-					for (int i = 0; i < 7; i++) {
-						afterReturn = afterReturn.getNext();
-						//System.out.println("traversingNodes: " + afterReturn.getOpcode());
-					}
+					for (int i = 0; i < 7; i++) { afterReturn = afterReturn.getNext(); }
 					
 					//System.out.println("after return node: " + afterReturn.getOpcode());
 					
