@@ -127,9 +127,14 @@ public class StorageBoxHolder<Obj, Val> implements Iterable<StorageBox<Obj, Val>
 	public Obj getObject(int pointNumber) { return createdList.get(pointNumber).getObject(); }
 	public Val getValue(int pointNumber) { return createdList.get(pointNumber).getValue(); }
 	
+	public Val getValueInBox(Obj objIn) {
+		StorageBox<Obj, Val> b = getBoxWithObj(objIn);
+		return b != null ? b.getValue() : null;
+	}
+	
 	//static methods
 	
-	public static <thing1, thing2> StorageBoxHolder<thing1, thing2> createBox(EArrayList<thing1> objectsIn, EArrayList<thing2> valuesIn) {
+	public static <thing1, thing2> StorageBoxHolder<thing1, thing2> createBox(List<thing1> objectsIn, List<thing2> valuesIn) {
 		if (objectsIn != null && valuesIn != null) {
 			if (objectsIn.size() == valuesIn.size()) {
 				StorageBoxHolder<thing1, thing2> newHolder = new StorageBoxHolder();
@@ -143,9 +148,7 @@ public class StorageBoxHolder<Obj, Val> implements Iterable<StorageBox<Obj, Val>
 	public static <T, V> StorageBoxHolder<T, V> createBox(int size, Object... dataIn) {
 		if (size % 2 == 0) {
 			StorageBoxHolder<T, V> newHolder = new StorageBoxHolder();
-			for (int i = 0; i < size; i++) {
-				newHolder.add((T) dataIn[i], (V) dataIn[i + 1]);
-			}
+			for (int i = 0; i < size; i++) { newHolder.add((T) dataIn[i], (V) dataIn[i + 1]); }
 			return newHolder;
 		}
 		return null;
@@ -159,7 +162,7 @@ public class StorageBoxHolder<Obj, Val> implements Iterable<StorageBox<Obj, Val>
 	public String toString() {
 		String returnString = "[";
 		for (int i = 0; i < createdList.size(); i++) {
-			returnString += (this.getObject(i) + ", " + this.getValue(i));
+			returnString += (getObject(i) + ", " + getValue(i));
 		}
 		returnString += "]";
 		return returnString;
