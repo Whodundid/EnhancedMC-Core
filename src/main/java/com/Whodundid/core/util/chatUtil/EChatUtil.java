@@ -27,12 +27,16 @@ public class EChatUtil {
 		return s;
 	}
 	
+	public static void readChat(IChatComponent chatMsg) { lastChat = chatMsg; }
+	
 	public void checkIfChatWindowOpen() { chatOpen = mc.ingameGUI.getChatGUI().getChatOpen(); }
 	public static boolean isChatOpen() { return chatOpen; }
-	public static void readChat(IChatComponent chatMsg) { lastChat = chatMsg; }
-	public static String getLastChatMsgFormatted() { return lastChat.getFormattedText(); }
-	public static String getLastChatMsgUnformatted() { return lastChat.getUnformattedText(); }
+	public static String getLMsgFor() { return lastChat != null ? lastChat.getFormattedText() : ""; }
+	public static String getLMsgUnf() { return lastChat != null ? removeFormattingCodes(lastChat.getUnformattedText()) : ""; }
 	public static void sendLongerChatMessage(String messageIn) { new LongerChatMessage(messageIn).sendMessage(); }
 	public static void setLastTypedMessage(String msgIn) { lastTypedMessage = msgIn; }
 	public static String getLastTypedMessage() { return lastTypedMessage; }
+	
+	public static boolean checkMsgUnfContains(String testIn) { return lastChat != null ? getLMsgUnf().contains(testIn) : false; }
+	public static boolean checkMsgForContains(String testIn) { return lastChat != null ? getLMsgFor().contains(testIn) : false; }
 }
