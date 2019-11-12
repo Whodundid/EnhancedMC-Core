@@ -1,8 +1,8 @@
 package com.Whodundid.core.enhancedGui.guiObjects;
 
-import com.Whodundid.core.enhancedGui.InnerEnhancedGui;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
-import com.Whodundid.core.util.miscUtil.EUtil;
+import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
 //Last edited: Jan 2, 2019

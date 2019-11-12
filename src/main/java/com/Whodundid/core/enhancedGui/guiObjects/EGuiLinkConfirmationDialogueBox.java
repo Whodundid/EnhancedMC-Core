@@ -1,9 +1,8 @@
 package com.Whodundid.core.enhancedGui.guiObjects;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
-
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.resources.I18n;
@@ -43,7 +42,7 @@ public class EGuiLinkConfirmationDialogueBox extends EGuiDialogueBox {
 		int h = 100 + linkLabel.getTextHeight() < 110 ? 110 : 100 + linkLabel.getTextHeight();
 		
 		init(parentIn, x, y, w, h);
-		addObject(header = new EGuiHeader(this));
+		setHeader(new EGuiHeader(this));
 		requestFocus();
 		getTopParent().setFocusLockObject(this);
 		setDisplayString("Opening Link");
@@ -54,6 +53,8 @@ public class EGuiLinkConfirmationDialogueBox extends EGuiDialogueBox {
 		
 		addObject(promptLabel, linkLabel, warningLabel, yes, copy, no);
 	}
+	
+	@Override public void initObjects() {}
 	
 	@Override
 	public void drawObject(int mXIn, int mYIn, float ticks) {

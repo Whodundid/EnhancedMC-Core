@@ -1,7 +1,6 @@
 package com.Whodundid.core.renderer;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.enhancedGui.EnhancedGui;
 import com.Whodundid.core.enhancedGui.StaticEGuiObject;
 import com.Whodundid.core.enhancedGui.guiObjectUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
@@ -19,11 +18,11 @@ import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.FocusType;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.KeyboardType;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.MouseType;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectModifyType;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedTopParent;
+import com.Whodundid.core.enhancedGui.types.EnhancedGui;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
 import com.Whodundid.core.events.emcEvents.ModCalloutEvent;
-import com.Whodundid.core.settings.SettingsGuiMain;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubModType;
 import com.Whodundid.core.util.miscUtil.ScreenLocation;
@@ -37,6 +36,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
 
 //Last edited: Apr 10, 2019
@@ -97,9 +97,9 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	//----------------------------
 	
 	//init
-	@Override public boolean hasBeenInitialized() { return true; }
+	@Override public boolean isInit() { return true; }
 	/** Effectively does nothing in the renderer. */
-	@Override public EnhancedMCRenderer completeInitialization() { return this; }
+	@Override public EnhancedMCRenderer completeInit() { return this; }
 	@Override
 	public void initObjects() {
 		//KeyOverlay keyOverlay = new KeyOverlay(this, 50, 50);
@@ -108,7 +108,6 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	@Override
 	public void reInitObjects() {
 		guiObjects.clear();
-		addObject(new SettingsGuiMain(this));
 		initObjects();
 	}
 	@Override public void onAdded() {}
@@ -136,7 +135,8 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 			else { drawStringWithShadow("FocusLockObject: " + focusLockObject, 3, 22, 0x70f3ff); }
 			drawStringWithShadow("objs: " + guiObjects, 3, 32, 0x70f3ff);
 			drawStringWithShadow("ModifyingObject & type: (" + modifyingObject + " : " + modifyType + ")", 3, 42, 0x70f3ff);
-			drawStringWithShadow("Object under mouse: " + getHighestZObjectUnderMouse(), 3, 52, 0xffbb00);
+			IEnhancedGuiObject ho = getHighestZObjectUnderMouse();
+			drawStringWithShadow("Object under mouse: " + ho + " " + (ho != null ? ho.getZLevel() : -1), 3, 52, 0xffbb00);
 			
 			drawStringWithShadow("(" + mX + ", " + mY + ")", 3, 62, 0xffbb00);
 		}
@@ -306,7 +306,7 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 		} else {
 			if (RegisteredSubMods.isModRegistered(SubModType.ENHANCEDCHAT)) {
 				ModCalloutEvent callout = new ModCalloutEvent(this, "has chat window"); // I AM NOT SURE IF THIS ACTUALLY ACCOMPLISHED ANYTHING!
-				if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(callout)) {
+				if (MinecraftForge.EVENT_BUS.post(callout)) {
 					if (!isShiftKeyDown()) { change *= 7; }
 					mc.ingameGUI.getChatGUI().scroll(change);
 				}
@@ -315,7 +315,10 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	} 
 	@Override
 	public void keyPressed(char typedChar, int keyCode) {
-		if (keyCode == 1) { guiObjects.clear(); }
+		if (keyCode == 1) {
+			IEnhancedGuiObject highest = getHighestZLevelObject();
+			if (highest != null) { highest.close(); }
+		}
 		if (eventHandler != null) { eventHandler.processEvent(new EventKeyboard(this, typedChar, keyCode, KeyboardType.Pressed)); }
 		if (focusedObject != null && focusedObject != this) { focusedObject.keyPressed(Keyboard.getEventCharacter(), Keyboard.getEventKey()); }
 	}
@@ -355,6 +358,19 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	//hovering text
 	@Override public IEnhancedTopParent setObjectWithHoveringText(IEnhancedGuiObject objIn) { hoveringTextObject = objIn; return this; }
 	@Override public IEnhancedGuiObject getObjectWithHoveringText() { return hoveringTextObject; }
+	
+	//objects
+	public IEnhancedGuiObject getHighestZLevelObject() {
+		EArrayList<IEnhancedGuiObject> objs = getImmediateChildren();
+		if (objs.isNotEmpty()) {
+			IEnhancedGuiObject highest = objs.get(0);
+			for (IEnhancedGuiObject o : getImmediateChildren()) {
+				if (o.getZLevel() > highest.getZLevel()) { highest = o; }
+			}
+			return highest;
+		}
+		return null;
+	}
 	
 	//focus
 	@Override public IEnhancedGuiObject getDefaultFocusObject() { return defaultFocusObject; }

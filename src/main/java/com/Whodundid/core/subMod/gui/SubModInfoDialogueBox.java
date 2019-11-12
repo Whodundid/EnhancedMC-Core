@@ -6,7 +6,7 @@ import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiLabel;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiRect;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextArea;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import net.minecraft.util.EnumChatFormatting;
@@ -27,6 +27,7 @@ public class SubModInfoDialogueBox extends EGuiDialogueBox {
 		setZLevel(99999);
 		setResizeable(true);
 		setMinimumWidth(140).setMinimumHeight(160);
+		setObjectName("Mod Info");
 	}
 	
 	public SubModInfoDialogueBox(IEnhancedGuiObject parentIn, int xPos, int yPos, int width, int height, SubMod modIn) {
@@ -37,6 +38,7 @@ public class SubModInfoDialogueBox extends EGuiDialogueBox {
 		setZLevel(999999);
 		setResizeable(true);
 		setMinimumWidth(140).setMinimumHeight(160);
+		setObjectName("Mod Info");
 	}
 	
 	@Override

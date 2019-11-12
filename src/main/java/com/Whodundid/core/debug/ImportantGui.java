@@ -2,7 +2,7 @@ package com.Whodundid.core.debug;
 
 import java.awt.Color;
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.enhancedGui.EnhancedGui;
+import com.Whodundid.core.enhancedGui.types.EnhancedGui;
 import com.Whodundid.core.util.renderUtil.Resources;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;

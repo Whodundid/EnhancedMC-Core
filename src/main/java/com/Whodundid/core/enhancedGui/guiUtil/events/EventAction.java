@@ -1,7 +1,7 @@
 package com.Whodundid.core.enhancedGui.guiUtil.events;
 
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 
 //Last edited: Mar 26, 2019
 //First Added: Mar 26, 2019

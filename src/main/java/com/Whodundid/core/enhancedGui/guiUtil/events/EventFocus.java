@@ -2,7 +2,7 @@ package com.Whodundid.core.enhancedGui.guiUtil.events;
 
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.EventType;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.FocusType;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 
 //Last edited: Dec 31, 2018
 //First Added: Dec 31, 2018

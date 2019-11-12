@@ -1,7 +1,7 @@
 package com.Whodundid.core.enhancedGui.guiObjects;
 
-import com.Whodundid.core.enhancedGui.InnerEnhancedGui;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 
 public class EGuiWindow extends InnerEnhancedGui {
 	

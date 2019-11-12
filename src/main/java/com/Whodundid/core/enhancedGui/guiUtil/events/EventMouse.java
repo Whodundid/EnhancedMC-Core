@@ -2,16 +2,19 @@ package com.Whodundid.core.enhancedGui.guiUtil.events;
 
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.EventType;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.MouseType;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 
 public class EventMouse extends ObjectEvent {
 	
 	MouseType type;
 	int mX = 0, mY = 0;
-	int button;
+	int button = -1;
 	
 	public EventMouse(IEnhancedGuiObject parentObjectIn, int mXIn, int mYIn, int buttonIn, MouseType typeIn) {
 		super(parentObjectIn, EventType.Mouse);
+		mX = mXIn;
+		mY = mYIn;
+		button = buttonIn;
 		type = typeIn;
 	}
 

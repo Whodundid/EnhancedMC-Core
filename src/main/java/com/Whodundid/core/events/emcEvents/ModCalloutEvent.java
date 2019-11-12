@@ -6,32 +6,40 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 @Cancelable
 public class ModCalloutEvent extends Event {
 	
-	Object eventObject;
-	boolean hasResponded = false;
-	String response = "";
-	String callerMessage = "";
-	Object responseObject;
-	int mX = 0;
-	int mY = 0;
+	Object sender, receiver;
+	String senderMessage = "", receiverMessage = "";
+	Object senderObject, receiverObject;
+	int mX = 0, mY = 0;
 	
 	public ModCalloutEvent(Object objIn) { this(objIn, "", -1, -1); }
-	public ModCalloutEvent(Object objIn, String callerMessageIn) { this(objIn, callerMessageIn, -1, -1); }
-	public ModCalloutEvent(Object objIn, String callerMessageIn, int mXIn, int mYIn) {
-		eventObject = objIn;
-		callerMessage = callerMessageIn;
+	public ModCalloutEvent(Object objIn, String senderMessageIn) { this(objIn, senderMessageIn, -1, -1); }
+	public ModCalloutEvent(Object objIn, String senderMessageIn, int mXIn, int mYIn) { this(objIn, senderMessageIn, null, -1, -1); }
+	public ModCalloutEvent(Object objIn, String senderMessageIn, Object senderObjectIn, int mXIn, int mYIn) {
+		sender = objIn;
+		senderMessage = senderMessageIn;
+		senderObject = senderObjectIn;
 		mX = mXIn;
 		mY = mYIn;
 	}
 	
-	public Object getCaller() { return eventObject; }
-	public ModCalloutEvent respond(String responseIn) { response = responseIn; hasResponded = true; return this; }
-	public ModCalloutEvent setResponseObject(Object objectIn) { responseObject = objectIn; return this; }
+	public ModCalloutEvent respond(Object objectIn) { return respond(objectIn, "", null); }
+	public ModCalloutEvent respond(Object objectIn, String msgIn) { return respond(objectIn, msgIn, null); }
+	public ModCalloutEvent respond(Object objectIn, String msgIn, Object receiverObjIn) {
+		receiver = objectIn;
+		receiverMessage = msgIn;
+		receiverObject = receiverObjIn;
+		return this;
+	}
 	
-	public boolean check() { return hasResponded; }
-	public boolean checkMessage(String testIn) { return callerMessage.equals(testIn); }
-	public String getResponse() { return response; }
-	public String getCallerMessage() { return callerMessage; }
-	public Object getResponseObject() { return responseObject; }
+	public boolean checkSenderMsg(String testIn) { return senderMessage.equals(testIn); }
+	public boolean checkReceiverMsg(String testIn) { return receiverMessage.equals(testIn); }
+	
+	public Object getSender() { return sender; }
+	public String getSenderMessage() { return senderMessage; }
+	public String getRecieverMessage() { return receiverMessage; }
+	public Object getSenderObject() { return senderObject; }
+	public Object getReceiverObject() { return receiverObject; }
+	
 	public int getMX() { return mX; }
 	public int getMY() { return mY; }
 }

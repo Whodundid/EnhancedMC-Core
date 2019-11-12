@@ -1,9 +1,9 @@
 package com.Whodundid.core.enhancedGui.guiObjects;
 
-import com.Whodundid.core.enhancedGui.EnhancedActionObject;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.EnhancedActionObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 
 import java.text.DecimalFormat;

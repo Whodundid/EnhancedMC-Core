@@ -1,13 +1,13 @@
 package com.Whodundid.core.enhancedGui.guiObjects;
 
-import com.Whodundid.core.enhancedGui.EnhancedGuiObject;
-import com.Whodundid.core.enhancedGui.InnerEnhancedGui;
 import com.Whodundid.core.enhancedGui.guiObjectUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectModifyType;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedTopParent;
+import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
 import com.Whodundid.core.util.miscUtil.ScreenLocation;
 import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.storageUtil.EDimension;
@@ -191,7 +191,7 @@ public class EGuiHeader extends EnhancedGuiObject {
 	
 	protected void handleFileUp() {
 		if (getParent() instanceof InnerEnhancedGui) {
-			if (getParent() != null) { getParent().close(); }
+			((InnerEnhancedGui) getParent()).fileUpAndClose();
 		}
 		else if (getTopParent() != null) { getTopParent().closeGui(false); }
 	}

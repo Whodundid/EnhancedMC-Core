@@ -1,10 +1,10 @@
 package com.Whodundid.core.enhancedGui.guiObjects;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.enhancedGui.EnhancedActionObject;
-import com.Whodundid.core.enhancedGui.InnerEnhancedGui;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.EnhancedActionObject;
+import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.subMod.IUseScreenLocation;
 import com.Whodundid.core.util.miscUtil.ScreenLocation;
 
@@ -76,7 +76,7 @@ public class EGuiScreenLocationSelector extends EnhancedActionObject {
 			//if (mc.currentScreen instanceof EnhancedGui) { history.push((EnhancedGui) mc.currentScreen); }
 			//if (history != null) { newGui.sendGuiHistory(history); }
 			//mc.displayGuiScreen(newGui);
-			EnhancedMC.displayEGui(newGui);
+			EnhancedMC.displayEGui(newGui, this);
 		}
 		if (actionReciever != null) { actionReciever.actionPerformed(this); }
 	}

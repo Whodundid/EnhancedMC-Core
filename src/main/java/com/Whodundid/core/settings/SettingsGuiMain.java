@@ -4,7 +4,6 @@ import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.coreSubMod.EnhancedMCMod;
 import com.Whodundid.core.debug.ExperimentGui;
 import com.Whodundid.core.debug.ImportantGui;
-import com.Whodundid.core.enhancedGui.InnerEnhancedGui;
 import com.Whodundid.core.enhancedGui.StaticEGuiObject;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
@@ -12,15 +11,18 @@ import com.Whodundid.core.enhancedGui.guiObjects.EGuiLabel;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiRect;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiScrollList;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextField;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.settings.guiParts.SettingsMenuContainer;
+import com.Whodundid.core.settings.guiParts.SettingsRCM;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.subMod.SubModSettings;
 import com.Whodundid.core.subMod.SubModType;
 import com.Whodundid.core.subMod.gui.IncompatibleWindowList;
-import com.Whodundid.core.subMod.gui.SubModMenuContainer;
-import com.Whodundid.core.util.miscUtil.ChatBuilder;
+import com.Whodundid.core.util.chatUtil.ChatBuilder;
+import com.Whodundid.core.util.miscUtil.ScreenLocation;
 import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
@@ -40,6 +42,7 @@ public class SettingsGuiMain extends InnerEnhancedGui {
 	EGuiButton hiddenButton1, hiddenButton2;
 	EGuiScrollList scrollList;
 	EGuiTextField searchField;
+	SettingsRCM rcm;
 	int leftPress = 0, rightPress = 0;
 	int found = 0;
 	
@@ -55,7 +58,8 @@ public class SettingsGuiMain extends InnerEnhancedGui {
 		setObjectName("EMC Settings");
 		centerObjectWithSize(defaultWidth, defaultHeight);
 		setResizeable(true);
-		setMinimumWidth(192).setMinimumHeight(101).setMaximumWidth(220);
+		//setMinimumWidth(192).
+		setMinimumWidth(defaultWidth).setMinimumHeight(101).setMaximumWidth(220);
 		super.initGui();
 	}
 	
@@ -85,11 +89,6 @@ public class SettingsGuiMain extends InnerEnhancedGui {
 		StaticEGuiObject.setPersistence(true, keyBindGui, reloadConfigs);
 		
 		hiddenButton1 = new EGuiButton(this, startX + 1, startY + 1, 10, 10) {
-			{
-				setRunActionOnPress(true);
-				setButtonTexture(Resources.emptyPixel);
-				setButtonSelTexture(Resources.emptyPixel);
-			}
 			@Override public void performAction() {
 				if (getPressedButton() == 0) {
 					if (!EnhancedMC.isDebugMode()) {
@@ -109,11 +108,6 @@ public class SettingsGuiMain extends InnerEnhancedGui {
 		};
 		
 		hiddenButton2 = new EGuiButton(this, endX - (RegisteredSubMods.getIncompatibleModsList().isEmpty() ? 11 : 28), startY + 1, 10, 10) {
-			{
-				setRunActionOnPress(true);
-				setButtonTexture(Resources.emptyPixel);
-				setButtonSelTexture(Resources.emptyPixel);
-			}
 			@Override public void performAction() {
 				if (getPressedButton() == 0) {
 					if (!EnhancedMC.isDebugMode()) {
@@ -125,6 +119,9 @@ public class SettingsGuiMain extends InnerEnhancedGui {
 				super.drawObject(mX, mY, ticks);
 			}
 		};
+		
+		hiddenButton1.setTextures(Resources.emptyPixel, Resources.emptyPixel).setRunActionOnPress(true);
+		hiddenButton2.setTextures(Resources.emptyPixel, Resources.emptyPixel).setRunActionOnPress(true);
 		
 		scrollList = new EGuiScrollList(this, startX + 5, startY + 23, endX - startX - 10, endY - startY - 75).setBackgroundColor(0xff252525);
 		
@@ -165,13 +162,22 @@ public class SettingsGuiMain extends InnerEnhancedGui {
 		super.drawObject(mXIn, mYIn, ticks);
 	}
 	
+	@Override
+	public SettingsGuiMain resize(int xIn, int yIn, ScreenLocation areaIn) {
+		int curPos = scrollList.getVScrollBar().getScrollPos();
+		scrollList.getVScrollBar().reset();
+		super.resize(xIn, yIn, areaIn);
+		scrollList.getVScrollBar().setScrollBarPos(curPos);
+		return this;
+	}
+	
 	private void assembleList() {
 		//reset the list first
 		scrollList.clearList();
 		scrollList.setListHeight(0); //reset height to 0
 		
 		//not important
-		if (searchField.getText().toLowerCase().equals("whodundid")) { mc.displayGuiScreen(new ImportantGui()); return; }
+		if (searchField.getText().toLowerCase().equals("whodundid")) { searchField.clear(); mc.displayGuiScreen(new ImportantGui()); assembleList(); return; }
 		
 		//gather and filter all present EMC submods
 		EArrayList<SubMod> filteredMods = new EArrayList();
@@ -199,7 +205,6 @@ public class SettingsGuiMain extends InnerEnhancedGui {
 		
 		//actually add mods to list
 		if (size > 0) {
-			scrollList.setListHeight(22); //add initial space
 			int count = 0;
 			int lineStart = 0;
 			int cHeight = 0;
@@ -207,11 +212,11 @@ public class SettingsGuiMain extends InnerEnhancedGui {
 			for (int i = 0; i < filteredMods.size(); i++) {
 				SubMod m = filteredMods.get(i);
 				
-				SubModMenuContainer container = new SubModMenuContainer(scrollList, m, count);
+				SettingsMenuContainer container = new SettingsMenuContainer(scrollList, m, count, this);
 				
 				cHeight = container.getHeight();
 				scrollList.addObjectToList(container);
-				scrollList.growListHeight(container.getHeight());
+				scrollList.growListHeight(container.getHeight() + 2);
 				count++;
 			}
 			
@@ -243,7 +248,7 @@ public class SettingsGuiMain extends InnerEnhancedGui {
 					for (int i = 0; i < incompats.size(); i++) {
 						SubMod m = incompats.get(i);
 						
-						SubModMenuContainer container = new SubModMenuContainer(scrollList, m, count, space - 4);
+						SettingsMenuContainer container = new SettingsMenuContainer(scrollList, m, count, space - 4, this);
 						
 						cHeight = container.getHeight();
 						scrollList.addObjectToList(container);
@@ -255,23 +260,20 @@ public class SettingsGuiMain extends InnerEnhancedGui {
 					EGuiRect incompatSeparator = new EGuiRect(this, l.getMidX() + 16, lineStartIncompat, l.getMidX() + 17, lineEndIncompat, 0xff000000);
 					scrollList.addObjectToList(incompatSeparator);
 					
-					//scrollList.growListLength(22);
+					scrollList.growListHeight(22);
 				}
 			}
 		}
 		
-		scrollList.growListHeight(2);
-		//scrollList.growListLength(40);
+		scrollList.growListHeight(2); //add spacing to bottom so it matches the top
 	}
 	
 	@Override
 	public void actionPerformed(IEnhancedActionObject object) {
 		if (object.runActionOnPress()) { object.performAction(); }
 		else {
-			if (object.equals(keyBindGui)) {
-				openNewGui(new KeyBindGui(EnhancedMC.getRenderer(), startX, startY, this));
-			}
-			if (object.equals(reloadConfigs)) {
+			if (object == keyBindGui) { EnhancedMC.displayEGui(new KeyBindGui(), this); }
+			if (object == reloadConfigs) {
 				for (SubMod m : RegisteredSubMods.getRegisteredModsList()) {
 					if (m.hasConfig()) {
 						if (mc.thePlayer != null) { mc.thePlayer.addChatComponentMessage(ChatBuilder.of(EnumChatFormatting.YELLOW +  "Reloading " + m.getName() + " config..").build()); }
@@ -285,9 +287,7 @@ public class SettingsGuiMain extends InnerEnhancedGui {
 				
 				assembleList();
 			}
-			if (object.equals(experimentGui)) {
-				EnhancedMC.displayEGui(new ExperimentGui());
-			}
+			if (object == experimentGui) { EnhancedMC.displayEGui(new ExperimentGui(), this); }
 			if (object == disableDebugMode) {
 				EnhancedMC.setDebugMode(false);
 				experimentGui.setVisible(false);
@@ -295,10 +295,18 @@ public class SettingsGuiMain extends InnerEnhancedGui {
 				leftPress = 0;
 				rightPress = 0;
 			}
-			if (object == problem) {
-				addObject(new IncompatibleWindowList(this));
-			}
+			if (object == problem) { addObject(new IncompatibleWindowList(this)); }
 		}
+	}
+	
+	@Override
+	public void keyPressed(char typedChar, int keyCode) {
+		
+	}
+	
+	public void openRCM(int mXIn, int mYIn) { openRCM(mXIn, mYIn); }
+	public void openRCM(int mXIn, int mYIn, SubMod modIn) {
+		addObject(rcm = new SettingsRCM(this, mXIn, mYIn, modIn));
 	}
 	
 	public void updateList() {

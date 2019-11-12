@@ -1,6 +1,6 @@
 package com.Whodundid.core.enhancedGui.guiUtil.events;
 
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
 public class ObjectEventHandler {

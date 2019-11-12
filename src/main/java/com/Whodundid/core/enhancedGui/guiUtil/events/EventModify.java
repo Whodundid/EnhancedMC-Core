@@ -2,7 +2,7 @@ package com.Whodundid.core.enhancedGui.guiUtil.events;
 
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.EventType;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectModifyType;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 
 //Last edited: Mar 26, 2019
 //First Added: Mar 26, 2019

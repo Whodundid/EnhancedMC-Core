@@ -6,15 +6,14 @@ import com.Whodundid.core.coreSubMod.EMCInGameMenu;
 import com.Whodundid.core.coreSubMod.EnhancedMCMod;
 import com.Whodundid.core.events.emcEvents.ChatLineCreatedEvent;
 import com.Whodundid.core.events.emcEvents.ModCalloutEvent;
+import com.Whodundid.core.renderer.RendererProxyGui;
 import com.Whodundid.core.subMod.RegisteredSubMods;
-import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.util.chatUtil.EChatUtil;
 import com.Whodundid.core.util.playerUtil.PlayerFacing;
 import com.Whodundid.core.util.renderUtil.BlockDrawer;
 import com.Whodundid.core.util.renderUtil.CursorHelper;
 import com.Whodundid.core.util.worldUtil.WorldEditListener;
 import net.minecraftforge.client.event.RenderPlayerEvent;
-import net.minecraftforge.client.event.RenderWorldEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraft.client.Minecraft;
@@ -52,7 +51,7 @@ public class EventListener {
 	@SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent e) {
 		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventClientTick(e); }
+			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventClientTick(e));
 			if (e.side == Side.CLIENT) {
 				if (EnhancedMC.updateCounter == Integer.MAX_VALUE) {
 					EnhancedMC.updateCounter = 0;
@@ -65,7 +64,7 @@ public class EventListener {
 	@SubscribeEvent
     public void onTick(TickEvent e) {
 		if (EnhancedMC.isInitialized()) {
-			
+			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventTick(e));
 		}
     }
 	
@@ -76,35 +75,35 @@ public class EventListener {
 			if (e.gui instanceof GuiIngameMenu) {
 				if (EnhancedMCMod.emcMenuOverride.get()) { mc.displayGuiScreen(new EMCInGameMenu()); }
 			}
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventInitGui(e); }
+			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventInitGui(e));
 		}
 	}
 	
 	@SubscribeEvent
 	public void onPlayerRender(RenderPlayerEvent.Pre e) {
 		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventRenderPlayer(e); }
+			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventRenderPlayer(e));
 		}
 	}
 	
 	@SubscribeEvent
 	public void onRenderFog(EntityViewRenderEvent.FogDensity e) {
 		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventRenderFogTick(e); }
+			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventRenderFogTick(e));
 		}
 	}
 	
 	@SubscribeEvent
 	public void onBlockOverlayRender(RenderBlockOverlayEvent e) {
 		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventBlockOverlayTick(e); }
+			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventBlockOverlayTick(e));
 		}
 	}
 	
 	@SubscribeEvent
 	public void living(LivingUpdateEvent e) {
 		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventLivingTick(e); }
+			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventLivingTick(e));
 		}
 	}
 	
@@ -113,35 +112,36 @@ public class EventListener {
 	public  void onKeyEvent(KeyInputEvent e) {
 		if (EnhancedMC.isInitialized()) {
 			EnhancedMC.checkKeyBinds();
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventKey(e); }
+			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventKey(e));
 		}
 	}
 	
 	@SubscribeEvent
 	public void onMouseEvent(MouseEvent e) {
 		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventMouse(e); }
+			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventMouse(e));
 		}
 	}
 	
 	@SubscribeEvent(priority = EventPriority.HIGH)
 	public void onOverlayRender(RenderGameOverlayEvent e) {
 		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventOverlayRenderTick(e); }
+			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventOverlayRenderTick(e));
 		}
 	}
 	
 	@SubscribeEvent
 	public void onOverlayRender(RenderGameOverlayEvent.Text e) {
 		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventTextOverlayRenderTick(e); }
+			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventTextOverlayRenderTick(e));
 		}
 	}
 	
 	@SubscribeEvent
 	public void onPreOverlayRender(RenderGameOverlayEvent.Pre e) {
 		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventPreOverlayRenderTick(e); }
+			if (e.type == ElementType.CHAT && mc.currentScreen instanceof RendererProxyGui) { e.setCanceled(true); }
+			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventPreOverlayRenderTick(e));
 		}
 	}
 	
@@ -149,7 +149,7 @@ public class EventListener {
 	public void onRenderTick(TickEvent.RenderTickEvent e) {
 		if (EnhancedMC.isInitialized()) {
 			PlayerFacing.checkEyePosition(e);
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventRenderTick(e); }
+			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventRenderTick(e));
 		}
 	}
 	
@@ -160,17 +160,20 @@ public class EventListener {
 				GL11.glPushMatrix();
 				GlStateManager.disableAlpha();
 				GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
-				for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventPostOverlayRenderTick(e); }
-				EnhancedMC.getRenderer().onRenderTick(e);
+				RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventPostOverlayRenderTick(e));
 				GlStateManager.enableAlpha();
 				GL11.glPopMatrix();
+				EnhancedMC.getRenderer().onRenderTick(e);
 			}
 		}
 	}
 	
 	@SubscribeEvent
 	public void onLastWorldRender(RenderWorldLastEvent e) {
-		BlockDrawer.draw(e);
+		if (EnhancedMC.isInitialized()) {
+			BlockDrawer.draw(e);
+			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventLastWorldRender(e));
+		}
 	}
 	
 	@SubscribeEvent
@@ -178,14 +181,14 @@ public class EventListener {
 		if (EnhancedMC.isInitialized()) {
 			EChatUtil.readChat(e.message);
 			WorldEditListener.checkForPositions();
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventChat(e); }
+			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventChat(e));
 		}
 	}
 	
 	@SubscribeEvent
 	public void onChatLineCreated(ChatLineCreatedEvent e) {
 		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventChatLineCreated(e); }
+			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventChatLineCreated(e));
 		}
 	}
 	
@@ -193,7 +196,9 @@ public class EventListener {
 	public void onWorldUnload(WorldEvent.Unload e) {
 		if (EnhancedMC.isInitialized()) {
 			CursorHelper.reset();
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventWorldUnload(e); }
+			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventWorldUnload(e));
+			BlockDrawer.clearBlocks();
+			EnhancedMC.getRenderer().getImmediateChildren().clear();
 		}
 	}
 	
@@ -201,8 +206,8 @@ public class EventListener {
 	public void onWorldLoad(WorldEvent.Load e) {
 		if (EnhancedMC.isInitialized()) {
 			CursorHelper.reset();
-			mc.ingameGUI = EnhancedMC.enhancedMCGui;
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventWorldLoad(e); }
+			//mc.ingameGUI = EnhancedMC.enhancedMCGui;
+			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventWorldLoad(e));
 		}
 	}
 	
@@ -210,21 +215,21 @@ public class EventListener {
     public void onServerJoin(EntityJoinWorldEvent e) {
 		if (EnhancedMC.isInitialized()) {
 			CursorHelper.reset();
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventServerJoin(e); }
+			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventServerJoin(e));
 		}
     }
 	
 	@SubscribeEvent
 	public void onCommand(CommandEvent e) {
 		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventCommand(e); }
+			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventCommand(e));
 		}
 	}
 	
 	@SubscribeEvent
 	public void onModCallout(ModCalloutEvent e) {
 		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventModCallout(e); }
+			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventModCallout(e));
 		}
 	}
 }

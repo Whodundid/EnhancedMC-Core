@@ -1,8 +1,8 @@
 package com.Whodundid.core.enhancedGui.guiObjects.misc;
 
-import com.Whodundid.core.enhancedGui.EnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 
 //Last edited: Apr 1, 2019
 //First Added: Apr 1, 2019

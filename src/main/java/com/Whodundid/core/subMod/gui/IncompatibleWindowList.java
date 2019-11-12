@@ -1,13 +1,12 @@
 package com.Whodundid.core.subMod.gui;
 
-import com.Whodundid.core.enhancedGui.guiObjectUtil.TextAreaLine;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiDialogueBox;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiLabel;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiRect;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextArea;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.util.storageUtil.EArrayList;
@@ -85,8 +84,8 @@ public class IncompatibleWindowList extends EGuiDialogueBox {
 		
 		addObject(problem);
 		
-		TextAreaLine l = incompatibleList.getLongestLine();
-		longest = l != null ? fontRenderer.getStringWidth(l.getText()) : 0;
+		//TextAreaLine l = incompatibleList.getLongestLine();
+		//longest = l != null ? fontRenderer.getStringWidth(l.getText()) : 0;
 		
 		
 		setDisplayStringColor(0xc2c2c2);

@@ -1,8 +1,8 @@
 package com.Whodundid.core.enhancedGui.guiObjects;
 
-import com.Whodundid.core.enhancedGui.EnhancedGuiObject;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.miscUtil.ScreenLocation;
 import com.Whodundid.core.util.renderUtil.PlayerDrawer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -108,11 +108,11 @@ public class EGuiPlayerViewer extends EnhancedGuiObject {
 		//System.out.println("xs: " + xs + " xe: " + xe + " ys: " + ys + " ye: " + ye);
 	}
 	
-	public EGuiPlayerViewer setHSliderOrientation(ScreenLocation locIn) { hLoc = locIn; if (hasBeenInitialized()) { reorient(); } return this; }
-	public EGuiPlayerViewer setVSliderOrientation(ScreenLocation locIn) { vLoc = locIn; if (hasBeenInitialized()) { reorient(); } return this; }
-	public EGuiPlayerViewer setResetButtonOrientation(ScreenLocation locIn) { rLoc = locIn; if (hasBeenInitialized()) { reorient(); } return this; }
+	public EGuiPlayerViewer setHSliderOrientation(ScreenLocation locIn) { hLoc = locIn; if (isInit()) { reorient(); } return this; }
+	public EGuiPlayerViewer setVSliderOrientation(ScreenLocation locIn) { vLoc = locIn; if (isInit()) { reorient(); } return this; }
+	public EGuiPlayerViewer setResetButtonOrientation(ScreenLocation locIn) { rLoc = locIn; if (isInit()) { reorient(); } return this; }
 	
-	public EGuiPlayerViewer setHSliderHeight(int heightIn) { hSlider.setDimensions(hSlider.startX, hSlider.startY, hSlider.width, heightIn); if (hasBeenInitialized()) { reorient(); } return this; }
-	public EGuiPlayerViewer setVSliderWidth(int widthIn) { vSlider.setDimensions(vSlider.startX, vSlider.startY, widthIn, vSlider.height); if (hasBeenInitialized()) { reorient(); } return this; }
+	public EGuiPlayerViewer setHSliderHeight(int heightIn) { hSlider.setDimensions(hSlider.startX, hSlider.startY, hSlider.width, heightIn); if (isInit()) { reorient(); } return this; }
+	public EGuiPlayerViewer setVSliderWidth(int widthIn) { vSlider.setDimensions(vSlider.startX, vSlider.startY, widthIn, vSlider.height); if (isInit()) { reorient(); } return this; }
 	
 }

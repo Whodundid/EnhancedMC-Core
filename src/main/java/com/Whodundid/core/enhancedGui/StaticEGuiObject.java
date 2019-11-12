@@ -11,8 +11,11 @@ import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectEventType;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectModifyType;
 import com.Whodundid.core.enhancedGui.guiUtil.exceptions.HeaderAlreadyExistsException;
 import com.Whodundid.core.enhancedGui.guiUtil.exceptions.ObjectInitException;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedTopParent;
+import com.Whodundid.core.enhancedGui.types.EnhancedGui;
+import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
 import com.Whodundid.core.util.miscUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
@@ -116,8 +119,10 @@ public class StaticEGuiObject {
 		}
 		obj.setDimensions(newX, newY, d.width, d.height);
 		for (IEnhancedGuiObject o : objs) {
-			StorageBox<Integer, Integer> oldLoc = previousLocations.getBoxWithObj(o).getValue();
-			o.setPosition(newX + oldLoc.getObject(), newY + oldLoc.getValue());
+			if (!o.isPositionLocked()) {
+				StorageBox<Integer, Integer> oldLoc = previousLocations.getBoxWithObj(o).getValue();
+				o.setPosition(newX + oldLoc.getObject(), newY + oldLoc.getValue());
+			}
 		}
 	}
 	public static void centerObjectWithSize(IEnhancedGuiObject obj, int widthIn, int heightIn) {
@@ -158,7 +163,6 @@ public class StaticEGuiObject {
 			try {
 				if (o != null) {
 					if (o != parent && parent.getImmediateChildren().notContains(o) && parent.getObjectsToBeAdded().notContains(o)) {
-					//if (o != parent && parent.getImmediateChildren().notContains(o)) {
 						if (o instanceof EnhancedGui) { continue; }
 						if (o instanceof EGuiHeader && parent.hasHeader()) { 
 							throw new HeaderAlreadyExistsException(parent.getHeader());
@@ -168,12 +172,9 @@ public class StaticEGuiObject {
 							o.setParent(parent).initObjects();
 							o.setZLevel(parent.getZLevel() + o.getZLevel() + 1);
 							if (parent.isBoundaryEnforced()) { o.setBoundaryEnforcer(parent.getBoundaryEnforcer()); }
-							o.completeInitialization();
+							o.completeInit();
 						} catch (ObjectInitException e) { e.printStackTrace(); }
 						addingObjects.add(o);
-						//parent.getImmediateChildren().add(o);
-						//o.onAdded();
-						//parent.postEvent(new EventObjects(parent, o, ObjectEventType.ObjectAdded));
 					}
 				}
 			} catch (HeaderAlreadyExistsException e) { e.printStackTrace(); }
@@ -181,14 +182,6 @@ public class StaticEGuiObject {
 		parent.getObjectsToBeAdded().addAll(addingObjects);
 	}
 	public static void removeObject(IEnhancedGuiObject parent, IEnhancedGuiObject... objsIn) {
-		//for (IEnhancedGuiObject o : objsIn) {
-		//	if (o != null && parent.getImmediateChildren().contains(o)) {
-		//		o.onClosed();
-		//		o.getImmediateChildren().remove(o);
-		//		o.postEvent(new EventObjects(parent, o, ObjectEventType.ObjectRemoved));
-		//	}
-		//}
-		
 		parent.getObjectsToBeRemoved().addAll(objsIn);
 	}
 	public static EArrayList<IEnhancedGuiObject> getAllChildren(IEnhancedGuiObject obj) {
@@ -276,8 +269,8 @@ public class StaticEGuiObject {
 			objIn.getTopParent().setModifyMousePos(mX, mY);
 			objIn.getTopParent().setModifyingObject(objIn, ObjectModifyType.Resize);
 		}
-		IEnhancedGuiObject window = objIn.getWindowParent();
-		if (window instanceof InnerEnhancedGui) { window.bringToFront(); }
+		//IEnhancedGuiObject window = objIn.getWindowParent();
+		//if (window instanceof InnerEnhancedGui) { window.bringToFront(); }
 	}
 	public static void mouseReleased(IEnhancedGuiObject objIn, int mX, int mY, int button) {
 		objIn.postEvent(new EventMouse(objIn, mX, mY, button, MouseType.Released));

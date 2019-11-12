@@ -4,7 +4,7 @@ import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiDialogueBox;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.settings.SettingsGuiMain;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.subMod.SubModSettings;
@@ -29,6 +29,7 @@ public class SubModErrorDialogueBox extends EGuiDialogueBox {
 		requestFocus();
 		getTopParent().setFocusLockObject(this);
 		setZLevel(99999);
+		setObjectName("Error");
 	}
 	
 	public SubModErrorDialogueBox(IEnhancedGuiObject parentIn, int xPos, int yPos, int width, int height, SubModErrorType typeIn, SubMod modIn) {
@@ -39,6 +40,7 @@ public class SubModErrorDialogueBox extends EGuiDialogueBox {
 		getTopParent().setFocusLockObject(this);
 		setMessageColor(0xff5555);
 		setZLevel(99999);
+		setObjectName("Error");
 	}
 	
 	@Override
@@ -103,9 +105,7 @@ public class SubModErrorDialogueBox extends EGuiDialogueBox {
 	}
 	
 	public SubModErrorDialogueBox createErrorMessage(Exception e, EArrayList<SubMod> modsIn) {
-		if (e != null) {
-			setMessage(e.getMessage());
-		}
+		if (e != null) { setMessage(e.getMessage()); }
 		else if (modsIn != null && !modsIn.isEmpty()) {
 			mods.addAll(modsIn);
 			message += "Mods: (";
@@ -119,11 +119,15 @@ public class SubModErrorDialogueBox extends EGuiDialogueBox {
 			}
 			setMessage(message);
 		}
+		else {
+			setMessage(message = mod.getName() + " does not have a main gui.");
+		}
 		
 		if (type == SubModErrorType.INCOMPATIBLE) {
-			setMessage(mod.getName() + " is either incompatible or deals with incompatible mods!");
-			this.setMessageColor(0xff5555);
+			setMessage(message = mod.getName() + " is either incompatible or deals with incompatible mods!");
 		}
+		
+		setMessageColor(0xff5555);
 		return this;
 	}
 	

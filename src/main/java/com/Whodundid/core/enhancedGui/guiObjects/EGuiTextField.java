@@ -1,11 +1,10 @@
 package com.Whodundid.core.enhancedGui.guiObjects;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.enhancedGui.EnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.guiObjectUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
-
+import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -400,4 +399,5 @@ public class EGuiTextField extends EnhancedGuiObject {
 	public EGuiTextField setAllowClipboardPastes(boolean val) { allowClipboardPastes = val; return this; }
 	public EGuiTextField setTextWhenEmpty(String textIn) { textWhenEmpty = textIn; text = textWhenEmpty; setTextColor(textWhenEmptyColor); return this; }
 	public EGuiTextField setTextWhenEmptyColor(int colorIn) { textWhenEmptyColor = colorIn; return this; }
+	public EGuiTextField clear() { setText(""); return this; }
 }

@@ -1,6 +1,6 @@
 package com.Whodundid.core.enhancedGui.guiUtil.exceptions;
 
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 
 public class ObjectInitException extends Exception {
 	

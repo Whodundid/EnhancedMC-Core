@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.enhancedGui.EnhancedGui;
-import com.Whodundid.core.enhancedGui.InnerEnhancedGui;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiColorPicker;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiDialogueBox;
@@ -17,9 +15,11 @@ import com.Whodundid.core.enhancedGui.guiObjects.EGuiScrollList;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiSlider;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextArea;
 import com.Whodundid.core.enhancedGui.guiObjects.misc.KeyOverlay;
+import com.Whodundid.core.enhancedGui.types.EnhancedGui;
+import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiRightClickMenu;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.settings.KeyBindGui;
 import com.Whodundid.core.settings.SettingsGuiMain;
 import com.Whodundid.core.subMod.RegisteredSubMods;
@@ -80,7 +80,10 @@ public class ExperimentGui extends InnerEnhancedGui {
 	
 	@Override
 	public void initGui() {
+		centerObjectWithSize(defaultWidth, defaultHeight);
 		super.initGui();
+		setObjectName("Experiment Gui");
+		setResizeable(true);
 	}
 	
 	@Override
@@ -130,9 +133,9 @@ public class ExperimentGui extends InnerEnhancedGui {
 		
 		window2.setHeader(new EGuiHeader(window2));
 		
-		EGuiTextArea textArea32 = new EGuiTextArea(this, endX + 20, 40, 210, 180, true, false).setDrawLineNumbers(true);
+		EGuiTextArea textArea32 = new EGuiTextArea(this, startX + 5, startY + 5, width - 10, height - 10, true, false).setDrawLineNumbers(true);
 		textArea32.addTextLine("this is an intentionally very long line of text to test horizontal scrolling!");
-		for (int i = 0; i < 20; i++) { textArea32.addTextLine("cow"); }
+		for (int i = 1; i <= 60; i++) { textArea32.addTextLine(i + " cow"); }
 		addObject(textArea32);
 		
 		//enableHeader(false);

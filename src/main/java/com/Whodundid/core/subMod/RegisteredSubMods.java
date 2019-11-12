@@ -4,7 +4,7 @@ import org.apache.logging.log4j.Level;
 import java.io.File;
 import java.util.List;
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.enhancedGui.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;

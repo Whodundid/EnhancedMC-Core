@@ -6,7 +6,7 @@ import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextArea;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextField;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectModifyType;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.miscUtil.ScreenLocation;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
@@ -21,7 +21,6 @@ public class TextAreaLine<obj> extends EGuiTextField {
 	EGuiTextArea parentTextArea;
 	EGuiLabel numberLabel;
 	public int lineNumberColor = 0xb2b2b2;
-	public String visibleText = "";
 	protected int lineNumber = 0;
 	protected int drawnLineNumber = 0;
 	protected int lineNumberWidth = 0;
@@ -59,10 +58,11 @@ public class TextAreaLine<obj> extends EGuiTextField {
 		updateValues();
 		
 		if (highlighted || lineEquals) {
-			drawRect(startX - (parentTextArea.getDrawLineNumbers() ? 3 : 2), startY, parentTextArea.endX - 1, endY, 0x20909090);
+			//drawRect(startX - (parentTextArea.getDrawLineNumbers() ? 3 : 2), startY, parentTextArea.endX - 1, endY, 0x20909090);
+			drawRect(startX - 2, startY, parentTextArea.endX - 1, endY, 0x20909090);
 		}
 		
-		if (parentTextArea.getDrawLineNumbers()) { drawLineNumber(); }
+		if (parentTextArea.hasLineNumbers()) { drawLineNumber(); }
 		drawText();
 		
 		if (checkDraw()) {
@@ -79,46 +79,46 @@ public class TextAreaLine<obj> extends EGuiTextField {
 	public void keyPressed(char typedChar, int keyCode) {
 		if (hasFocus()) {
 			parentTextArea.keyPressed(typedChar, keyCode);
-			if (drawnLineNumber < 0) { parentTextArea.makeLineNumberDrawn(lineNumber); }
+			//if (drawnLineNumber < 0) { parentTextArea.makeLineNumberDrawn(lineNumber); }
 			if (GuiScreen.isKeyComboCtrlA(keyCode)) { setCursorPositionEnd(); }
 			else if (GuiScreen.isKeyComboCtrlC(keyCode)) { GuiScreen.setClipboardString(getSelectedText()); }
 			else if (GuiScreen.isKeyComboCtrlV(keyCode) && isEnabled()) { writeText(GuiScreen.getClipboardString()); checkLine(); }
 			else if (GuiScreen.isKeyComboCtrlX(keyCode)) {
 				GuiScreen.setClipboardString(getSelectedText());
-				if (isEnabled() && parentTextArea.isEditable()) {
-					writeText("");
-					checkLine();
-				}
+				//if (isEnabled() && parentTextArea.isEditable()) {
+				//	writeText("");
+				//	checkLine();
+				//}
 			} else {
 				switch (keyCode) {
 				case 28: //enter
 					if (parentTextArea.isEditable()) {
 						if (!creating) {
 							creating = true;
-							TextAreaLine newLine = parentTextArea.insertTextLine(lineNumber + 1, getSelectionEnd() == text.length(), cursorPosition);
-							if (newLine != null) { newLine.requestFocus(); }
+							//TextAreaLine newLine = parentTextArea.insertTextLine(lineNumber + 1, getSelectionEnd() == text.length(), cursorPosition);
+							//if (newLine != null) { newLine.requestFocus(); }
 						}
 					}
 					break;
 				case 200: //up
-					parentTextArea.moveCurrentLineUp();
+					//parentTextArea.moveCurrentLineUp();
 					break;
 				case 208: //down
-					parentTextArea.moveCurrentLineDown();
+					//parentTextArea.moveCurrentLineDown();
 					break;
 				case 14: //backspace
 					if (parentTextArea.isEditable()) {
 						if (getText().isEmpty()) {
 							if (!deleting) {
 								deleting = true;
-								if (parentTextArea.getTextLineWithLineNumber(lineNumber - 1) != null) { parentTextArea.removeTextLine(this); }
-								else { deleting = false; }
+								//if (parentTextArea.getTextLineWithLineNumber(lineNumber - 1) != null) { parentTextArea.removeTextLine(this); }
+								//else { deleting = false; }
 							}
 						} else if (cursorPosition == 0) {
-							if (!deleting) {
-								deleting = true;
-								parentTextArea.deleteLineAndMoveTextUp(this);
-							}
+							//if (!deleting) {
+							//	deleting = true;
+							//	parentTextArea.deleteLineAndMoveTextUp(this);
+							//}
 						}
 						if (GuiScreen.isCtrlKeyDown()) {
 							if (isEnabled()) { deleteWords(-1); }
@@ -214,12 +214,12 @@ public class TextAreaLine<obj> extends EGuiTextField {
 	}
 	
 	protected void checkLine() {
-		TextAreaLine l = parentTextArea.updateAndGetLongestLine();
-		if (l.equals(this)) {
-			if (fontRenderer.getStringWidth(text.substring(parentTextArea.getCurrentHorizontalPos())) > width - maxVisibleLength) {
-				parentTextArea.makeLineNumberEndDrawn(lineNumber);
-			}
-		}
+		//TextAreaLine l = parentTextArea.updateAndGetLongestLine();
+		//if (l.equals(this)) {
+		//	if (fontRenderer.getStringWidth(text.substring(parentTextArea.getCurrentHorizontalPos())) > width - maxVisibleLength) {
+		//		parentTextArea.makeLineNumberEndDrawn(lineNumber);
+		//	}
+		//}
 	}
 	
 	protected void updateValues() {
@@ -236,7 +236,7 @@ public class TextAreaLine<obj> extends EGuiTextField {
 	}
 	
 	protected void drawLineNumber() {
-		drawStringWithShadow("" + lineNumber, parentTextArea.startX + parentTextArea.getLineNumberSeparatorPos() - (lineNumberWidth + 2), startY + 2, lineNumberColor);
+		//drawStringWithShadow("" + lineNumber, parentTextArea.startX + parentTextArea.getLineNumberSeparatorPos() - (lineNumberWidth + 2), startY + 2, lineNumberColor);
 	}
 	
 	protected void drawText() {
@@ -245,7 +245,7 @@ public class TextAreaLine<obj> extends EGuiTextField {
 		//System.out.println(lineScrollOffset);
 		String s = fontRenderer.trimStringToWidth(text.substring(lineScrollOffset), getWidth());
 		//drawStringWithShadow(s, startX, startY + 50, enabledColor);
-		visibleText = fontRenderer.trimStringToWidth(text.substring(parentTextArea.getCurrentHorizontalPos()), width - maxVisibleLength);
+		//visibleText = fontRenderer.trimStringToWidth(text.substring(parentTextArea.getCurrentHorizontalPos()), width - maxVisibleLength);
 		
 		int textLength = fontRenderer.getStringWidth(text);
 		if (textLength > width) {
@@ -254,7 +254,7 @@ public class TextAreaLine<obj> extends EGuiTextField {
 		} else {
 			if (lineEquals && (textRecentlyEntered || drawCursor)) {
 				int textCursorPosLength = fontRenderer.getStringWidth(text.substring(0, cursorPosition)); //this is not finished -- does not check for horizontal position
-				drawRect(startX + textCursorPosLength, startY + 1, startX + textCursorPosLength + 1, endY - 2, 0xffffffff);
+				drawRect(startX + textCursorPosLength, startY + 1, startX + textCursorPosLength + 1, endY, 0xffb2b2b2);
 			}
 			//drawStringWithShadow(text, startX, startY + 2, enabledColor);
 		}
@@ -264,7 +264,7 @@ public class TextAreaLine<obj> extends EGuiTextField {
 	public int getDrawnLineNumber() { return drawnLineNumber; }
 	public int getLineNumber() { return lineNumber; }
 	public obj getStoredObj() { return storedObj; }
-	public String getVisibleText() { return visibleText; }
+	//public String getVisibleText() { return visibleText; }
 	public long getDoubleClickThreshold() { return doubleClickThreshold; }
 	public void onDoubleClick() {}
 	

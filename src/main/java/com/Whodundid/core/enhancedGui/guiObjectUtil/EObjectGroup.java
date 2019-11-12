@@ -1,7 +1,7 @@
 package com.Whodundid.core.enhancedGui.guiObjectUtil;
 
 import com.Whodundid.core.enhancedGui.guiUtil.events.ObjectEvent;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
 import java.util.Iterator;

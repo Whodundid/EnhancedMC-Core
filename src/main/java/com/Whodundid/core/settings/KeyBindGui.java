@@ -1,13 +1,13 @@
 package com.Whodundid.core.settings;
 
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
-import com.Whodundid.core.enhancedGui.InnerEnhancedGui;
 import com.Whodundid.core.enhancedGui.guiObjectUtil.TextAreaLine;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextArea;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.util.miscUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
@@ -16,6 +16,8 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.GL11;
 
 public class KeyBindGui extends InnerEnhancedGui {
 	
@@ -38,13 +40,16 @@ public class KeyBindGui extends InnerEnhancedGui {
 	@Override
 	public void initGui() {
 		setObjectName("Minecraft Controls");
-		centerObjectWithSize(380, 256);
+		centerObjectWithSize(380, 254);
 		super.initGui();
+		setResizeable(true);
 	}
 	
 	@Override
 	public void initObjects() {
-		keyList = new EGuiTextArea(this, startX + 10, startY + 20, 190, 220) {
+		defaultHeader(this);
+		
+		keyList = new EGuiTextArea(this, startX + 10, startY + 20, width - 190, height - 30) {
 			@Override
 			public void mousePressed(int mX, int mY, int button) {
 				if (getCurrentLine() != null && getCurrentLine().getStoredObj() != null) {
@@ -73,9 +78,9 @@ public class KeyBindGui extends InnerEnhancedGui {
 				else { resetValues(); }
 			}
 		};
-		keyList.setDrawLineNumbers(false);
+		keyList.setDrawLineNumbers(false).setResetDrawn(false);
 		
-		changeKey = new EGuiButton(this, keyList.endX + 20, endY - 120, 70, 20) {
+		changeKey = new EGuiButton(this, keyList.endX + 20, startY + 140, 70, 20) {
 			@Override
 			public void keyPressed(char typedChar, int keyCode) {
 				if (changing) {
@@ -87,17 +92,17 @@ public class KeyBindGui extends InnerEnhancedGui {
 			        changeKey.setDisplayString(GameSettings.getKeyDisplayString(selectedKey.getKeyCode()));
 			        changeKey.setDisplayStringColor(selectedKey.getKeyCodeDefault() != selectedKey.getKeyCode() ? 0x55ff55 : 0xffffff);
 			        resetKey.setEnabled(selectedKey.getKeyCodeDefault() != selectedKey.getKeyCode());
-			        int pos = keyList.getCurrentVerticalPos();
+			        int pos = keyList.getVScrollBar().getScrollPos();
 			        buildKeyList();
 			        TextAreaLine l = keyList.getLineWithText("   " + I18n.format(selectedKey.getKeyDescription(), new Object[0]));
 			        //System.out.println(l);
 			        keyList.setSelectedLine(l);
-			        keyList.setDocumentVerticalPos(pos);
+			        keyList.getVScrollBar().setScrollBarPos(pos);
 				}
 			}
 		};
 		
-		resetKey = new EGuiButton(this, keyList.endX + 100, endY - 120, 59, 20, "Reset");
+		resetKey = new EGuiButton(this, keyList.endX + 100, startY + 140, 59, 20, "Reset");
 		
 		changeKey.setVisible(false);
 		resetKey.setVisible(false);
@@ -115,8 +120,8 @@ public class KeyBindGui extends InnerEnhancedGui {
 		drawCenteredStringWithShadow("Key Binding Values", keyList.endX + 90, startY + 7, 0xb2b2b2);
 		
 		//draw hotkey value display container
-		drawRect(keyList.endX + 9, startY + 20, endX - 10, startY + 240, 0xff000000);
-		drawRect(keyList.endX + 10, startY + 21, endX - 11, startY + 239, 0xff2D2D2D);
+		drawRect(keyList.endX + 9, startY + 20, endX - 10, endY - 10, 0xff000000);
+		drawRect(keyList.endX + 10, startY + 21, endX - 11, endY - 11, 0xff2D2D2D);
 		
 		//draw separator lines
 		//System.out.println(keyList.getCurrentLine());
@@ -138,6 +143,16 @@ public class KeyBindGui extends InnerEnhancedGui {
 		GL11.glDisable(GL11.GL_SCISSOR_TEST);
 		
 		super.drawObject(mXIn, mYIn, ticks);
+	}
+	
+	@Override
+	public EnhancedGuiObject resize(int xIn, int yIn, ScreenLocation areaIn) {
+		int pos = keyList.getVScrollBar().getScrollPos();
+		TextAreaLine l = keyList.getCurrentLine();
+		super.resize(xIn, yIn, areaIn);
+		keyList.getVScrollBar().setScrollBarPos(pos);
+		keyList.setSelectedLine(l);
+		return this;
 	}
 	
 	protected void buildKeyList() {

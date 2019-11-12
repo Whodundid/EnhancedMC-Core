@@ -1,8 +1,8 @@
 package com.Whodundid.core.enhancedGui.guiObjects;
 
-import com.Whodundid.core.enhancedGui.EnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.miscUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.StorageBox;
@@ -45,8 +45,9 @@ public class EGuiScrollBar extends EnhancedGuiObject {
 		if (sideIn == ScreenLocation.top || sideIn == ScreenLocation.bot) { vertical = false; }
 		else { vertical = true; }
 		
-		int sWidth = vertical ? (widthIn < 0 ? scrollBarThickness : widthIn) : dim.width - 2;
-		int sHeight = vertical ? (heightIn < 0 ? dim.height - 2 : heightIn) : scrollBarThickness;
+		int sWidth = vertical ? (widthIn < 0 ? scrollBarThickness : widthIn) : (widthIn < 0 ? dim.width - 2 : widthIn);
+		int sHeight = vertical ? (heightIn < 0 ? dim.height - 2 : heightIn) : (heightIn < 0 ? scrollBarThickness : heightIn);
+
 		
 		switch (sideIn) {
 		case top: init(parentIn, dim.startX + 1, dim.startY + 1, sWidth, sHeight); break;
@@ -104,6 +105,7 @@ public class EGuiScrollBar extends EnhancedGuiObject {
 			if (vertical) { moveThumb(0, mY - mousePos.getValue()); }
 			else { moveThumb(mX - mousePos.getObject(), 0); }
 			mousePos.setValues(mX, mY);
+			//System.out.println("scroll val: " + this.getScrollPos());
 		}
 		drawRect(startX, startY, startX + width, startY + height, 0xff666666);
 		if (renderThumb) { drawRect(thumbStartX, thumbStartY, thumbEndX, thumbEndY, (isMouseInThumb(mX, mY) || isScrolling) ? 0xffffffff : 0xffbbbbbb); }
@@ -209,7 +211,7 @@ public class EGuiScrollBar extends EnhancedGuiObject {
 			relativeThumbPos = MathHelper.clamp_double((double)(thumbStartX - startX) / (width - thumbSize), 0f, 1f);
 		}
 		double val = visibleAmount + (highVal - visibleAmount) * relativeThumbPos;
-		scrollPos = (int) Math.ceil(val);
+		scrollPos = (int) val;
 	}
 	
 	private void recalculateInterval() {

@@ -1,9 +1,9 @@
 package com.Whodundid.core.enhancedGui.guiObjects;
 
-import com.Whodundid.core.enhancedGui.InnerEnhancedGui;
 import com.Whodundid.core.enhancedGui.guiObjectUtil.TextAreaLine;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
@@ -63,9 +63,7 @@ public class EGuiSelectionList extends InnerEnhancedGui implements IEnhancedActi
 			public void keyPressed(char typedChar, int keyCode) {
 				super.keyPressed(typedChar, keyCode);
 				if (keyCode == 28) {
-					if (getCurrentLine() != null && getCurrentLine().getStoredObj() != null) {
-						selectOptionAndClose(getCurrentLine().getStoredObj());
-					}
+					selectCurrentOptionAndClose();
 				}
 			}
 		};
@@ -77,17 +75,13 @@ public class EGuiSelectionList extends InnerEnhancedGui implements IEnhancedActi
 			TextAreaLine l = new TextAreaLine(selectionList, b.getObject(), 0xffffff, b.getValue()) {
 				@Override
 				public void onDoubleClick() {
-					if (selectionList.getCurrentLine() != null && getStoredObj() != null) {
-						selectOptionAndClose(getStoredObj());
-					}
+					selectCurrentOptionAndClose();
 				}
 				@Override
 				public void keyPressed(char typedChar, int keyCode) {
 					super.keyPressed(typedChar, keyCode);
 					if (keyCode == 28) {
-						if (selectionList.getCurrentLine() != null && selectionList.getCurrentLine().getStoredObj() != null) {
-							selectOptionAndClose(selectionList.getCurrentLine().getStoredObj());
-						}
+						selectCurrentOptionAndClose();
 					}
 				}
 			};
@@ -96,10 +90,12 @@ public class EGuiSelectionList extends InnerEnhancedGui implements IEnhancedActi
 		if (!selectionList.getTextDocument().isEmpty()) { selectionList.setSelectedLine(selectionList.getTextLineWithLineNumber(1)); }
 	}
 	
-	private void selectOptionAndClose(Object o) {
-		selectedObject = o;
-		actionReciever.actionPerformed(this);
-		close();
+	private void selectCurrentOptionAndClose() {
+		if (selectionList.getCurrentLine() != null && selectionList.getCurrentLine().getStoredObj() != null) {
+			selectedObject = selectionList.getCurrentLine().getStoredObj();
+			actionReciever.actionPerformed(this);
+			close();
+		}
 	}
 	
 	public EGuiSelectionList setHeaderString(String msgIn) { headerString = msgIn; if (header != null) { header.setDisplayString(msgIn); } return this; }
@@ -135,18 +131,14 @@ public class EGuiSelectionList extends InnerEnhancedGui implements IEnhancedActi
 			close();
 		}
 		if (keyCode == 28) {
-			if (selectionList.getCurrentLine() != null && selectionList.getCurrentLine().getStoredObj() != null) {
-				selectOptionAndClose(selectionList.getCurrentLine().getStoredObj());
-			}
+			selectCurrentOptionAndClose();
 		}
 	}
 	
 	@Override
 	public void actionPerformed(IEnhancedActionObject object) {
 		if (object.equals(select)) {
-			if (selectionList.getCurrentLine() != null && selectionList.getCurrentLine().getStoredObj() != null) {
-				selectOptionAndClose(selectionList.getCurrentLine().getStoredObj());
-			}
+			selectCurrentOptionAndClose();
 		}
 		if (object.equals(cancelSel)) { close(); }
 	}
