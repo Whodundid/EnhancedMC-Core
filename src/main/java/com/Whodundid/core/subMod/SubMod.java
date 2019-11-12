@@ -1,6 +1,6 @@
 package com.Whodundid.core.subMod;
 
-import com.Whodundid.core.enhancedGui.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
 import com.Whodundid.core.events.emcEvents.ChatLineCreatedEvent;
 import com.Whodundid.core.events.emcEvents.ModCalloutEvent;
 import com.Whodundid.core.subMod.config.SubModConfigManager;
@@ -15,6 +15,7 @@ import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
@@ -96,6 +97,7 @@ public abstract class SubMod {
 	
 	public Object sendArgs(Object... args) { return null; }
 	
+	public void eventTick(TickEvent e) {}
 	public void eventClientTick(TickEvent.ClientTickEvent e) {}
 	public void eventRenderTick(TickEvent.RenderTickEvent e) {}
 	public void eventOverlayRenderTick(RenderGameOverlayEvent e) {}
@@ -105,6 +107,7 @@ public abstract class SubMod {
 	public void eventRenderFogTick(EntityViewRenderEvent.FogDensity e) {}
 	public void eventBlockOverlayTick(RenderBlockOverlayEvent e) {}
 	public void eventRenderPlayer(RenderPlayerEvent e) {}
+	public void eventLastWorldRender(RenderWorldLastEvent e) {}
 	public void eventLivingTick(LivingUpdateEvent e) {}
 	public void eventMouse(MouseEvent e) {}
 	public void eventKey(KeyInputEvent e) {}
