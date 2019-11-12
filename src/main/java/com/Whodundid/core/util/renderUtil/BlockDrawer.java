@@ -4,6 +4,7 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 import com.Whodundid.core.util.storageUtil.Vector3D;
+import com.Whodundid.core.util.storageUtil.WorldRegion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.RenderHelper;
@@ -17,15 +18,19 @@ import org.lwjgl.opengl.GL11;
 
 public class BlockDrawer {
 
-	static StorageBoxHolder<Vector3D, Integer> blocks = new StorageBoxHolder();
-	static StorageBoxHolder<Vector3D, Integer> toAdd = new StorageBoxHolder();
+	static StorageBoxHolder<WorldRegion, Integer> blocks = new StorageBoxHolder();
+	static StorageBoxHolder<WorldRegion, Integer> toAdd = new StorageBoxHolder();
 
 	public static void addBlock(BlockPos posIn, int colorIn) {
 		addBlock(new Vector3D(posIn), colorIn);
 	}
 
 	public static void addBlock(Vector3D posIn, int colorIn) {
-		blocks.add(posIn, colorIn);
+		blocks.add(new WorldRegion(posIn), colorIn);
+	}
+	
+	public static void addBlock(WorldRegion regionIn, int colorIn) {
+		blocks.add(regionIn, colorIn);
 	}
 
 	public static void clearBlocks() {
@@ -38,9 +43,10 @@ public class BlockDrawer {
 
 			EArrayList<AxisAlignedBB> bbs = new EArrayList();
 
-			for (StorageBox<Vector3D, Integer> box : blocks) {
-				Vector3D v = box.getObject();
-				bbs.add(new AxisAlignedBB(v.x + 1, v.y + 1, v.z + 1, v.x, v.y, v.z));
+			for (StorageBox<WorldRegion, Integer> box : blocks) {
+				WorldRegion r = box.getObject();
+				//System.out.println(r);
+				bbs.add(new AxisAlignedBB(r.sX + r.width, r.sY + r.height, r.sZ + r.length, r.sX, r.sY, r.sZ));
 			}
 
 			double d0 = p.lastTickPosX + (p.posX - p.lastTickPosX) * e.partialTicks;
@@ -72,6 +78,7 @@ public class BlockDrawer {
 		GL11.glDepthMask(false);
 		RenderHelper.disableStandardItemLighting();
 		GL11.glColor4d(r, b, g, 0.185F);
+		//GL11.glColor4d(r, b, g, 0F);
 		drawBoundingBox(bb);
 		GL11.glColor4d(r, b, g, 1.0F);
 		drawOutlinedBoundingBox(bb);
