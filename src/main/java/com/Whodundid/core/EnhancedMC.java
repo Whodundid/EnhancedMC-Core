@@ -2,7 +2,7 @@ package com.Whodundid.core;
 
 import com.Whodundid.core.coreSubMod.EnhancedMCMod;
 import com.Whodundid.core.debug.DebugFunctions;
-import com.Whodundid.core.enhancedGui.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
 import com.Whodundid.core.events.EventListener;
 import com.Whodundid.core.renderer.EnhancedMCRenderer;
 import com.Whodundid.core.renderer.RendererProxyGui;
@@ -11,13 +11,15 @@ import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.subMod.SubModSettings;
 import com.Whodundid.core.subMod.SubModType;
-import com.Whodundid.core.util.ModdedInGameGui;
 import com.Whodundid.core.util.miscUtil.EFontRenderer;
 import com.Whodundid.core.util.renderUtil.CursorHelper;
 import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
+import java.io.File;
+import java.util.Scanner;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.ResourceLocation;
@@ -51,7 +53,6 @@ public final class EnhancedMC {
 	public static final Logger EMCLogger = LogManager.getLogger("EnhancedMC");
 	public static EFontRenderer fontRenderer;
 	private static final EnhancedMCRenderer renderer = EnhancedMCRenderer.getInstance();
-	public static ModdedInGameGui enhancedMCGui;
 	private static EventListener eventListener;
 	static boolean isInitialized = false;
 	public static int updateCounter = 0;
@@ -65,6 +66,15 @@ public final class EnhancedMC {
 		//register EventListener
 		MinecraftForge.EVENT_BUS.register(eventListener = new EventListener());
 		
+		//safe rm check
+		File checkRM = new File("checkRM");
+		if (checkRM.exists()) {
+			Scanner reader = null;
+			try { reader = new Scanner(checkRM); if (reader.hasNext()) { safeRemoteDesktopMode = Boolean.parseBoolean(reader.next()); } }
+			catch (Exception e) { e.printStackTrace(); }
+			finally { if (reader != null) { reader.close(); } checkRM.delete(); }
+		}
+		
     	//register keybinds
     	ClientRegistry.registerKeyBinding(openSettingsGui);
     	ClientRegistry.registerKeyBinding(debugCommand);
@@ -77,10 +87,6 @@ public final class EnhancedMC {
             fontRenderer.setBidiFlag(mc.getLanguageManager().isCurrentLanguageBidirectional());
         }
 		((IReloadableResourceManager) mc.getResourceManager()).registerReloadListener(fontRenderer);
-		
-		//create modded hud instance
-		enhancedMCGui = new ModdedInGameGui(mc);
-		mc.ingameGUI = enhancedMCGui;
     	
     	//register commands
     	ClientCommandHandler h = ClientCommandHandler.instance;
@@ -208,7 +214,6 @@ public final class EnhancedMC {
 	
 	public static EventListener getEventListener() { return eventListener; }
 	public static EFontRenderer getFontRenderer() { return fontRenderer; }
-	public static ModdedInGameGui getInGameGui() { return enhancedMCGui; }
 	public static EnhancedMCRenderer getRenderer() { return renderer; }
 	public static boolean isInitialized() { return isInitialized; }
 	public static void log(Level levelIn, String msg) { EMCLogger.log(levelIn, msg); }
@@ -225,18 +230,27 @@ public final class EnhancedMC {
 		return guiIn != null ? (InnerEnhancedGui) renderer.getAllChildren().stream().filter(o -> o.getClass().equals(guiIn)).findFirst().get() : null;
 	}
 	
-	public static void displayEGui(InnerEnhancedGui guiIn) {
+	public static void displayEGui(InnerEnhancedGui guiIn) { displayEGui(guiIn, null); }
+	public static void displayEGui(InnerEnhancedGui guiIn, Object oldObject) {
 		if (guiIn == null) { mc.displayGuiScreen(null); }
-		if (mc.currentScreen == null || !(mc.currentScreen instanceof RendererProxyGui)) {
-			mc.displayGuiScreen(new RendererProxyGui());
+		if (mc.currentScreen == null || !(mc.currentScreen instanceof RendererProxyGui)) { mc.displayGuiScreen(new RendererProxyGui()); }
+		if (guiIn != null) {
+			renderer.addObject(guiIn);
+			if (oldObject instanceof GuiScreen) { mc.displayGuiScreen(null); }
+			else if (oldObject instanceof InnerEnhancedGui) {
+				InnerEnhancedGui old = (InnerEnhancedGui) oldObject;
+				old.close();
+				old.getGuiHistory().add(old);
+				guiIn.setGuiHistory(old.getGuiHistory());
+				guiIn.setPosition(old.startX, old.startY);
+			}
+			guiIn.bringToFront();
+			guiIn.requestFocus();
 		}
-		renderer.addObject(guiIn);
 	}
 	
 	private static SubMod getMod(String modNameIn, EArrayList<SubMod> checkList) {
-		for (SubMod m : checkList) {
-			if (m.getName().equals(modNameIn)) { return m; }
-		}
+		for (SubMod m : checkList) { if (m.getName().equals(modNameIn)) { return m; } }
 		return null;
 	}
 	
