@@ -11,11 +11,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.imageio.ImageIO;
 
 import org.apache.logging.log4j.Level;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.enhancedGui.EnhancedGui;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.EnhancedGui;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.subMod.SubModType;
@@ -25,7 +26,7 @@ import com.Whodundid.core.util.playerUtil.Direction;
 import com.Whodundid.core.util.playerUtil.PlayerFacing;
 import com.Whodundid.core.util.playerUtil.PlayerMovement;
 import com.Whodundid.core.util.storageUtil.StorageBox;
-
+import com.Whodundid.miniMap.MiniMapMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiDisconnected;
 import net.minecraft.client.multiplayer.GuiConnecting;
@@ -67,7 +68,21 @@ public class DebugFunctions {
 	}
 
 	private static void debug_0() throws Throwable {
-		EnhancedMC.getRenderer().reInitObjects();
+		//System.out.println("here " + (PlayerFacing.isFacingPlayer() ? PlayerFacing.getFacingPlayerName() : "no one"));
+		//System.out.println(" " + mc.ingameGUI);
+		
+		/*
+		if (RegisteredSubMods.isModRegEn(SubModType.MINIMAP)) {
+			MiniMapMod mapMod = (MiniMapMod) RegisteredSubMods.getMod(SubModType.MINIMAP);
+			mapMod.findPlayer = "";
+			if (PlayerFacing.isFacingPlayer()) {
+				mapMod.findPlayer = PlayerFacing.getFacingPlayerName();
+			}
+		}
+		
+		
+		//EnhancedMC.getRenderer().reInitObjects();
+		
 		/*
 		Thread t = new Thread() {
 			@Override
@@ -231,6 +246,9 @@ public class DebugFunctions {
 	}
 
 	private static void debug_1() throws Throwable {
+		mc.thePlayer.rotationYaw = PlayerFacing.getCompassFacingDir().getDegree();
+		
+		
 		Thread t = new Thread() {
 			@Override
 			public void run() {
@@ -239,7 +257,7 @@ public class DebugFunctions {
 					float diff = PlayerFacing.getCompassFacingDir().getDegree() - start;
 					for (int i = 0; i < 10; i++) {
 						Thread.sleep(200 / 10);
-						PlayerFacing.setFacingDir(PlayerFacing.getDegreeFacingDir() + diff / 10);
+						//PlayerFacing.setFacingDir(PlayerFacing.getDegreeFacingDir() + diff / 10);
 					}
 				}
 				catch (InterruptedException e) { e.printStackTrace(); }
