@@ -1,7 +1,7 @@
-package com.Whodundid.core.enhancedGui;
+package com.Whodundid.core.enhancedGui.types;
 
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 
 public abstract class EnhancedActionObject extends EnhancedGuiObject implements IEnhancedActionObject {
 

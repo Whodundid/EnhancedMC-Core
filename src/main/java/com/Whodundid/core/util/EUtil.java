@@ -1,4 +1,4 @@
-package com.Whodundid.core.util.miscUtil;
+package com.Whodundid.core.util;
 
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import java.awt.image.BufferedImage;

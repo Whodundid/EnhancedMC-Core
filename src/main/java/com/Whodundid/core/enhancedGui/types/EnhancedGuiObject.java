@@ -1,6 +1,7 @@
-package com.Whodundid.core.enhancedGui;
+package com.Whodundid.core.enhancedGui.types;
 
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.enhancedGui.StaticEGuiObject;
 import com.Whodundid.core.enhancedGui.guiObjectUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiFocusLockBorder;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
@@ -17,9 +18,9 @@ import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.FocusType;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.MouseType;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectEventType;
 import com.Whodundid.core.enhancedGui.guiUtil.exceptions.ObjectInitException;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedTopParent;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
 import com.Whodundid.core.util.miscUtil.ScreenLocation;
 import com.Whodundid.core.util.renderUtil.CursorHelper;
 import com.Whodundid.core.util.renderUtil.Resources;
@@ -82,7 +83,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	protected ObjectEventHandler eventHandler = new ObjectEventHandler(this);
 	protected ScreenLocation oldArea = ScreenLocation.out;
 	protected EObjectGroup objectGroup;
-	protected boolean hasBeenInitialized = false;
+	private boolean hasBeenInitialized = false;
 	protected boolean enabled = true;
 	protected boolean visible = true;
 	public boolean mouseEntered = false;
@@ -146,8 +147,8 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	//----------------------------
 	
 	//init
-	@Override public boolean hasBeenInitialized() { return hasBeenInitialized; }
-	@Override public EnhancedGuiObject completeInitialization() { hasBeenInitialized = true; return this; }
+	@Override public boolean isInit() { return hasBeenInitialized; }
+	@Override public EnhancedGuiObject completeInit() { hasBeenInitialized = true; return this; }
 	@Override public void initObjects() throws ObjectInitException {}
 	@Override
 	public void reInitObjects() throws ObjectInitException {
@@ -165,6 +166,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 		hasBeenInitialized = true;
 	}
 	@Override public void onAdded() {}
+	//@Override public void reInit(int newWidth, int newHeight) {}
 	
 	//main draw
 	@Override

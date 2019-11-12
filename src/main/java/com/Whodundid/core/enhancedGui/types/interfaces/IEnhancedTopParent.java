@@ -1,7 +1,7 @@
-package com.Whodundid.core.enhancedGui.interfaces;
+package com.Whodundid.core.enhancedGui.types.interfaces;
 
-import com.Whodundid.core.enhancedGui.EnhancedGui;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectModifyType;
+import com.Whodundid.core.enhancedGui.types.EnhancedGui;
 import com.Whodundid.core.util.miscUtil.ScreenLocation;
 
 import java.util.Stack;
@@ -27,6 +27,9 @@ public interface IEnhancedTopParent extends IEnhancedGuiObject {
 	//hovering text
 	public IEnhancedTopParent setObjectWithHoveringText(IEnhancedGuiObject objIn);
 	public IEnhancedGuiObject getObjectWithHoveringText();
+	
+	//objects
+	public IEnhancedGuiObject getHighestZLevelObject();
 	
 	//focus
 	

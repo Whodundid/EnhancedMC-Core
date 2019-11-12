@@ -1,4 +1,4 @@
-package com.Whodundid.core.enhancedGui.interfaces;
+package com.Whodundid.core.enhancedGui.types.interfaces;
 
 import com.Whodundid.core.enhancedGui.guiObjectUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
@@ -28,15 +28,17 @@ public interface IEnhancedGuiObject {
 	//init
 	
 	/** Returns true if this object has been fully initialized with all of its values and children. */
-	public boolean hasBeenInitialized();
+	public boolean isInit();
 	/** Internal method used to denote that this object and all of its children have been fully initialized. */
-	public IEnhancedGuiObject completeInitialization();
+	public IEnhancedGuiObject completeInit();
 	/** Event fired from the top parent upon being fully added to the parent so that this object can safely initialize all of it's own children. */
 	public void initObjects() throws ObjectInitException;
 	/** Removes all children and re-runs the initObjects method. */
 	public void reInitObjects() throws ObjectInitException;
 	/** Event called when this object has actually been added to its parent. */
 	public void onAdded();
+	/** Clears the object's current paramaters and attempts to reinitialize. (NOT SURE IF ADDING) */
+	//public void reInit(int newWidth, int newHeight);
 	
 	//main draw
 	

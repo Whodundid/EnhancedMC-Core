@@ -1,7 +1,8 @@
-package com.Whodundid.core.enhancedGui;
+package com.Whodundid.core.enhancedGui.types;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.debug.DebugFunctions;
+import com.Whodundid.core.enhancedGui.StaticEGuiObject;
 import com.Whodundid.core.enhancedGui.guiObjectUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiFocusLockBorder;
@@ -20,9 +21,10 @@ import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.MouseType;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectEventType;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectModifyType;
 import com.Whodundid.core.enhancedGui.guiUtil.exceptions.ObjectInitException;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedActionObject;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedGuiObject;
-import com.Whodundid.core.enhancedGui.interfaces.IEnhancedTopParent;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
+import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.util.chatUtil.EChatUtil;
 import com.Whodundid.core.util.miscUtil.EFontRenderer;
 import com.Whodundid.core.util.miscUtil.ScreenLocation;
@@ -63,7 +65,7 @@ import org.lwjgl.input.Mouse;
 //First Added: Sep 7, 2018
 //Author: Hunter Bragg
 
-public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParent {
+public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParent, IWindowParent {
 	
 	public static final Set<String> PROTOCOLS = Sets.newHashSet(new String[] {"http", "https"});
 	public static final Splitter NEWLINE_SPLITTER = Splitter.on('\n');
@@ -374,8 +376,8 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	//----------------------------
 	
 	//init
-	@Override public boolean hasBeenInitialized() { return hasBeenInitialized; }
-	@Override public EnhancedGui completeInitialization() { hasBeenInitialized = true; return this; }
+	@Override public boolean isInit() { return hasBeenInitialized; }
+	@Override public EnhancedGui completeInit() { hasBeenInitialized = true; return this; }
 	@Override public void initObjects() throws ObjectInitException {}
 	@Override
 	public void reInitObjects() throws ObjectInitException {
@@ -649,6 +651,19 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	//hovering text
 	@Override public IEnhancedTopParent setObjectWithHoveringText(IEnhancedGuiObject objIn) { hoveringTextObject = objIn; return this; }
 	@Override public IEnhancedGuiObject getObjectWithHoveringText() { return hoveringTextObject; }
+	
+	//objects
+	public IEnhancedGuiObject getHighestZLevelObject() {
+		EArrayList<IEnhancedGuiObject> objs = getImmediateChildren();
+		if (objs.isNotEmpty()) {
+			IEnhancedGuiObject highest = objs.get(0);
+			for (IEnhancedGuiObject o : getImmediateChildren()) {
+				if (o.getZLevel() > highest.getZLevel()) { highest = o; }
+			}
+			return highest;
+		}
+		return null;
+	}
 	
 	//focus
 	@Override public IEnhancedGuiObject getDefaultFocusObject() { return defaultFocusObject; }

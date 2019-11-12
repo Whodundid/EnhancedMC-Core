@@ -1,4 +1,4 @@
-package com.Whodundid.core.util.miscUtil;
+package com.Whodundid.core.util.chatUtil;
 
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.HoverEvent;

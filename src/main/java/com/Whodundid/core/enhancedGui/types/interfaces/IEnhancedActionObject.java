@@ -1,4 +1,4 @@
-package com.Whodundid.core.enhancedGui.interfaces;
+package com.Whodundid.core.enhancedGui.types.interfaces;
 
 //Last edited: Aug 6, 2019
 //Edit note: Added the ability to designate an actionReciever, by default it's the object it was added to.
