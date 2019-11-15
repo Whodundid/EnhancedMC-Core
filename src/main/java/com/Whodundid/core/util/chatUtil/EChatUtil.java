@@ -27,6 +27,17 @@ public class EChatUtil {
 		return s;
 	}
 	
+	public static String subStringFromPosToSpace(String in, int startPos) {
+		if (in != null && !in.isEmpty()) {
+			int pos = startPos;
+			while (pos < in.length() && in.charAt(pos) != ' ') {
+				pos++;
+			}
+			return in.substring(startPos, pos);
+		}
+		return in;
+	}
+	
 	public static void readChat(IChatComponent chatMsg) { lastChat = chatMsg; }
 	
 	public void checkIfChatWindowOpen() { chatOpen = mc.ingameGUI.getChatGUI().getChatOpen(); }
