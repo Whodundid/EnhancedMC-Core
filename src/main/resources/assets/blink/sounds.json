@@ -1,0 +1,5 @@
+{
+  "blink1": { "category": "player", "sounds": ["blink:blink1"] },
+  "blink2": { "category": "player", "sounds": ["blink:blink2"] },
+  "blink3": { "category": "player", "sounds": ["blink:blink3"] }
+}
