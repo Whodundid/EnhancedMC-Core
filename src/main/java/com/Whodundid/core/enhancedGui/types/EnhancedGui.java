@@ -551,7 +551,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override public EnhancedGui sendToBack() { getTopParent().sendObjectToBack(this); return this; }
 	
 	//focus
-	@Override public boolean hasFocus() { return getTopParent().getFocusedObject().equals(this); }
+	@Override public boolean hasFocus() { return this.equals(this.getFocusedObject()); }
 	@Override public boolean relinquishFocus() {
 		if (doesFocusLockExist() && getFocusLockObject().equals(this)) { clearFocusLockObject(); }
 		else if (hasFocus()) {
