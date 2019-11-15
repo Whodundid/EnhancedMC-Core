@@ -21,13 +21,6 @@ import org.lwjgl.opengl.GL11;
 
 public class KeyBindGui extends InnerEnhancedGui {
 	
-	public KeyBindGui() { super(); }
-	public KeyBindGui(Object oldGuiIn) { super(oldGuiIn); }
-	public KeyBindGui(IEnhancedGuiObject parentIn) { super(parentIn); }
-	public KeyBindGui(IEnhancedGuiObject parentIn, Object oldGuiIn) { super(parentIn, oldGuiIn); }
-	public KeyBindGui(IEnhancedGuiObject parentIn, int posX, int posY) { super(parentIn, posX, posY); }
-	public KeyBindGui(IEnhancedGuiObject parentIn, int posX, int posY, Object oldGuiIn) { super(parentIn, posX, posY, oldGuiIn); }
-	
 	EGuiTextArea keyList;
 	String description = "";
 	String key = "";

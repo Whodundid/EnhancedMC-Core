@@ -46,13 +46,6 @@ public class SettingsGuiMain extends InnerEnhancedGui {
 	int leftPress = 0, rightPress = 0;
 	int found = 0;
 	
-	public SettingsGuiMain() { super(); }
-	public SettingsGuiMain(Object oldGuiIn) { super(oldGuiIn); }
-	public SettingsGuiMain(IEnhancedGuiObject parentIn) { super(parentIn); }
-	public SettingsGuiMain(IEnhancedGuiObject parentIn, Object oldGuiIn) { super(parentIn, oldGuiIn); }
-	public SettingsGuiMain(IEnhancedGuiObject parentIn, int posX, int posY) { super(parentIn, posX, posY); }
-	public SettingsGuiMain(IEnhancedGuiObject parentIn, int posX, int posY, Object oldGuiIn) { super(parentIn, posX, posY, oldGuiIn); }
-	
 	@Override
 	public void initGui() {
 		setObjectName("EMC Settings");

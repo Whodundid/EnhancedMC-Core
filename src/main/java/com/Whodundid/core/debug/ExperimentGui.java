@@ -55,7 +55,6 @@ import net.minecraft.util.ResourceLocation;
 //First Added: 9-5-18
 //Author: Hunter Bragg
 
-@SuppressWarnings("unused")
 public class ExperimentGui extends InnerEnhancedGui {
 	
 	static Minecraft mc = Minecraft.getMinecraft();
@@ -70,13 +69,6 @@ public class ExperimentGui extends InnerEnhancedGui {
 	EGuiSlider slider, slider2;
 	EGuiRightClickMenu rcm;
 	EGuiColorPicker colorPicker;
-	
-	public ExperimentGui() { super(); }
-	public ExperimentGui(Object oldGuiIn) { super(oldGuiIn); }
-	public ExperimentGui(IEnhancedGuiObject parentIn) { super(parentIn); }
-	public ExperimentGui(IEnhancedGuiObject parentIn, Object oldGuiIn) { super(parentIn, oldGuiIn); }
-	public ExperimentGui(IEnhancedGuiObject parentIn, int posX, int posY) { super(parentIn, posX, posY); }
-	public ExperimentGui(IEnhancedGuiObject parentIn, int posX, int posY, Object oldGuiIn) { super(parentIn, posX, posY, oldGuiIn); }
 	
 	@Override
 	public void initGui() {
