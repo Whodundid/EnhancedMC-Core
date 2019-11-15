@@ -2,8 +2,8 @@ package com.Whodundid.core.settings.guiParts;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiRightClickMenu;
-import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.settings.SettingsGuiMain;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.subMod.gui.SubModErrorType;
@@ -52,7 +52,7 @@ public class SettingsRCM extends EGuiRightClickMenu {
 	
 	private void open() {
 		try {
-			InnerEnhancedGui g = mod.getMainGui();
+			IWindowParent g = mod.getMainGui();
 			if (g != null) { EnhancedMC.displayEGui(g, getWindowParent()); }
 			else { SubModErrorDisplay.displayError(SubModErrorType.NOGUI, mod); }
 		} catch (Exception e) { e.printStackTrace(); }
@@ -60,7 +60,7 @@ public class SettingsRCM extends EGuiRightClickMenu {
 	
 	private void openNewWindow() {
 		try {
-			InnerEnhancedGui g = mod.getMainGui();
+			IWindowParent g = mod.getMainGui();
 			if (g != null) { EnhancedMC.displayEGui(g); }
 			else { SubModErrorDisplay.displayError(SubModErrorType.NOGUI, mod); }
 		} catch (Exception e) { e.printStackTrace(); }

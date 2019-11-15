@@ -4,10 +4,10 @@ import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiScrollList;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
-import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
+import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.settings.SettingsGuiMain;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.subMod.gui.SubModErrorType;
@@ -73,14 +73,14 @@ public class SettingsMenuContainer extends EnhancedGuiObject {
 	private void openSettings() {
 		try {
 			EDimension d = topParent.getDimensions();
-			InnerEnhancedGui gui = mod.getMainGui();
+			IWindowParent gui = mod.getMainGui();
 			IEnhancedGuiObject windowObj = getWindowParent();
 			if (gui != null) {
 				if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) { EnhancedMC.displayEGui(gui); }
 				else { EnhancedMC.displayEGui(gui, windowObj); }
 			}
 			else { SubModErrorDisplay.displayError(SubModErrorType.NOGUI, mod); }
-		} catch (Exception e) { System.out.println("Unable to open: " + mod.getName() + "'s main gui!"); SubModErrorDisplay.displayError(SubModErrorType.NOGUI, mod, e); }
+		} catch (Exception e) { e.printStackTrace(); System.out.println("Unable to open: " + mod.getName() + "'s main gui!"); SubModErrorDisplay.displayError(SubModErrorType.NOGUI, mod, e); }
 	}
 	
 	private void toggleEnable() {

@@ -4,7 +4,7 @@ import org.apache.logging.log4j.Level;
 import java.io.File;
 import java.util.List;
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
@@ -245,7 +245,7 @@ public final class RegisteredSubMods {
 	public static EArrayList<Class> getAllGuiClasses() {
 		EArrayList<Class> guis = new EArrayList();
 		for (SubMod m : RegisteredSubMods.getRegisteredModsList()) {
-			for (InnerEnhancedGui g : m.getGuis()) { if (g != null) { guis.add(g.getClass()); } }
+			for (IWindowParent g : m.getGuis()) { if (g != null) { guis.add(g.getClass()); } }
 		}
 		return guis;
 	}

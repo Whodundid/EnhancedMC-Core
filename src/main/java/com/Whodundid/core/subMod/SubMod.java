@@ -1,6 +1,6 @@
 package com.Whodundid.core.subMod;
 
-import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.events.emcEvents.ChatLineCreatedEvent;
 import com.Whodundid.core.events.emcEvents.ModCalloutEvent;
 import com.Whodundid.core.subMod.config.SubModConfigManager;
@@ -29,8 +29,8 @@ import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
 public abstract class SubMod {
 	
 	protected Minecraft mc = Minecraft.getMinecraft();
-	protected InnerEnhancedGui mainGui;
-	protected EArrayList<InnerEnhancedGui> guis = new EArrayList();
+	protected IWindowParent mainGui;
+	protected EArrayList<IWindowParent> guis = new EArrayList();
 	protected StorageBoxHolder<String, String> dependencies = new StorageBoxHolder().noDuplicates();
 	protected StorageBoxHolder<String, String> softDependencies = new StorageBoxHolder().noDuplicates();
 	protected String modName = "noname";
@@ -54,10 +54,10 @@ public abstract class SubMod {
 	public boolean hasConfig() { return configManager.getNumberOfConfigFiles() > 0; }
 	public boolean isDisableable() { return isDisableable; }
 	public boolean isIncompatible() { return incompatible; }
-	public EArrayList<InnerEnhancedGui> getGuis() { return guis; }
+	public EArrayList<IWindowParent> getGuis() { return guis; }
 	public StorageBoxHolder<String, String> getDependencies() { return dependencies; }
 	public StorageBoxHolder<String, String> getSoftDependencies() { return softDependencies; }
-	public InnerEnhancedGui getMainGui() throws Exception { return mainGui != null ? mainGui.getClass().newInstance() : null; }
+	public IWindowParent getMainGui() throws Exception { return mainGui != null ? mainGui.getClass().newInstance() : null; }
 	public SubModConfigManager getConfig() { return configManager; }
 	public SubMod setEnabled(boolean valueIn) { enabled = valueIn; return this; }
 	public SubMod setIncompatible(boolean valueIn) { incompatible = valueIn; return this; }
@@ -72,11 +72,11 @@ public abstract class SubMod {
 		return this;
 	}
 	
-	protected SubMod setMainGui(InnerEnhancedGui guiIn) {
-		InnerEnhancedGui oldGui = mainGui;
+	protected SubMod setMainGui(IWindowParent guiIn) {
+		IWindowParent oldGui = mainGui;
 		if (oldGui != null) {
 			if (guis.contains(oldGui)) {
-				Iterator<InnerEnhancedGui> it = guis.iterator();
+				Iterator<IWindowParent> it = guis.iterator();
 				while (it.hasNext()) {
 					if (oldGui.equals(it.next())) { it.remove(); break; } 
 				}
@@ -88,8 +88,8 @@ public abstract class SubMod {
 		return this;
 	}
 	
-	protected SubMod addGui(InnerEnhancedGui... guiIn) {
-		for (InnerEnhancedGui gui : guiIn) { if (!guis.contains(gui)) { guis.add(gui); } }
+	protected SubMod addGui(IWindowParent... guiIn) {
+		for (IWindowParent g : guiIn) { if (!guis.contains(g)) { guis.add(g); } }
 		return this;
 	}
 	

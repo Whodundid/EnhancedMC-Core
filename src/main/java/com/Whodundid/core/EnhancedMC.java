@@ -2,7 +2,9 @@ package com.Whodundid.core;
 
 import com.Whodundid.core.coreSubMod.EnhancedMCMod;
 import com.Whodundid.core.debug.DebugFunctions;
+import com.Whodundid.core.enhancedGui.types.EnhancedGui;
 import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.events.EventListener;
 import com.Whodundid.core.renderer.EnhancedMCRenderer;
 import com.Whodundid.core.renderer.RendererProxyGui;
@@ -230,22 +232,28 @@ public final class EnhancedMC {
 		return guiIn != null ? (InnerEnhancedGui) renderer.getAllChildren().stream().filter(o -> o.getClass().equals(guiIn)).findFirst().get() : null;
 	}
 	
-	public static void displayEGui(InnerEnhancedGui guiIn) { displayEGui(guiIn, null); }
-	public static void displayEGui(InnerEnhancedGui guiIn, Object oldObject) {
+	public static void displayEGui(IWindowParent guiIn) { displayEGui(guiIn, null); }
+	public static void displayEGui(IWindowParent guiIn, Object oldObject) {
 		if (guiIn == null) { mc.displayGuiScreen(null); }
 		if (mc.currentScreen == null || !(mc.currentScreen instanceof RendererProxyGui)) { mc.displayGuiScreen(new RendererProxyGui()); }
 		if (guiIn != null) {
-			renderer.addObject(guiIn);
-			if (oldObject instanceof GuiScreen) { mc.displayGuiScreen(null); }
-			else if (oldObject instanceof InnerEnhancedGui) {
-				InnerEnhancedGui old = (InnerEnhancedGui) oldObject;
-				old.close();
-				old.getGuiHistory().add(old);
-				guiIn.setGuiHistory(old.getGuiHistory());
-				guiIn.setPosition(old.startX, old.startY);
+			if (guiIn instanceof EnhancedGui) {
+				mc.displayGuiScreen((EnhancedGui) guiIn);
 			}
-			guiIn.bringToFront();
-			guiIn.requestFocus();
+			else {
+				renderer.addObject(guiIn);
+				if (oldObject instanceof GuiScreen) { mc.displayGuiScreen(null); }
+				else if (oldObject instanceof InnerEnhancedGui && guiIn instanceof InnerEnhancedGui) {
+					InnerEnhancedGui old = (InnerEnhancedGui) oldObject;
+					InnerEnhancedGui in = (InnerEnhancedGui) guiIn;
+					old.close();
+					old.getGuiHistory().add(old);
+					in.setGuiHistory(old.getGuiHistory());
+					in.setPosition(old.startX, old.startY);
+				}
+				guiIn.bringToFront();
+				guiIn.requestFocus();
+			}
 		}
 	}
 	

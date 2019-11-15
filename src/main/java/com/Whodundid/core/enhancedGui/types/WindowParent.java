@@ -1,5 +1,7 @@
 package com.Whodundid.core.enhancedGui.types;
 
-public class WindowParent extends EnhancedGuiObject {
+import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
+
+public class WindowParent extends EnhancedGuiObject implements IWindowParent {
 
 }
