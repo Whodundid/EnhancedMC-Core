@@ -3,7 +3,7 @@ package com.Whodundid.core.enhancedGui.guiObjects;
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.guiObjectUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
-import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.EnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
@@ -18,7 +18,7 @@ import org.lwjgl.input.Keyboard;
 //First Added: Oct 2, 2018
 //Author: Hunter Bragg
 
-public class EGuiTextField extends EnhancedGuiObject {
+public class EGuiTextField extends EnhancedActionObject {
 	
 	public String text = "", textWhenEmpty = "";
 	public int maxStringLength = 32;
@@ -119,8 +119,8 @@ public class EGuiTextField extends EnhancedGuiObject {
 			if (GuiScreen.isKeyComboCtrlA(keyCode)) {
 				setCursorPositionEnd();
 				setSelectionPos(0);
-			} else if (GuiScreen.isKeyComboCtrlC(keyCode)) { GuiScreen.setClipboardString(getSelectedText()); } 
-			else if (GuiScreen.isKeyComboCtrlV(keyCode) && isEnabled() && allowClipboardPastes) { writeText(GuiScreen.getClipboardString()); } 
+			} else if (GuiScreen.isKeyComboCtrlC(keyCode)) { GuiScreen.setClipboardString(getSelectedText()); }
+			else if (GuiScreen.isKeyComboCtrlV(keyCode) && isEnabled() && allowClipboardPastes) { writeText(GuiScreen.getClipboardString()); }
 			else if (GuiScreen.isKeyComboCtrlX(keyCode)) {
 				GuiScreen.setClipboardString(getSelectedText());
 				if (isEnabled()) { writeText(""); }
@@ -130,6 +130,9 @@ public class EGuiTextField extends EnhancedGuiObject {
 					if (GuiScreen.isCtrlKeyDown()) {
 						if (isEnabled()) { deleteWords(-1); }
 					} else if (isEnabled()) { deleteFromCursor(-1); }
+					break;
+				case 28: //enter
+					if (getActionReciever() != null) { getActionReciever().actionPerformed(this); }
 					break;
 				case 199: //home
 					if (GuiScreen.isShiftKeyDown()) { setSelectionPos(0); } 
@@ -386,6 +389,8 @@ public class EGuiTextField extends EnhancedGuiObject {
 	public int getSelectionEnd() { return selectionEnd; }
 	public int getWidth() { return getEnableBackgroundDrawing() ? width - 8 : width; }
 	public String getText() { return text; }
+	public boolean isEmpty() { return text != null ? text.isEmpty() : true; }
+	public boolean isNotEmpty() { return text != null ? !text.isEmpty() : false; }
 	public EGuiTextField setCursorPositionZero() { setCursorPosition(0); return this; }
 	public EGuiTextField setCursorPositionEnd() { setCursorPosition(text.length()); return this; }
 	public EGuiTextField setEnableBackgroundDrawing(boolean val) { enableBackgroundDrawing = val; return this; }
