@@ -2,6 +2,7 @@ package com.Whodundid.core.renderer;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiRightClickMenu;
+import com.Whodundid.core.enhancedGui.guiObjects.EMCGuiSelectionList;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.events.emcEvents.ModCalloutEvent;
@@ -41,7 +42,6 @@ public class RendererRCM extends EGuiRightClickMenu {
 		if (!EnhancedMC.isEGuiOpen(SettingsGuiMain.class)) {
 			EnhancedMC.displayEGui(new SettingsGuiMain());
 		}
-		close();
 	}
 	
 	private void openChatWindow() {
@@ -49,6 +49,6 @@ public class RendererRCM extends EGuiRightClickMenu {
 	}
 	
 	private void openGui() {
-		
+		EnhancedMC.displayEGui(new EMCGuiSelectionList(EnhancedMCRenderer.getInstance()));
 	}
 }

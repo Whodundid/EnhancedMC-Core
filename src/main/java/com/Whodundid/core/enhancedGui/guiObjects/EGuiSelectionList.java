@@ -26,6 +26,7 @@ public class EGuiSelectionList extends InnerEnhancedGui implements IEnhancedActi
 	IEnhancedGuiObject actionReciever;
 	int headerStringColor = 0xb2b2b2;
 	
+	protected EGuiSelectionList() {}
 	public EGuiSelectionList(IEnhancedGuiObject parentIn, StorageBoxHolder<String, ?> objectListIn) { this(parentIn, true, objectListIn, null); }
 	public EGuiSelectionList(IEnhancedGuiObject parentIn, StorageBoxHolder<String, ?> objectListIn, Object selObjIn) { this(parentIn, true, objectListIn, selObjIn); }
 	public EGuiSelectionList(IEnhancedGuiObject parentIn, int xPos, int yPos, StorageBoxHolder<String, ?> objectListIn) { this(parentIn, xPos, yPos, 200, 230, objectListIn, null); }
@@ -68,6 +69,7 @@ public class EGuiSelectionList extends InnerEnhancedGui implements IEnhancedActi
 			}
 		};
 		selectionList.setDrawLineNumbers(true);
+		selectionList.setResetDrawn(false);
 		
 		addObject(select, cancelSel, selectionList);
 		

@@ -79,6 +79,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 		
 		verticalScroll.setVisible(isVScrollDrawn());
 		horizontalScroll.setVisible(isHScrollDrawn());
+		//System.out.println("reset drawn: " + resetVis);
 		reset.setVisible(isResetDrawn());
 		
 		int vScrollPos = verticalScroll.getScrollPos() - verticalScroll.getVisibleAmount();
