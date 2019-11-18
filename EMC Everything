@@ -1,0 +1,103 @@
+-------------
+Needed Assets
+-------------
+
+Images:
+    RendererRCM
+        1. Opening new chat window - renderer RCM
+        2. Opening any gui - renderer RCM
+    SettingsRCM
+        1. Open gui
+        2. Open in new window
+        3. For toggling enabled state
+    SubMods (general)
+        1. Logo/Image for each
+    
+Sounds:
+    Notifications:
+        1. Name mention
+        2. EMC Info
+        3. Error
+        (total of around 5 -- player can select which one they want for each)
+
+
+--------------------------
+Known Bugs -- EMC Core 1.0
+--------------------------
+
+EMC Core 1.0:
+    1. Object window z-layering
+
+    2. Error thrown when opening screenshot links in chat. (Happens for both InGameChatWindow & GuiChat (but for different reasons))
+
+    3. InGameChatWindow doesn't open at mouse position from RendererRCM.
+    
+    4. All EGuiObjects are removed when the entire screen is resized.
+    
+    5. When shift-scrolling EGuiTextAreas, the thumb appears to go beyond the scrollbars boundary.
+    
+    6. When reloading mod configs from the SettingsGuiMain, the results are not displayed in chat.
+
+EnhancedChat: (MAIN PRIORITY AFTER CORE)
+    1. Text/Mouse miss alignment when hovering/clicking on chat (the clickable area appears to be about 3 pixels lower than the text).
+
+    2. MainRCM is no longer opening.
+    
+    3. NameFinder is not properly isolating names from chat messages.
+    
+    4. Hovering Events are still drawn even if the chat window is not the highest Z Object under mouse.
+    
+    5. Config loading issues.
+    
+    6. Pinned Chat Windows don't stay pinned when renderer proxy is closed.
+    
+Ping Display: (Second Priority)
+
+Player Info: (Third Priority)
+
+
+
+-------------------------------------
+Missing/Broken Quality of Life Issues
+-------------------------------------
+
+1. When using the FileUpButton to return to the main settings gui, the scroll position is not remembered.
+
+2. When a vanilla gui is opened, the renderer proxy is effectively closed - breaking the control bridge.
+   This would be fine if it weren't for the fact that the EGuiObjects remain on screen.
+   
+3. RCM does not appear for 'MC KeyBinds' button in SettingsGuiMain.
+
+4. While the scale of everything does change with Minecraft's gui scaling, some objects really do not
+   fit well in the larger scales. (ie. InGameChatWindow, MiniMapGui, etc.)
+   
+   On the largest scaling mode, nothing actually fits well..
+
+
+--------------------------------
+Unfinished/Planned Core Features
+--------------------------------
+
+ 1. Hovering Events
+ 2. Notification System
+ 3. Quick Bar for Frequently Used Mods
+ 4. EMC Console
+ 5. Display SubMod Picture/Icon when hovering over mod in SettingsGuiMain and in SubModInfoDialogueBox
+ 6. Customize-able color palletes/themes for EMC
+ 7. Resizeable Settings Menu
+ 8. SubMod Categories -- Organize and display each mod categorically in the SettingsGuiMain
+ 9. Animated windows and notifications
+10. EMC In-Game Server Browser
+11. System to check for updates in background
+12. Finish PlayerFacing API
+13. Toggle sounds from the EMC Core SubMod gui
+14. Select sounds for each notification from the EMC Core SubMod gui
+15. Finish EGuiColorPicker
+16. Redo EGuiDropDownList
+
+
+----------
+Fixed Bugs
+----------
+
+1.
