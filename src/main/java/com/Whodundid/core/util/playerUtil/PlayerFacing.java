@@ -26,7 +26,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
  *
  * Created by Hunter Bragg on 5/20/2017.
  */
-public abstract class PlayerFacing {
+public final class PlayerFacing {
 
 	static Minecraft mc = Minecraft.getMinecraft();
 	public static Vector3D playerEyeVec3;
@@ -54,7 +54,7 @@ public abstract class PlayerFacing {
 				else if (247.5 <= rotation && rotation < 292.5) { direction = Direction.S; }
 				else if (292.5 <= rotation && rotation < 337.5) { direction = Direction.SW; }
 				else if (337.5 <= rotation && rotation < 360.0) { direction = Direction.W; }
-				else { System.out.println("NoWhere"); }
+				else { System.out.println("NoWhere: " + rotation); }
 				return direction;
 				
 			} catch (Exception e) { e.printStackTrace(); }
