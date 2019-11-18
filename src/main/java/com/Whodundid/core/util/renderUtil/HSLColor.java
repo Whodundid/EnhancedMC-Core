@@ -42,54 +42,53 @@ public class HSLColor {
 			String bC = Integer.toString(b, 16);
 			return Integer.parseInt(rC + gC + bC, 16);
 		}
+		
+		if (luminance < 0.50d) { temp1 = luminance * (1.00d + saturation); }
+		else if (luminance >= 0.50d) { temp1 = luminance + saturation - luminance * saturation; }
+		
+		temp2 = 2.00d * luminance - temp1;
+		
+		double hueVal = (hue % 360) / 360;
+		
+		double tR = hueVal + 0.333;
+		double tG = hueVal;
+		double tB = hueVal - 0.333;
+		
+		if (tR < 0) { tR += 1.0d; } else if (tR > 1.0d) { tR -= 1.0d; }
+		if (tG < 0) { tG += 1.0d; } else if (tG > 1.0d) { tG -= 1.0d; }
+		if (tB < 0) { tB += 1.0d; } else if (tB > 1.0d) { tB -= 1.0d; }
+		
+		if (6 * tR < 1.0d) { rHolder = temp2 + (temp1 - temp2) * 6 * tR; }
 		else {
-			if (luminance < 0.50d) { temp1 = luminance * (1.00d + saturation); }
-			else if (luminance >= 0.50d) { temp1 = luminance + saturation - luminance * saturation; }
-			
-			temp2 = 2.00d * luminance - temp1;
-			
-			double hueVal = (hue % 360) / 360;
-			
-			double tR = hueVal + 0.333;
-			double tG = hueVal;
-			double tB = hueVal - 0.333;
-			
-			if (tR < 0) { tR += 1.0d; } else if (tR > 1.0d) { tR -= 1.0d; }
-			if (tG < 0) { tG += 1.0d; } else if (tG > 1.0d) { tG -= 1.0d; }
-			if (tB < 0) { tB += 1.0d; } else if (tB > 1.0d) { tB -= 1.0d; }
-			
-			if (6 * tR < 1.0d) { rHolder = temp2 + (temp1 - temp2) * 6 * tR; }
-			else {
-				if (2 * tR < 1.0d) { rHolder = temp1; }
-				else if (3 * tR < 2.0d) { rHolder = temp2 + (temp1 - temp2) * (0.666 - tR) * 6; }
-				else { rHolder = temp2; }
-			}
-			
-			if (6 * tG < 1.0d) { gHolder = temp2 + (temp1 - temp2) * 6 * tG; }
-			else {
-				if (2 * tG < 1.0d) { gHolder = temp1; }
-				else if (3 * tG < 2.0d) { gHolder = temp2 + (temp1 - temp2) * (0.666 - tG) * 6; }
-				else { gHolder = temp2; }
-			}
-			
-			if (6 * tB < 1.0d) { bHolder = temp2 + (temp1 - temp2) * 6 * tB; }
-			else {
-				if (2 * tB < 1.0d) { bHolder = temp1; }
-				else if (3 * tB < 2.0d) { bHolder = temp2 + (temp1 - temp2) * (0.666 - tB) * 6; }
-				else { bHolder = temp2; }
-			}
-			
-			r = (int) (rHolder * 255);
-			g = (int) (gHolder * 255);
-			b = (int) (bHolder * 255);
-			
-			//System.out.println(r + " " + g + " " + b);
-			
-			String rC = Integer.toString(r, 16);
-			String gC = Integer.toString(g, 16);
-			String bC = Integer.toString(b, 16);
-			return Integer.parseInt(rC + gC + bC, 16);
+			if (2 * tR < 1.0d) { rHolder = temp1; }
+			else if (3 * tR < 2.0d) { rHolder = temp2 + (temp1 - temp2) * (0.666 - tR) * 6; }
+			else { rHolder = temp2; }
 		}
+		
+		if (6 * tG < 1.0d) { gHolder = temp2 + (temp1 - temp2) * 6 * tG; }
+		else {
+			if (2 * tG < 1.0d) { gHolder = temp1; }
+			else if (3 * tG < 2.0d) { gHolder = temp2 + (temp1 - temp2) * (0.666 - tG) * 6; }
+			else { gHolder = temp2; }
+		}
+		
+		if (6 * tB < 1.0d) { bHolder = temp2 + (temp1 - temp2) * 6 * tB; }
+		else {
+			if (2 * tB < 1.0d) { bHolder = temp1; }
+			else if (3 * tB < 2.0d) { bHolder = temp2 + (temp1 - temp2) * (0.666 - tB) * 6; }
+			else { bHolder = temp2; }
+		}
+		
+		r = (int) (rHolder * 255);
+		g = (int) (gHolder * 255);
+		b = (int) (bHolder * 255);
+		
+		//System.out.println(r + " " + g + " " + b);
+		
+		String rC = Integer.toString(r, 16);
+		String gC = Integer.toString(g, 16);
+		String bC = Integer.toString(b, 16);
+		return Integer.parseInt(rC + gC + bC, 16);
 	}
 	
 	public static HSLColor convertFromRGB(Color colorIn) {
