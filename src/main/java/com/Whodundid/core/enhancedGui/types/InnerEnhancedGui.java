@@ -4,6 +4,7 @@ import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.renderer.EnhancedMCRenderer;
+import com.Whodundid.core.util.miscUtil.CenterType;
 import java.util.Stack;
 import net.minecraft.client.gui.GuiScreen;
 
@@ -17,8 +18,6 @@ public abstract class InnerEnhancedGui extends WindowParent {
 	protected EGuiHeader header;
 	protected boolean moveWithParent = false;
 	protected Stack<Object> guiHistory = new Stack();
-	protected boolean closeAndRecenter = false;
-	public boolean useCustomPosition = false;
 	protected Object oldObject = null;
 	public static int defaultWidth = 220, defaultHeight = 255;
 	
@@ -42,7 +41,6 @@ public abstract class InnerEnhancedGui extends WindowParent {
 		guiInstance = this;
 	}
 	private void initDefaultDims(IEnhancedGuiObject parentIn, int xPos, int yPos) {
-		useCustomPosition = true;
 		init(parentIn, xPos, yPos, defaultWidth, defaultHeight);
 		guiInstance = this;
 	}
@@ -57,11 +55,7 @@ public abstract class InnerEnhancedGui extends WindowParent {
 		}
 	}
 	
-	public void initGui() {
-		//setHeader(new EGuiHeader(this));
-		//header.setPersistent(true);
-		//header.updateFileUpButtonVisibility();
-	}
+	public void initGui() {}
 	
 	protected void defaultPos() { centerObjectWithSize(defaultWidth, defaultHeight); }
 	protected void defaultHeader(IEnhancedGuiObject in) { setHeader(new EGuiHeader(in)); }
@@ -87,14 +81,14 @@ public abstract class InnerEnhancedGui extends WindowParent {
 		return this;
 	}
 	
+	@Override
 	public Stack<Object> getGuiHistory() { return guiHistory; }
+	@Override
 	public InnerEnhancedGui setGuiHistory(Stack<Object> historyIn) {
 		guiHistory = historyIn;
 		if (header != null) { header.updateFileUpButtonVisibility(); }
 		return this;
 	}
-	
-	public InnerEnhancedGui setCloseAndRecenter(boolean val) { closeAndRecenter = val; return this; }
 	
 	public void fileUpAndClose() {
 		if (!guiHistory.isEmpty() && guiHistory.peek() != null) {
@@ -103,12 +97,7 @@ public abstract class InnerEnhancedGui extends WindowParent {
 				if (oldGuiPass instanceof InnerEnhancedGui) {
 					InnerEnhancedGui newGui = ((InnerEnhancedGui) Class.forName(oldGuiPass.getClass().getName()).getConstructor().newInstance());
 					newGui.setGuiHistory(((InnerEnhancedGui) oldGuiPass).getGuiHistory());
-					super.close();
-					EnhancedMC.displayEGui(newGui);
-					if (!closeAndRecenter) {
-						newGui.useCustomPosition = true;
-						newGui.setPosition(startX, startY);
-					}
+					EnhancedMC.displayEGui(newGui, this, false, CenterType.object);
 				}
 				else if (oldGuiPass instanceof GuiScreen) {
 					if (oldObject != null) {
@@ -135,7 +124,6 @@ public abstract class InnerEnhancedGui extends WindowParent {
 		return this;
 	}
 	
-	public InnerEnhancedGui setUseCustomPosition(boolean val) { useCustomPosition = val; return this; }
 	public boolean movesWithParent() { return moveWithParent; }
 	public InnerEnhancedGui setMoveWithParent(boolean val) { moveWithParent = val; return this; }
 	public EGuiHeader getHeader() { return header; }

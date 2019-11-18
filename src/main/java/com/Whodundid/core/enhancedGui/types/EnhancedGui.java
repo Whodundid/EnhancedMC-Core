@@ -26,6 +26,7 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.util.chatUtil.EChatUtil;
+import com.Whodundid.core.util.miscUtil.CenterType;
 import com.Whodundid.core.util.miscUtil.EFontRenderer;
 import com.Whodundid.core.util.miscUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
@@ -107,7 +108,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	public long mouseHoverTime = 0l;
 	public long hoverRefTime = 0l;
 	public StorageBox<Integer, Integer> oldMousePos = new StorageBox(0, 0);
-	protected Stack<EnhancedGui> guiHistory = new Stack();
+	protected Stack<Object> guiHistory = new Stack();
 	protected Deque<EventFocus> focusQueue = new ArrayDeque();
 	public EFontRenderer fontRenderer;
 	public RenderItem itemRenderer;
@@ -136,7 +137,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 			oldGui = oldGuiIn;
 			if (oldGuiIn instanceof EnhancedGui) {
 				guiHistory = ((EnhancedGui) oldGuiIn).getGuiHistory();
-				guiHistory.push((EnhancedGui) oldGuiIn);
+				guiHistory.push(oldGuiIn);
 			}
 		}
 	}
@@ -148,7 +149,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 		if (oldGuiIn != null) {
 			if (oldGuiIn instanceof EnhancedGui) {
 				guiHistory = ((EnhancedGui) oldGuiIn).getGuiHistory();
-				guiHistory.push((EnhancedGui) oldGuiIn);
+				guiHistory.push(oldGuiIn);
 			}
 		}
 	}
@@ -460,9 +461,9 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override public EDimension getBoundaryEnforcer() { return getDimensions(); }
 	
 	//size
-	@Override public boolean hasHeader() { for (IEnhancedGuiObject o : guiObjects) { if (o instanceof EGuiHeader) { return true; } } return false; }
+	@Override public boolean hasHeader() { return StaticEGuiObject.hasHeader(this); }
 	@Override public boolean isResizeable() { return resizeable; }
-	@Override public EGuiHeader getHeader() { for (IEnhancedGuiObject o : guiObjects) { if (o instanceof EGuiHeader) { return (EGuiHeader) o; } } return null; }
+	@Override public EGuiHeader getHeader() { return StaticEGuiObject.getHeader(this); }
 	@Override public int getMinimumWidth() { return minWidth; }
 	@Override public int getMinimumHeight() { return minHeight; }
 	@Override public int getMaximumWidth() { return maxWidth; }
@@ -632,17 +633,21 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override public EnhancedGui setFocusedObjectOnClose(IEnhancedGuiObject objIn) { focusObjectOnClose = objIn; return this; }
 	
 	//-------------------------
-	//IEnhancedTopGui Overrides
+	//IWindowParent Overrides
 	//-------------------------
 	
-	//history
-	@Override public Stack<EnhancedGui> getGuiHistory() { return guiHistory; }
 	@Override
-	public EnhancedGui sendGuiHistory(Stack<EnhancedGui> historyIn) {
+	public Stack<Object> getGuiHistory() { return guiHistory; }
+	@Override
+	public EnhancedGui setGuiHistory(Stack<Object> historyIn) {
 		guiHistory = historyIn;
 		if (header != null) { header.updateFileUpButtonVisibility(); }
 		return this;
 	}
+	
+	//-------------------------
+	//IEnhancedTopGui Overrides
+	//-------------------------
 	
 	//draw order
 	@Override public EnhancedGui bringObjectToFront(IEnhancedGuiObject objIn) { toFront = objIn; return this; }
@@ -786,28 +791,21 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 			mc.displayGuiScreen(null);
 			if (mc.currentScreen == null) { mc.setIngameFocus(); }
 		}
-		else if (isSpawned()) {
-			if (oldGui != null) {
-				try {
-					GuiScreen newGui = ((GuiScreen) Class.forName(oldGui.getClass().getName()).getConstructor().newInstance());
-					mc.displayGuiScreen(newGui);
-					return;
-				} catch (Exception e) { e.printStackTrace(); }
-			} else {
-				mc.displayGuiScreen(null);
-		        if (mc.currentScreen == null) { mc.setIngameFocus(); }
-			}
-		}
 		else if (backwardsTraverseable && !guiHistory.isEmpty() && guiHistory.peek() != null) {
 			try {
-				EnhancedGui oldGuiPass = guiHistory.pop();
-				EnhancedGui newGui = ((EnhancedGui) Class.forName(oldGuiPass.getClass().getName()).getConstructor().newInstance());
-				if (!closeAndRecenter) {
-					newGui.useCustomPosition = true;
-					newGui.setPosition(startX, startY);
+				Object oldGuiPass = guiHistory.pop();
+				if (oldGuiPass instanceof InnerEnhancedGui) {
+					InnerEnhancedGui newGui = ((InnerEnhancedGui) Class.forName(oldGuiPass.getClass().getName()).getConstructor().newInstance());
+					newGui.setGuiHistory(((InnerEnhancedGui) oldGuiPass).getGuiHistory());
+					EnhancedMC.displayEGui(newGui, this, CenterType.object);
 				}
-				newGui.sendGuiHistory(oldGuiPass.getGuiHistory());
-				mc.displayGuiScreen(newGui);
+				else if (oldGuiPass instanceof GuiScreen) {
+					try {
+						GuiScreen newGui = ((GuiScreen) Class.forName(oldGuiPass.getClass().getName()).getConstructor().newInstance());
+						mc.displayGuiScreen(newGui);
+						return;
+					} catch (Exception e) { e.printStackTrace(); }
+				}
 				return;
 			} catch (Exception e) { e.printStackTrace(); }
 		} else {
@@ -924,7 +922,5 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	
 	public EnhancedGui setGuiWidthAndHeight(int widthIn, int heightIn) { width = widthIn; height = heightIn; updatePosition(); return this; }
 	public EnhancedGui setGuiName(String nameIn) { guiName = nameIn; return this; }
-	public EnhancedGui setSpawned(boolean val) { isSpawned = val; return this; }
-	public boolean isSpawned() { return isSpawned; }
 	public String getGuiName() { return guiName; }
 }

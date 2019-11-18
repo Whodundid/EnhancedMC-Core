@@ -1,10 +1,7 @@
 package com.Whodundid.core.enhancedGui.types.interfaces;
 
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectModifyType;
-import com.Whodundid.core.enhancedGui.types.EnhancedGui;
 import com.Whodundid.core.util.miscUtil.ScreenLocation;
-
-import java.util.Stack;
 
 //Jan 1, 2019
 //Last edited: Jan 21, 2019
@@ -13,11 +10,6 @@ import java.util.Stack;
 
 /** An interface outlining behavior for Top Level Enhanced Gui Objects. Top level objects handle drawing, object focus, object manipulation, and inputs. */
 public interface IEnhancedTopParent extends IEnhancedGuiObject {
-	
-	//history
-	
-	public Stack<EnhancedGui> getGuiHistory();
-	public IEnhancedGuiObject sendGuiHistory(Stack<EnhancedGui> historyIn);
 	
 	//draw order
 	

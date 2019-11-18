@@ -21,6 +21,7 @@ import com.Whodundid.core.enhancedGui.guiUtil.exceptions.ObjectInitException;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
+import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.util.miscUtil.ScreenLocation;
 import com.Whodundid.core.util.renderUtil.CursorHelper;
 import com.Whodundid.core.util.renderUtil.Resources;
@@ -236,9 +237,9 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	@Override public EDimension getBoundaryEnforcer() { return boundaryDimension; }
 	
 	//size
-	@Override public boolean hasHeader() { for (IEnhancedGuiObject o : guiObjects) { if (o instanceof EGuiHeader) { return true; } } return false; }
+	@Override public boolean hasHeader() { return StaticEGuiObject.hasHeader(this); }
 	@Override public boolean isResizeable() { return resizeable; }
-	@Override public EGuiHeader getHeader() { for (IEnhancedGuiObject o : guiObjects) { if (o instanceof EGuiHeader) { return (EGuiHeader) o; } } return null; }
+	@Override public EGuiHeader getHeader() { return StaticEGuiObject.getHeader(this); }
 	@Override public int getMinimumWidth() { return minWidth; }
 	@Override public int getMinimumHeight() { return minHeight; }
 	@Override public int getMaximumWidth() { return maxWidth; }
@@ -295,7 +296,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	@Override public IEnhancedGuiObject getParent() { return parent; }
 	@Override public EnhancedGuiObject setParent(IEnhancedGuiObject parentIn) { parent = parentIn; return this; }
 	@Override public IEnhancedTopParent getTopParent() { return StaticEGuiObject.getTopParent(this); }
-	@Override public IEnhancedGuiObject getWindowParent() { return StaticEGuiObject.getWindowParent(this); }
+	@Override public IWindowParent getWindowParent() { return StaticEGuiObject.getWindowParent(this); }
 	
 	//zLevel
 	@Override

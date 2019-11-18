@@ -16,6 +16,7 @@ import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
+import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.util.miscUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
@@ -28,6 +29,14 @@ import net.minecraft.client.gui.ScaledResolution;
 public class StaticEGuiObject {
 	
 	//size
+	public static boolean hasHeader(IEnhancedGuiObject obj) { return getHeader(obj) != null; }
+	public static EGuiHeader getHeader(IEnhancedGuiObject obj) {
+		EArrayList<IEnhancedGuiObject> children = new EArrayList();
+		children.addAll(obj.getImmediateChildren());
+		children.addAll(obj.getObjectsToBeAdded());
+		for (IEnhancedGuiObject o : children) { if (o instanceof EGuiHeader) { return (EGuiHeader) o; } }
+		return null;
+	}
 	public static void resize(IEnhancedGuiObject obj, int xIn, int yIn, ScreenLocation areaIn) {
 		obj.postEvent(new EventModify(obj, obj, ObjectModifyType.Resize));
 		if (xIn != 0 || yIn != 0) {
@@ -226,13 +235,13 @@ public class StaticEGuiObject {
 		}
 		return obj instanceof IEnhancedTopParent ? (IEnhancedTopParent) obj : null;
 	}
-	public static IEnhancedGuiObject getWindowParent(IEnhancedGuiObject obj) {
+	public static IWindowParent getWindowParent(IEnhancedGuiObject obj) {
 		IEnhancedGuiObject parentObject = obj.getParent();
 		while (parentObject != null && !(parentObject instanceof IEnhancedTopParent)) {
-			if (parentObject instanceof InnerEnhancedGui) { return parentObject; }
+			if (parentObject instanceof IWindowParent) { return (IWindowParent) parentObject; }
 			if (parentObject.getParent() != null) { parentObject = parentObject.getParent(); }
 		}
-		return obj instanceof InnerEnhancedGui ? obj : obj.getTopParent();
+		return obj instanceof IWindowParent ? (IWindowParent) obj : null;
 	}
 	
 	//mouse checks

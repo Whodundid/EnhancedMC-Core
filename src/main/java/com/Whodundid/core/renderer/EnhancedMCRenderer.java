@@ -31,7 +31,6 @@ import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Stack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
@@ -346,10 +345,6 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	//-------------------------
 	//IEnhancedTopGui Overrides
 	//-------------------------
-	
-	//history
-	@Override public Stack<EnhancedGui> getGuiHistory() { return null; }
-	@Override public EnhancedMCRenderer sendGuiHistory(Stack<EnhancedGui> historyIn) { return this; }
 	
 	//draw order
 	@Override public EnhancedMCRenderer bringObjectToFront(IEnhancedGuiObject objIn) { toFront = objIn; return this; }
