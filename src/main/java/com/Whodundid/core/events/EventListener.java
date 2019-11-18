@@ -9,6 +9,7 @@ import com.Whodundid.core.events.emcEvents.ModCalloutEvent;
 import com.Whodundid.core.renderer.RendererProxyGui;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.util.chatUtil.EChatUtil;
+import com.Whodundid.core.util.miscUtil.EMouseHelper;
 import com.Whodundid.core.util.playerUtil.PlayerFacing;
 import com.Whodundid.core.util.renderUtil.BlockDrawer;
 import com.Whodundid.core.util.renderUtil.CursorHelper;
@@ -64,6 +65,7 @@ public class EventListener {
 	@SubscribeEvent
     public void onTick(TickEvent e) {
 		if (EnhancedMC.isInitialized()) {
+			EMouseHelper.updateMousePos();
 			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventTick(e));
 		}
     }
@@ -119,6 +121,7 @@ public class EventListener {
 	@SubscribeEvent
 	public void onMouseEvent(MouseEvent e) {
 		if (EnhancedMC.isInitialized()) {
+			EMouseHelper.mouseClicked(e.button);
 			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventMouse(e));
 		}
 	}
