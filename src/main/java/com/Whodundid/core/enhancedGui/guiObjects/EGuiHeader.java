@@ -125,7 +125,9 @@ public class EGuiHeader extends EnhancedGuiObject {
 		if (drawDefault) {
 			moveButton.setVisible(val).setPersistent(val);
 			closeButton.setVisible(val).setPersistent(val);
-			if (fileUpButton != null) { fileUpButton.setVisible(val && getTopParent().getGuiHistory() != null && !getTopParent().getGuiHistory().isEmpty()); }
+			if (getWindowParent() != null) {
+				if (fileUpButton != null) { fileUpButton.setVisible(val && getWindowParent().getGuiHistory() != null && !getWindowParent().getGuiHistory().isEmpty()); }
+			}
 		}
 		for (IEnhancedGuiObject o : getImmediateChildren()) { o.setVisible(val); }
 		return this;
@@ -155,7 +157,7 @@ public class EGuiHeader extends EnhancedGuiObject {
 				fileUpButton.setVisible(true);
 			}
 		}
-		else if (getTopParent() != null && getTopParent().getGuiHistory() != null && !getTopParent().getGuiHistory().isEmpty() && fileUpButton != null) { fileUpButton.setVisible(true); }
+		else if (getWindowParent() != null && getWindowParent().getGuiHistory() != null && !getWindowParent().getGuiHistory().isEmpty() && fileUpButton != null) { fileUpButton.setVisible(true); }
 		return this;
 	}
 	
