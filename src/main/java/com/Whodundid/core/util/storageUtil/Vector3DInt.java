@@ -180,7 +180,7 @@ public class Vector3DInt {
 	 * @see java.lang.Math#floor(double)
 	 */
 	public Vector3DInt set(Vec3i vecIn) {
-		set((int) vecIn.getX(), (int) vecIn.getY(), (int) vecIn.getZ());
+		set(vecIn.getX(), vecIn.getY(), vecIn.getZ());
 		return this;
 	}
 	
