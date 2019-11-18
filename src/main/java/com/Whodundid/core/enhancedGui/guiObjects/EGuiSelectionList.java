@@ -44,14 +44,13 @@ public class EGuiSelectionList extends InnerEnhancedGui implements IEnhancedActi
 		listContents = objectListIn;
 		defaultSelectionObject = selObjIn;
 		actionReciever = getParent();
-	}
-	
-	@Override
-	public void initGui() {
 		requestFocus();
 		getTopParent().setFocusLockObject(this);
 		setZLevel(10000);
-		
+	}
+	
+	@Override
+	public void initGui() {	
 		setHeader(new EGuiHeader(this));
 		header.setDisplayString(headerString);
 		header.setDisplayStringColor(headerStringColor);
@@ -92,7 +91,7 @@ public class EGuiSelectionList extends InnerEnhancedGui implements IEnhancedActi
 		if (!selectionList.getTextDocument().isEmpty()) { selectionList.setSelectedLine(selectionList.getTextLineWithLineNumber(1)); }
 	}
 	
-	private void selectCurrentOptionAndClose() {
+	protected void selectCurrentOptionAndClose() {
 		if (selectionList.getCurrentLine() != null && selectionList.getCurrentLine().getStoredObj() != null) {
 			selectedObject = selectionList.getCurrentLine().getStoredObj();
 			actionReciever.actionPerformed(this);
@@ -129,19 +128,13 @@ public class EGuiSelectionList extends InnerEnhancedGui implements IEnhancedActi
 	
 	@Override
 	public void keyPressed(char typedChar, int keyCode) {
-		if (keyCode == 1) {
-			close();
-		}
-		if (keyCode == 28) {
-			selectCurrentOptionAndClose();
-		}
+		if (keyCode == 1) { close(); }
+		if (keyCode == 28) { selectCurrentOptionAndClose(); }
 	}
 	
 	@Override
 	public void actionPerformed(IEnhancedActionObject object) {
-		if (object.equals(select)) {
-			selectCurrentOptionAndClose();
-		}
+		if (object.equals(select)) { selectCurrentOptionAndClose(); }
 		if (object.equals(cancelSel)) { close(); }
 	}
 	
