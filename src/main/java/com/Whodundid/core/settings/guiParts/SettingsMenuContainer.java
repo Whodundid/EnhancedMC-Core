@@ -5,7 +5,6 @@ import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiScrollList;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
-import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.settings.SettingsGuiMain;
@@ -14,6 +13,7 @@ import com.Whodundid.core.subMod.gui.SubModErrorType;
 import com.Whodundid.core.subMod.gui.SubModInfoDialogueBox;
 import com.Whodundid.core.subMod.util.SubModEnabler;
 import com.Whodundid.core.subMod.util.SubModErrorDisplay;
+import com.Whodundid.core.util.miscUtil.CenterType;
 import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import org.lwjgl.input.Keyboard;
@@ -74,10 +74,10 @@ public class SettingsMenuContainer extends EnhancedGuiObject {
 		try {
 			EDimension d = topParent.getDimensions();
 			IWindowParent gui = mod.getMainGui();
-			IEnhancedGuiObject windowObj = getWindowParent();
+			IWindowParent windowObj = getWindowParent();
 			if (gui != null) {
 				if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) { EnhancedMC.displayEGui(gui); }
-				else { EnhancedMC.displayEGui(gui, windowObj); }
+				else { EnhancedMC.displayEGui(gui, windowObj, CenterType.object); }
 			}
 			else { SubModErrorDisplay.displayError(SubModErrorType.NOGUI, mod); }
 		} catch (Exception e) { e.printStackTrace(); System.out.println("Unable to open: " + mod.getName() + "'s main gui!"); SubModErrorDisplay.displayError(SubModErrorType.NOGUI, mod, e); }

@@ -1,7 +1,10 @@
 package com.Whodundid.core.util.guiUtil;
 
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.enhancedGui.types.EnhancedGui;
 import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
+import com.Whodundid.core.util.miscUtil.CenterType;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiCustomizeSkin;
@@ -19,18 +22,25 @@ import net.minecraft.client.settings.GameSettings;
 
 public class GuiOpener {
 	
-	public static void openGui(Class guiIn) throws Exception { openGui(guiIn, null, null); }
-	public static void openGui(Class guiIn, Class[] paramTypes, Object[] paramValues) throws Exception {
+	public static void openGui(Class guiIn) throws Exception { openGui(guiIn, null, null, null, CenterType.screen); }
+	public static void openGui(Class guiIn, IWindowParent old) throws Exception { openGui(guiIn, null, null, old, CenterType.screen); }
+	public static void openGui(Class guiIn, CenterType typeIn) throws Exception { openGui(guiIn, null, null, null, typeIn); }
+	public static void openGui(Class guiIn, IWindowParent old, CenterType typeIn) throws Exception { openGui(guiIn, null, null, old, typeIn); }
+	public static void openGui(Class guiIn, Class[] paramTypes, Object[] paramValues) throws Exception { openGui(guiIn, null, null, null, CenterType.screen); }
+	public static void openGui(Class guiIn, Class[] paramTypes, Object[] paramValues, IWindowParent old) throws Exception { openGui(guiIn, null, null, old, CenterType.screen); }
+	public static void openGui(Class guiIn, Class[] paramTypes, Object[] paramValues, CenterType typeIn) throws Exception { openGui(guiIn, null, null, null, CenterType.screen); }
+		public static void openGui(Class guiIn, Class[] paramTypes, Object[] paramValues, IWindowParent old, CenterType typeIn) throws Exception {
 		if (guiIn != null) {
 			if (!testForVanillaGui(guiIn)) {
-				
-				System.out.println(guiIn + " ");
 				
 				Object obj = getObject(guiIn, paramTypes, paramValues);
 				
 				if (obj != null) {
 					if (obj instanceof InnerEnhancedGui) {
-						EnhancedMC.displayEGui((InnerEnhancedGui) obj);
+						EnhancedMC.displayEGui((InnerEnhancedGui) obj, old, typeIn);
+					}
+					else if (obj instanceof EnhancedGui) {
+						EnhancedMC.displayEGui((EnhancedGui) obj, old, typeIn);
 					}
 					else if (obj instanceof GuiScreen) {
 						Minecraft.getMinecraft().displayGuiScreen((GuiScreen) obj);
@@ -46,11 +56,9 @@ public class GuiOpener {
 			if (paramValues != null) {
 				return Class.forName(gui.getName()).getConstructor(paramTypes).newInstance(paramValues);
 			}
-			else { throw new IllegalArgumentException("Missing param values!"); }
+			throw new IllegalArgumentException("Missing param values!");
 		}
-		else {
-			return Class.forName(gui.getName()).getConstructor().newInstance();
-		}
+		return Class.forName(gui.getName()).getConstructor().newInstance();
 	}
 	
 	private static boolean testForVanillaGui(Class gui) throws Exception {

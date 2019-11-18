@@ -9,6 +9,7 @@ import com.Whodundid.core.events.emcEvents.ModCalloutEvent;
 import com.Whodundid.core.settings.SettingsGuiMain;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubModType;
+import com.Whodundid.core.util.miscUtil.CenterType;
 import com.Whodundid.core.util.renderUtil.Resources;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -40,7 +41,7 @@ public class RendererRCM extends EGuiRightClickMenu {
 	
 	private void openSettings() {
 		if (!EnhancedMC.isEGuiOpen(SettingsGuiMain.class)) {
-			EnhancedMC.displayEGui(new SettingsGuiMain());
+			EnhancedMC.displayEGui(new SettingsGuiMain(), CenterType.cursor);
 		}
 	}
 	
@@ -49,6 +50,6 @@ public class RendererRCM extends EGuiRightClickMenu {
 	}
 	
 	private void openGui() {
-		EnhancedMC.displayEGui(new EMCGuiSelectionList(EnhancedMCRenderer.getInstance()));
+		EnhancedMC.displayEGui(new EMCGuiSelectionList(EnhancedMCRenderer.getInstance()), CenterType.cursor);
 	}
 }
