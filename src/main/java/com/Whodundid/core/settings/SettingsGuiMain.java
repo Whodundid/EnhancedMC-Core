@@ -13,7 +13,6 @@ import com.Whodundid.core.enhancedGui.guiObjects.EGuiScrollList;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextField;
 import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
-import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.settings.guiParts.SettingsMenuContainer;
 import com.Whodundid.core.settings.guiParts.SettingsRCM;
 import com.Whodundid.core.subMod.RegisteredSubMods;
@@ -207,58 +206,54 @@ public class SettingsGuiMain extends InnerEnhancedGui {
 				
 				SettingsMenuContainer container = new SettingsMenuContainer(scrollList, m, count, this);
 				
-				cHeight = container.getHeight();
+				cHeight = container.getHeight() + 2;
 				scrollList.addObjectToList(container);
-				scrollList.growListHeight(container.getHeight() + 2);
+				scrollList.growListHeight(cHeight);
 				count++;
 			}
 			
-			int lineEnd = 3 + (count + 1) * cHeight;
+			int lineEnd = 3 + count * cHeight;
 			
 			//add length specific lines if there are multiple categories
 			if (incompats.isNotEmpty()) {
-				EGuiRect workingSeparator = new EGuiRect(this, l.getMidX() + 16, lineStart, l.getMidX() + 17, lineEnd, 0xff000000);
+				EGuiRect workingSeparator = new EGuiRect(this, l.getMidX() + 18, lineStart, l.getMidX() + 19, lineEnd, 0xff000000);
 				scrollList.addObjectToList(workingSeparator);
 			} else {
 				addObject(separator); //add the general separator instead
 			}
 			
-			if (EnhancedMCMod.showIncompats.get()) {
-				if (incompats.isNotEmpty()) {
-					count++;
-					int space = 2;
-					//add box
+			if (EnhancedMCMod.showIncompats.get() && incompats.isNotEmpty()) {
+				int space = 2;
+				//add box
+				scrollList.growListHeight(cHeight);
+				scrollList.addObjectToList(new EGuiRect(scrollList, l.startX, l.startY + (count * cHeight) + 1 + space, l.endX, l.startY + (count * cHeight) + 2 + space, 0xff000000));
+				scrollList.addObjectToList(new EGuiRect(scrollList, l.startX, l.startY + (count * cHeight) + 2 + space, l.endX, l.startY + (count * cHeight) + 18 + space, 0xff3b3b3b));
+				scrollList.addObjectToList(new EGuiLabel(scrollList, l.midX, l.startY + (count * cHeight) + 6 + space, "Incompatible Mods").setDrawCentered(true).setDisplayStringColor(0xff4444));
+				scrollList.addObjectToList(new EGuiRect(scrollList, l.startX, l.startY + (count * cHeight) + 18 + space, l.endX, l.startY + (count * cHeight) + 19 + space, 0xff000000));
+				
+				int lineStartIncompat = -1 + ((count + 1) * cHeight);
+				
+				count += 1;
+				
+				for (int i = 0; i < incompats.size(); i++) {
+					SubMod m = incompats.get(i);
+					
+					SettingsMenuContainer container = new SettingsMenuContainer(scrollList, m, count, space - 4, this);
+					
+					cHeight = container.getHeight() + 2;
+					scrollList.addObjectToList(container);
 					scrollList.growListHeight(cHeight);
-					scrollList.addObjectToList(new EGuiRect(scrollList, l.startX, l.startY + (count * cHeight) + 1 + space, l.endX, l.startY + (count * cHeight) + 2 + space, 0xff000000));
-					//scrollList.addObjectToList(new EGuiRect(scrollList, l.startX, l.startY + (count * cHeight) + 2 + space, l.endX, l.startY + (count * cHeight) + 18 + space, 0xff000000));
-					scrollList.addObjectToList(new EGuiRect(scrollList, l.startX, l.startY + (count * cHeight) + 2 + space, l.endX, l.startY + (count * cHeight) + 18 + space, 0xff3b3b3b));
-					//scrollList.addObjectToList(new EGuiRect(scrollList, l.startX + 7, l.startY + (count * cHeight) + 5 + space, l.endX - 12, l.startY + (count * cHeight) + 19 + space, 0xff4b4b4b));
-					scrollList.addObjectToList(new EGuiLabel(scrollList, l.midX, l.startY + (count * cHeight) + 6 + space, "Incompatible Mods").setDrawCentered(true).setDisplayStringColor(0xff4444));
-					scrollList.addObjectToList(new EGuiRect(scrollList, l.startX, l.startY + (count * cHeight) + 18 + space, l.endX, l.startY + (count * cHeight) + 19 + space, 0xff000000));
-					
-					int lineStartIncompat = 1 + ((count + 1) * cHeight);
-					
-					for (int i = 0; i < incompats.size(); i++) {
-						SubMod m = incompats.get(i);
-						
-						SettingsMenuContainer container = new SettingsMenuContainer(scrollList, m, count, space - 4, this);
-						
-						cHeight = container.getHeight();
-						scrollList.addObjectToList(container);
-						scrollList.growListHeight(cHeight);
-						count++;
-					}
-					
-					int lineEndIncompat = ld.endY;
-					EGuiRect incompatSeparator = new EGuiRect(this, l.getMidX() + 16, lineStartIncompat, l.getMidX() + 17, lineEndIncompat, 0xff000000);
-					scrollList.addObjectToList(incompatSeparator);
-					
-					scrollList.growListHeight(22);
+					count++;
 				}
+				
+				int lineEndIncompat = ((count + 1) * cHeight) + 13;
+				EGuiRect incompatSeparator = new EGuiRect(this, l.getMidX() + 18, lineStartIncompat, l.getMidX() + 19, lineEndIncompat, 0xff000000);
+				scrollList.addObjectToList(incompatSeparator);
+			}
+			else {
+				scrollList.growListHeight(2); //add spacing to bottom so it matches the top
 			}
 		}
-		
-		scrollList.growListHeight(2); //add spacing to bottom so it matches the top
 	}
 	
 	@Override
