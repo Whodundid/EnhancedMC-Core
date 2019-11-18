@@ -4,6 +4,7 @@ import com.Whodundid.core.coreSubMod.EnhancedMCMod;
 import com.Whodundid.core.debug.DebugFunctions;
 import com.Whodundid.core.enhancedGui.types.EnhancedGui;
 import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.events.EventListener;
 import com.Whodundid.core.renderer.EnhancedMCRenderer;
@@ -13,15 +14,19 @@ import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.subMod.SubModSettings;
 import com.Whodundid.core.subMod.SubModType;
+import com.Whodundid.core.util.miscUtil.CenterType;
 import com.Whodundid.core.util.miscUtil.EFontRenderer;
+import com.Whodundid.core.util.miscUtil.EMouseHelper;
 import com.Whodundid.core.util.renderUtil.CursorHelper;
 import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.storageUtil.EArrayList;
+import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import java.io.File;
 import java.util.Scanner;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.ResourceLocation;
@@ -232,29 +237,71 @@ public final class EnhancedMC {
 		return guiIn != null ? (InnerEnhancedGui) renderer.getAllChildren().stream().filter(o -> o.getClass().equals(guiIn)).findFirst().get() : null;
 	}
 	
-	public static void displayEGui(IWindowParent guiIn) { displayEGui(guiIn, null); }
-	public static void displayEGui(IWindowParent guiIn, Object oldObject) {
+	public static void displayEGui(IWindowParent guiIn) { displayEGui(guiIn, null, false, CenterType.screen); }
+	public static void displayEGui(IWindowParent guiIn, CenterType loc) { displayEGui(guiIn, null, false, loc); }
+	public static void displayEGui(IWindowParent guiIn, Object oldObject) { displayEGui(guiIn, oldObject, true, CenterType.object); }
+	public static void displayEGui(IWindowParent guiIn, Object oldObject, boolean transferHistory) { displayEGui(guiIn, oldObject, transferHistory, CenterType.object); }
+	public static void displayEGui(IWindowParent guiIn, Object oldObject, CenterType loc) { displayEGui(guiIn, oldObject, true, loc); }
+	public static void displayEGui(IWindowParent guiIn, Object oldObject, boolean transferHistory, CenterType loc) {
 		if (guiIn == null) { mc.displayGuiScreen(null); }
 		if (mc.currentScreen == null || !(mc.currentScreen instanceof RendererProxyGui)) { mc.displayGuiScreen(new RendererProxyGui()); }
 		if (guiIn != null) {
-			if (guiIn instanceof EnhancedGui) {
-				mc.displayGuiScreen((EnhancedGui) guiIn);
-			}
+			if (guiIn instanceof EnhancedGui) { mc.displayGuiScreen((EnhancedGui) guiIn); }
 			else {
 				renderer.addObject(guiIn);
 				if (oldObject instanceof GuiScreen) { mc.displayGuiScreen(null); }
-				else if (oldObject instanceof InnerEnhancedGui && guiIn instanceof InnerEnhancedGui) {
-					InnerEnhancedGui old = (InnerEnhancedGui) oldObject;
-					InnerEnhancedGui in = (InnerEnhancedGui) guiIn;
-					old.close();
-					old.getGuiHistory().add(old);
-					in.setGuiHistory(old.getGuiHistory());
-					in.setPosition(old.startX, old.startY);
-				}
-				guiIn.bringToFront();
-				guiIn.requestFocus();
+				else if (oldObject instanceof IWindowParent) { ((IWindowParent) oldObject).close(); }
 			}
+			if (transferHistory && oldObject instanceof IWindowParent) {
+				IWindowParent old = (IWindowParent) oldObject;
+				old.getGuiHistory().add(old);
+				guiIn.setGuiHistory(old.getGuiHistory());
+			}
+			setPos(guiIn, oldObject instanceof IEnhancedGuiObject ? (IEnhancedGuiObject) oldObject : null, loc);
+			guiIn.bringToFront();
+			guiIn.requestFocus();
 		}
+	}
+	
+	private static void setPos(IWindowParent guiIn, IEnhancedGuiObject objectIn, CenterType typeIn) {
+		ScaledResolution res = new ScaledResolution(mc);
+		EDimension gDim = guiIn.getDimensions();
+		int headerHeight = guiIn.hasHeader() ? guiIn.getHeader().height : 0;
+		
+		int sX = 0;
+		int sY = 0;
+		
+		switch (typeIn) {
+		case cursor:
+			sX = EMouseHelper.mX - (gDim.width / 2);
+			sY = EMouseHelper.mY - (gDim.height - headerHeight) / 2;
+			break;
+		case object:
+			if (objectIn != null) {
+				EDimension objDim = objectIn.getDimensions();
+				sX = objDim.midX - (gDim.width / 2);
+				sY = objDim.midY - (gDim.height / 2);
+				break;
+			}
+		case objectCorner:
+			if (objectIn != null) {
+				EDimension objDim = objectIn.getDimensions();
+				sX = objDim.startX;
+				sY = objDim.startY;
+				break;
+			}
+		case screen:
+			sX = res.getScaledWidth() - gDim.startX - gDim.width;
+			sY = res.getScaledHeight() - gDim.startY - gDim.height;
+			break;
+		default: break;
+		}
+		
+		sX = sX < 0 ? 1 : sX;
+		sY = (sY - headerHeight) < 2 ? 2 + headerHeight : sY;
+		sX = sX + gDim.width > res.getScaledWidth() ? -1 + sX - (sX + gDim.width - res.getScaledWidth()) : sX;
+		sY = sY + gDim.height > res.getScaledHeight() ? -2 + sY - (sY + gDim.height - res.getScaledHeight()) : sY;
+		guiIn.setPosition(sX, sY);
 	}
 	
 	private static SubMod getMod(String modNameIn, EArrayList<SubMod> checkList) {
