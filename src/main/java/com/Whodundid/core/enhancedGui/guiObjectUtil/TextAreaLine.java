@@ -7,7 +7,7 @@ import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextField;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectModifyType;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
-import com.Whodundid.core.util.miscUtil.ScreenLocation;
+import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ChatAllowedCharacters;

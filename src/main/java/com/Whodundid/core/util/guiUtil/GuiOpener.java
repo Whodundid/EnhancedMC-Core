@@ -4,7 +4,7 @@ import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.types.EnhancedGui;
 import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
-import com.Whodundid.core.util.miscUtil.CenterType;
+import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiCustomizeSkin;
@@ -47,7 +47,6 @@ public class GuiOpener {
 					}
 				}
 			}
-			else { Minecraft.getMinecraft().displayGuiScreen((GuiScreen) Class.forName(guiIn.getName()).getConstructor().newInstance()); }
 		}
 	}
 	

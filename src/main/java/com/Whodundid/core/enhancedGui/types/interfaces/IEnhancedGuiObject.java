@@ -6,7 +6,7 @@ import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
 import com.Whodundid.core.enhancedGui.guiUtil.events.ObjectEvent;
 import com.Whodundid.core.enhancedGui.guiUtil.events.ObjectEventHandler;
 import com.Whodundid.core.enhancedGui.guiUtil.exceptions.ObjectInitException;
-import com.Whodundid.core.util.miscUtil.ScreenLocation;
+import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.StorageBox;

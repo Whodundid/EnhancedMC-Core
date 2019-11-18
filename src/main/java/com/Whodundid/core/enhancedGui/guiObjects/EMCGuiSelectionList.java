@@ -5,7 +5,7 @@ import com.Whodundid.core.renderer.EnhancedMCRenderer;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.util.guiUtil.CommonVanillaGuis;
 import com.Whodundid.core.util.guiUtil.GuiOpener;
-import com.Whodundid.core.util.miscUtil.CenterType;
+import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 import net.minecraft.client.gui.ScaledResolution;

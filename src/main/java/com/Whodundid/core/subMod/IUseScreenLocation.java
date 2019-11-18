@@ -1,7 +1,7 @@
 package com.Whodundid.core.subMod;
 
 import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
-import com.Whodundid.core.util.miscUtil.ScreenLocation;
+import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 
 //Last edited: Dec 14, 2018

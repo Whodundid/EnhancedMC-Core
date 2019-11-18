@@ -10,6 +10,7 @@ import net.minecraft.client.gui.GuiOptions;
 import net.minecraft.client.gui.GuiShareToLan;
 import net.minecraft.client.gui.achievement.GuiAchievements;
 import net.minecraft.client.gui.achievement.GuiStats;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.realms.RealmsBridge;
 import net.minecraftforge.fml.client.GuiModList;
@@ -52,9 +53,20 @@ public class EMCInGameMenu extends EnhancedGui {
 	
 	@Override
 	public void drawObject(int mXIn, int mYIn, float ticks) {
+		updateBeforeNextDraw(mXIn, mYIn);
+		if (EnhancedMC.isDebugMode() && !mc.gameSettings.showDebugInfo) { drawDebugInfo(); }
+		
 		drawMenuGradient();
 		drawCenteredStringWithShadow(I18n.format("menu.game", new Object[0]), res.getScaledWidth() / 2, (height / 2 - 16) / 2, 16777215);
-		super.drawObject(mXIn, mYIn, ticks);
+		
+		if (checkDraw()) {
+			GlStateManager.pushMatrix();
+			GlStateManager.enableBlend();
+			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+			guiObjects.stream().filter(o -> o.checkDraw()).forEach(o -> { GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F); o.drawObject(mX, mY, ticks); });
+			
+			GlStateManager.popMatrix();
+		}
 	}
 	
 	@Override

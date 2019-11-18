@@ -14,9 +14,9 @@ import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.subMod.SubModSettings;
 import com.Whodundid.core.subMod.SubModType;
-import com.Whodundid.core.util.miscUtil.CenterType;
 import com.Whodundid.core.util.miscUtil.EFontRenderer;
 import com.Whodundid.core.util.miscUtil.EMouseHelper;
+import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.renderUtil.CursorHelper;
 import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.storageUtil.EArrayList;
@@ -53,7 +53,7 @@ public final class EnhancedMC {
 	
 	public static final String MODID = "enhancedmccore";
 	public static final String VERSION = "1.0";
-	public static final String NAME = "EnhancedMC Core";
+	public static final String NAME = "EnhancedMC";
 	public static final Minecraft mc = Minecraft.getMinecraft();
 	public static final KeyBinding openSettingsGui = new KeyBinding("Settings", Keyboard.KEY_P, "EnhancedMC");
 	public static final KeyBinding debugCommand = new KeyBinding("Debug key", Keyboard.KEY_GRAVE, "EnhancedMC");

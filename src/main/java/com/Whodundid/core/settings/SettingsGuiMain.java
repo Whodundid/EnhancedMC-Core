@@ -21,8 +21,8 @@ import com.Whodundid.core.subMod.SubModSettings;
 import com.Whodundid.core.subMod.SubModType;
 import com.Whodundid.core.subMod.gui.IncompatibleWindowList;
 import com.Whodundid.core.util.chatUtil.ChatBuilder;
-import com.Whodundid.core.util.miscUtil.ScreenLocation;
 import com.Whodundid.core.util.renderUtil.Resources;
+import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import net.minecraft.util.EnumChatFormatting;
@@ -49,9 +49,9 @@ public class SettingsGuiMain extends InnerEnhancedGui {
 	public void initGui() {
 		setObjectName("EMC Settings");
 		centerObjectWithSize(defaultWidth, defaultHeight);
-		setResizeable(true);
-		//setMinimumWidth(192).
-		setMinimumWidth(defaultWidth).setMinimumHeight(101).setMaximumWidth(220);
+		//setResizeable(true);
+		setMinimumWidth(192).setMinimumHeight(101).setMaximumWidth(220);
+		//setMinimumWidth(defaultWidth).setMinimumHeight(101).setMaximumWidth(220);
 		super.initGui();
 	}
 	

@@ -4,7 +4,7 @@ import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.renderer.EnhancedMCRenderer;
-import com.Whodundid.core.util.miscUtil.CenterType;
+import com.Whodundid.core.util.renderUtil.CenterType;
 import java.util.Stack;
 import net.minecraft.client.gui.GuiScreen;
 

@@ -1,7 +1,7 @@
 package com.Whodundid.core.enhancedGui.types.interfaces;
 
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectModifyType;
-import com.Whodundid.core.util.miscUtil.ScreenLocation;
+import com.Whodundid.core.util.renderUtil.ScreenLocation;
 
 //Jan 1, 2019
 //Last edited: Jan 21, 2019
@@ -11,16 +11,22 @@ import com.Whodundid.core.util.miscUtil.ScreenLocation;
 /** An interface outlining behavior for Top Level Enhanced Gui Objects. Top level objects handle drawing, object focus, object manipulation, and inputs. */
 public interface IEnhancedTopParent extends IEnhancedGuiObject {
 	
+	//drawing
+	
+	public void drawDebugInfo();
+	
 	//draw order
 	
 	public IEnhancedTopParent bringObjectToFront(IEnhancedGuiObject objIn);
 	public IEnhancedTopParent sendObjectToBack(IEnhancedGuiObject objIn);
 	
 	//hovering text
+	
 	public IEnhancedTopParent setObjectWithHoveringText(IEnhancedGuiObject objIn);
 	public IEnhancedGuiObject getObjectWithHoveringText();
 	
 	//objects
+	
 	public IEnhancedGuiObject getHighestZLevelObject();
 	
 	//focus

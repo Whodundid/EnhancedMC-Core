@@ -13,7 +13,7 @@ import com.Whodundid.core.subMod.gui.SubModErrorType;
 import com.Whodundid.core.subMod.gui.SubModInfoDialogueBox;
 import com.Whodundid.core.subMod.util.SubModEnabler;
 import com.Whodundid.core.subMod.util.SubModErrorDisplay;
-import com.Whodundid.core.util.miscUtil.CenterType;
+import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import org.lwjgl.input.Keyboard;

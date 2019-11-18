@@ -25,7 +25,7 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
 import com.Whodundid.core.events.emcEvents.ModCalloutEvent;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubModType;
-import com.Whodundid.core.util.miscUtil.ScreenLocation;
+import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.StorageBox;
@@ -120,25 +120,7 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 		GlStateManager.enableBlend();
 		//EArrayList<IEnhancedGuiObject> instanceObjects = new EArrayList(guiObjects);
 		guiObjects.stream().filter(o -> o.checkDraw()).forEach(o -> { GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F); o.drawObject(mX, mY, ticks); });
-		if (EnhancedMC.isDebugMode() && !mc.gameSettings.showDebugInfo) {
-			drawStringWithShadow("TopParent: " + getTopParent(), 3, 2, 0x70f3ff);
-			if (focusedObject instanceof EGuiButton) {
-				drawStringWithShadow("FocuedObject: " + (((EGuiButton) focusedObject).getDisplayString().isEmpty() ? focusedObject : "EGuiButton: " +
-														((EGuiButton) focusedObject).getDisplayString()), 3, 12, 0x70f3ff);
-			}
-			else { drawStringWithShadow("FocuedObject: " + focusedObject, 3, 12, 0x70f3ff); }
-			if (focusLockObject instanceof EGuiButton) {
-				drawStringWithShadow("FocusLockObject: " + (((EGuiButton) focusLockObject).getDisplayString().isEmpty() ? focusedObject : "EGuiButton: " +
-														((EGuiButton) focusLockObject).getDisplayString()), 3, 22, 0x70f3ff);
-			}
-			else { drawStringWithShadow("FocusLockObject: " + focusLockObject, 3, 22, 0x70f3ff); }
-			drawStringWithShadow("objs: " + guiObjects, 3, 32, 0x70f3ff);
-			drawStringWithShadow("ModifyingObject & type: (" + modifyingObject + " : " + modifyType + ")", 3, 42, 0x70f3ff);
-			IEnhancedGuiObject ho = getHighestZObjectUnderMouse();
-			drawStringWithShadow("Object under mouse: " + ho + " " + (ho != null ? ho.getZLevel() : -1), 3, 52, 0xffbb00);
-			
-			drawStringWithShadow("(" + mX + ", " + mY + ")", 3, 62, 0xffbb00);
-		}
+		if (EnhancedMC.isDebugMode() && !mc.gameSettings.showDebugInfo) { drawDebugInfo(); }
 		GlStateManager.popMatrix();
 	}
 	@Override public void updateCursorImage() {}
@@ -345,6 +327,28 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	//-------------------------
 	//IEnhancedTopGui Overrides
 	//-------------------------
+	
+	//drawing
+	@Override
+	public void drawDebugInfo() {
+		drawStringWithShadow("TopParent: " + getTopParent(), 3, 2, 0x70f3ff);
+		if (focusedObject instanceof EGuiButton) {
+			drawStringWithShadow("FocuedObject: " + (((EGuiButton) focusedObject).getDisplayString().isEmpty() ? focusedObject : "EGuiButton: " +
+													((EGuiButton) focusedObject).getDisplayString()), 3, 12, 0x70f3ff);
+		}
+		else { drawStringWithShadow("FocuedObject: " + focusedObject, 3, 12, 0x70f3ff); }
+		if (focusLockObject instanceof EGuiButton) {
+			drawStringWithShadow("FocusLockObject: " + (((EGuiButton) focusLockObject).getDisplayString().isEmpty() ? focusedObject : "EGuiButton: " +
+													((EGuiButton) focusLockObject).getDisplayString()), 3, 22, 0x70f3ff);
+		}
+		else { drawStringWithShadow("FocusLockObject: " + focusLockObject, 3, 22, 0x70f3ff); }
+		drawStringWithShadow("objs: " + guiObjects, 3, 32, 0x70f3ff);
+		drawStringWithShadow("ModifyingObject & type: (" + modifyingObject + " : " + modifyType + ")", 3, 42, 0x70f3ff);
+		IEnhancedGuiObject ho = getHighestZObjectUnderMouse();
+		drawStringWithShadow("Object under mouse: " + ho + " " + (ho != null ? ho.getZLevel() : -1), 3, 52, 0xffbb00);
+		
+		drawStringWithShadow("(" + mX + ", " + mY + ")", 3, 62, 0xffbb00);
+	}
 	
 	//draw order
 	@Override public EnhancedMCRenderer bringObjectToFront(IEnhancedGuiObject objIn) { toFront = objIn; return this; }

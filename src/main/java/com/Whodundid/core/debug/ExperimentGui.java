@@ -16,10 +16,12 @@ import com.Whodundid.core.enhancedGui.guiObjects.EGuiSlider;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextArea;
 import com.Whodundid.core.enhancedGui.guiObjects.misc.KeyOverlay;
 import com.Whodundid.core.enhancedGui.types.EnhancedGui;
+import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiRightClickMenu;
+import com.Whodundid.core.enhancedGui.guiObjects.EGuiScrollBar;
 import com.Whodundid.core.settings.KeyBindGui;
 import com.Whodundid.core.settings.SettingsGuiMain;
 import com.Whodundid.core.subMod.RegisteredSubMods;
@@ -29,9 +31,9 @@ import com.Whodundid.core.subMod.SubModType;
 import com.Whodundid.core.subMod.gui.SubModErrorDialogueBox;
 import com.Whodundid.core.subMod.gui.SubModErrorType;
 import com.Whodundid.core.subMod.gui.SubModInfoDialogueBox;
-import com.Whodundid.core.util.miscUtil.ScreenLocation;
 import com.Whodundid.core.util.renderUtil.PlayerDrawer;
 import com.Whodundid.core.util.renderUtil.Resources;
+import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.StorageBox;
@@ -126,10 +128,10 @@ public class ExperimentGui extends InnerEnhancedGui {
 		
 		window2.setHeader(new EGuiHeader(window2));
 		
-		EGuiTextArea textArea32 = new EGuiTextArea(this, startX + 5, startY + 5, width - 10, height - 10, true, false).setDrawLineNumbers(true);
-		textArea32.addTextLine("this is an intentionally very long line of text to test horizontal scrolling!");
-		for (int i = 1; i <= 60; i++) { textArea32.addTextLine(i + " cow"); }
-		addObject(textArea32);
+		textArea = new EGuiTextArea(this, startX + 5, startY + 5, width - 10, height - 10, true, false).setDrawLineNumbers(true);
+		textArea.addTextLine("this is an intentionally very long line of text to test horizontal scrolling!");
+		for (int i = 1; i <= 60; i++) { textArea.addTextLine(i + " cow"); }
+		addObject(textArea);
 		
 		//enableHeader(false);
 		//EScreenLocationSelector selector = new EScreenLocationSelector(this, wPos - 300, hPos - 200, 100);
@@ -279,6 +281,18 @@ public class ExperimentGui extends InnerEnhancedGui {
 		super.drawObject(mXIn, mYIn, ticks);
 	}
 	
+	@Override
+	public EnhancedGuiObject resize(int xIn, int yIn, ScreenLocation areaIn) {
+		if (textArea != null) {
+			EArrayList doc = textArea.getTextDocument();
+			super.resize(xIn, yIn, areaIn);
+			textArea.setTextDocument(doc);
+		} else {
+			super.resize(xIn, yIn, areaIn);
+		}
+		return this;
+	}
+	
 	public void updateColor() {
 		color = Color.HSBtoRGB(System.currentTimeMillis() % 10000L / 10000.0f, 0.8f, 1f);
 		if (label != null) { label.setDisplayStringColor(-color + 0xff222222); }
@@ -288,6 +302,11 @@ public class ExperimentGui extends InnerEnhancedGui {
 	@Override
 	public void mousePressed(int mX, int mY, int button) {
 		super.mousePressed(mX, mY, button);
+		if (textArea != null) {
+			textArea.addTextLine("clicked " + mX + ", " + mY + " with button " + button, 0xffaa00);
+			EGuiScrollBar b = textArea.getVScrollBar();
+			if (b != null) { b.setScrollBarPos(b.getHighVal()); }
+		}
 	}
 	
 	@Override

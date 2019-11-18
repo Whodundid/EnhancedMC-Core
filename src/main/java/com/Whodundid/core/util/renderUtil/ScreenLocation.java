@@ -1,4 +1,4 @@
-package com.Whodundid.core.util.miscUtil;
+package com.Whodundid.core.util.renderUtil;
 
 //Last edited: Dec 10, 2018
 //First Added: Dec 10, 2018

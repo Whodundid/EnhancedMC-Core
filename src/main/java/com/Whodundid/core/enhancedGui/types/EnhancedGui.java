@@ -26,9 +26,9 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.util.chatUtil.EChatUtil;
-import com.Whodundid.core.util.miscUtil.CenterType;
 import com.Whodundid.core.util.miscUtil.EFontRenderer;
-import com.Whodundid.core.util.miscUtil.ScreenLocation;
+import com.Whodundid.core.util.renderUtil.CenterType;
+import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.StorageBox;
@@ -200,25 +200,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	
 	@Override
 	public void drawScreen(int mXIn, int mYIn, float ticks) {
-		updateBeforeNextDraw(mXIn, mYIn);
-		if (checkDraw()) {
-			GlStateManager.pushMatrix();
-			GlStateManager.enableBlend();
-			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-			drawObject(mXIn, mYIn, ticks);
-			GlStateManager.popMatrix();
-			if (EnhancedMC.isDebugMode() && !mc.gameSettings.showDebugInfo) {
-				drawStringWithShadow("TopParent: " + getTopParent(), 3, 52, 0xffffff);
-				if (focusedObject instanceof EGuiButton) {
-					drawStringWithShadow("FocuedObject: " + (((EGuiButton) focusedObject).getDisplayString().isEmpty() ? focusedObject : "EGuiButton: " +
-															((EGuiButton) focusedObject).getDisplayString()), 3, 62, 0xffffff);
-				}
-				else { drawStringWithShadow("FocuedObject: " + focusedObject, 3, 62, 0xffffff); }
-				drawStringWithShadow("GuiHistory: " + guiHistory, 3, 72, 0xffffff);
-				drawStringWithShadow("ModifyingObject & type: (" + modifyingObject + " : " + modifyType + ")", 3, 82, 0xffffff);
-				drawStringWithShadow("Object under mouse: " + getHighestZObjectUnderMouse(), 3, 92, 0xffbb00);
-			}
-		}
+		drawObject(mXIn, mYIn, ticks);
 	}
 	
 	//basic inputs
@@ -399,15 +381,15 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	/** Call this super to draw objects when overriding! */
 	@Override
 	public void drawObject(int mXIn, int mYIn, float ticks) {
-		try {
-			if (checkDraw()) {
-				GlStateManager.pushMatrix();
-				GlStateManager.enableBlend();
-				//EArrayList<IEnhancedGuiObject> instanceObjects = new EArrayList(guiObjects);
-				guiObjects.stream().filter(o -> o.checkDraw()).forEach(o -> { GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F); o.drawObject(mX, mY, ticks); });
-				GlStateManager.popMatrix();
-			}
-		} catch (Exception e) { e.printStackTrace(); }
+		updateBeforeNextDraw(mXIn, mYIn);
+		if (checkDraw()) {
+			GlStateManager.pushMatrix();
+			GlStateManager.enableBlend();
+			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+			guiObjects.stream().filter(o -> o.checkDraw()).forEach(o -> { GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F); o.drawObject(mX, mY, ticks); });
+			if (EnhancedMC.isDebugMode() && !mc.gameSettings.showDebugInfo) { drawDebugInfo(); }
+			GlStateManager.popMatrix();
+		}
 	}
 	@Override
 	public void updateCursorImage() {
@@ -648,6 +630,20 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	//-------------------------
 	//IEnhancedTopGui Overrides
 	//-------------------------
+	
+	//drawing
+	@Override
+	public void drawDebugInfo() {
+		drawStringWithShadow("TopParent: " + getTopParent(), 3, 72, 0xffffff);
+		if (focusedObject instanceof EGuiButton) {
+			drawStringWithShadow("FocuedObject: " + (((EGuiButton) focusedObject).getDisplayString().isEmpty() ? focusedObject : "EGuiButton: " +
+													((EGuiButton) focusedObject).getDisplayString()), 3, 82, 0xffffff);
+		}
+		else { drawStringWithShadow("FocuedObject: " + focusedObject, 3, 82, 0xffffff); }
+		drawStringWithShadow("GuiHistory: " + guiHistory, 3, 92, 0xffffff);
+		drawStringWithShadow("ModifyingObject & type: (" + modifyingObject + " : " + modifyType + ")", 3, 102, 0xffffff);
+		drawStringWithShadow("Object under mouse: " + getHighestZObjectUnderMouse(), 3, 112, 0xffbb00);
+	}
 	
 	//draw order
 	@Override public EnhancedGui bringObjectToFront(IEnhancedGuiObject objIn) { toFront = objIn; return this; }

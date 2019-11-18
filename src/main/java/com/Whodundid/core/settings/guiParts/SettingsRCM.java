@@ -17,6 +17,22 @@ public class SettingsRCM extends EGuiRightClickMenu {
 	private SubMod mod;
 	
 	public SettingsRCM(SettingsGuiMain parentIn, int mXIn, int mYIn) { this(parentIn, mXIn, mYIn, null); }
+	public SettingsRCM(SettingsGuiMain parentIn, int mXIn, int mYIn, IWindowParent guiIn, String titleIn) {
+		super(parentIn, mXIn, mYIn);
+		window = parentIn;
+		
+		addOption("Open", Resources.guiFileUpButton);
+		addOption("Open in new Window", Resources.guiFileUpButtonSel);
+		
+		setRunActionOnPress(true);
+		setActionReciever(this);
+		
+		setUseTitle(true);
+		setTitle(titleIn);
+		setBackgroundColor(0xff4b4b4b);
+		setSeparatorLineColor(0xff000000);
+		
+	}
 	public SettingsRCM(SettingsGuiMain parentIn, int mXIn, int mYIn, SubMod modIn) {
 		super(parentIn, mXIn, mYIn);
 		window = parentIn;
