@@ -55,6 +55,7 @@ import net.minecraft.util.ResourceLocation;
 //First Added: 9-5-18
 //Author: Hunter Bragg
 
+@SuppressWarnings("unused")
 public class ExperimentGui extends InnerEnhancedGui {
 	
 	static Minecraft mc = Minecraft.getMinecraft();
