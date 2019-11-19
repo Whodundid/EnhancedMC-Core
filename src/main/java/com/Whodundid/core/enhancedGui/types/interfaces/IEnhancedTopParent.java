@@ -2,6 +2,7 @@ package com.Whodundid.core.enhancedGui.types.interfaces;
 
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectModifyType;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
+import com.Whodundid.core.util.storageUtil.EArrayList;
 
 //Jan 1, 2019
 //Last edited: Jan 21, 2019
@@ -61,6 +62,8 @@ public interface IEnhancedTopParent extends IEnhancedGuiObject {
 	public boolean isMouseInsideHeader(int mX, int mY);
 	/** Returns the objects with this highest z level under the mouse. */
 	public IEnhancedGuiObject getHighestZObjectUnderMouse();
+	/** Returns a list of all objects underneath the mouse. */
+	public EArrayList<IEnhancedGuiObject> getAllObjectsUnderMouse();
 	
 	//close
 	

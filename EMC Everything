@@ -26,7 +26,7 @@ Known Bugs -- EMC Core 1.0
 --------------------------
 
 EMC Core 1.0:
-    1. Object window z-layering
+Y   1. Object window z-layering
 
     2. Error thrown when opening screenshot links in chat. (Happens for both InGameChatWindow & GuiChat (but for different reasons))
 
@@ -51,11 +51,27 @@ EnhancedChat: (MAIN PRIORITY AFTER CORE)
     
     6. Pinned Chat Windows don't stay pinned when renderer proxy is closed.
     
-Ping Display: (Second Priority)
+Clear Visuals:
 
-Player Info: (Third Priority)
+Ping Display:
 
+Player Info:
 
+Multi Hotbar:
+
+Hotkeys:
+
+SLC:
+
+CMD Autocorrect:
+
+Scripts:
+
+Minimap:
+
+World Editor:
+
+Parkour AI:
 
 -------------------------------------
 Missing/Broken Quality of Life Issues

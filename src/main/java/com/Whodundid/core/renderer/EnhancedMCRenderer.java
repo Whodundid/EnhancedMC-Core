@@ -29,6 +29,7 @@ import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.StorageBox;
+import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import net.minecraft.client.Minecraft;
@@ -101,8 +102,8 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	@Override public EnhancedMCRenderer completeInit() { return this; }
 	@Override
 	public void initObjects() {
-		//KeyOverlay keyOverlay = new KeyOverlay(this, 50, 50);
-		//addObject(keyOverlay);
+		//addObject(new SettingsGuiMain());
+		//addObject(new EGuiContainer(this, 15, 205, 100, 100).setDisplayString("Baccon"));
 	}
 	@Override
 	public void reInitObjects() {
@@ -344,8 +345,8 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 		else { drawStringWithShadow("FocusLockObject: " + focusLockObject, 3, 22, 0x70f3ff); }
 		drawStringWithShadow("objs: " + guiObjects, 3, 32, 0x70f3ff);
 		drawStringWithShadow("ModifyingObject & type: (" + modifyingObject + " : " + modifyType + ")", 3, 42, 0x70f3ff);
-		IEnhancedGuiObject ho = getHighestZObjectUnderMouse();
-		drawStringWithShadow("Object under mouse: " + ho + " " + (ho != null ? ho.getZLevel() : -1), 3, 52, 0xffbb00);
+		//IEnhancedGuiObject ho = getHighestZObjectUnderMouse();
+		//drawStringWithShadow("Object under mouse: " + ho + " " + (ho != null ? ho.getZLevel() : -1), 3, 52, 0xffbb00);
 		
 		drawStringWithShadow("(" + mX + ", " + mY + ")", 3, 62, 0xffbb00);
 	}
@@ -458,26 +459,46 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	}
 	@Override
 	public IEnhancedGuiObject getHighestZObjectUnderMouse() {
-		EArrayList<IEnhancedGuiObject> foundObjs = getAllChildren();
-		EArrayList<IEnhancedGuiObject> mouseIn = new EArrayList();
-		//System.out.println(mX + " " + mY);
-		if (!foundObjs.isEmpty()) {
-			for (IEnhancedGuiObject o : foundObjs) {
-				if (o.checkDraw() && o.isMouseInside(mX, mY)) { mouseIn.add(o); }
+		try {
+			EArrayList<IEnhancedGuiObject> underMouse = getAllObjectsUnderMouse();
+			StorageBoxHolder<IEnhancedGuiObject, EArrayList<IEnhancedGuiObject>> sortedByParent = new StorageBoxHolder();
+			
+			//first setup the sorted list
+			for (int i = guiObjects.size() - 1; i >= 0; i--) {
+				sortedByParent.add(guiObjects.get(i), new EArrayList());
 			}
-			if (!mouseIn.isEmpty()) {
-				IEnhancedGuiObject highestZObj = null;
-				for (IEnhancedGuiObject o : mouseIn) {
-					if (highestZObj != null) {
-						if (o.getZLevel() > highestZObj.getZLevel()) { highestZObj = o; }
-					} else { highestZObj = o; }
+			
+			//next iterate through each of the objects found under the mouse and add them to the corresponding parents
+			for (IEnhancedGuiObject o : underMouse) {
+				for (int i = 0; i < sortedByParent.size(); i++) {
+					IEnhancedGuiObject parent = sortedByParent.getObject(i);
+					if (o.equals(parent) || parent.getAllChildren().contains(o)) { sortedByParent.getValue(i).add(o); }
 				}
-				return highestZObj;
 			}
-			if (checkDraw() && isMouseInside(mX, mY)) { return this; }
-		}
-		
+			
+			//next iterate through each of the sorted parent's found objects to see if they are the highest object
+			for (StorageBox<IEnhancedGuiObject, EArrayList<IEnhancedGuiObject>> box : sortedByParent) {
+				if (box.getValue().isEmpty()) { continue; }
+				
+				IEnhancedGuiObject highest = null;
+				
+				for (IEnhancedGuiObject o : box.getValue()) {
+					if (highest == null) { highest = o; }
+					else if (o.getZLevel() > highest.getZLevel()) { highest = o; }
+				}
+				
+				return highest;
+			}
+		} catch (Exception e) { e.printStackTrace(); }
 		return null;
+	}
+	@Override
+	public EArrayList<IEnhancedGuiObject> getAllObjectsUnderMouse() {
+		EArrayList<IEnhancedGuiObject> underMouse = new EArrayList();
+		for (IEnhancedGuiObject o : getAllChildren()) {
+			if (o.isMouseInside(mX, mY) && o.isVisible()) { underMouse.add(o); }
+		}
+		return underMouse;
 	}
 	
 	//close
