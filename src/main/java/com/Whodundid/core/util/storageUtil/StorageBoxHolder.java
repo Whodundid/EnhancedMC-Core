@@ -162,7 +162,7 @@ public class StorageBoxHolder<Obj, Val> implements Iterable<StorageBox<Obj, Val>
 	public String toString() {
 		String returnString = "[";
 		for (int i = 0; i < createdList.size(); i++) {
-			returnString += (getObject(i) + ", " + getValue(i));
+			returnString += ("(" + getObject(i) + ", " + getValue(i) + (i == createdList.size() - 1 ? ")" : "), "));
 		}
 		returnString += "]";
 		return returnString;
