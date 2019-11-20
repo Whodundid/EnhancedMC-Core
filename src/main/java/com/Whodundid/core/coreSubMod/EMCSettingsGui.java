@@ -2,23 +2,15 @@ package com.Whodundid.core.coreSubMod;
 
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
-import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
-import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubModType;
 
-public class EMCSettingsGui extends InnerEnhancedGui {
+public class EMCSettingsGui extends WindowParent {
 	
 	EnhancedMCMod mod = (EnhancedMCMod) RegisteredSubMods.getMod(SubModType.CORE);
 	EGuiButton menuOverride, showIncompats, useDebugKey;
-	
-	public EMCSettingsGui() { super(); }
-	public EMCSettingsGui(Object oldGuiIn) { super(oldGuiIn); }
-	public EMCSettingsGui(IEnhancedGuiObject parentIn) { super(parentIn); }
-	public EMCSettingsGui(IEnhancedGuiObject parentIn, Object oldGuiIn) { super(parentIn, oldGuiIn); }
-	public EMCSettingsGui(IEnhancedGuiObject parentIn, int posX, int posY) { super(parentIn, posX, posY); }
-	public EMCSettingsGui(IEnhancedGuiObject parentIn, int posX, int posY, Object oldGuiIn) { super(parentIn, posX, posY, oldGuiIn); }
 	
 	@Override
 	public void initGui() {
@@ -56,14 +48,8 @@ public class EMCSettingsGui extends InnerEnhancedGui {
 	
 	@Override
 	public void actionPerformed(IEnhancedActionObject object) {
-		if (object == menuOverride) {
-			menuOverride.toggleTrueFalse(mod.emcMenuOverride, mod, false);
-		}
-		if (object == showIncompats) {
-			showIncompats.toggleTrueFalse(mod.showIncompats, mod, false);
-		}
-		if (object == useDebugKey) {
-			useDebugKey.toggleTrueFalse(mod.useDebugKey, mod, false);
-		}
+		if (object == menuOverride) { menuOverride.toggleTrueFalse(mod.emcMenuOverride, mod, false); }
+		if (object == showIncompats) { showIncompats.toggleTrueFalse(mod.showIncompats, mod, false); }
+		if (object == useDebugKey) { useDebugKey.toggleTrueFalse(mod.useDebugKey, mod, false); }
 	}
 }

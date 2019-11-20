@@ -12,10 +12,6 @@ import org.apache.logging.log4j.Level;
 
 public class SubModSettings {
 	
-	public static void setAll(boolean state) {
-		for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.setEnabled(state); }
-	}
-	
 	public static void updateModState(SubMod modIn, boolean state) {
 		for (SubMod m : RegisteredSubMods.getRegisteredModsList()) {
 			if (m.equals(modIn)) {
@@ -88,7 +84,6 @@ public class SubModSettings {
 									try {
 										val = Boolean.parseBoolean(valIn);
 									} catch (Exception f) { EnhancedMC.log(Level.WARN, "failed to parse emc subModSettings file line: " + valIn); val = false; }
-									//EnhancedMC.log(Level.INFO, "Found: " + type + " " + val);
 									updateModState(type != null ? type.modName : readMod, val);
 								}
 								lineReader.close();

@@ -8,14 +8,13 @@ import com.Whodundid.core.util.storageUtil.StorageBox;
 
 public class NumberUtil {
 	
-	public static int returnLarger(int a, int b) { return (a > b) ? a : b; }
-	public static int returnSmaller(int a, int b) { return (a < b) ? a : b; }
-	public static boolean isInteger(String s) { return s.matches("-?\\d+"); }
+	public static int max(int a, int b) { return (a > b) ? a : b; }
+	public static int min(int a, int b) { return (a < b) ? a : b; }
 	
+	public static boolean isInteger(String s) { return s.matches("-?\\d+"); }
 	public static boolean isInteger(String s, int radix) {
 		if (s.isEmpty()) { return false; }
 		for (int i = 0; i < s.length(); i++) {
-			System.out.println(s.charAt(i));
 			if (i == 0 && s.charAt(i) == '-') {
 				if (s.length() == 1) { return false; }
 				continue;

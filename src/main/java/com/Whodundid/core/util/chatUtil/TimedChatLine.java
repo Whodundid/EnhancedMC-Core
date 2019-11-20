@@ -28,9 +28,6 @@ public class TimedChatLine extends ChatLine implements Comparable<TimedChatLine>
 		SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
 		formatter.setTimeZone(TimeZone.getDefault());
 		creationTimeStamp = formatter.format(date);
-		
-		//Calendar calendar = Calendar.getInstance();
-		//creationTimeStamp = String.format("%02d:%02d:%02d ", calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), calendar.get(Calendar.SECOND));
 	}
 
 	public String getTimeStamp() { return creationTimeStamp; }
@@ -38,8 +35,5 @@ public class TimedChatLine extends ChatLine implements Comparable<TimedChatLine>
 	public long getCreationTime() { return creationTime; }
 	public TimedChatLine setCreationTime(long timeIn) { creationTime = timeIn; generateTimeStamp(); return this; }
 
-	@Override
-	public int compareTo(TimedChatLine o) {
-		return creationTime.compareTo(o.getCreationTime());
-	}
+	@Override public int compareTo(TimedChatLine o) { return creationTime.compareTo(o.getCreationTime()); }
 }

@@ -24,17 +24,15 @@ public class EGuiDropDownList extends EnhancedGuiObject {
 	boolean fixedWidth = false;
 	boolean globalAction = false;
 	
-	public EGuiDropDownList(IEnhancedGuiObject parentIn, int x, int y) {
-		init(parentIn, x, y, 75, 14);
-	}
-	public EGuiDropDownList(IEnhancedGuiObject parentIn, int x, int y, int entryHeightIn) { 
-		this(parentIn, x, y, entryHeightIn, false); 
-	}
+	public EGuiDropDownList(IEnhancedGuiObject parentIn, int x, int y) { init(parentIn, x, y, 75, 14); }
+	public EGuiDropDownList(IEnhancedGuiObject parentIn, int x, int y, int entryHeightIn) { this(parentIn, x, y, entryHeightIn, false); }
 	public EGuiDropDownList(IEnhancedGuiObject parentIn, int x, int y, int entryHeightIn, boolean useGlobalAction) {
 		init(parentIn, x, y, width, entryHeightIn);
 		entryHeight = entryHeightIn;
 		globalAction = useGlobalAction;
 	}
+	
+	//ANCIENT -- REWRITE FROM SCRATCH
 	
 	@Override
 	public void drawObject(int mX, int mY, float ticks) {

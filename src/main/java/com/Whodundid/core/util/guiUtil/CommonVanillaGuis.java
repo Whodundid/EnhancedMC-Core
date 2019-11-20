@@ -56,9 +56,7 @@ public class CommonVanillaGuis {
 	}
 	
 	public static StorageBoxHolder<Class, StorageBox<Class[], Object[]>> getGuis() {
-		if (instance == null || vanillaGuis == null) {
-			createRepo();
-		}
+		if (instance == null || vanillaGuis == null) { createRepo(); }
 		return vanillaGuis;
 	}
 }

@@ -4,7 +4,7 @@ import com.Whodundid.core.enhancedGui.guiObjectUtil.TextAreaLine;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextArea;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
-import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
@@ -15,10 +15,8 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
 
-public class KeyBindGui extends InnerEnhancedGui {
+public class KeyBindGui extends WindowParent {
 	
 	EGuiTextArea keyList;
 	String description = "";
@@ -35,6 +33,7 @@ public class KeyBindGui extends InnerEnhancedGui {
 		centerObjectWithSize(380, 254);
 		super.initGui();
 		setResizeable(true);
+		setMinimumDims(150, 150);
 	}
 	
 	@Override
@@ -124,15 +123,15 @@ public class KeyBindGui extends InnerEnhancedGui {
 		
 		int scale = mc.gameSettings.guiScale;
 		
-		GL11.glEnable(GL11.GL_SCISSOR_TEST);
-		GL11.glScissor(
-				((keyList.endX + 10) * scale),
-				(Display.getHeight() - startY * scale) - (height - 1) * scale,
-				(endX - keyList.endX - 21) * scale,
-				(height - 1) * scale);
+		//GL11.glEnable(GL11.GL_SCISSOR_TEST);
+		//GL11.glScissor(
+		//		((keyList.endX + 10) * scale),
+		//		(Display.getHeight() - startY * scale) - (height - 1) * scale,
+		//		(endX - keyList.endX - 21) * scale,
+		//		(height - 1) * scale);
 		
 		drawKeyValues();
-		GL11.glDisable(GL11.GL_SCISSOR_TEST);
+		//GL11.glDisable(GL11.GL_SCISSOR_TEST);
 		
 		super.drawObject(mXIn, mYIn, ticks);
 	}
@@ -165,12 +164,14 @@ public class KeyBindGui extends InnerEnhancedGui {
 			}
 		}
 		
-		for (String s : categories) {
-			keyList.addTextLine(s).setLineNumberColor(0xb2b2b2).setTextColor(0xffffff);
+		for (int i = 0; i < categories.size(); i++) {
+			String s = categories.get(i);
+			keyList.addTextLine(EnumChatFormatting.BLUE + "" + EnumChatFormatting.BOLD + s).setLineNumberColor(0xb2b2b2);
 			for (StorageBox<String, KeyBinding> b : keys.getAllBoxesWithObj(s)) {
 				KeyBinding k = b.getValue();
 				keyList.addTextLine("   " +	I18n.format(k.getKeyDescription(), new Object[0]), (k.getKeyCodeDefault() != k.getKeyCode() ? 0x55ff55 : 0xb2b2b2), k).setLineNumberColor(0xb2b2b2);
 			}
+			if (i < categories.size() - 1) { keyList.addTextLine(); }
 		}
 	}
 	

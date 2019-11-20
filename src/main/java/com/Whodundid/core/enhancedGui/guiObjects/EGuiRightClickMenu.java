@@ -174,14 +174,6 @@ public class EGuiRightClickMenu extends EnhancedActionObject {
 		}
 	}
 	
-	public int getBackgroundColor() { return backgroundColor; }
-	public int getTitleBackgroundColor() { return titleBackgroundColor; }
-	public int getLineSepartorColor() { return separatorLineColor; }
-	public int getBorderColor() { return borderColor; }
-	public int getTitleHeight() { return titleHeight; }
-	public EGuiLabel getTitle() { return title; }
-	public boolean hasTitle() { return useTitle; }
-	
 	public EGuiRightClickMenu setBackgroundColor(int colorIn) { backgroundColor = colorIn; return this; }
 	public EGuiRightClickMenu setTitleBackgroundColor(int colorIn) { titleBackgroundColor = colorIn; return this; }
 	public EGuiRightClickMenu setSeparatorLineColor(int colorIn) { separatorLineColor = colorIn; return this; }
@@ -189,4 +181,12 @@ public class EGuiRightClickMenu extends EnhancedActionObject {
 	public EGuiRightClickMenu setTitleHeight(int heightIn) { titleHeight = heightIn; resize(); return this; }
 	public EGuiRightClickMenu setTitle(String titleIn) { title.setDisplayString(titleIn); return this; }
 	public EGuiRightClickMenu setUseTitle(boolean val) { useTitle = val; title.setVisible(val); resize(); return this; }
+	
+	public int getBackgroundColor() { return backgroundColor; }
+	public int getTitleBackgroundColor() { return titleBackgroundColor; }
+	public int getLineSepartorColor() { return separatorLineColor; }
+	public int getBorderColor() { return borderColor; }
+	public int getTitleHeight() { return titleHeight; }
+	public EGuiLabel getTitle() { return title; }
+	public boolean hasTitle() { return useTitle; }
 }

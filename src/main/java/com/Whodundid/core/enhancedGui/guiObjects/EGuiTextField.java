@@ -251,20 +251,20 @@ public class EGuiTextField extends EnhancedActionObject {
 	/**
 	 * see @getNthNextWordFromPos() params: N, position
 	 */
-	public int getNthWordFromCursor(int p_146187_1_) { return getNthWordFromPos(p_146187_1_, getCursorPosition());}
+	public int getNthWordFromCursor(int pos) { return getNthWordFromPos(pos, getCursorPosition());}
 
 	/**
 	 * gets the position of the nth word. N may be negative, then it looks
 	 * backwards. params: N, position
 	 */
-	public int getNthWordFromPos(int p_146183_1_, int p_146183_2_) {
-		return func_146197_a(p_146183_1_, p_146183_2_, true);
+	public int getNthWordFromPos(int posIn, int cursorPos) {
+		return func_146197_a(posIn, cursorPos, true);
 	}
 
-	public int func_146197_a(int p_146197_1_, int p_146197_2_, boolean p_146197_3_) {
-		int i = p_146197_2_;
-		boolean flag = p_146197_1_ < 0;
-		int j = Math.abs(p_146197_1_);
+	public int func_146197_a(int posIn, int cursorPos, boolean p_146197_3_) {
+		int i = cursorPos;
+		boolean flag = posIn < 0;
+		int j = Math.abs(posIn);
 		for (int k = 0; k < j; ++k) {
 			if (!flag) {
 				int l = text.length();
@@ -378,19 +378,6 @@ public class EGuiTextField extends EnhancedActionObject {
 		return this;
 	}
 	
-	public void updateCursorCounter() { cursorCounter++; }
-	public EGuiTextField moveCursorBy(int moveAmount) { setCursorPosition(selectionEnd + moveAmount); return this; }
-	public int getMaxStringLength() { return maxStringLength; }
-	public int getCursorPosition() { return cursorPosition; }
-	public boolean getEnableBackgroundDrawing() { return enableBackgroundDrawing; }
-	public boolean onlyAcceptsletters() { return onlyAcceptLetters; }
-	public boolean onlyAcceptsNumbers() { return onlyAcceptNumbers; }
-	public boolean allowsClipboardPastes() { return allowClipboardPastes; }
-	public int getSelectionEnd() { return selectionEnd; }
-	public int getWidth() { return getEnableBackgroundDrawing() ? width - 8 : width; }
-	public String getText() { return text; }
-	public boolean isEmpty() { return text != null ? text.isEmpty() : true; }
-	public boolean isNotEmpty() { return text != null ? !text.isEmpty() : false; }
 	public EGuiTextField setCursorPositionZero() { setCursorPosition(0); return this; }
 	public EGuiTextField setCursorPositionEnd() { setCursorPosition(text.length()); return this; }
 	public EGuiTextField setEnableBackgroundDrawing(boolean val) { enableBackgroundDrawing = val; return this; }
@@ -404,5 +391,19 @@ public class EGuiTextField extends EnhancedActionObject {
 	public EGuiTextField setAllowClipboardPastes(boolean val) { allowClipboardPastes = val; return this; }
 	public EGuiTextField setTextWhenEmpty(String textIn) { textWhenEmpty = textIn; text = textWhenEmpty; setTextColor(textWhenEmptyColor); return this; }
 	public EGuiTextField setTextWhenEmptyColor(int colorIn) { textWhenEmptyColor = colorIn; return this; }
+	public EGuiTextField moveCursorBy(int moveAmount) { setCursorPosition(selectionEnd + moveAmount); return this; }
 	public EGuiTextField clear() { setText(""); return this; }
+	
+	public void updateCursorCounter() { cursorCounter++; }
+	public int getMaxStringLength() { return maxStringLength; }
+	public int getCursorPosition() { return cursorPosition; }
+	public boolean getEnableBackgroundDrawing() { return enableBackgroundDrawing; }
+	public boolean onlyAcceptsletters() { return onlyAcceptLetters; }
+	public boolean onlyAcceptsNumbers() { return onlyAcceptNumbers; }
+	public boolean allowsClipboardPastes() { return allowClipboardPastes; }
+	public int getSelectionEnd() { return selectionEnd; }
+	public int getWidth() { return getEnableBackgroundDrawing() ? width - 8 : width; }
+	public String getText() { return text; }
+	public boolean isEmpty() { return text != null ? text.isEmpty() : true; }
+	public boolean isNotEmpty() { return text != null ? !text.isEmpty() : false; }
 }

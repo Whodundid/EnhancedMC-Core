@@ -56,18 +56,12 @@ public class EGuiLabel extends EnhancedGuiObject {
 		super.drawObject(mX, mY, ticks);
 	}
 	
-	public int getTextHeight() { return wordWrap ? (wordWrappedLines.size() * 9 + wordWrappedLines.size() * gapSize) : fontRenderer.FONT_HEIGHT; }
-	public int getDisplayStringColor() { return displayStringColor; }
-	public EGuiLabel setLineGapHeight(int heightIn) { gapSize = heightIn; return this; }
 	public EGuiLabel setDisplayString(String stringIn) {
 		displayString = stringIn;
 		if (wordWrap) { wordWrappedLines = EUtil.createWordWrapString(displayString, widthMax); }
 		return this;
 	}
-	public EGuiLabel setDisplayStringColor(int colorIn) { displayStringColor = colorIn; return this; }
-	public String getDisplayString() { return displayString; }
-	public EGuiLabel enableShadow(boolean val) { shadow = val; return this; }
-	public EGuiLabel setDrawCentered(boolean val) { centered = val; return this; }
+	
 	public EGuiLabel enableWordWrap(boolean val, int widthMaxIn) {
 		boolean oldVal = wordWrap;
 		widthMax = widthMaxIn;
@@ -75,4 +69,13 @@ public class EGuiLabel extends EnhancedGuiObject {
 		if (wordWrap && wordWrap != oldVal) { wordWrappedLines = EUtil.createWordWrapString(displayString, widthMax); }
 		return this;
 	}
+	
+	public EGuiLabel setLineGapHeight(int heightIn) { gapSize = heightIn; return this; }
+	public EGuiLabel setDisplayStringColor(int colorIn) { displayStringColor = colorIn; return this; }
+	public EGuiLabel enableShadow(boolean val) { shadow = val; return this; }
+	public EGuiLabel setDrawCentered(boolean val) { centered = val; return this; }
+	
+	public int getTextHeight() { return wordWrap ? (wordWrappedLines.size() * 9 + wordWrappedLines.size() * gapSize) : fontRenderer.FONT_HEIGHT; }
+	public String getDisplayString() { return displayString; }
+	public int getDisplayStringColor() { return displayStringColor; }
 }

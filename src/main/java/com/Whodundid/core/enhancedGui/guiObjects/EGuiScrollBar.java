@@ -167,22 +167,6 @@ public class EGuiScrollBar extends EnhancedGuiObject {
 		return (mX >= thumbStartX && mX <= thumbEndX && mY >= thumbStartY && mY <= thumbEndY);
 	}
 	
-	public EGuiScrollBar reset() { setScrollBarPos(0); return this; }
-	public boolean drawVertical() { return vertical; }
-	public boolean isThumbRendered() { return renderThumb; }
-	public int getScrollBarThickness() { return scrollBarThickness; }
-	public int getThumbSize() { return thumbSize; }
-	public int getScrollPos() { return scrollPos; }
-	public int getVisibleAmount() { return visibleAmount; }
-	public int getHighVal() { return highVal; }
-	public EGuiScrollBar setRenderThumb(boolean val) { renderThumb = val; return this; }
-	
-	//public EGuiScrollBar setScrollBarWidth(int widthIn) { scrollBarThickness = widthIn; return this; }
-	public EGuiScrollBar setVisibleAmount(int sizeIn) { visibleAmount = sizeIn; setScrollBarValues(visibleAmount, highVal, vertical ? height : width); return this; }
-	
-	public EGuiScrollBar setHighVal(int valIn) { setScrollBarValues(visibleAmount, valIn, drawVertical() ? height : width); return this; }
-	public EGuiScrollBar setLowVal(int valIn) { setScrollBarValues(valIn, highVal, drawVertical() ? height : width); return this; }
-	
 	public EGuiScrollBar setScrollBarPos(int pos) {
 		pos = pos < visibleAmount ? visibleAmount : pos;
 		pos = pos > highVal ? highVal : pos;
@@ -236,4 +220,18 @@ public class EGuiScrollBar extends EnhancedGuiObject {
 		recalculateInterval();
 		setScrollBarPos(scrollPos);
 	}
+	
+	public EGuiScrollBar reset() { setScrollBarPos(0); return this; }
+	public EGuiScrollBar setRenderThumb(boolean val) { renderThumb = val; return this; }
+	public EGuiScrollBar setVisibleAmount(int sizeIn) { visibleAmount = sizeIn; setScrollBarValues(visibleAmount, highVal, vertical ? height : width); return this; }
+	public EGuiScrollBar setHighVal(int valIn) { setScrollBarValues(visibleAmount, valIn, drawVertical() ? height : width); return this; }
+	public EGuiScrollBar setLowVal(int valIn) { setScrollBarValues(valIn, highVal, drawVertical() ? height : width); return this; }
+	
+	public boolean drawVertical() { return vertical; }
+	public boolean isThumbRendered() { return renderThumb; }
+	public int getScrollBarThickness() { return scrollBarThickness; }
+	public int getThumbSize() { return thumbSize; }
+	public int getScrollPos() { return scrollPos; }
+	public int getVisibleAmount() { return visibleAmount; }
+	public int getHighVal() { return highVal; }
 }

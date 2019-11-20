@@ -23,6 +23,4 @@ public class EnhancedMCMod extends SubMod {
 		addGui(new SettingsGuiMain(), new KeyBindGui());
 		isDisableable = false;
 	}
-	
-	@Override public SubMod getInstance() { return this; }
 }

@@ -243,9 +243,14 @@ public class EGuiSlider extends EnhancedActionObject implements IEnhancedActionO
 		if (actionReciever != null) { actionReciever.actionPerformed(this); }
 	}
 	
-	public boolean isMouseInThumb(int mX, int mY) { return mX >= thumbStartX && mX <= thumbEndX && mY >= thumbStartY && mY <= thumbEndY; }
-	
 	public EGuiSlider reset() { setSliderValue(defaultVal); return this; }
+	public EGuiSlider setDisplayString(String valIn) { displayValue = valIn; return this; }
+	public EGuiSlider setDisplayValueColor(int colorIn) { displayValueColor = colorIn; return this; }
+	public EGuiSlider setThumbSize(int sizeIn) { thumbSize = sizeIn; return this; }
+	public EGuiSlider setHighVal(int valIn) { highVal = valIn; return this; }
+	public EGuiSlider setLowVal(int valIn) { lowVal = valIn; return this; }
+	public EGuiSlider setDrawDefault(boolean valIn) { defaultDisplayString = valIn; return this; }
+	public EGuiSlider setDrawDisplayString(boolean valIn) { drawDisplayString = valIn; return this; }
 	
 	public float getSliderValue() { return sliderValue; }
 	public boolean drawVertical() { return vertical; }
@@ -255,11 +260,5 @@ public class EGuiSlider extends EnhancedActionObject implements IEnhancedActionO
 	public float getDefaultVal() { return defaultVal; }
 	public boolean drawDefault() { return defaultDisplayString; }
 	public boolean drawDisplayString() { return drawDisplayString; }
-	public EGuiSlider setDisplayString(String valIn) { displayValue = valIn; return this; }
-	public EGuiSlider setDisplayValueColor(int colorIn) { displayValueColor = colorIn; return this; }
-	public EGuiSlider setThumbSize(int sizeIn) { thumbSize = sizeIn; return this; }
-	public EGuiSlider setHighVal(int valIn) { highVal = valIn; return this; }
-	public EGuiSlider setLowVal(int valIn) { lowVal = valIn; return this; }
-	public EGuiSlider setDrawDefault(boolean valIn) { defaultDisplayString = valIn; return this; }
-	public EGuiSlider setDrawDisplayString(boolean valIn) { drawDisplayString = valIn; return this; }
+	public boolean isMouseInThumb(int mX, int mY) { return mX >= thumbStartX && mX <= thumbEndX && mY >= thumbStartY && mY <= thumbEndY; }
 }

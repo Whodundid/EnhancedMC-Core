@@ -18,6 +18,7 @@ public class EGuiFocusLockBorder extends EnhancedGuiObject {
 	protected boolean second = false;
 	protected boolean drawingBorder = true;
 	protected int borderColor = 0xffff2222;
+	protected int preservedColor = 0;
 	
 	public EGuiFocusLockBorder(IEnhancedGuiObject parentIn) {
 		if (parentIn != null) {

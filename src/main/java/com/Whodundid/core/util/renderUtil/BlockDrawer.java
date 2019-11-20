@@ -21,21 +21,11 @@ public class BlockDrawer {
 	static StorageBoxHolder<WorldRegion, Integer> blocks = new StorageBoxHolder();
 	static StorageBoxHolder<WorldRegion, Integer> toAdd = new StorageBoxHolder();
 
-	public static void addBlock(BlockPos posIn, int colorIn) {
-		addBlock(new Vector3D(posIn), colorIn);
-	}
+	public static void addBlock(BlockPos posIn, int colorIn) { addBlock(new Vector3D(posIn), colorIn); }
+	public static void addBlock(Vector3D posIn, int colorIn) { blocks.add(new WorldRegion(posIn), colorIn); }
+	public static void addBlock(WorldRegion regionIn, int colorIn) { blocks.add(regionIn, colorIn); }
 
-	public static void addBlock(Vector3D posIn, int colorIn) {
-		blocks.add(new WorldRegion(posIn), colorIn);
-	}
-	
-	public static void addBlock(WorldRegion regionIn, int colorIn) {
-		blocks.add(regionIn, colorIn);
-	}
-
-	public static void clearBlocks() {
-		blocks.clear();
-	}
+	public static void clearBlocks() { blocks.clear(); }
 
 	public static void draw(RenderWorldLastEvent e) {
 		if (Minecraft.getMinecraft().thePlayer != null) {

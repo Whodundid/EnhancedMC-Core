@@ -74,6 +74,10 @@ public class EGuiTextArea<obj> extends EGuiScrollList {
 		int moveArg = moveDown ? 1 : 0;
 		EDimension ld = this.getListDimensions();
 		lineIn.setDimensions(3, 1 + (textDocument.size() * 10), ld.width, 10);
+		if (textDocument.size() % 2 == 1) {
+			EGuiRect back = new EGuiRect(this, 0, 2 + (textDocument.size() * 10), ld.width, 12 + (textDocument.size() * 10), 0x1a000000);
+			addObjectToList(back.setClickable(false));
+		}
 		textDocument.add(lineIn);
 		addObjectToList(lineIn);
 		fitDocumentInDims();
@@ -125,22 +129,31 @@ public class EGuiTextArea<obj> extends EGuiScrollList {
 	}
 	
 	private void fitDocumentInDims() {
+		//get current scroll position -- if there is one
+		//EGuiScrollBar vs = getVScrollBar();
+		//int prevScroll = vs != null ? vs.getScrollPos() : 0;
+		
+		//reset list values
 		setListHeight(0);
 		setListWidth(width);
+		
 		if (textDocument.size() > 0) {
 			growListHeight(1);
-			setListHeight(textDocument.size() * 10);
+			setListHeight(textDocument.size() * 10); //currently hardcoding line height
 			growListHeight(1);
 			
 			int len = getLongestLineLength();
 			setListWidth(len > 0 ? len : getListWidth());
 			
-			if (verticalScroll != null) { if (scrollableHeight > (height - 2)) { growListWidth(8); } }
+			if (verticalScroll != null) { if (scrollableHeight > (height - 2)) { growListWidth(11); } }
 			else if (heightToBeSet > (height - 2)) { growListWidth(8); }
 			
-			if (horizontalScroll != null) {	if (scrollableWidth > (width - 2)) { growListHeight(5); } }
-			else if (widthToBeSet > (width - 2)) { growListHeight(5); }
+			if (horizontalScroll != null) {	if (scrollableWidth > (width - 2)) { growListHeight(10); } }
+			growListHeight(4);
 		}
+		
+		//return to original scroll position
+		//if (vs != null) { vs.setScrollBarPos(prevScroll); }
 	}
 	
 	public TextAreaLine getLongestTextLine() {
@@ -167,6 +180,12 @@ public class EGuiTextArea<obj> extends EGuiScrollList {
 		textDocument.clear();
 		currentLine = null;
 		longestLine = null;
+		return this;
+	}
+	
+	public EGuiTextArea setTextDocument(EArrayList<TextAreaLine> docIn) {
+		clear();
+		for (TextAreaLine l : docIn) { addTextLine(l); }
 		return this;
 	}
 	

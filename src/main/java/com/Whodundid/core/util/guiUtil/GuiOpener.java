@@ -2,7 +2,7 @@ package com.Whodundid.core.util.guiUtil;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.types.EnhancedGui;
-import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.storageUtil.EArrayList;
@@ -20,6 +20,7 @@ import net.minecraft.client.gui.ScreenChatOptions;
 import net.minecraft.client.resources.LanguageManager;
 import net.minecraft.client.settings.GameSettings;
 
+/** A helper class used to display WindowParents and GuiScreens. */
 public class GuiOpener {
 	
 	public static void openGui(Class guiIn) throws Exception { openGui(guiIn, null, null, null, CenterType.screen); }
@@ -36,8 +37,8 @@ public class GuiOpener {
 				Object obj = getObject(guiIn, paramTypes, paramValues);
 				
 				if (obj != null) {
-					if (obj instanceof InnerEnhancedGui) {
-						EnhancedMC.displayEGui((InnerEnhancedGui) obj, old, typeIn);
+					if (obj instanceof WindowParent) {
+						EnhancedMC.displayEGui((WindowParent) obj, old, typeIn);
 					}
 					else if (obj instanceof EnhancedGui) {
 						EnhancedMC.displayEGui((EnhancedGui) obj, old, typeIn);

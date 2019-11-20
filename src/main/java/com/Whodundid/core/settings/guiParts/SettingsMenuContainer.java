@@ -92,7 +92,7 @@ public class SettingsMenuContainer extends EnhancedGuiObject {
 	
 	private void openInfo() {
 		EDimension d = topParent.getDimensions();
-		SubModInfoDialogueBox infoBox = new SubModInfoDialogueBox(topParent, mod);
+		SubModInfoDialogueBox infoBox = new SubModInfoDialogueBox(mod);
 		topParent.addObject(infoBox);
 	}
 	

@@ -17,7 +17,7 @@ import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextArea;
 import com.Whodundid.core.enhancedGui.guiObjects.misc.KeyOverlay;
 import com.Whodundid.core.enhancedGui.types.EnhancedGui;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
-import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiRightClickMenu;
@@ -58,7 +58,7 @@ import net.minecraft.util.ResourceLocation;
 //Author: Hunter Bragg
 
 @SuppressWarnings("unused")
-public class ExperimentGui extends InnerEnhancedGui {
+public class ExperimentGui extends WindowParent {
 	
 	static Minecraft mc = Minecraft.getMinecraft();
 	ArrayList<Integer> values = new ArrayList();
@@ -84,9 +84,10 @@ public class ExperimentGui extends InnerEnhancedGui {
 	@Override
 	public void initObjects() {
 		setHeader(new EGuiHeader(this));
-		header.setDisplayStringColor(0x000000);
+		header.setTitleColor(0x000000);
+		header.setParentFocusDrawn(false);
 		
-		InnerEnhancedGui inner = new InnerEnhancedGui(this, endX + 15, midY - 5, 219, 190) {
+		WindowParent inner = new WindowParent(this, endX + 15, midY - 5, 219, 190) {
 			@Override
 			public void drawObject(int mXIn, int mYIn, float ticks) {
 				drawDefaultBackground();
@@ -95,7 +96,7 @@ public class ExperimentGui extends InnerEnhancedGui {
 		};
 		
 		inner.setHeader(new EGuiHeader(inner));
-		if (inner.getHeader() != null) { inner.getHeader().setDisplayString("New Window"); }
+		if (inner.getHeader() != null) { inner.getHeader().setTitle("New Window"); }
 		
 		scrollList = new EGuiScrollList(inner, endX + 20, midY, 210, 180);
 		
@@ -118,7 +119,7 @@ public class ExperimentGui extends InnerEnhancedGui {
 		
 		inner.addObject(scrollList);
 		
-		InnerEnhancedGui window2 = new InnerEnhancedGui(this, endX + 15, 35, 219, 190) {
+		WindowParent window2 = new WindowParent(this, endX + 15, 35, 219, 190) {
 			@Override
 			public void drawObject(int mXIn, int mYIn, float ticks) {
 				drawDefaultBackground();
@@ -132,6 +133,7 @@ public class ExperimentGui extends InnerEnhancedGui {
 		textArea.addTextLine("this is an intentionally very long line of text to test horizontal scrolling!");
 		for (int i = 1; i <= 60; i++) { textArea.addTextLine(i + " cow"); }
 		addObject(textArea);
+		textArea.addTextLine("this is an intentionally very long line of text to test horizontal scrolling!");
 		
 		//enableHeader(false);
 		//EScreenLocationSelector selector = new EScreenLocationSelector(this, wPos - 300, hPos - 200, 100);
@@ -284,9 +286,9 @@ public class ExperimentGui extends InnerEnhancedGui {
 	@Override
 	public EnhancedGuiObject resize(int xIn, int yIn, ScreenLocation areaIn) {
 		if (textArea != null) {
-			EArrayList doc = textArea.getTextDocument();
+			//EArrayList doc = textArea.getTextDocument();
 			super.resize(xIn, yIn, areaIn);
-			textArea.setTextDocument(doc);
+			//textArea.setTextDocument(doc);
 		} else {
 			super.resize(xIn, yIn, areaIn);
 		}
@@ -303,9 +305,9 @@ public class ExperimentGui extends InnerEnhancedGui {
 	public void mousePressed(int mX, int mY, int button) {
 		super.mousePressed(mX, mY, button);
 		if (textArea != null) {
-			textArea.addTextLine("clicked " + mX + ", " + mY + " with button " + button, 0xffaa00);
-			EGuiScrollBar b = textArea.getVScrollBar();
-			if (b != null) { b.setScrollBarPos(b.getHighVal()); }
+			//textArea.addTextLine("clicked " + mX + ", " + mY + " with button " + button, 0xffaa00);
+			//EGuiScrollBar b = textArea.getVScrollBar();
+			//if (b != null) { b.setScrollBarPos(b.getHighVal()); }
 		}
 	}
 	

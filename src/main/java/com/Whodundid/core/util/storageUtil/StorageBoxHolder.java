@@ -98,9 +98,6 @@ public class StorageBoxHolder<Obj, Val> implements Iterable<StorageBox<Obj, Val>
 		return false;
 	}
 	
-	public StorageBoxHolder<Obj, Val> noDuplicates() { allowDuplicates = false; return this; }
-	public StorageBoxHolder<Obj, Val> setAllowDuplicates(boolean val) { allowDuplicates = val; return this; }
-	
 	public List<Obj> getObjects() {
 		EArrayList<Obj> objects = new EArrayList();
 		createdList.forEach(b -> objects.add(b.getObject()));
@@ -117,15 +114,6 @@ public class StorageBoxHolder<Obj, Val> implements Iterable<StorageBox<Obj, Val>
 		EArrayList<StorageBox<Obj, Val>> boxes = new EArrayList(createdList);
 		return boxes;
 	}
-	
-	public int size() { return this.createdList.size(); }
-	public StorageBox<Obj, Val> get(int pointNumber) { return createdList.get(pointNumber); }
-	public boolean isEmpty() { return createdList.isEmpty(); }
-	public boolean isNotEmpty() { return !createdList.isEmpty(); }
-	public void clear() { this.createdList.clear(); }
-	public boolean remove(int pointNumber) { return createdList.remove(pointNumber) != null; }
-	public Obj getObject(int pointNumber) { return createdList.get(pointNumber).getObject(); }
-	public Val getValue(int pointNumber) { return createdList.get(pointNumber).getValue(); }
 	
 	public Val getValueInBox(Obj objIn) {
 		StorageBox<Obj, Val> b = getBoxWithObj(objIn);
@@ -153,6 +141,18 @@ public class StorageBoxHolder<Obj, Val> implements Iterable<StorageBox<Obj, Val>
 		}
 		return null;
 	}
+	
+	public StorageBoxHolder<Obj, Val> noDuplicates() { allowDuplicates = false; return this; }
+	public StorageBoxHolder<Obj, Val> setAllowDuplicates(boolean val) { allowDuplicates = val; return this; }
+	
+	public int size() { return this.createdList.size(); }
+	public StorageBox<Obj, Val> get(int pointNumber) { return createdList.get(pointNumber); }
+	public boolean isEmpty() { return createdList.isEmpty(); }
+	public boolean isNotEmpty() { return !createdList.isEmpty(); }
+	public void clear() { this.createdList.clear(); }
+	public boolean remove(int pointNumber) { return createdList.remove(pointNumber) != null; }
+	public Obj getObject(int pointNumber) { return createdList.get(pointNumber).getObject(); }
+	public Val getValue(int pointNumber) { return createdList.get(pointNumber).getValue(); }
 	
 	//object overrides
 	

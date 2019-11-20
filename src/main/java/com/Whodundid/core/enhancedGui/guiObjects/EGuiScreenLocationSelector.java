@@ -2,9 +2,9 @@ package com.Whodundid.core.enhancedGui.guiObjects;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.types.EnhancedActionObject;
-import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.subMod.IUseScreenLocation;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 
@@ -71,7 +71,7 @@ public class EGuiScreenLocationSelector extends EnhancedActionObject {
 		if (object.equals(tRight)) { obj.setLocation(ScreenLocation.topRight); }
 		if (object.equals(center)) { obj.setLocation(ScreenLocation.center); }
 		if (object.equals(custom)) {
-			InnerEnhancedGui newGui = obj.getScreenLocationGui();
+			IWindowParent newGui = obj.getScreenLocationGui();
 			//Stack<InnerEnhancedGui> history = getTopParent().getGuiHistory();
 			//if (mc.currentScreen instanceof EnhancedGui) { history.push((EnhancedGui) mc.currentScreen); }
 			//if (history != null) { newGui.sendGuiHistory(history); }

@@ -18,8 +18,8 @@ import net.minecraft.util.ChatAllowedCharacters;
 
 public class TextAreaLine<obj> extends EGuiTextField {
 	
-	EGuiTextArea parentTextArea;
-	EGuiLabel numberLabel;
+	protected EGuiTextArea parentTextArea;
+	protected EGuiLabel numberLabel;
 	public int lineNumberColor = 0xb2b2b2;
 	protected int lineNumber = 0;
 	protected int drawnLineNumber = 0;
@@ -34,7 +34,7 @@ public class TextAreaLine<obj> extends EGuiTextField {
 	protected long doubleClickTimer = 0l;
 	protected long doubleClickThreshold = 500l;
 	protected boolean clicked = false;
-	obj storedObj;
+	protected obj storedObj;
 	
 	public TextAreaLine(EGuiTextArea textAreaIn) { this(textAreaIn, "", 0xffffff, null, -1); }
 	public TextAreaLine(EGuiTextArea textAreaIn, String textIn) { this(textAreaIn, textIn, 0xffffff, null, -1); }
@@ -58,8 +58,8 @@ public class TextAreaLine<obj> extends EGuiTextField {
 		updateValues();
 		
 		if (highlighted || lineEquals) {
-			//drawRect(startX - (parentTextArea.getDrawLineNumbers() ? 3 : 2), startY, parentTextArea.endX - 1, endY, 0x20909090);
-			drawRect(startX - 2, startY, parentTextArea.endX - 1, endY, 0x20909090);
+			//drawRect(startX - (parentTextArea.hasLineNumbers() ? 3 : 2), startY, parentTextArea.endX - 1, endY, 0x20909090);
+			drawRect(startX - 2, startY + 2, parentTextArea.endX - 1, endY, 0x20909090);
 		}
 		
 		if (parentTextArea.hasLineNumbers()) { drawLineNumber(); }
@@ -242,10 +242,7 @@ public class TextAreaLine<obj> extends EGuiTextField {
 	protected void drawText() {
 		int j = cursorPosition - lineScrollOffset;
 		int k = selectionEnd - lineScrollOffset;
-		//System.out.println(lineScrollOffset);
 		String s = fontRenderer.trimStringToWidth(text.substring(lineScrollOffset), getWidth());
-		//drawStringWithShadow(s, startX, startY + 50, enabledColor);
-		//visibleText = fontRenderer.trimStringToWidth(text.substring(parentTextArea.getCurrentHorizontalPos()), width - maxVisibleLength);
 		
 		int textLength = fontRenderer.getStringWidth(text);
 		if (textLength > width) {
@@ -261,13 +258,6 @@ public class TextAreaLine<obj> extends EGuiTextField {
 		drawStringWithShadow(text, startX, startY + 2, mainDrawColor);
 	}
 	
-	public int getDrawnLineNumber() { return drawnLineNumber; }
-	public int getLineNumber() { return lineNumber; }
-	public obj getStoredObj() { return storedObj; }
-	//public String getVisibleText() { return visibleText; }
-	public long getDoubleClickThreshold() { return doubleClickThreshold; }
-	public void onDoubleClick() {}
-	
 	public TextAreaLine incrementLineNumber() { setLineNumber(lineNumber + 1); return this; }
 	public TextAreaLine decrementLineNumber() { setLineNumber(lineNumber - 1); return this; }
 	public TextAreaLine setHighlighted(boolean val) { highlighted = val; return this; }
@@ -277,6 +267,12 @@ public class TextAreaLine<obj> extends EGuiTextField {
 	public TextAreaLine setDrawnLineNumber(int numberIn) { drawnLineNumber = numberIn; return this; }
 	public TextAreaLine indent() { setText("    " + getText()); return this; }
 	public TextAreaLine setDoubleClickThreshold(long timeIn) { doubleClickThreshold = timeIn; return this; }
+	
+	public int getDrawnLineNumber() { return drawnLineNumber; }
+	public int getLineNumber() { return lineNumber; }
+	public obj getStoredObj() { return storedObj; }
+	public long getDoubleClickThreshold() { return doubleClickThreshold; }
+	public void onDoubleClick() {}
 	
 	@Override public String toString() { return "[" + lineNumber + ": " + getText() + "]"; }
 }

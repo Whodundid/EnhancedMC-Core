@@ -43,7 +43,7 @@ public class KeyOverlay extends EnhancedGuiObject {
 			@Override
 			public void onAdded() {
 				movementHeader.setDrawButtons(false);
-				movementHeader.setDrawDisplayString(false);
+				movementHeader.setDrawTitle(false);
 			}
 		};
 		movementHeader.setResizeable(true);

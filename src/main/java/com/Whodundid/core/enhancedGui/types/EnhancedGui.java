@@ -74,7 +74,6 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	public GuiScreen oldGui;
 	protected IEnhancedGuiObject parent, modifyingObject;
 	public URI clickedLinkURI;
-	protected EGuiFocusLockBorder border;
 	public int startXPos, startYPos, startWidth, startHeight;
 	public int sWidth = 0, sHeight = 0;
 	public int midX = 0, midY = 0;
@@ -93,8 +92,10 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	public boolean isMouseHover = false;
 	public boolean mouseEntered = false;
 	protected boolean resizeable = false;
+	protected boolean clickable = true;
 	protected boolean positionLocked = false;
 	protected boolean persistent = false;
+	protected boolean pinned = false;
 	protected boolean closeAndRecenter = false;
 	protected int minWidth = 0;
 	protected int minHeight = 0;
@@ -435,10 +436,12 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override public boolean isEnabled() { return enabled; }
 	@Override public boolean isVisible() { return visible; }
 	@Override public boolean isPersistent() { return persistent; }
+	@Override public boolean isPinned() { return pinned; }
 	@Override public boolean isBoundaryEnforced() { return false; }
 	@Override public EnhancedGui setEnabled(boolean val) { enabled = val; return this; }
 	@Override public EnhancedGui setVisible(boolean val) { visible = val; return this; }
 	@Override public EnhancedGui setPersistent(boolean val) { return this; }
+	@Override public EnhancedGui setPinned(boolean val) { pinned = val; return this; }
 	@Override public EnhancedGui setBoundaryEnforcer(EDimension dimIn) { return this; }
 	@Override public EDimension getBoundaryEnforcer() { return getDimensions(); }
 	
@@ -450,6 +453,8 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override public int getMinimumHeight() { return minHeight; }
 	@Override public int getMaximumWidth() { return maxWidth; }
 	@Override public int getMaximumHeight() { return maxHeight; }
+	@Override public EnhancedGui setMinimumDims(int widthIn, int heightIn) { setMinimumWidth(widthIn).setMinimumHeight(heightIn); return this; }
+	@Override public EnhancedGui setMaximumDims(int widthIn, int heightIn) { setMaximumWidth(widthIn).setMaximumHeight(heightIn); return this; }
 	@Override public EnhancedGui setMinimumWidth(int widthIn) { minWidth = widthIn; return this; }
 	@Override public EnhancedGui setMinimumHeight(int heightIn) { minHeight = heightIn; return this; }
 	@Override public EnhancedGui setMaximumWidth(int widthIn) { maxWidth = widthIn; return this; }
@@ -558,10 +563,10 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	}
 	@Override
 	public void drawFocusLockBorder() {
-		if (checkDraw() && border == null) {
-			if (hasHeader() && header.isEnabled()) {
-				addObject(border = new EGuiFocusLockBorder(this, header.startX, header.startY, width, height + header.height));
-			} else { addObject(border = new EGuiFocusLockBorder(this)); }
+		if (checkDraw() && guiObjects.notContainsInstanceOf(EGuiFocusLockBorder.class)) {
+			if (hasHeader() && getHeader().isEnabled()) {
+				addObject(new EGuiFocusLockBorder(this, getHeader().startX, getHeader().startY, width, height + getHeader().height));
+			} else { addObject(new EGuiFocusLockBorder(this)); }
 		}
 	}
 	@Override
@@ -581,6 +586,8 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override public void mouseExited(int mX, int mY) { postEvent(new EventMouse(this, mX, mY, -1, MouseType.Exited)); }
 	@Override public boolean isMouseInside(int mX, int mY) { return mX >= startX && mX <= endX && mY >= startY && mY <= endY; }
 	@Override public boolean isMouseHover(int mX, int mY) { return isMouseInside(mX, mY) && this.equals(getTopParent().getHighestZObjectUnderMouse()); }
+	@Override public boolean isClickable() { return clickable; }
+	@Override public IEnhancedGuiObject setClickable(boolean valIn) { clickable = valIn; return this; }
 	
 	//basic inputs
 	@Override public void parseMousePosition(int mX, int mY) { guiObjects.stream().filter(o -> o.isMouseInside(mX, mY)).forEach(o -> o.parseMousePosition(mX, mY)); }
@@ -688,6 +695,10 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override
 	public void updateFocus() {
 		if (modifyingObject != null && !modifyingObject.isResizeable() && modifyType.equals(ObjectModifyType.Resize)) { modifyType = ObjectModifyType.None; }
+		EArrayList<IEnhancedGuiObject> children = getAllChildren();
+		if (!children.contains(focusedObject)) { clearFocusedObject(); }
+		if (!children.contains(focusLockObject)) { clearFocusLockObject(); }
+		if (!children.contains(defaultFocusObject)) { defaultFocusObject = null; }
 		
 		if (!focusQueue.isEmpty()) {
 			EventFocus event = focusQueue.pop();
@@ -794,7 +805,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	public EArrayList<IEnhancedGuiObject> getAllObjectsUnderMouse() {
 		EArrayList<IEnhancedGuiObject> underMouse = new EArrayList();
 		for (IEnhancedGuiObject o : getAllChildren()) {
-			if (o.isMouseHover(mX, mY) && o.isVisible()) { underMouse.add(o); }
+			if (o.isMouseInside(mX, mY) && o.isVisible() && o.isClickable()) { underMouse.add(o); }
 		}
 		return underMouse;
 	}
@@ -809,9 +820,9 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 		else if (backwardsTraverseable && !guiHistory.isEmpty() && guiHistory.peek() != null) {
 			try {
 				Object oldGuiPass = guiHistory.pop();
-				if (oldGuiPass instanceof InnerEnhancedGui) {
-					InnerEnhancedGui newGui = ((InnerEnhancedGui) Class.forName(oldGuiPass.getClass().getName()).getConstructor().newInstance());
-					newGui.setGuiHistory(((InnerEnhancedGui) oldGuiPass).getGuiHistory());
+				if (oldGuiPass instanceof WindowParent) {
+					WindowParent newGui = ((WindowParent) Class.forName(oldGuiPass.getClass().getName()).getConstructor().newInstance());
+					newGui.setGuiHistory(((WindowParent) oldGuiPass).getGuiHistory());
 					EnhancedMC.displayEGui(newGui, this, CenterType.object);
 				}
 				else if (oldGuiPass instanceof GuiScreen) {

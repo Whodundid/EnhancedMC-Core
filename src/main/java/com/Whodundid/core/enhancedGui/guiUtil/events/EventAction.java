@@ -19,5 +19,4 @@ public class EventAction extends ObjectEvent {
 	
 	public IEnhancedActionObject getActionObject() { return actionObject; }
 	public Object getStoredObject() { return storedObject; }
-	
 }

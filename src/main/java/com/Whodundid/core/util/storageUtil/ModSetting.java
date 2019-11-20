@@ -13,7 +13,6 @@ public class ModSetting {
 	public ModSetting() { this(true); }
 	public ModSetting(boolean initialValue) { val = initialValue; }
 	
-	public boolean get() { return val; }
 	public ModSetting set(boolean valIn) { val = valIn; return this; }
-
+	public boolean get() { return val; }
 }

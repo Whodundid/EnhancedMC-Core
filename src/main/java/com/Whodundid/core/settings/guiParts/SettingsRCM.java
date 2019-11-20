@@ -15,41 +15,32 @@ public class SettingsRCM extends EGuiRightClickMenu {
 
 	private SettingsGuiMain window;
 	private SubMod mod;
+	private IWindowParent gui;
 	
 	public SettingsRCM(SettingsGuiMain parentIn, int mXIn, int mYIn) { this(parentIn, mXIn, mYIn, null); }
-	public SettingsRCM(SettingsGuiMain parentIn, int mXIn, int mYIn, IWindowParent guiIn, String titleIn) {
-		super(parentIn, mXIn, mYIn);
-		window = parentIn;
-		
-		addOption("Open", Resources.guiFileUpButton);
-		addOption("Open in new Window", Resources.guiFileUpButtonSel);
-		
-		setRunActionOnPress(true);
-		setActionReciever(this);
-		
-		setUseTitle(true);
-		setTitle(titleIn);
-		setBackgroundColor(0xff4b4b4b);
-		setSeparatorLineColor(0xff000000);
-		
-	}
-	public SettingsRCM(SettingsGuiMain parentIn, int mXIn, int mYIn, SubMod modIn) {
+	public SettingsRCM(SettingsGuiMain parentIn, int mXIn, int mYIn, IWindowParent guiIn, String titleIn) { this (parentIn, mXIn, mYIn, null, guiIn, titleIn); }
+	public SettingsRCM(SettingsGuiMain parentIn, int mXIn, int mYIn, SubMod modIn) { this(parentIn, mXIn, mYIn, modIn, null, ""); }
+	protected SettingsRCM(SettingsGuiMain parentIn, int mXIn, int mYIn, SubMod modIn, IWindowParent guiIn, String titleIn) {
 		super(parentIn, mXIn, mYIn);
 		window = parentIn;
 		mod = modIn;
+		gui = guiIn;
 		
 		addOption("Open", Resources.guiFileUpButton);
 		addOption("Open in new Window", Resources.guiFileUpButtonSel);
 		
-		if (mod.isDisableable()) {
-			addOption(mod.isEnabled() ? "Disable" : "Enable", Resources.guiCloseButton);
+		if (mod != null) {
+			if (mod.isDisableable()) { addOption(mod.isEnabled() ? "Disable" : "Enable", Resources.guiCloseButton); }
+			setTitle(mod.getName()).setTitleBackgroundColor(0xff303030).setTitleHeight(14);
+		}
+		else {
+			setTitle(titleIn);
 		}
 		
 		setRunActionOnPress(true);
 		setActionReciever(this);
 		
 		setUseTitle(true);
-		setTitle(mod.getName()).setTitleBackgroundColor(0xff303030).setTitleHeight(14);
 		setBackgroundColor(0xff4b4b4b);
 		setSeparatorLineColor(0xff000000);
 	}
@@ -68,7 +59,7 @@ public class SettingsRCM extends EGuiRightClickMenu {
 	
 	private void open() {
 		try {
-			IWindowParent g = mod.getMainGui();
+			IWindowParent g = mod != null ? mod.getMainGui() : gui;
 			if (g != null) { EnhancedMC.displayEGui(g, getWindowParent()); }
 			else { SubModErrorDisplay.displayError(SubModErrorType.NOGUI, mod); }
 		} catch (Exception e) { e.printStackTrace(); }
@@ -76,7 +67,7 @@ public class SettingsRCM extends EGuiRightClickMenu {
 	
 	private void openNewWindow() {
 		try {
-			IWindowParent g = mod.getMainGui();
+			IWindowParent g = mod != null ? mod.getMainGui() : gui;
 			if (g != null) { EnhancedMC.displayEGui(g); }
 			else { SubModErrorDisplay.displayError(SubModErrorType.NOGUI, mod); }
 		} catch (Exception e) { e.printStackTrace(); }

@@ -23,23 +23,21 @@ public class SubModErrorDialogueBox extends EGuiDialogueBox {
 	
 	public SubModErrorDialogueBox(IEnhancedGuiObject parentIn, SubModErrorType typeIn, SubMod modIn) {
 		init(parentIn);
-		type = typeIn;
-		mod = modIn;
 		centerObjectWithSize(250, 75);
-		requestFocus();
-		getTopParent().setFocusLockObject(this);
-		setZLevel(99999);
-		setObjectName("Error");
+		mInit(typeIn, modIn);
 	}
-	
 	public SubModErrorDialogueBox(IEnhancedGuiObject parentIn, int xPos, int yPos, int width, int height, SubModErrorType typeIn, SubMod modIn) {
 		init(parentIn, xPos, yPos, width, height);
+		mInit(typeIn, modIn);
+	}
+	
+	private void mInit(SubModErrorType typeIn, SubMod modIn) {
 		type = typeIn;
 		mod = modIn;
 		requestFocus();
 		getTopParent().setFocusLockObject(this);
 		setMessageColor(0xff5555);
-		setZLevel(99999);
+		bringToFront();
 		setObjectName("Error");
 	}
 	
@@ -48,12 +46,12 @@ public class SubModErrorDialogueBox extends EGuiDialogueBox {
 		this.setHeader(new EGuiHeader(this));
 		
 		switch (type) {
-		case ENABLE: setDisplayString("Mod Enable Error"); addEnable(); addCancel(); break;
-		case DISABLE: setDisplayString("Mod Disable Error"); addDisable(); addCancel(); break;
-		case NOGUI: setDisplayString("No Gui Found"); addOk(); break;
-		case NOTFOUND: setDisplayString("Mod Not Found"); addOk(); break;
-		case INCOMPATIBLE: setDisplayString("Mod Incompatible"); addOk(); break;
-		case ERROR: setDisplayString("Submod Error!"); addOk(); break;
+		case ENABLE: setTitle("Mod Enable Error"); addEnable(); addCancel(); break;
+		case DISABLE: setTitle("Mod Disable Error"); addDisable(); addCancel(); break;
+		case NOGUI: setTitle("No Gui Found"); addOk(); break;
+		case NOTFOUND: setTitle("Mod Not Found"); addOk(); break;
+		case INCOMPATIBLE: setTitle("Mod Incompatible"); addOk(); break;
+		case ERROR: setTitle("Submod Error!"); addOk(); break;
 		}
 	}
 	

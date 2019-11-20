@@ -27,8 +27,8 @@ public abstract class SubModConfigFile {
 		configValues = new StorageBoxHolder<String, EArrayList<String>>();
 	}
 	
-	public String getConfigName() { return configName; }
-	public boolean exists() { return mod.getConfig().getConfigFileLocation(configName).exists(); }
+	public abstract boolean saveConfig();
+	public abstract boolean loadConfig();
 	
 	public StorageBoxHolder getConfigContents() {
 		if (configValues == null) { configValues = new StorageBoxHolder<String, EArrayList<String>>(); }
@@ -36,9 +36,6 @@ public abstract class SubModConfigFile {
 		parseFile();
 		return configValues;
 	}
-	
-	public abstract boolean saveConfig();
-	public abstract boolean loadConfig();
 	
 	protected <Val extends Object> Val getConfigVal(String keyWord, Class<Val> asType) throws Exception { return getConfigVal(keyWord, asType, null); }
 	protected <Val extends Object> Val getConfigVal(String keyWord, Class<Val> asType, Object defaultVal) throws Exception {
@@ -176,4 +173,7 @@ public abstract class SubModConfigFile {
 		finally { if (saver != null) { saver.close(); } }
 		return true;
 	}
+	
+	public String getConfigName() { return configName; }
+	public boolean exists() { return mod.getConfig().getConfigFileLocation(configName).exists(); }
 }

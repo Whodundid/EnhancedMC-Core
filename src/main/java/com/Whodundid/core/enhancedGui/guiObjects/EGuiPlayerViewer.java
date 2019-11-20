@@ -103,16 +103,11 @@ public class EGuiPlayerViewer extends EnhancedGuiObject {
 		
 		vSlider.setSliderValue(vSlider.getSliderValue());
 		hSlider.setSliderValue(hSlider.getSliderValue());
-		
-		//System.out.println(this.getDimensions());
-		//System.out.println("xs: " + xs + " xe: " + xe + " ys: " + ys + " ye: " + ye);
 	}
 	
 	public EGuiPlayerViewer setHSliderOrientation(ScreenLocation locIn) { hLoc = locIn; if (isInit()) { reorient(); } return this; }
 	public EGuiPlayerViewer setVSliderOrientation(ScreenLocation locIn) { vLoc = locIn; if (isInit()) { reorient(); } return this; }
 	public EGuiPlayerViewer setResetButtonOrientation(ScreenLocation locIn) { rLoc = locIn; if (isInit()) { reorient(); } return this; }
-	
 	public EGuiPlayerViewer setHSliderHeight(int heightIn) { hSlider.setDimensions(hSlider.startX, hSlider.startY, hSlider.width, heightIn); if (isInit()) { reorient(); } return this; }
 	public EGuiPlayerViewer setVSliderWidth(int widthIn) { vSlider.setDimensions(vSlider.startX, vSlider.startY, widthIn, vSlider.height); if (isInit()) { reorient(); } return this; }
-	
 }

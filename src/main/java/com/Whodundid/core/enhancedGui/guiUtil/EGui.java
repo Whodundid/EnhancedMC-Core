@@ -36,7 +36,7 @@ public class EGui {
     public static int drawStringWithShadow(String text, int x, int y, int color, float height) { return EnhancedMC.getFontRenderer().drawStringWithShadowIH(text, x, y, color, height); }
     public static int drawCenteredStringWithShadow(String text, int x, int y, int color, float height) { return EnhancedMC.getFontRenderer().drawStringWithShadowIH(text, x - EnhancedMC.getFontRenderer().getStringWidth(text) / 2, y, color, height); }
 	
-    protected void drawHorizontalLine(int startX, int endX, int y, int color) {
+    protected static void drawHorizontalLine(int startX, int endX, int y, int color) {
         if (endX < startX) {
             int i = startX;
             startX = endX;
@@ -45,7 +45,7 @@ public class EGui {
         drawRect(startX, y, endX + 1, y + 1, color);
     }
     
-    protected void drawVerticalLine(int x, int startY, int endY, int color) {
+    protected static void drawVerticalLine(int x, int startY, int endY, int color) {
         if (endY < startY) {
             int i = startY;
             startY = endY;
@@ -176,10 +176,10 @@ public class EGui {
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
         worldrenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
-        worldrenderer.pos(right, top, this.zLevel).color(f1, f2, f3, f).endVertex();
-        worldrenderer.pos(left, top, this.zLevel).color(f1, f2, f3, f).endVertex();
-        worldrenderer.pos(left, bottom, this.zLevel).color(f5, f6, f7, f4).endVertex();
-        worldrenderer.pos(right, bottom, this.zLevel).color(f5, f6, f7, f4).endVertex();
+        worldrenderer.pos(right, top, zLevel).color(f1, f2, f3, f).endVertex();
+        worldrenderer.pos(left, top, zLevel).color(f1, f2, f3, f).endVertex();
+        worldrenderer.pos(left, bottom, zLevel).color(f5, f6, f7, f4).endVertex();
+        worldrenderer.pos(right, bottom, zLevel).color(f5, f6, f7, f4).endVertex();
         tessellator.draw();
         GlStateManager.shadeModel(7424);
         GlStateManager.disableBlend();
@@ -193,10 +193,10 @@ public class EGui {
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
         worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
-        worldrenderer.pos(x + 0, y + height, this.zLevel).tex((textureX + 0) * f, (textureY + height) * f1).endVertex();
-        worldrenderer.pos(x + width, y + height, this.zLevel).tex((textureX + width) * f, (textureY + height) * f1).endVertex();
-        worldrenderer.pos(x + width, y + 0, this.zLevel).tex((textureX + width) * f, (textureY + 0) * f1).endVertex();
-        worldrenderer.pos(x + 0, y + 0, this.zLevel).tex((textureX + 0) * f, (textureY + 0) * f1).endVertex();
+        worldrenderer.pos(x + 0, y + height, zLevel).tex((textureX + 0) * f, (textureY + height) * f1).endVertex();
+        worldrenderer.pos(x + width, y + height, zLevel).tex((textureX + width) * f, (textureY + height) * f1).endVertex();
+        worldrenderer.pos(x + width, y + 0, zLevel).tex((textureX + width) * f, (textureY + 0) * f1).endVertex();
+        worldrenderer.pos(x + 0, y + 0, zLevel).tex((textureX + 0) * f, (textureY + 0) * f1).endVertex();
         tessellator.draw();
     }
     
@@ -206,10 +206,10 @@ public class EGui {
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
         worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
-        worldrenderer.pos(xCoord + 0.0F, yCoord + maxV, this.zLevel).tex((minU + 0) * f, (minV + maxV) * f1).endVertex();
-        worldrenderer.pos(xCoord + maxU, yCoord + maxV, this.zLevel).tex((minU + maxU) * f, (minV + maxV) * f1).endVertex();
-        worldrenderer.pos(xCoord + maxU, yCoord + 0.0F, this.zLevel).tex((minU + maxU) * f, (minV + 0) * f1).endVertex();
-        worldrenderer.pos(xCoord + 0.0F, yCoord + 0.0F, this.zLevel).tex((minU + 0) * f, (minV + 0) * f1).endVertex();
+        worldrenderer.pos(xCoord + 0.0F, yCoord + maxV, zLevel).tex((minU + 0) * f, (minV + maxV) * f1).endVertex();
+        worldrenderer.pos(xCoord + maxU, yCoord + maxV, zLevel).tex((minU + maxU) * f, (minV + maxV) * f1).endVertex();
+        worldrenderer.pos(xCoord + maxU, yCoord + 0.0F, zLevel).tex((minU + maxU) * f, (minV + 0) * f1).endVertex();
+        worldrenderer.pos(xCoord + 0.0F, yCoord + 0.0F, zLevel).tex((minU + 0) * f, (minV + 0) * f1).endVertex();
         tessellator.draw();
     }
     
@@ -229,10 +229,10 @@ public class EGui {
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
         worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
-        worldrenderer.pos(xCoord + 0, yCoord + heightIn, this.zLevel).tex(textureSprite.getMinU(), textureSprite.getMaxV()).endVertex();
-        worldrenderer.pos(xCoord + widthIn, yCoord + heightIn, this.zLevel).tex(textureSprite.getMaxU(), textureSprite.getMaxV()).endVertex();
-        worldrenderer.pos(xCoord + widthIn, yCoord + 0, this.zLevel).tex(textureSprite.getMaxU(), textureSprite.getMinV()).endVertex();
-        worldrenderer.pos(xCoord + 0, yCoord + 0, this.zLevel).tex(textureSprite.getMinU(), textureSprite.getMinV()).endVertex();
+        worldrenderer.pos(xCoord + 0, yCoord + heightIn, zLevel).tex(textureSprite.getMinU(), textureSprite.getMaxV()).endVertex();
+        worldrenderer.pos(xCoord + widthIn, yCoord + heightIn, zLevel).tex(textureSprite.getMaxU(), textureSprite.getMaxV()).endVertex();
+        worldrenderer.pos(xCoord + widthIn, yCoord + 0, zLevel).tex(textureSprite.getMaxU(), textureSprite.getMinV()).endVertex();
+        worldrenderer.pos(xCoord + 0, yCoord + 0, zLevel).tex(textureSprite.getMinU(), textureSprite.getMinV()).endVertex();
         tessellator.draw();
     }
     

@@ -1,6 +1,6 @@
 package com.Whodundid.core.enhancedGui.guiObjects;
 
-import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.storageUtil.EArrayList;
@@ -9,14 +9,14 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 //First Added: Oct 22, 2018
 //Author: Hunter Bragg
 
-public class EGuiDialogueBox extends InnerEnhancedGui {
+public class EGuiDialogueBox extends WindowParent {
 	
-	public int messageColor = 0xffffff, displayColor = 0xffffff;
-	public String message = "", displayString = "";
+	public int messageColor = 0xffffff, titleColor = 0xffffff;
+	public String message = "", title = "";
 	protected EArrayList<String> wordWrappedLines;
-	protected IEnhancedGuiObject primaryObject;
+	protected IEnhancedGuiObject defaultObject;
 	protected EGuiButton yes, no, okButton;
-	private DialogueBoxTypes type;
+	protected DialogueBoxTypes type;
 	
 	public enum DialogueBoxTypes { yesNo, ok, custom; }
 	
@@ -31,15 +31,13 @@ public class EGuiDialogueBox extends InnerEnhancedGui {
 		requestFocus();
 		getTopParent().setFocusLockObject(this);
 		setResizeable(true);
-		setMinimumWidth(101).setMinimumHeight(101);
+		setMinimumDims(101, 101);
 	}
 	
 	@Override
 	public void initObjects() {
-		EGuiHeader h = new EGuiHeader(this);
-		h.setDisplayString(displayString);
-		h.setDisplayStringColor(displayColor);
-		setHeader(h);
+		defaultHeader(this);
+		getHeader().setTitle(title).setTitleColor(titleColor);
 		
 		switch (type) {
 		case yesNo:
@@ -64,8 +62,7 @@ public class EGuiDialogueBox extends InnerEnhancedGui {
 	
 	@Override
 	public void drawObject(int mXIn, int mYIn, float ticks) {
-		drawRect(startX, startY, endX, endY, -0x00ffffff); //black
-		drawRect(startX + 1, startY + 1, endX - 1, endY - 1, 0xff4c4c4c); //grey
+		drawDefaultBackground();
 		if (wordWrappedLines != null) {
 			int lnWidth = wordWrappedLines.size() * 10;
 			int totalWidth = midY + 5 - startY;
@@ -82,18 +79,17 @@ public class EGuiDialogueBox extends InnerEnhancedGui {
 	@Override
 	public void keyPressed(char typedKey, int keyCode) {
 		if (keyCode == 28) { //enter
-			if (primaryObject != null && primaryObject instanceof EGuiButton) {
-				((EGuiButton) primaryObject).performAction();
+			if (defaultObject != null && defaultObject instanceof EGuiButton) {
+				((EGuiButton) defaultObject).performAction();
 			}
 		}
 	}
 	
-	public IEnhancedGuiObject getPrimaryObject() { return primaryObject; }
-	public EGuiDialogueBox setPrimaryObject(IEnhancedGuiObject objIn) { primaryObject = objIn; return this; }
-	public EGuiDialogueBox addButtonOption(EGuiButton buttonIn) { addObject(buttonIn); return this; }
-	public EGuiDialogueBox setDisplayString(String stringIn) { displayString = stringIn; return this; }
-	public EGuiDialogueBox setDisplayStringColor(int colorIn) { displayColor = colorIn; return this; }
+	public EGuiDialogueBox setDefaultObject(IEnhancedGuiObject objIn) { defaultObject = objIn; return this; }
+	public EGuiDialogueBox setTitle(String stringIn) { title = stringIn; return this; }
+	public EGuiDialogueBox setTitleColor(int colorIn) { titleColor = colorIn; return this; }
 	public EGuiDialogueBox setMessage(String stringIn) { message = stringIn; wordWrappedLines = EUtil.createWordWrapString(message, width - 20); return this; }
 	public EGuiDialogueBox setMessageColor(int colorIn) { messageColor = colorIn; return this; }
-	public EGuiDialogueBox setMoveable(boolean val) { if (header.moveButton != null) { header.moveButton.setPersistent(false).setVisible(false); } return this; }
+	
+	public IEnhancedGuiObject getPrimaryObject() { return defaultObject; }
 }

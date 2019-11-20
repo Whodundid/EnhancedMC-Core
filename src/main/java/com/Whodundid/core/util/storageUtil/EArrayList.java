@@ -167,6 +167,20 @@ public class EArrayList<E> extends AbstractList<E> {
 	public boolean notContains(Object o) { return !contains(o); }
 	public Object[] toArray() { return Arrays.copyOf(elementData, size); }
 
+	public boolean containsInstanceOf(Class<?> cIn) {
+		for (Object e : elementData) {
+			if (cIn.isInstance(e)) { return true; }
+		}
+		return false;
+	}
+	
+	public boolean notContainsInstanceOf(Class<?> cIn) {
+		for (Object e : elementData) {
+			if (cIn.isInstance(e)) { return false; }
+		}
+		return true;
+	}
+	
 	public E get(int index) {
         rangeCheck(index);
         return this.getElementData(index);

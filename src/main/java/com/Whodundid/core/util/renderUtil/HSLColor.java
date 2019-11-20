@@ -83,8 +83,6 @@ public class HSLColor {
 		g = (int) (gHolder * 255);
 		b = (int) (bHolder * 255);
 		
-		//System.out.println(r + " " + g + " " + b);
-		
 		String rC = Integer.toString(r, 16);
 		String gC = Integer.toString(g, 16);
 		String bC = Integer.toString(b, 16);

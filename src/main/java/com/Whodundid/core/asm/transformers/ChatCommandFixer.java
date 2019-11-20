@@ -36,31 +36,9 @@ public class ChatCommandFixer extends IETransformer {
 				}
 				
 				if (targetNode != null) {
-					//targetNode = ' mv.visitFieldInsn(GETSTATIC, "net/minecraftforge/client/ClientCommandHandler", "instance", "Lnet/minecraftforge/client/ClientCommandHandler;"); '
-					/*
-					mv.visitJumpInsn(IFNULL, l2);
-					mv.visitVarInsn(ALOAD, 1);
-					mv.visitLdcInsn("/");
-					mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "startsWith", "(Ljava/lang/String;)Z", false);
-					mv.visitJumpInsn(IFEQ, l2);
-					*/
-					//adding before
-					/*
-					ALOAD 1: msg
-					LDC "/"
-					INVOKEVIRTUAL String.startsWith(String):boolean
-					mv.visitFieldInsn(GETSTATIC, "net/minecraftforge/client/ClientCommandHandler", "instance", "Lnet/minecraftforge/client/ClientCommandHandler;");
-					mv.visitVarInsn(ALOAD, 0);
-					mv.visitFieldInsn(GETFIELD, "net/minecraft/client/gui/GuiScreen", "mc", "Lnet/minecraft/client/Minecraft;");
-					mv.visitFieldInsn(GETFIELD, "net/minecraft/client/Minecraft", "thePlayer", "Lnet/minecraft/client/entity/EntityPlayerSP;");
-					mv.visitVarInsn(ALOAD, 1);
-					mv.visitMethodInsn(INVOKEVIRTUAL, "net/minecraftforge/client/ClientCommandHandler", "executeCommand", "(Lnet/minecraft/command/ICommandSender;Ljava/lang/String;)I", false);
-					*/
 					
 					AbstractInsnNode afterReturn = targetNode;
 					for (int i = 0; i < 7; i++) { afterReturn = afterReturn.getNext(); }
-					
-					//System.out.println("after return node: " + afterReturn.getOpcode());
 					
 					LabelNode lNode = new LabelNode();
 					

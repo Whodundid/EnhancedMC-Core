@@ -45,20 +45,13 @@ public class EGuiLinkConfirmationDialogueBox extends EGuiDialogueBox {
 		setHeader(new EGuiHeader(this));
 		requestFocus();
 		getTopParent().setFocusLockObject(this);
-		setDisplayString("Opening Link");
+		setTitle("Opening Link");
 		
 		yes = new EGuiButton(this, midX - copyLength - 35, endY - 35, 75, 20, I18n.format("gui.yes", new Object[0])).setDisplayStringColor(0x55ff55);
 		copy = new EGuiButton(this, midX - (copyLength  + 8) / 2, endY - 35, copyLength + 8, 20, I18n.format("chat.copy", new Object[0])).setDisplayStringColor(0xffffff);
 		no = new EGuiButton(this, midX + copyLength - 39, endY - 35, 75, 20, I18n.format("gui.no", new Object[0])).setDisplayStringColor(0xff5555);
 		
 		addObject(promptLabel, linkLabel, warningLabel, yes, copy, no);
-	}
-	
-	@Override public void initObjects() {}
-	
-	@Override
-	public void drawObject(int mXIn, int mYIn, float ticks) {
-		super.drawObject(mXIn, mYIn, ticks);
 	}
 	
 	@Override

@@ -66,6 +66,7 @@ public class ConfigBlock {
 	public ConfigBlock createEmptyLine(boolean valIn) { createEmptyLine = valIn; return this; }
 	public ConfigBlock nl() { return noEmptyLine(); }
 	public ConfigBlock noEmptyLine() { createEmptyLine = false; return this; }
+	
 	public boolean createEmptyLineAfterBlock() { return createEmptyLine; }
 	public StorageBoxHolder<String, List<String>> getBlockContents() { return blockContents; }
 }

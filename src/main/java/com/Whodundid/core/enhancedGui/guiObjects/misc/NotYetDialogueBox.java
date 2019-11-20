@@ -17,6 +17,6 @@ public class NotYetDialogueBox extends EGuiDialogueBox {
 	@Override
 	public void onAdded() {
 		setMessage("This feature is not ready yet.. Be on the lookout for future EnhancedMC releases!").setMessageColor(0xff5555);
-		setDisplayString("Error");
+		setTitle("Error");
 	}
 }

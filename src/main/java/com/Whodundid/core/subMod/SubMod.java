@@ -48,7 +48,7 @@ public abstract class SubMod {
 		configManager = new SubModConfigManager(this);
 	}
 	
-	public abstract SubMod getInstance();
+	//public abstract SubMod getInstance();
 	public SubModType getModType() { return SubModType.getTypeFromString(modName); }
 	public boolean isEnabled() { return enabled; }
 	public boolean hasConfig() { return configManager.getNumberOfConfigFiles() > 0; }

@@ -67,6 +67,8 @@ public interface IEnhancedTopParent extends IEnhancedGuiObject {
 	
 	//close
 	
+	/** Essentially deprecated */
 	public void closeGui(boolean fullClose);
+	/** Essentially deprecated */
 	public IEnhancedTopParent setCloseAndRecenter(boolean val);
 }

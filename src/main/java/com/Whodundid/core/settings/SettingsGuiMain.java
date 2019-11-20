@@ -5,27 +5,31 @@ import com.Whodundid.core.coreSubMod.EnhancedMCMod;
 import com.Whodundid.core.debug.ExperimentGui;
 import com.Whodundid.core.debug.ImportantGui;
 import com.Whodundid.core.enhancedGui.StaticEGuiObject;
+import com.Whodundid.core.enhancedGui.guiObjectUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiLabel;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiRect;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiScrollList;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextField;
-import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.guiUtil.events.EventKeyboard;
+import com.Whodundid.core.enhancedGui.guiUtil.events.ObjectEvent;
+import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.KeyboardType;
+import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.settings.guiParts.ReloaderDialogueBox;
 import com.Whodundid.core.settings.guiParts.SettingsMenuContainer;
 import com.Whodundid.core.settings.guiParts.SettingsRCM;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubMod;
-import com.Whodundid.core.subMod.SubModSettings;
 import com.Whodundid.core.subMod.SubModType;
 import com.Whodundid.core.subMod.gui.IncompatibleWindowList;
-import com.Whodundid.core.util.chatUtil.ChatBuilder;
+import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
-import net.minecraft.util.EnumChatFormatting;
 
 //Dec 28, 2018
 
@@ -34,7 +38,7 @@ import net.minecraft.util.EnumChatFormatting;
 //First Added: Sep 14, 2018
 //Author: Hunter Bragg
 
-public class SettingsGuiMain extends InnerEnhancedGui {
+public class SettingsGuiMain extends WindowParent {
 	
 	EGuiButton keyBindGui, reloadConfigs, problem;
 	EGuiButton experimentGui, disableDebugMode;
@@ -43,15 +47,11 @@ public class SettingsGuiMain extends InnerEnhancedGui {
 	EGuiTextField searchField;
 	SettingsRCM rcm;
 	int leftPress = 0, rightPress = 0;
-	int found = 0;
 	
 	@Override
 	public void initGui() {
 		setObjectName("EMC Settings");
 		centerObjectWithSize(defaultWidth, defaultHeight);
-		//setResizeable(true);
-		setMinimumWidth(192).setMinimumHeight(101).setMaximumWidth(220);
-		//setMinimumWidth(defaultWidth).setMinimumHeight(101).setMaximumWidth(220);
 		super.initGui();
 	}
 	
@@ -130,6 +130,10 @@ public class SettingsGuiMain extends InnerEnhancedGui {
 		addObject(scrollList, problem, searchField, keyBindGui, reloadConfigs);
 		addObject(hiddenButton1, hiddenButton2);
 		addObject(experimentGui, disableDebugMode);
+		
+		objectGroup = new EObjectGroup(this);
+		objectGroup.addObjects(getAllChildren());
+		for (IEnhancedGuiObject o : getAllChildren()) { o.setObjectGroup(objectGroup); }
 		
 		//then build the list
 		if (RegisteredSubMods.getRegisteredModsList().isEmpty()) { //THIS SHOULD BE IMPOSSIBLE!
@@ -262,17 +266,7 @@ public class SettingsGuiMain extends InnerEnhancedGui {
 		else {
 			if (object == keyBindGui) { EnhancedMC.displayEGui(new KeyBindGui(), this); }
 			if (object == reloadConfigs) {
-				for (SubMod m : RegisteredSubMods.getRegisteredModsList()) {
-					if (m.hasConfig()) {
-						if (mc.thePlayer != null) { mc.thePlayer.addChatComponentMessage(ChatBuilder.of(EnumChatFormatting.YELLOW +  "Reloading " + m.getName() + " config..").build()); }
-						m.getConfig().loadAllConfigs();
-						m.getConfig().saveAllConfigs();
-					}
-				}
-				
-				if (mc.thePlayer != null) { mc.thePlayer.addChatComponentMessage(ChatBuilder.of(EnumChatFormatting.YELLOW + "Reloading global config..").build()); }
-				SubModSettings.loadConfig();
-				
+				EnhancedMC.displayEGui(new ReloaderDialogueBox(RegisteredSubMods.getRegisteredModsList()), CenterType.screen);
 				assembleList();
 			}
 			if (object == experimentGui) { EnhancedMC.displayEGui(new ExperimentGui(), this); }
@@ -283,13 +277,23 @@ public class SettingsGuiMain extends InnerEnhancedGui {
 				leftPress = 0;
 				rightPress = 0;
 			}
-			if (object == problem) { addObject(new IncompatibleWindowList(this)); }
+			if (object == problem) { EnhancedMC.displayEGui(new IncompatibleWindowList()); }
+		}
+	}
+	
+	@Override
+	public void onGroupNotification(ObjectEvent e) {
+		if (e instanceof EventKeyboard) {
+			EventKeyboard kbe = (EventKeyboard) e;
+			if (kbe.getKeyboardType() == KeyboardType.Pressed) {
+				if (searchField != null) { searchField.requestFocus(); searchField.setText("" + kbe.getEventChar()); }
+			}
 		}
 	}
 	
 	@Override
 	public void keyPressed(char typedChar, int keyCode) {
-		
+		if (searchField != null) { searchField.requestFocus(); searchField.setText("" + typedChar); }
 	}
 	
 	public void openRCM(int mXIn, int mYIn) { openRCM(mXIn, mYIn); }

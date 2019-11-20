@@ -34,12 +34,12 @@ public class SubModConfigManager {
 	}
 	
 	public boolean saveAllConfigs() {
-		configFiles.forEach(c -> { c.getValue().saveConfig(); });
+		for (SubModConfigFile f : configFiles.getValues()) { if (!f.saveConfig()) { return false; } }
 		return true;
 	}
 	
 	public boolean loadAllConfigs() {
-		configFiles.forEach(c -> { c.getValue().loadConfig(); });
+		for (SubModConfigFile f : configFiles.getValues()) { if (!f.loadConfig()) { return false; } }
 		return true;
 	}
 	
@@ -62,7 +62,8 @@ public class SubModConfigManager {
 		return box != null ? box.getValue().loadConfig() : false;
 	}
 	
+	public SubModConfigFile getMainConfig() { return mainConfig; }
+	
 	public File getConfigFileLocation(String configName) { return new File(RegisteredSubMods.getModConfigBaseFileLocation(mod.getModType()).getAbsolutePath() + "/" + configName + ".cfg"); }
 	public int getNumberOfConfigFiles() { return configFiles.size(); }
-	public SubModConfigFile getMainConfig() { return mainConfig; }
 }

@@ -77,7 +77,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	protected ScaledResolution res;
 	protected IEnhancedGuiObject parent, focusObjectOnClose;
 	protected EDimension boundaryDimension;
-	protected EGuiFocusLockBorder border;
+	//protected EGuiFocusLockBorder border;
 	protected EArrayList<IEnhancedGuiObject> guiObjects = new EArrayList();
 	protected EArrayList<IEnhancedGuiObject> objsToBeRemoved = new EArrayList();
 	protected EArrayList<IEnhancedGuiObject> objsToBeAdded = new EArrayList();
@@ -92,7 +92,9 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	protected boolean hasFocus = false;
 	protected boolean focusLock = false;
 	protected boolean persistent = false;
+	protected boolean pinned = false;
 	protected boolean resizeable = false;
+	protected boolean clickable = true;
 	protected int minWidth = 0;
 	protected int minHeight = 0;
 	protected int maxWidth = Integer.MAX_VALUE;
@@ -177,8 +179,16 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 			if (checkDraw()) {
 				GlStateManager.pushMatrix();
 				GlStateManager.enableBlend();
-				//EArrayList<IEnhancedGuiObject> instanceObjects = new EArrayList(guiObjects);
-				guiObjects.stream().filter(o -> o.checkDraw()).forEach(o -> { GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F); o.drawObject(mX, mY, ticks); });
+				guiObjects.stream().filter(o -> o.checkDraw()).forEach(o -> {
+					o.drawObject(mX, mY, ticks);
+					IEnhancedGuiObject f = getTopParent().getFocusLockObject();
+					if (f != null && o instanceof EGuiHeader && (!o.equals(f) && !f.getAllChildren().contains(o))) {
+						if (o.isVisible()) {
+							EDimension d = o.getDimensions();
+							this.drawRect(d.startX, d.startY, d.endX, d.endY, 0x88000000);
+						}
+					}
+				});
 				GlStateManager.popMatrix();
 			}
 		} catch (Exception e) { e.printStackTrace(); }
@@ -229,10 +239,12 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	@Override public boolean isEnabled() { return enabled; }
 	@Override public boolean isVisible() { return visible; }
 	@Override public boolean isPersistent() { return persistent; }
+	@Override public boolean isPinned() { return pinned; }
 	@Override public boolean isBoundaryEnforced() { return boundaryDimension != null; }
 	@Override public EnhancedGuiObject setEnabled(boolean val) { enabled = val; return this; }
 	@Override public EnhancedGuiObject setVisible(boolean val) { visible = val; return this; }
 	@Override public EnhancedGuiObject setPersistent(boolean val) { persistent = val; return this; }
+	@Override public EnhancedGuiObject setPinned(boolean val) { pinned = val; return this; }
 	@Override public EnhancedGuiObject setBoundaryEnforcer(EDimension dimIn) { boundaryDimension = new EDimension(dimIn); return this; }
 	@Override public EDimension getBoundaryEnforcer() { return boundaryDimension; }
 	
@@ -244,6 +256,8 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	@Override public int getMinimumHeight() { return minHeight; }
 	@Override public int getMaximumWidth() { return maxWidth; }
 	@Override public int getMaximumHeight() { return maxHeight; }
+	@Override public EnhancedGuiObject setMinimumDims(int widthIn, int heightIn) { setMinimumWidth(widthIn).setMinimumHeight(heightIn); return this; }
+	@Override public EnhancedGuiObject setMaximumDims(int widthIn, int heightIn) { setMaximumWidth(widthIn).setMaximumHeight(heightIn); return this; }
 	@Override public EnhancedGuiObject setMinimumWidth(int widthIn) { minWidth = widthIn; return this; }
 	@Override public EnhancedGuiObject setMinimumHeight(int heightIn) { minHeight = heightIn; return this; }
 	@Override public EnhancedGuiObject setMaximumWidth(int widthIn) { maxWidth = widthIn; return this; }
@@ -346,10 +360,10 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	}
 	@Override
 	public void drawFocusLockBorder() {
-		if (checkDraw() && border == null) {
+		if (checkDraw() && guiObjects.notContainsInstanceOf(EGuiFocusLockBorder.class)) {
 			if (hasHeader() && getHeader().isEnabled()) {
-				addObject(border = new EGuiFocusLockBorder(this, getHeader().startX, getHeader().startY, width, height + getHeader().height));
-			} else { addObject(border = new EGuiFocusLockBorder(this)); }
+				addObject(new EGuiFocusLockBorder(this, getHeader().startX, getHeader().startY, width, height + getHeader().height));
+			} else { addObject(new EGuiFocusLockBorder(this)); }
 		}
 	}
 	@Override public EnhancedGuiObject requestFocus() {
@@ -371,6 +385,8 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 		return mX >= startX && mX <= endX && mY >= startY && mY <= endY;
 	}
 	@Override public boolean isMouseHover(int mX, int mY) { return isMouseInside(mX, mY) && this.equals(getTopParent().getHighestZObjectUnderMouse()); }
+	@Override public boolean isClickable() { return clickable; }
+	@Override public IEnhancedGuiObject setClickable(boolean valIn) { clickable = valIn; return this; }
 	
 	//basic inputs
 	@Override public void parseMousePosition(int mX, int mY) { StaticEGuiObject.parseMousePosition(this, mX, mY); }

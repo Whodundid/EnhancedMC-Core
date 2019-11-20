@@ -16,7 +16,7 @@ public class EMCGuiSelectionList extends EGuiSelectionList {
 	public EMCGuiSelectionList() { this(EnhancedMCRenderer.getInstance()); }
 	public EMCGuiSelectionList(IEnhancedGuiObject parentIn) {
 		ScaledResolution res = new ScaledResolution(mc);
-		init(parentIn, (res.getScaledWidth() - 200) / 2, (res.getScaledHeight() - 230) / 2, 200, 230);
+		init(parentIn, (res.getScaledWidth() - 200) / 2, (res.getScaledHeight() - 230) / 2, 200, 228);
 		listContents = buildList();
 		defaultSelectionObject = null;
 		actionReciever = this;

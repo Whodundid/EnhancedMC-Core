@@ -3,7 +3,7 @@ package com.Whodundid.core;
 import com.Whodundid.core.coreSubMod.EnhancedMCMod;
 import com.Whodundid.core.debug.DebugFunctions;
 import com.Whodundid.core.enhancedGui.types.EnhancedGui;
-import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.events.EventListener;
@@ -61,7 +61,7 @@ public final class EnhancedMC {
 	public static EFontRenderer fontRenderer;
 	private static final EnhancedMCRenderer renderer = EnhancedMCRenderer.getInstance();
 	private static EventListener eventListener;
-	static boolean isInitialized = false;
+	private static boolean isInitialized = false;
 	public static int updateCounter = 0;
 	public static boolean enableDebugFunctions = false;
 	public final EnhancedMCMod modInstance = new EnhancedMCMod();
@@ -216,25 +216,12 @@ public final class EnhancedMC {
 		}
 	}
 	
-	public static boolean isDebugMode() { return enableDebugFunctions; }
-	public static void setDebugMode(boolean val) { enableDebugFunctions = val; }
-	
-	public static EventListener getEventListener() { return eventListener; }
-	public static EFontRenderer getFontRenderer() { return fontRenderer; }
-	public static EnhancedMCRenderer getRenderer() { return renderer; }
-	public static boolean isInitialized() { return isInitialized; }
-	public static void log(Level levelIn, String msg) { EMCLogger.log(levelIn, msg); }
-	public static void info(String msg) { EMCLogger.log(Level.INFO, msg); }
-	public static void error(String msg) { EMCLogger.log(Level.ERROR, msg); }
-	public static void error(String msg, Throwable throwableIn) { EMCLogger.log(Level.ERROR, msg, throwableIn); }
-	public static void openSettingsGui() { displayEGui(new SettingsGuiMain()); }
-	
-	public static <T extends InnerEnhancedGui> boolean isEGuiOpen(Class<T> guiIn) {
+	public static <T extends WindowParent> boolean isEGuiOpen(Class<T> guiIn) {
 		return guiIn != null ? renderer.getAllChildren().stream().anyMatch(o -> o.getClass().equals(guiIn)) : false;
 	}
 	
-	public static <T extends InnerEnhancedGui> InnerEnhancedGui getWindowInstance(Class<T> guiIn) {
-		return guiIn != null ? (InnerEnhancedGui) renderer.getAllChildren().stream().filter(o -> o.getClass().equals(guiIn)).findFirst().get() : null;
+	public static <T extends WindowParent> WindowParent getWindowInstance(Class<T> guiIn) {
+		return guiIn != null ? (WindowParent) renderer.getAllChildren().stream().filter(o -> o.getClass().equals(guiIn)).findFirst().get() : null;
 	}
 	
 	public static void displayEGui(IWindowParent guiIn) { displayEGui(guiIn, null, false, CenterType.screen); }
@@ -291,8 +278,8 @@ public final class EnhancedMC {
 				break;
 			}
 		case screen:
-			sX = res.getScaledWidth() - gDim.startX - gDim.width;
-			sY = res.getScaledHeight() - gDim.startY - gDim.height;
+			sX = (res.getScaledWidth() / 2) - (gDim.width / 2);
+			sY = (res.getScaledHeight() / 2) - (gDim.height / 2);
 			break;
 		default: break;
 		}
@@ -312,6 +299,19 @@ public final class EnhancedMC {
 	public boolean isModRegistered(SubMod modIn) { return RegisteredSubMods.isModRegistered(modIn); }
 	public boolean isModRegistered(SubModType typeIn) { return RegisteredSubMods.isModRegistered(typeIn); }
 	public boolean isModRegistered(String modName) { return RegisteredSubMods.isModRegEn(modName); }
+	
+	public static boolean isDebugMode() { return enableDebugFunctions; }
+	public static void setDebugMode(boolean val) { enableDebugFunctions = val; }
+	
+	public static EventListener getEventListener() { return eventListener; }
+	public static EFontRenderer getFontRenderer() { return fontRenderer; }
+	public static EnhancedMCRenderer getRenderer() { return renderer; }
+	public static boolean isInitialized() { return isInitialized; }
+	public static void log(Level levelIn, String msg) { EMCLogger.log(levelIn, msg); }
+	public static void info(String msg) { EMCLogger.log(Level.INFO, msg); }
+	public static void error(String msg) { EMCLogger.log(Level.ERROR, msg); }
+	public static void error(String msg, Throwable throwableIn) { EMCLogger.log(Level.ERROR, msg, throwableIn); }
+	public static void openSettingsGui() { displayEGui(new SettingsGuiMain()); }
 	
 	protected static void createdByHunterBragg() {}
 }

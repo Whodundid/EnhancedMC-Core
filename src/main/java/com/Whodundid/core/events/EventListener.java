@@ -37,14 +37,7 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
-//Oct 26, 2018
-
-//Last edited: Jun 22, 2019
-//Edit Note: added initial support for ERenderManager
-//First Added: Oct 9, 2017
-//Author: Hunter Bragg
-
-/** A global listener for all events in EnhancedMC */
+/** A forge event wrapper for EnhancedMC and its' SubMods */
 public class EventListener {
 	
 	Minecraft mc = Minecraft.getMinecraft();
@@ -55,7 +48,7 @@ public class EventListener {
 			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventClientTick(e));
 			if (e.side == Side.CLIENT) {
 				if (EnhancedMC.updateCounter == Integer.MAX_VALUE) {
-					EnhancedMC.updateCounter = 0;
+					EnhancedMC.updateCounter = 0; //reset back to 0 to prevent overflows
 				}
 				EnhancedMC.updateCounter++;
 			}
@@ -209,7 +202,6 @@ public class EventListener {
 	public void onWorldLoad(WorldEvent.Load e) {
 		if (EnhancedMC.isInitialized()) {
 			CursorHelper.reset();
-			//mc.ingameGUI = EnhancedMC.enhancedMCGui;
 			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventWorldLoad(e));
 		}
 	}

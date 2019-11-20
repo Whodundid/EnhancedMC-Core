@@ -8,18 +8,11 @@ public class PlayerInventory {
 	
 	static final Minecraft mc = Minecraft.getMinecraft();
 	
-	public static boolean isPlayerInvSlotEmpty(int x) { return mc.thePlayer.inventory.getStackInSlot(x) == null; }
-	public static boolean doesHotbarContainItem(Item i) { return doesHotbarContainItem(i.getUnlocalizedName()); }
-	public static int getSlotNumberForContaingItem(Item i) { return getSlotNumberForContaingItem(i.getUnlocalizedName()); };
-	
 	public static ItemStack[] getPlayerHotbar() {
 		ItemStack[] hotbar = new ItemStack[8];
 		for (int i = 0; i < 9; i++) {
-			if (mc.thePlayer.inventory.getStackInSlot(i) != null) {
-				hotbar[i] = mc.thePlayer.inventory.getStackInSlot(i);
-			} else {
-				hotbar[i] = null;
-			}			
+			if (mc.thePlayer.inventory.getStackInSlot(i) != null) { hotbar[i] = mc.thePlayer.inventory.getStackInSlot(i); }
+			else { hotbar[i] = null; }
 		}
 		return hotbar;
 	}
@@ -41,4 +34,8 @@ public class PlayerInventory {
 		}
 		return -1;
 	}
+	
+	public static boolean isPlayerInvSlotEmpty(int x) { return mc.thePlayer.inventory.getStackInSlot(x) == null; }
+	public static boolean doesHotbarContainItem(Item i) { return doesHotbarContainItem(i.getUnlocalizedName()); }
+	public static int getSlotNumberForContaingItem(Item i) { return getSlotNumberForContaingItem(i.getUnlocalizedName()); };
 }

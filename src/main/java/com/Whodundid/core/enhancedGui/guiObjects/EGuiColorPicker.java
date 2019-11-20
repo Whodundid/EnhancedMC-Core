@@ -1,12 +1,12 @@
 package com.Whodundid.core.enhancedGui.guiObjects;
 
-import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.renderUtil.HSLColor;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
-public class EGuiColorPicker extends InnerEnhancedGui {
+public class EGuiColorPicker extends WindowParent {
 
 	int color = 0x00000000;
 	boolean enableTransparency = true;
@@ -31,7 +31,7 @@ public class EGuiColorPicker extends InnerEnhancedGui {
 	@Override
 	public void initObjects() {
 		setHeader(new EGuiHeader(this));
-		header.setDisplayString("Color Picker");
+		header.setTitle("Color Picker");
 	}
 	
 	@Override

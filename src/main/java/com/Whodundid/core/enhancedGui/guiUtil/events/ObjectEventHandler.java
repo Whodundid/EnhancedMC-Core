@@ -46,12 +46,12 @@ public class ObjectEventHandler {
 		updateList();
 	}
 	
-	public EArrayList<IEnhancedGuiObject> getListenerObjects() { return listeners; }
-	
 	private void updateList() {
 		if (!iterating) {
 			if (toBeAdded.isNotEmpty()) { listeners.addAll(toBeAdded); toBeAdded.clear(); }
 			if (toBeRemoved.isNotEmpty()) { listeners.removeAll(toBeRemoved); toBeRemoved.clear(); }
 		}
 	}
+	
+	public EArrayList<IEnhancedGuiObject> getListenerObjects() { return listeners; }
 }

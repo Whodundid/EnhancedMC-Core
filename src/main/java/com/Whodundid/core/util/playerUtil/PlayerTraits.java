@@ -17,7 +17,7 @@ public class PlayerTraits {
 	}
 	
 	public static boolean isSpectator() {
-		return mc.playerController.isSpectator();
+		return mc.playerController != null ? mc.playerController.isSpectator() : false;
 	}
 	
 	public static boolean isHoldingItem() {

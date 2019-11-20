@@ -6,16 +6,9 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 
-public abstract class SetLocationGui extends InnerEnhancedGui {
+public abstract class SetLocationGui extends WindowParent {
 	
 	protected StorageBoxHolder<IEnhancedGuiObject, Boolean> previousStates = new StorageBoxHolder();
-	
-	protected SetLocationGui() { super(); }
-	protected SetLocationGui(Object oldGuiIn) { super(oldGuiIn); }
-	protected SetLocationGui(IEnhancedGuiObject parentIn) { super(parentIn); }
-	protected SetLocationGui(IEnhancedGuiObject parentIn, Object oldGuiIn) { super(parentIn, oldGuiIn); }
-	protected SetLocationGui(IEnhancedGuiObject parentIn, int posX, int posY) { super(parentIn, posX, posY); }
-	protected SetLocationGui(IEnhancedGuiObject parentIn, int posX, int posY, Object oldGuiIn) { super(parentIn, posX, posY, oldGuiIn); }
 	
 	protected SetLocationGui hideAllOnRenderer(IEnhancedGuiObject... exceptionsIn) {
 		previousStates.clear();
@@ -40,5 +33,4 @@ public abstract class SetLocationGui extends InnerEnhancedGui {
 		
 		return this;
 	}
-	
 }

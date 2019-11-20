@@ -2,7 +2,7 @@ package com.Whodundid.core.renderer;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextField;
-import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.google.common.collect.Lists;
 import com.google.common.collect.ObjectArrays;
 import java.io.IOException;
@@ -22,7 +22,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-/** A type of GuiScreen which sends it's inputs to the EnhancedMCRenderer */
+/** A type of GuiScreen which sends it's inputs to the EnhancedMCRenderer.
+ *  Extends GuiChat to intercept autocomplete events.
+ */
 public class RendererProxyGui extends GuiChat implements IRendererProxy {
 
 	EnhancedMCRenderer renderer = EnhancedMCRenderer.getInstance();
@@ -43,7 +45,7 @@ public class RendererProxyGui extends GuiChat implements IRendererProxy {
     public String historyBuffer = "";
 
 	public RendererProxyGui() {}
-	public RendererProxyGui(InnerEnhancedGui guiIn) {
+	public RendererProxyGui(WindowParent guiIn) {
 		renderer = EnhancedMC.getRenderer();
 		renderer.addObject(guiIn);
 	}

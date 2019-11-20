@@ -4,14 +4,14 @@ import com.Whodundid.core.enhancedGui.guiObjectUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectModifyType;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
-import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
+import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EDimension;
-import net.minecraft.client.gui.GuiScreen;
 
 //Dec 31, 2018
 //Last edited: Jan 12, 2019
@@ -21,16 +21,16 @@ import net.minecraft.client.gui.GuiScreen;
 public class EGuiHeader extends EnhancedGuiObject {
 	
 	public EGuiButton fileUpButton, moveButton, closeButton;
-	public GuiScreen closingGui = null;
 	public boolean fullClose = false;
 	public boolean drawDefault = true;
-	public boolean drawDisplayString = true;
-	public String displayString = "";
-	public int headerBorderColor = 0xff000000;
-	public int headerMainColor = 0xff2D2D2D;
-	public int headerStringColor = 0xb2b2b2;
+	public boolean drawTitle = true;
+	public String title = "";
+	public int borderColor = 0xff000000;
+	public int mainColor = 0xff2D2D2D;
+	public int titleColor = 0xb2b2b2;
 	protected boolean drawBackground = true;
 	protected boolean drawHeader = true;
+	protected boolean drawParentFocus = true;
 	
 	protected EGuiHeader() {}
 	public EGuiHeader(IEnhancedGuiObject parentIn) { this(parentIn, true, 19, ""); }
@@ -48,7 +48,7 @@ public class EGuiHeader extends EnhancedGuiObject {
 			addCloseButton();
 			
 			if (titleIn.isEmpty()) {
-				displayString = getParent().getObjectName();
+				title = getParent().getObjectName();
 			}
 			
 			EObjectGroup group = new EObjectGroup(getParent());
@@ -81,14 +81,27 @@ public class EGuiHeader extends EnhancedGuiObject {
 	@Override
 	public void drawObject(int mX, int mY, float ticks) {
 		if (drawHeader) {
-			if (drawBackground) {
-				drawRect(startX, startY, startX + 1, startY + height, headerBorderColor); //left
-				drawRect(startX + 1, startY, endX - 1, startY + 1, headerBorderColor); //top
-				drawRect(endX - 1, startY, endX, startY + height, headerBorderColor); //right
-				drawRect(startX + 1, startY + 1, endX - 1, startY + height, headerMainColor); //mid
+			boolean anyFocus = false;
+			if (drawParentFocus) {
+				IWindowParent p = getWindowParent();
+				if (p != null) {
+					if (p.hasFocus()) { anyFocus = true; }
+					else {
+						for (IEnhancedGuiObject o : p.getAllChildren()) {
+							if (o.hasFocus()) { anyFocus = true; break; }
+						}
+					}
+				}
 			}
-			if (drawDisplayString) {
-				drawString(displayString, startX + 4, startY + height / 2 - 3, headerStringColor);
+			
+			if (drawBackground) {
+				drawRect(startX, startY, startX + 1, startY + height, borderColor); //left
+				drawRect(startX + 1, startY, endX - 1, startY + 1, borderColor); //top
+				drawRect(endX - 1, startY, endX, startY + height, borderColor); //right
+				drawRect(startX + 1, startY + 1, endX - 1, startY + height, anyFocus ? mainColor + 0x0a0a0a : mainColor); //mid
+			}
+			if (drawTitle) {
+				drawString(title, startX + 4, startY + height / 2 - 3, titleColor);
 			}
 		}
 		super.drawObject(mX, mY, ticks);
@@ -151,8 +164,8 @@ public class EGuiHeader extends EnhancedGuiObject {
 	}
 	
 	public EGuiHeader updateFileUpButtonVisibility() {
-		if (getParent() instanceof InnerEnhancedGui) {
-			InnerEnhancedGui gui = (InnerEnhancedGui) getParent();
+		if (getParent() instanceof WindowParent) {
+			WindowParent gui = (WindowParent) getParent();
 			if (gui != null && gui.getGuiHistory() != null && !gui.getGuiHistory().isEmpty() && fileUpButton != null) {
 				fileUpButton.setVisible(true);
 			}
@@ -169,10 +182,7 @@ public class EGuiHeader extends EnhancedGuiObject {
 	}
 	
 	protected void handleClose() {
-		if (fullClose) {
-			mc.displayGuiScreen(closingGui);
-			if (mc.currentScreen == null) { mc.setIngameFocus(); }
-		} else { parent.close(); }
+		parent.close();
 	}
 	
 	protected void handleMove() {
@@ -192,28 +202,29 @@ public class EGuiHeader extends EnhancedGuiObject {
 	}
 	
 	protected void handleFileUp() {
-		if (getParent() instanceof InnerEnhancedGui) {
-			((InnerEnhancedGui) getParent()).fileUpAndClose();
+		if (getParent() instanceof WindowParent) {
+			((WindowParent) getParent()).fileUpAndClose();
 		}
 		else if (getTopParent() != null) { getTopParent().closeGui(false); }
 	}
 	
-	public EGuiHeader setClosingGui(GuiScreen guiIn) { closingGui = guiIn; return this; }
-	public EGuiHeader setDisplayStringColor(int colorIn) { headerStringColor = colorIn; return this; }
-	public EGuiHeader setBorderColor(int colorIn) { headerBorderColor = colorIn; return this; }
-	public EGuiHeader setMainColor(int colorIn) { headerMainColor = colorIn; return this; }
-	public EGuiHeader setDisplayString(String stringIn) { displayString = stringIn; return this; }
-	public EGuiHeader setFullClose(boolean val) { fullClose = val; return this; }
-	public EGuiHeader setDrawDisplayString(boolean val) { drawDisplayString = val; return this; }
-	public EGuiHeader setDrawBackground(boolean val) { drawBackground = val; return this; }
-	public EGuiHeader setDrawHeader(boolean val) { drawHeader = val; return this; }
 	public EGuiHeader setDrawButtons(boolean val) {
 		if (fileUpButton != null) { fileUpButton.setVisible(val); }
 		if (moveButton != null) { moveButton.setVisible(val); }
 		if (closeButton != null) { closeButton.setVisible(val); }
 		return this;
 	}
-	public int getStringColor() { return headerStringColor; }
-	public String getDisplayString() { return displayString; }
-	public GuiScreen getClosingGui() { return closingGui; }
+	
+	public EGuiHeader setTitleColor(int colorIn) { titleColor = colorIn; return this; }
+	public EGuiHeader setBorderColor(int colorIn) { borderColor = colorIn; return this; }
+	public EGuiHeader setMainColor(int colorIn) { mainColor = colorIn; return this; }
+	public EGuiHeader setTitle(String stringIn) { title = stringIn; return this; }
+	public EGuiHeader setDrawTitle(boolean val) { drawTitle = val; return this; }
+	public EGuiHeader setDrawBackground(boolean val) { drawBackground = val; return this; }
+	public EGuiHeader setDrawHeader(boolean val) { drawHeader = val; return this; }
+	public EGuiHeader setParentFocusDrawn(boolean val) { drawParentFocus = val; return this; }
+	
+	public int getTitleColor() { return titleColor; }
+	public String getTitle() { return title; }
+	public boolean isParentFocusDrawn() { return drawParentFocus; }
 }

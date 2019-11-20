@@ -23,13 +23,13 @@ public class DynamicTextureHandler {
 	}
 
 	public void updateTextureData(BufferedImage newImage) {
-		int[] newImgData = ((DataBufferInt)newImage.getRaster().getDataBuffer()).getData();
-		if (this.textureData.length == newImgData.length) {
+		int[] newImgData = ((DataBufferInt) newImage.getRaster().getDataBuffer()).getData();
+		if (textureData.length == newImgData.length) {
 			for (int i = 0; i < newImgData.length; i++) {
-				this.textureData[i] = newImgData[i];
+				textureData[i] = newImgData[i];
 			}
 		}
-		this.texture.updateDynamicTexture();
+		texture.updateDynamicTexture();
 	}
 
 	public ResourceLocation getTextureLocation() { return location; }

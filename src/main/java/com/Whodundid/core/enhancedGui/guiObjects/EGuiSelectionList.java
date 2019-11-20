@@ -1,7 +1,7 @@
 package com.Whodundid.core.enhancedGui.guiObjects;
 
 import com.Whodundid.core.enhancedGui.guiObjectUtil.TextAreaLine;
-import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.storageUtil.EArrayList;
@@ -13,7 +13,7 @@ import net.minecraft.client.gui.ScaledResolution;
 //First Added: Jan 23, 2019
 //Author: Hunter Bragg
 
-public class EGuiSelectionList extends InnerEnhancedGui implements IEnhancedActionObject {
+public class EGuiSelectionList extends WindowParent implements IEnhancedActionObject {
 	
 	EGuiButton select, cancelSel;
 	EGuiTextArea selectionList;
@@ -52,8 +52,8 @@ public class EGuiSelectionList extends InnerEnhancedGui implements IEnhancedActi
 	@Override
 	public void initGui() {	
 		setHeader(new EGuiHeader(this));
-		header.setDisplayString(headerString);
-		header.setDisplayStringColor(headerStringColor);
+		header.setTitle(headerString);
+		header.setTitleColor(headerStringColor);
 		
 		select = new EGuiButton(this, startX + 10, endY - 28, 80, 20, "Select");
 		cancelSel = new EGuiButton(this, endX - 90, endY - 28, 80, 20, "Cancel");
@@ -99,15 +99,6 @@ public class EGuiSelectionList extends InnerEnhancedGui implements IEnhancedActi
 		}
 	}
 	
-	public EGuiSelectionList setHeaderString(String msgIn) { headerString = msgIn; if (header != null) { header.setDisplayString(msgIn); } return this; }
-	public EGuiSelectionList setHeaderStringColor(int colorIn) { headerStringColor = colorIn; if (header != null) { header.setDisplayStringColor(colorIn); } return this; }
-	public EGuiSelectionList setStoredObject(Object objIn) { storedObject = objIn; return this; }
-	public EGuiSelectionList setAdditionalValues(EArrayList<Object> values) { additionalValues = values; return this; }
-	public String getHeaderString() { return header != null ? header.getDisplayString() : headerString; }
-	public int getHeaderStringColor() { return header != null ? header.getStringColor() : headerStringColor; }
-	public Object getStoredObject() { return storedObject; }
-	public EArrayList<Object> getAdditionalValues() { return additionalValues; }
-	
 	@Override
 	public void onAdded() {
 		bringToFront();
@@ -137,6 +128,16 @@ public class EGuiSelectionList extends InnerEnhancedGui implements IEnhancedActi
 		if (object.equals(select)) { selectCurrentOptionAndClose(); }
 		if (object.equals(cancelSel)) { close(); }
 	}
+	
+	public EGuiSelectionList setHeaderString(String msgIn) { headerString = msgIn; if (header != null) { header.setTitle(msgIn); } return this; }
+	public EGuiSelectionList setHeaderStringColor(int colorIn) { headerStringColor = colorIn; if (header != null) { header.setTitleColor(colorIn); } return this; }
+	public EGuiSelectionList setStoredObject(Object objIn) { storedObject = objIn; return this; }
+	public EGuiSelectionList setAdditionalValues(EArrayList<Object> values) { additionalValues = values; return this; }
+	
+	public String getHeaderString() { return header != null ? header.getTitle() : headerString; }
+	public int getHeaderStringColor() { return header != null ? header.getTitleColor() : headerStringColor; }
+	public Object getStoredObject() { return storedObject; }
+	public EArrayList<Object> getAdditionalValues() { return additionalValues; }
 	
 	@Override public boolean runActionOnPress() { return false; }
 	@Override public EGuiSelectionList setRunActionOnPress(boolean val) { return null; }

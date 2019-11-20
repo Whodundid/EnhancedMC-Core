@@ -9,7 +9,7 @@ import com.Whodundid.core.enhancedGui.guiUtil.exceptions.HeaderAlreadyExistsExce
 import com.Whodundid.core.enhancedGui.guiUtil.exceptions.ObjectInitException;
 import com.Whodundid.core.enhancedGui.types.EnhancedGui;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
-import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
@@ -44,7 +44,6 @@ public class EGuiScrollList extends EnhancedGuiObject {
 	boolean resetVis = false;
 	
 	protected EGuiScrollList() {}
-	
 	public EGuiScrollList(IEnhancedGuiObject parentIn, int xIn, int yIn, int widthIn, int heightIn) {
 		init(parentIn, xIn, yIn, widthIn, heightIn);
 		scrollableWidth = widthIn - 2;
@@ -79,13 +78,10 @@ public class EGuiScrollList extends EnhancedGuiObject {
 		
 		verticalScroll.setVisible(isVScrollDrawn());
 		horizontalScroll.setVisible(isHScrollDrawn());
-		//System.out.println("reset drawn: " + resetVis);
 		reset.setVisible(isResetDrawn());
 		
 		int vScrollPos = verticalScroll.getScrollPos() - verticalScroll.getVisibleAmount();
 		int hScrollPos = horizontalScroll.getScrollPos() - horizontalScroll.getVisibleAmount();
-		
-		//System.out.println(this.getListHeight());
 		
 		int scale = res.getScaleFactor();
 		try {
@@ -106,18 +102,10 @@ public class EGuiScrollList extends EnhancedGuiObject {
 				
 				synchronized (listContents) {
 					for (IEnhancedGuiObject o : listContents) {
-						//System.out.println("das d: " + hScrollPos + " ; " + vScrollPos);
 						if (o.checkDraw()) {
 		    				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		    				EDimension d = o.getDimensions();
 		    				o.setPosition(o.getInitialPosition().getObject() - hScrollPos, o.getInitialPosition().getValue() - vScrollPos);
-		    				
-		    				//debug used to check bounds
-		    				//if (o.isBoundaryEnforced()) {
-		    	    		//	EDimension ed = o.getBoundaryEnforcer();
-		    	    		//	drawRect(ed.startX, ed.startY, ed.endX, ed.endY, 0xffff0000);
-		    	    		//}
-		    				
 		    	        	o.drawObject(mXIn, mYIn, ticks);
 		    			}
 					}
@@ -133,8 +121,6 @@ public class EGuiScrollList extends EnhancedGuiObject {
 		    			}
 					}
 				}
-				//EDimension ed = this.getListDimensions();
-	    		//drawRect(ed.startX + startX + 1, ed.startY + startY + 1, ed.endX + startX + 1, ed.endY + startY + 1, 0xffff0000);
 				
 				GlStateManager.popMatrix();
 			}
@@ -151,8 +137,8 @@ public class EGuiScrollList extends EnhancedGuiObject {
 			while (it.hasNext()) {
 				IEnhancedGuiObject o = it.next();
 				if (!o.isPositionLocked()) {
-					if (o instanceof InnerEnhancedGui) {
-						if (((InnerEnhancedGui) o).movesWithParent()) { o.move(newX, newY); }
+					if (o instanceof WindowParent) {
+						if (((WindowParent) o).movesWithParent()) { o.move(newX, newY); }
 					} else {
 						if (listContents.contains(o)) { o.setInitialPosition(o.getInitialPosition().getObject() + newX, o.getInitialPosition().getValue() + newY); }
 						o.move(newX, newY);
@@ -175,7 +161,6 @@ public class EGuiScrollList extends EnhancedGuiObject {
 		for (IEnhancedGuiObject o : objs) {
 			if (listContents.contains(o) || listObjsToBeAdded.contains(o)) {
 				previousLocations.add(o, new StorageBox(o.getDimensions().startX, o.getDimensions().startY));
-				//System.out.println("get: " + o + " ::::: " + o.getDimensions().startX + " " + loc.getObject() + " : " + ((startX + o.getDimensions().startX) - loc.getObject()));
 			} else {
 				previousLocations.add(o, new StorageBox(o.getDimensions().startX - loc.getObject(), o.getDimensions().startY - loc.getValue()));
 			}
@@ -185,7 +170,6 @@ public class EGuiScrollList extends EnhancedGuiObject {
 			if (listContents.contains(o) || listObjsToBeAdded.contains(o)) {
 				StorageBox<Integer, Integer> oldLoc = previousLocations.getBoxWithObj(o).getValue();
 				o.setPosition((newX + oldLoc.getObject()) - startX, (newY + oldLoc.getValue()) - startY);
-				//System.out.println("set: " + o + " ||||| " + newX + " " + oldLoc.getObject() + " : " + ((newX + oldLoc.getObject()) - startX));
 			} else {
 				StorageBox<Integer, Integer> oldLoc = previousLocations.getBoxWithObj(o).getValue();
 				o.setPosition(newX + oldLoc.getObject(), newY + oldLoc.getValue());
@@ -200,15 +184,6 @@ public class EGuiScrollList extends EnhancedGuiObject {
 			verticalScroll.reset();
 			horizontalScroll.reset();
 		}
-	}
-	
-	public void clearList() {
-		for (IEnhancedGuiObject o : listContents) { removeObject(o); }
-	}
-	
-	@Override
-	public void mousePressed(int mX, int mY, int button) {
-		super.mousePressed(mX, mY, button);
 	}
 	
 	public EDimension getListDimensions() {
@@ -310,7 +285,6 @@ public class EGuiScrollList extends EnhancedGuiObject {
 							}
 						} else { o.relinquishFocus(); }
 						o.onClosed();
-						if (o.equals(border)) { border = null; }
 						if (eventHandler != null) { eventHandler.processEvent(new EventObjects(this, o, ObjectEventType.ObjectRemoved)); }
 						it.remove();
 					}
@@ -349,7 +323,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 					try {
 						o.setParent(this).initObjects();
 						o.setZLevel(getZLevel() + 1);
-						if (o instanceof InnerEnhancedGui) { ((InnerEnhancedGui) o).initGui(); }
+						if (o instanceof WindowParent) { ((WindowParent) o).initGui(); }
 						o.completeInit();
 					} catch (ObjectInitException e) { e.printStackTrace(); }
 					listContents.add(o);
@@ -372,17 +346,20 @@ public class EGuiScrollList extends EnhancedGuiObject {
 		}
 	}
 	
+	public void clearList() { listContents.forEach(o -> removeObject(o)); }
+	
 	public EGuiScrollList setBackgroundColor(int colorIn) { backgroundColor = colorIn; return this; }
+	public EGuiScrollList setVScrollDrawn(boolean valIn) { vScrollVis = valIn; if (verticalScroll != null) { verticalScroll.setVisible(valIn); } updateVisuals(); return this; }
+	public EGuiScrollList setHScrollDrawn(boolean valIn) { hScrollVis = valIn; if (horizontalScroll != null) { horizontalScroll.setVisible(valIn); } updateVisuals(); return this; }
+	public EGuiScrollList setResetDrawn(boolean valIn) { resetVis = valIn; if (reset != null) { reset.setVisible(valIn); } updateVisuals(); return this; }
+	public EGuiScrollList renderVScrollBarThumb(boolean val) { if (verticalScroll != null) { verticalScroll.setRenderThumb(val); } else { vScrollVis = val; } return this; }
+	public EGuiScrollList renderHScrollBarThumb(boolean val) { if (horizontalScroll != null) { horizontalScroll.setRenderThumb(val); } else { hScrollVis = val; } return this; }
+	
 	public int getListHeight() { return scrollableHeight - (isHScrollDrawn() ? horizontalScroll.getDimensions().height : 0); }
 	public int getListWidth() { return scrollableWidth - (isVScrollDrawn() ? verticalScroll.getDimensions().width : 0); }
 	public boolean isVScrollDrawn() { return vScrollVis && (verticalScroll != null ? verticalScroll.getHighVal() > verticalScroll.getVisibleAmount() : false); }
 	public boolean isHScrollDrawn() { return hScrollVis && (horizontalScroll != null ? horizontalScroll.getHighVal() > horizontalScroll.getVisibleAmount() : false); }
 	public boolean isResetDrawn() { return resetVis && (isVScrollDrawn() || isHScrollDrawn()); }
-	public EGuiScrollList setVScrollDrawn(boolean valIn) { vScrollVis = valIn; if (verticalScroll != null) { verticalScroll.setVisible(valIn); } updateVisuals(); return this; }
-	public EGuiScrollList setHScrollDrawn(boolean valIn) { hScrollVis = valIn; if (horizontalScroll != null) { horizontalScroll.setVisible(valIn); } updateVisuals(); return this; }
-	public EGuiScrollList setResetDrawn(boolean valIn) { resetVis = valIn; if (reset != null) { reset.setVisible(valIn); } updateVisuals(); return this; }
 	public EGuiScrollBar getVScrollBar() { return verticalScroll; }
 	public EGuiScrollBar getHScrollBar() { return horizontalScroll; }
-	public EGuiScrollList renderVScrollBarThumb(boolean val) { if (verticalScroll != null) { verticalScroll.setRenderThumb(val); } else { vScrollVis = val; } return this; }
-	public EGuiScrollList renderHScrollBarThumb(boolean val) { if (horizontalScroll != null) { horizontalScroll.setRenderThumb(val); } else { hScrollVis = val; } return this; }
 }

@@ -15,6 +15,7 @@ public class EGuiRect extends EnhancedGuiObject {
 	@Override
 	public void drawObject(int mXIn, int mYIn, float ticks) {
 		drawRect(startX, startY, endX, endY, color);
+		super.drawObject(mXIn, mYIn, ticks);
 	}
 
 	public EGuiRect setColor(int colorIn) { color = colorIn; return this; }

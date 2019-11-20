@@ -11,17 +11,6 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 
-//Jan 2, 2019
-//Jan 11, 2019
-//Mar 9, 2019 : Added some documentation.
-//Mar 26, 2019 : implemented listeners
-//Jun 5, 2019 : reimplemented listeners
-//Jul 14, 2019 : rewrote listener system entirely
-//Last edited: Aug 9, 2019
-//Edit note: Added hovering text functionality, moved top level mouse checks to IEnhancedTopParent, finished documentation.
-//First Added: Oct 2, 2018
-//Author: Hunter Bragg
-
 /** An interface outlining behavior for Enhanced Gui Objects. */
 public interface IEnhancedGuiObject {
 	
@@ -37,8 +26,6 @@ public interface IEnhancedGuiObject {
 	public void reInitObjects() throws ObjectInitException;
 	/** Event called when this object has actually been added to its parent. */
 	public void onAdded();
-	/** Clears the object's current paramaters and attempts to reinitialize. (NOT SURE IF ADDING) */
-	//public void reInit(int newWidth, int newHeight);
 	
 	//main draw
 	
@@ -76,6 +63,7 @@ public interface IEnhancedGuiObject {
 	public boolean isVisible();
 	/** Returns true if this object will be drawn regardless of it being visible or enabled. */
 	public boolean isPersistent();
+	public boolean isPinned();
 	/** Returns true if this object's mouse checks are enforced by a boundary. */
 	public boolean isBoundaryEnforced();
 	/** Set this object's enabled state. */
@@ -84,6 +72,8 @@ public interface IEnhancedGuiObject {
 	public IEnhancedGuiObject setVisible(boolean val);
 	/** Sets this object to be drawn regardless of it being visible or enabled. */
 	public IEnhancedGuiObject setPersistent(boolean val);
+	/** Sets this object to remain drawn on the renderer even when an IRendererProxy gui is displayed. */
+	public IEnhancedGuiObject setPinned(boolean val);
 	/** Specifies a region that this object will adhere to for mouse checks. */
 	public IEnhancedGuiObject setBoundaryEnforcer(EDimension dimIn);
 	/** Returns an EDimension object containing the boundary this object is bounded by */
@@ -105,6 +95,10 @@ public interface IEnhancedGuiObject {
 	public int getMaximumWidth();
 	/** Returns the maximum height that this object can have. */
 	public int getMaximumHeight();
+	/** Sets both the minimum width and height for this object. */
+	public IEnhancedGuiObject setMinimumDims(int widthIn, int heightIn);
+	/** Sets both the maximum width and height for this object. */
+	public IEnhancedGuiObject setMaximumDims(int widthIn, int heightIn);
 	/** Sets the minimum width for this object when resizing. */
 	public IEnhancedGuiObject setMinimumWidth(int widthIn);
 	/** Sets the minimum height for this object when resizing. */
@@ -135,8 +129,11 @@ public interface IEnhancedGuiObject {
 	public IEnhancedGuiObject setDimensions(EDimension dimIn);
 	/** Specifies this objects position, width, and height. (x, y, width, height) */
 	public IEnhancedGuiObject setDimensions(int startXIn, int startYIn, int widthIn, int heightIn);
+	/** Specifies the position this object will relocate to when its' position is reset. */
 	public IEnhancedGuiObject setInitialPosition(int startXIn, int startYIn);
+	/** Returns the position this object will relocate to when reset. */
 	public StorageBox<Integer, Integer> getInitialPosition();
+	/** Centers the object around the center of the screen with proper dimensions. */
 	public IEnhancedGuiObject centerObjectWithSize(int widthIn, int heightIn);
 	/** Returns the current dimensions of this object. */
 	public EDimension getDimensions();
@@ -218,6 +215,10 @@ public interface IEnhancedGuiObject {
 	public boolean isMouseInside(int mX, int mY);
 	/** Returns true if the mouse is currently inside this object and that this is the top most object insideo fthe parent. */
 	public boolean isMouseHover(int mX, int mY);
+	/** Returns true if this object can be clicked on. */
+	public boolean isClickable();
+	/** Specifies if this object can be clicked on. */
+	public IEnhancedGuiObject setClickable(boolean valIn);
 	
 	//basic inputs
 	

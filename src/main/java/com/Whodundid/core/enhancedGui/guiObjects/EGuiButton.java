@@ -54,7 +54,6 @@ public class EGuiButton extends EnhancedActionObject implements IEnhancedActionO
 		if (drawBackground) { drawRect(startX, startY, endX, endY, backgroundColor); }
 		boolean mouseHover = isMouseHover(mX, mY);
 		boolean mouseCheck = !Mouse.isButtonDown(0) && mouseHover;
-		//int stringColor = isEnabled() ? (isMouseHover ? (color == 14737632 ? textHoverColor : color) : color) : 0x979797;
 		int stringColor = isEnabled() ? (mouseCheck ? (color == 14737632 ? textHoverColor : color) : color) : color + 0xbbbbbb;
 		displayLabel.setDisplayStringColor(stringColor);
 		if (drawDefault) {
@@ -67,7 +66,6 @@ public class EGuiButton extends EnhancedActionObject implements IEnhancedActionO
 			GlStateManager.enableBlend();
 	        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 	        GlStateManager.blendFunc(770, 771);
-	    	//if (!isEnabled()) { stringColor = 0xaaaaaa; }
 	    	displayLabel.setDisplayStringColor(stringColor);
 	    	if (usingBaseTexture || usingBaseSelTexture) {
 	    		if (stretchBaseTextures) {
@@ -88,9 +86,8 @@ public class EGuiButton extends EnhancedActionObject implements IEnhancedActionO
 	            		drawTexturedModalRect(startX + width - 2, startY, 198, 0 + offset, 2, i);
 					}
 				}
-			} else {
-				drawModalRectWithCustomSizedTexture(startX, startY, 0, 0, width, height, width, height);
 			}
+	    	else { drawModalRectWithCustomSizedTexture(startX, startY, 0, 0, width, height, width, height); }
 		}
 		if (!isEnabled()) { drawRect(startX, startY, endX, endY, 0x77000000); }
 		super.drawObject(mX, mY, ticks);
@@ -177,7 +174,6 @@ public class EGuiButton extends EnhancedActionObject implements IEnhancedActionO
 		
 	public static void playPressSound() { mc.getSoundHandler().playSound(PositionedSoundRecord.create(Resources.buttonSound, 1.0F)); }
 	
-	public int getPressedButton() { return pressedButton; }
 	public EGuiButton setDisplayString(String stringIn) { displayLabel.setDisplayString(stringIn); return this; }
 	public EGuiButton setDisplayStringColor(int colorIn) { color = colorIn; return this; }
 	public EGuiButton setDisplayStringHoverColor(int colorIn) { textHoverColor = colorIn; return this; }
@@ -191,6 +187,8 @@ public class EGuiButton extends EnhancedActionObject implements IEnhancedActionO
 	public EGuiButton setTrueFalseButton(boolean val, ModSetting settingIn) { return setTrueFalseButton(val, settingIn != null ? settingIn.get() : false); }
 	public EGuiButton setTrueFalseButton(boolean val, boolean initial) { trueFalseButton = val; updateTrueFalseDisplay(initial); return this; }
 	public EGuiButton setDrawString(boolean val) { drawString = val; return this; }
+	
+	public int getPressedButton() { return pressedButton; }
 	public String getDisplayString() { return displayLabel.getDisplayString(); }
 	public EGuiLabel getDisplayLabel() { return displayLabel; }
 }

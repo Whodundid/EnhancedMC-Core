@@ -6,7 +6,7 @@ import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiLabel;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiRect;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextArea;
-import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.renderer.EnhancedMCRenderer;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.util.storageUtil.EArrayList;
@@ -22,18 +22,18 @@ public class IncompatibleWindowList extends EGuiDialogueBox {
 	EGuiTextArea incompatibleList;
 	int longest = 0;
 	
-	public IncompatibleWindowList(IEnhancedGuiObject parentIn) {
-		init(parentIn);
+	public IncompatibleWindowList() {
+		init(EnhancedMCRenderer.getInstance());
 		centerObjectWithSize(272, 200);
-		requestFocus();
-		getTopParent().setFocusLockObject(this);
-		setZLevel(99999);
-		setResizeable(true);
-		setMinimumWidth(160).setMinimumHeight(101);
+		mInit();
 	}
 	
-	public IncompatibleWindowList(IEnhancedGuiObject parentIn, int xPos, int yPos, int width, int height) {
-		init(parentIn, xPos, yPos, width, height);
+	public IncompatibleWindowList(int xPos, int yPos, int width, int height) {
+		init(EnhancedMCRenderer.getInstance(), xPos, yPos, width, height);
+		mInit();
+	}
+	
+	private void mInit() {
 		requestFocus();
 		getTopParent().setFocusLockObject(this);
 		setZLevel(99999);
@@ -75,7 +75,6 @@ public class IncompatibleWindowList extends EGuiDialogueBox {
 					SubMod m = box.getObject();
 					incompatibleList.addTextLine("   - " + EnumChatFormatting.RED + "requires " + EnumChatFormatting.YELLOW + 
 												 m.getName() + EnumChatFormatting.RED + " version '" + box.getValue() + "'", 0xb2b2b2);
-												 //+ EnumChatFormatting.GRAY + " :" + EnumChatFormatting.WHITE + " (" + (m.isIncompatible() ? "Incompatible" : m.getVersion()) + ")", 0xb2b2b2);
 				}
 				
 				if (mods.indexOf(s) < mods.size() - 1) { incompatibleList.addTextLine(); }
@@ -84,17 +83,7 @@ public class IncompatibleWindowList extends EGuiDialogueBox {
 		
 		addObject(problem);
 		
-		//TextAreaLine l = incompatibleList.getLongestLine();
-		//longest = l != null ? fontRenderer.getStringWidth(l.getText()) : 0;
-		
-		
-		setDisplayStringColor(0xc2c2c2);
-		setDisplayString("SubMod Incompatibility");
-	}
-	
-	@Override
-	public void onAdded() {
-		int diffX = width - longest;
-		//resize(diffX, 0, ScreenLocation.right);
+		setTitleColor(0xc2c2c2);
+		setTitle("SubMod Incompatibility");
 	}
 }

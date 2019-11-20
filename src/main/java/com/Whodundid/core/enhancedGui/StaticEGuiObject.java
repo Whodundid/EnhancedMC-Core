@@ -13,7 +13,7 @@ import com.Whodundid.core.enhancedGui.guiUtil.exceptions.HeaderAlreadyExistsExce
 import com.Whodundid.core.enhancedGui.guiUtil.exceptions.ObjectInitException;
 import com.Whodundid.core.enhancedGui.types.EnhancedGui;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
-import com.Whodundid.core.enhancedGui.types.InnerEnhancedGui;
+import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
@@ -103,8 +103,8 @@ public class StaticEGuiObject {
 			while (it.hasNext()) {
 				IEnhancedGuiObject o = it.next();
 				if (!o.isPositionLocked()) {
-					if (o instanceof InnerEnhancedGui) {
-						if (((InnerEnhancedGui) o).movesWithParent()) { o.move(newX, newY); }
+					if (o instanceof WindowParent) {
+						if (((WindowParent) o).movesWithParent()) { o.move(newX, newY); }
 					} else { o.move(newX, newY); }
 				}
 			}
@@ -177,7 +177,7 @@ public class StaticEGuiObject {
 							throw new HeaderAlreadyExistsException(parent.getHeader());
 						}
 						try {
-							if (o instanceof InnerEnhancedGui) { ((InnerEnhancedGui) o).initGui(); }
+							if (o instanceof WindowParent) { ((WindowParent) o).initGui(); }
 							o.setParent(parent).initObjects();
 							o.setZLevel(parent.getZLevel() + o.getZLevel() + 1);
 							if (parent.isBoundaryEnforced()) { o.setBoundaryEnforcer(parent.getBoundaryEnforcer()); }
@@ -249,10 +249,10 @@ public class StaticEGuiObject {
 		boolean left = false, right = false, top = false, bottom = false;
 		EDimension d = objIn.getDimensions();
 		int rStartY = objIn.hasHeader() ? objIn.getHeader().startY : d.startY;
-		if (mX >= d.startX && mX <= d.startX + 1) { left = true; }
-		if (mX <= d.endX && mX >= d.endX - 1) { right = true; }
-		if (mY >= rStartY && mY <= rStartY + 1) { top = true; }
-		if (mY <= d.endY && mY >= d.endY - 1) { bottom = true; }
+		if (mX >= d.startX && mX <= d.startX) { left = true; }
+		if (mX <= d.endX && mX >= d.endX - 2) { right = true; }
+		if (mY >= rStartY && mY <= rStartY + 2) { top = true; }
+		if (mY <= d.endY && mY >= d.endY - 2) { bottom = true; }
 		if (objIn.checkDraw() && !(left || right || top || bottom)) { return ScreenLocation.out; }
 		if (left) {
 			if (top) { return ScreenLocation.topLeft; }
@@ -278,8 +278,6 @@ public class StaticEGuiObject {
 			objIn.getTopParent().setModifyMousePos(mX, mY);
 			objIn.getTopParent().setModifyingObject(objIn, ObjectModifyType.Resize);
 		}
-		//IEnhancedGuiObject window = objIn.getWindowParent();
-		//if (window instanceof InnerEnhancedGui) { window.bringToFront(); }
 	}
 	public static void mouseReleased(IEnhancedGuiObject objIn, int mX, int mY, int button) {
 		objIn.postEvent(new EventMouse(objIn, mX, mY, button, MouseType.Released));

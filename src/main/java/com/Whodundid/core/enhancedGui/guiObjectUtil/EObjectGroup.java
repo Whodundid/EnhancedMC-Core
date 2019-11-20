@@ -5,6 +5,7 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
 import java.util.Iterator;
+import java.util.List;
 
 //Last edited: Jan 10, 2019
 //First Added: Jan 10, 2019
@@ -23,8 +24,19 @@ public class EObjectGroup {
 	
 	/** does not accept duplicates */
 	public EObjectGroup addObject(IEnhancedGuiObject... objectIn) {
-		for (IEnhancedGuiObject o : objectIn) {
-			if (objects.notContains(o)) { objects.add(o); }
+		if (objectIn != null) {
+			for (IEnhancedGuiObject o : objectIn) {
+				objects.addIfNotContains(o);
+			}
+		}
+		return this;
+	}
+	
+	public EObjectGroup addObjects(List<IEnhancedGuiObject> objectsIn) {
+		if (objectsIn != null) {
+			for (IEnhancedGuiObject o : objectsIn) {
+				objects.addIfNotContains(o);
+			}
 		}
 		return this;
 	}
@@ -55,7 +67,8 @@ public class EObjectGroup {
 		return false;
 	}
 	
-	public EArrayList<IEnhancedGuiObject> getObjects() { return objects; }
 	public EObjectGroup setGroupParent(IEnhancedGuiObject parentIn) { groupParent = parentIn; return this; }
+	
+	public EArrayList<IEnhancedGuiObject> getObjects() { return objects; }
 	public IEnhancedGuiObject getGroupParent() { return groupParent; }
 }
