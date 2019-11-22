@@ -32,10 +32,6 @@ public class CursorHelper {
 		invisibleCursor = createCursorFromResourceLocation(Resources.emptyPixel);
 	}
 	
-	public static void reset() {
-		setCursor(cursor);
-	}
-	
 	public static void setCursorVisibility(boolean visible) {
 		if (isVisible != visible) {
 			try {
@@ -125,5 +121,13 @@ public class CursorHelper {
 			return createdCursor;			
 		} catch (Exception e) { e.printStackTrace(); }
 		return null;
+	}
+	
+	public static void reset() { setCursor(cursor); }
+	public static boolean isNormalCursor() {
+		if (Mouse.isCreated() && Mouse.getNativeCursor() != null) {
+			return Mouse.getNativeCursor().equals(cursor);
+		}
+		return false;
 	}
 }
