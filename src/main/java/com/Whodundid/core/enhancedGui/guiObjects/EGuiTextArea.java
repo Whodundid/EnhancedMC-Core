@@ -121,7 +121,7 @@ public class EGuiTextArea<obj> extends EGuiScrollList {
 		if (lineIn != null && textDocument.contains(lineIn)) {
 			currentLine = lineIn;
 			if (makeDrawn && currentLine != null) {
-				currentLine.requestFocus();
+				//currentLine.requestFocus();
 				//makeLineNumberDrawn(currentLine.getLineNumber());
 			}
 		}

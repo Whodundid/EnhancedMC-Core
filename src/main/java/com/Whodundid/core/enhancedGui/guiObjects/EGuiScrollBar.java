@@ -105,7 +105,6 @@ public class EGuiScrollBar extends EnhancedGuiObject {
 			if (vertical) { moveThumb(0, mY - mousePos.getValue()); }
 			else { moveThumb(mX - mousePos.getObject(), 0); }
 			mousePos.setValues(mX, mY);
-			//System.out.println("scroll val: " + this.getScrollPos());
 		}
 		drawRect(startX, startY, startX + width, startY + height, 0xff666666);
 		if (renderThumb) { drawRect(thumbStartX, thumbStartY, thumbEndX, thumbEndY, (isMouseInThumb(mX, mY) || isScrolling) ? 0xffffffff : 0xffbbbbbb); }

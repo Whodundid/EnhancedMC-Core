@@ -63,6 +63,7 @@ public interface IEnhancedGuiObject {
 	public boolean isVisible();
 	/** Returns true if this object will be drawn regardless of it being visible or enabled. */
 	public boolean isPersistent();
+	/** Returns true if this object will remain on the hud when a RendererProxyGui is closed. */
 	public boolean isPinned();
 	/** Returns true if this object's mouse checks are enforced by a boundary. */
 	public boolean isBoundaryEnforced();
@@ -205,7 +206,9 @@ public interface IEnhancedGuiObject {
 	
 	//mouse checks
 	
+	/** Returns true if the mouse is on the edge of an object. */
 	public boolean isMouseOnObjEdge(int mX, int mY);
+	/** Returns the edge type that the mouse is currently hovering over, if any. */
 	public ScreenLocation getEdgeAreaMouseIsOn();
 	/** Event fired upon the mouse entering this object. */
 	public void mouseEntered(int mX, int mY);

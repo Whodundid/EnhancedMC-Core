@@ -45,14 +45,36 @@ F   6. When reloading mod configs from the SettingsGuiMain, the results are not 
     
 F   9. If a focusLockObject is present, the flashing red border only displays once and never again until reset.
     
-    10. When the fileUpButton is pressed, the new gui does not recieve focus.
+F   10. When the fileUpButton is pressed, the new gui does not recieve focus.
     
-    11. FocusLockObject logic is messing up quite hard allowing non headers and focusLockObjects to get focus somehow.
+F   11. FocusLockObject logic is messing up quite hard allowing non headers and focusLockObjects to get focus somehow.
+            -Caused by clicking on objects close to the edge of the parent they are in
     
-    12. Right clicking the move button on headers does not reset the window's position.
+C   12. Right clicking the move button on headers does not reset the window's position.
+        --This is probably something that should be left behind at this point now that I think about it
     
-    13. When closing objects, the cursor will become stuck in a resizing image state if the mouse was on a resizeable object's edge when it was closed.
+F   13. When closing objects, the cursor will become stuck in a resizing image state if the mouse was on a resizeable object's edge when it was closed.
+            -Added a check for the EnhancedMCRenerer on pre draw that checks if the cursor has been changed and resets it if there isn't a resizeable object underneath mouse
 
+F-  14. Focus is bugging out randomly. Certain things will not correctly update focus, and sometimes things teleport around.
+            -If you click and immediately move the mouse after, the object does not record the mosue release properly
+            -The issue appears to be specific to headers with the way they actually clear their modifying state
+            -Fixed by clearing the renderer's modify object on header draw calls
+                -Introduces another issue that the movement button no longer works when pressed and released..
+            
+F?  15. When a new gui is opened, it does not get focus.
+        --Mostly fixed. There are some visual annoyances with headers due to the way that focus is passed around multiple draw cycles
+            -Removed the super.mousePressed call in EGuiButtons and it appears to have visually fixed this (possible unintended consequences)
+    
+    16. Objects are drawn below rendered items in the player's hotbar.
+    
+F   17. Cannot click on scrollbars for some reason.
+            -onFocusLost was never being called when the topParent's focused object was cleared
+    
+F?  18. When resizing an object, its' focus is lost.
+            -Removed the updateFoucs method from clearing the mofidying type
+            --Removed Line: 'if (mod != null && !mod.isResizeable() && mType.equals(ObjectModifyType.Resize)) { objIn.setModifyingObject(mod, ObjectModifyType.None); }'
+    
 
 
 EnhancedChat: (MAIN PRIORITY AFTER CORE)
@@ -135,4 +157,13 @@ Unfinished/Planned Core Features
 Fixed Bugs
 ----------
 
-1.
+1. Object window z-layering
+6. When reloading mod configs from the SettingsGuiMain, the results are not displayed in chat.
+9. If a focusLockObject is present, the flashing red border only displays once and never again until reset.
+10. When the fileUpButton is pressed, the new gui does not recieve focus.
+11. FocusLockObject logic is messing up quite hard allowing non headers and focusLockObjects to get focus somehow.
+13. When closing objects, the cursor will become stuck in a resizing image state if the mouse was on a resizeable object's edge when it was closed.
+14. Focus is bugging out randomly. Certain things will not correctly update focus, and sometimes things teleport around.
+15. When a new gui is opened, it does not get focus.
+17. Cannot click on scrollbars for some reason.
+18. When resizing an object, its' focus is lost.

@@ -20,7 +20,6 @@ public class EMCGuiSelectionList extends EGuiSelectionList {
 		listContents = buildList();
 		defaultSelectionObject = null;
 		actionReciever = this;
-		requestFocus();
 		setZLevel(10000);
 	}
 	

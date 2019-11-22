@@ -3,6 +3,7 @@ package com.Whodundid.core.enhancedGui.types;
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.debug.DebugFunctions;
 import com.Whodundid.core.enhancedGui.StaticEGuiObject;
+import com.Whodundid.core.enhancedGui.StaticTopParent;
 import com.Whodundid.core.enhancedGui.guiObjectUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiFocusLockBorder;
@@ -580,8 +581,6 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	}
 	
 	//mouse checks
-	@Override public boolean isMouseOnObjEdge(int mX, int mY) { return checkDraw() && !getEdgeAreaMouseIsOn().equals(ScreenLocation.out); }
-	@Override public ScreenLocation getEdgeAreaMouseIsOn() { return StaticEGuiObject.getEdgeAreaMouseIsOn(this, mX, mY); }
 	@Override public void mouseEntered(int mX, int mY) { postEvent(new EventMouse(this, mX, mY, -1, MouseType.Entered)); }
 	@Override public void mouseExited(int mX, int mY) { postEvent(new EventMouse(this, mX, mY, -1, MouseType.Exited)); }
 	@Override public boolean isMouseInside(int mX, int mY) { return mX >= startX && mX <= endX && mY >= startY && mY <= endY; }
@@ -661,22 +660,18 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override public IEnhancedGuiObject getObjectWithHoveringText() { return hoveringTextObject; }
 	
 	//objects
-	public IEnhancedGuiObject getHighestZLevelObject() {
-		EArrayList<IEnhancedGuiObject> objs = getImmediateChildren();
-		if (objs.isNotEmpty()) {
-			IEnhancedGuiObject highest = objs.get(0);
-			for (IEnhancedGuiObject o : getImmediateChildren()) {
-				if (o.getZLevel() > highest.getZLevel()) { highest = o; }
-			}
-			return highest;
-		}
-		return null;
+	@Override public IEnhancedGuiObject getHighestZLevelObject() { return StaticTopParent.getHighestZLevelObject(this); }
+	@Override public IEnhancedGuiObject removeUnpinnedObjects() {
+		guiObjects.stream().filter(o -> !o.isPinned()).forEach(o -> removeObject(o));
+		objsToBeAdded.stream().filter(o -> !o.isPinned()).forEach(o -> removeObject(o));
+		return this;
 	}
 	
 	//focus
 	@Override public IEnhancedGuiObject getDefaultFocusObject() { return defaultFocusObject; }
 	@Override public EnhancedGui setDefaultFocusObject(IEnhancedGuiObject objIn) { defaultFocusObject = objIn; return this; }
 	@Override public IEnhancedGuiObject getFocusedObject() { return focusedObject; }
+	@Override public IEnhancedTopParent setFocusedObject(IEnhancedGuiObject objIn) { focusedObject = objIn; return this; }
 	@Override public EnhancedGui setObjectRequestingFocus(IEnhancedGuiObject objIn) { focusQueue.add(new EventFocus(this, objIn, FocusType.Transfer)); return this; }
 	@Override public IEnhancedGuiObject getFocusLockObject() { return focusLockObject; }
 	@Override public EnhancedGui setFocusLockObject(IEnhancedGuiObject objIn) {
@@ -756,6 +751,8 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override public EnhancedGui clearModifyingObject() { modifyingObject = null; modifyType = ObjectModifyType.None; return this; }
 	
 	//mouse checks
+	@Override public boolean isMouseOnObjEdge(int mX, int mY) { return checkDraw() && !getEdgeAreaMouseIsOn().equals(ScreenLocation.out); }
+	@Override public ScreenLocation getEdgeAreaMouseIsOn() { return StaticEGuiObject.getEdgeAreaMouseIsOn(this, mX, mY); }
 	@Override public boolean isMouseInsideObject(int mX, int mY) { return getHighestZObjectUnderMouse() != null; }
 	@Override
 	public boolean isMouseInsideHeader(int mX, int mY) {

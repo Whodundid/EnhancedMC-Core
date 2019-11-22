@@ -197,23 +197,22 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	public void updateCursorImage() {
 		if (isResizeable() && !EnhancedMC.safeRemoteDesktopMode) {
 			int rStartY = hasHeader() ? getHeader().startY : startY;
-			boolean inside = (mX >= startX && mX <= endX && mY >= rStartY && mY <= endY);
 			ScreenLocation newArea = getEdgeAreaMouseIsOn();
 			if (newArea != oldArea) {
 				if (!Mouse.isButtonDown(0)) {
 					oldArea = newArea;
 					switch (newArea) {
 					case top:
-					case bot: if (inside) { CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeNS)); }
+					case bot: CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeNS));
 					break;
 					case left:
-					case right: if (inside) { CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeEW)); }
+					case right: CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeEW));
 					break;
 					case topRight:
-					case botLeft: if (inside) { CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeDL)); }
+					case botLeft: CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeDL));
 					break;
 					case topLeft:
-					case botRight: if (inside) { CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeDR)); }
+					case botRight: CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeDR));
 					break;
 					default: CursorHelper.setCursor(null); break;
 					}
@@ -367,12 +366,13 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 		}
 	}
 	@Override public EnhancedGuiObject requestFocus() {
-		if (!hasFocus()) { getTopParent().setObjectRequestingFocus(this); }
+		//System.out.println(this + " is requesting focus");
+		getTopParent().setObjectRequestingFocus(this);
 		return this;
 	}
 	
 	//mouse checks
-	@Override public boolean isMouseOnObjEdge(int mX, int mY) { return checkDraw() && !getEdgeAreaMouseIsOn().equals(ScreenLocation.out); }
+	@Override public boolean isMouseOnObjEdge(int mX, int mY) { return checkDraw() && getEdgeAreaMouseIsOn() != ScreenLocation.out; }
 	@Override public ScreenLocation getEdgeAreaMouseIsOn() { return StaticEGuiObject.getEdgeAreaMouseIsOn(this, mX, mY); }
 	@Override public void mouseEntered(int mX, int mY) { postEvent(new EventMouse(this, mX, mY, -1, MouseType.Entered)); }
 	@Override public void mouseExited(int mX, int mY) { postEvent(new EventMouse(this, mX, mY, -1, MouseType.Exited)); }

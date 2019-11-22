@@ -110,8 +110,8 @@ public class EGuiButton extends EnhancedActionObject implements IEnhancedActionO
 	
 	@Override
 	public void mousePressed(int mX, int mY, int button) {
+		//super.mousePressed(mX, mY, button);
 		if (hasFocus()) { pressButton(button); }
-		super.mousePressed(mX, mY, button);
     }
 	
 	@Override

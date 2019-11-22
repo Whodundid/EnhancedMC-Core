@@ -29,12 +29,14 @@ public interface IEnhancedTopParent extends IEnhancedGuiObject {
 	//objects
 	
 	public IEnhancedGuiObject getHighestZLevelObject();
+	public IEnhancedGuiObject removeUnpinnedObjects();
 	
 	//focus
 	
 	public IEnhancedGuiObject getDefaultFocusObject();
 	public IEnhancedTopParent setDefaultFocusObject(IEnhancedGuiObject objIn);
 	public IEnhancedGuiObject getFocusedObject();
+	public IEnhancedTopParent setFocusedObject(IEnhancedGuiObject objIn);
 	public IEnhancedTopParent setObjectRequestingFocus(IEnhancedGuiObject objIn);
 	public IEnhancedGuiObject getFocusLockObject();
 	public IEnhancedTopParent setFocusLockObject(IEnhancedGuiObject objIn);
@@ -56,6 +58,10 @@ public interface IEnhancedTopParent extends IEnhancedGuiObject {
 	
 	//mouse checks
 	
+	/** Returns true if the mouse is on the edge of an object. */
+	public boolean isMouseOnObjEdge(int mX, int mY);
+	/** Returns the edge type that the mouse is currently hovering over, if any. */
+	public ScreenLocation getEdgeAreaMouseIsOn();
 	/** Returns true if the mouse is inside of any object. */
 	public boolean isMouseInsideObject(int mX, int mY);
 	/** Returns true if the mouse is inside of an EGuiHeader object. */

@@ -80,7 +80,6 @@ public class RendererProxyGui extends GuiChat implements IRendererProxy {
 		mX = (Mouse.getEventX() * width / mc.displayWidth);
 		mY = (height - Mouse.getEventY() * height / mc.displayHeight - 1);
 		int button = Mouse.getEventButton();
-
 		renderer.parseMousePosition(mX, mY);
 
 		if (Mouse.hasWheel()) {

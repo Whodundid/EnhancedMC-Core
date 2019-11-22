@@ -249,30 +249,32 @@ public class StaticEGuiObject {
 		boolean left = false, right = false, top = false, bottom = false;
 		EDimension d = objIn.getDimensions();
 		int rStartY = objIn.hasHeader() ? objIn.getHeader().startY : d.startY;
-		if (mX >= d.startX && mX <= d.startX) { left = true; }
-		if (mX <= d.endX && mX >= d.endX - 2) { right = true; }
-		if (mY >= rStartY && mY <= rStartY + 2) { top = true; }
-		if (mY <= d.endY && mY >= d.endY - 2) { bottom = true; }
-		if (objIn.checkDraw() && !(left || right || top || bottom)) { return ScreenLocation.out; }
-		if (left) {
-			if (top) { return ScreenLocation.topLeft; }
-			else if (bottom) { return ScreenLocation.botLeft; }
-			else { return ScreenLocation.left; }
+		if (mX >= d.startX - 2 && mX <= d.endX + 1 && mY >= rStartY - 1 && mY <= d.endY + 1) {
+			if (mX >= d.startX - 2 && mX <= d.startX) { left = true; }
+			if (mX >= d.endX - 1 && mX <= d.endX + 1) { right = true; }
+			if (mY >= rStartY - 1 && mY <= rStartY) { top = true; }
+			if (mY >= d.endY - 1 && mY <= d.endY + 1) { bottom = true; }
+			if (left) {
+				if (top) { return ScreenLocation.topLeft; }
+				else if (bottom) { return ScreenLocation.botLeft; }
+				else { return ScreenLocation.left; }
+			}
+			else if (right) {
+				if (top) { return ScreenLocation.topRight; }
+				else if (bottom) { return ScreenLocation.botRight; }
+				else { return ScreenLocation.right; }
+			} 
+			else if (top) { return ScreenLocation.top; }
+			else if (bottom) { return ScreenLocation.bot; }
 		}
-		else if (right) {
-			if (top) { return ScreenLocation.topRight; }
-			else if (bottom) { return ScreenLocation.botRight; }
-			else { return ScreenLocation.right; }
-		} 
-		else if (top) { return ScreenLocation.top; }
-		else { return ScreenLocation.bot; }
+		return ScreenLocation.out;
 	}
 	
 	//basic inputs
 	public static void parseMousePosition(IEnhancedGuiObject objIn, int mX, int mY) { objIn.getImmediateChildren().stream().filter(o -> o.isMouseInside(mX, mY)).forEach(o -> o.parseMousePosition(mX, mY)); }
 	public static void mousePressed(IEnhancedGuiObject objIn, int mX, int mY, int button) {
 		objIn.postEvent(new EventMouse(objIn, mX, mY, button, MouseType.Pressed));
-		if (objIn.isMouseHover(mX, mY)) { objIn.requestFocus(); }
+		if (!objIn.hasFocus() && objIn.isMouseHover(mX, mY)) { objIn.requestFocus(); }
 		if (button == 0 && objIn.isResizeable() && !objIn.getEdgeAreaMouseIsOn().equals(ScreenLocation.out)) {
 			objIn.getTopParent().setResizingDir(objIn.getEdgeAreaMouseIsOn());
 			objIn.getTopParent().setModifyMousePos(mX, mY);
@@ -294,6 +296,7 @@ public class StaticEGuiObject {
 		if (objIn.getTopParent() != null && keyCode == 15) {
 			EArrayList<IEnhancedGuiObject> objs = objIn.getImmediateChildren();
 			EArrayList<IEnhancedGuiObject> pObjs = objIn.getTopParent().getImmediateChildren();
+			//I have no idea if this code even works
 			if (objs != null) {
 				if (objs.isEmpty()) {
 					int thisObjPos = 0;

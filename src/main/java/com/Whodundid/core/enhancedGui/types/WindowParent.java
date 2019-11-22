@@ -93,31 +93,28 @@ public abstract class WindowParent extends EnhancedGuiObject implements IWindowP
 	
 	public void fileUpAndClose() {
 		if (!guiHistory.isEmpty() && guiHistory.peek() != null) {
-			try {
-				Object oldGuiPass = guiHistory.pop();
-				if (oldGuiPass instanceof WindowParent) {
+			Object oldGuiPass = guiHistory.pop();
+			if (oldGuiPass instanceof WindowParent) {
+				try {
 					WindowParent newGui = ((WindowParent) Class.forName(oldGuiPass.getClass().getName()).getConstructor().newInstance());
 					newGui.setGuiHistory(((WindowParent) oldGuiPass).getGuiHistory());
 					EnhancedMC.displayEGui(newGui, this, false, CenterType.object);
+				} catch (Exception e) { e.printStackTrace(); }
+			}
+			else if (oldGuiPass instanceof GuiScreen) {
+				if (oldObject != null) {
+					try {
+						GuiScreen newGui = ((GuiScreen) Class.forName(oldObject.getClass().getName()).getConstructor().newInstance());
+						mc.displayGuiScreen(newGui);
+						return;
+					} catch (Exception e) { e.printStackTrace(); }
+				} else {
+					mc.displayGuiScreen(null);
+			        if (mc.currentScreen == null) { mc.setIngameFocus(); }
 				}
-				else if (oldGuiPass instanceof GuiScreen) {
-					if (oldObject != null) {
-						try {
-							GuiScreen newGui = ((GuiScreen) Class.forName(oldObject.getClass().getName()).getConstructor().newInstance());
-							mc.displayGuiScreen(newGui);
-							return;
-						} catch (Exception e) { e.printStackTrace(); }
-					} else {
-						mc.displayGuiScreen(null);
-				        if (mc.currentScreen == null) { mc.setIngameFocus(); }
-					}
-					super.close();
-				}
-				return;
-			} catch (Exception e) { e.printStackTrace(); }
-		} else {
-			super.close();
+			}
 		}
+		super.close();
 	}
 	
 	public WindowParent enableHeader(boolean val) {

@@ -1,7 +1,6 @@
 package com.Whodundid.core.enhancedGui.guiObjects;
 
 import com.Whodundid.core.enhancedGui.guiObjectUtil.EObjectGroup;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectModifyType;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
@@ -12,6 +11,7 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EDimension;
+import org.lwjgl.input.Mouse;
 
 //Dec 31, 2018
 //Last edited: Jan 12, 2019
@@ -80,6 +80,11 @@ public class EGuiHeader extends EnhancedGuiObject {
 	
 	@Override
 	public void drawObject(int mX, int mY, float ticks) {
+		IEnhancedTopParent top = getTopParent();
+		if (top.getModifyingObject() == parent && top.getModifyType() == ObjectModifyType.Move && !Mouse.isButtonDown(0)) {
+			top.clearModifyingObject();
+		}
+		
 		if (drawHeader) {
 			boolean anyFocus = false;
 			if (drawParentFocus) {
@@ -98,7 +103,7 @@ public class EGuiHeader extends EnhancedGuiObject {
 				drawRect(startX, startY, startX + 1, startY + height, borderColor); //left
 				drawRect(startX + 1, startY, endX - 1, startY + 1, borderColor); //top
 				drawRect(endX - 1, startY, endX, startY + height, borderColor); //right
-				drawRect(startX + 1, startY + 1, endX - 1, startY + height, anyFocus ? mainColor + 0x0a0a0a : mainColor); //mid
+				drawRect(startX + 1, startY + 1, endX - 1, startY + height, anyFocus ? mainColor - 0x1f1f1f : mainColor); //mid
 			}
 			if (drawTitle) {
 				drawString(title, startX + 4, startY + height / 2 - 3, titleColor);
@@ -114,22 +119,13 @@ public class EGuiHeader extends EnhancedGuiObject {
 			if (getObjectGroup() != null && getObjectGroup().getGroupParent() != null) {
 				IEnhancedGuiObject groupParent = getObjectGroup().getGroupParent();
 				if (groupParent.isResizeable()) {
-					if (groupParent.getEdgeAreaMouseIsOn() != ScreenLocation.out) {
-						groupParent.mousePressed(mX, mY, button);
-					} else {
-						headerClick(button);
-					}
+					if (groupParent.getEdgeAreaMouseIsOn() != ScreenLocation.out) { groupParent.mousePressed(mX, mY, button); }
+					else { headerClick(button); }
 					return;
 				}
 			}
 			headerClick(button);
 		}
-	}
-	
-	@Override
-	public void mouseReleased(int mX, int mY, int button) {
-		if (hasFocus()) { getTopParent().clearModifyingObject(); }
-		super.mouseReleased(mX, mY, button);
 	}
 	
 	@Override
@@ -144,11 +140,6 @@ public class EGuiHeader extends EnhancedGuiObject {
 		}
 		for (IEnhancedGuiObject o : getImmediateChildren()) { o.setVisible(val); }
 		return this;
-	}
-	
-	@Override
-	public void onFocusLost(EventFocus eventIn) {
-		getTopParent().clearModifyingObject();
 	}
 	
 	protected void headerClick(int button) {
