@@ -124,10 +124,5 @@ public class CursorHelper {
 	}
 	
 	public static void reset() { setCursor(cursor); }
-	public static boolean isNormalCursor() {
-		if (Mouse.isCreated() && Mouse.getNativeCursor() != null) {
-			return Mouse.getNativeCursor().equals(cursor);
-		}
-		return false;
-	}
+	public static boolean isNormalCursor() { return Mouse.isCreated() && Mouse.getNativeCursor() == null; }
 }
