@@ -261,7 +261,7 @@ public final class EnhancedMC {
 		switch (typeIn) {
 		case cursor:
 			sX = EMouseHelper.mX - (gDim.width / 2);
-			sY = EMouseHelper.mY - (gDim.height - headerHeight) / 2;
+			sY = EMouseHelper.mY - (gDim.height - headerHeight) / 2 + (gDim.height / 7);
 			break;
 		case object:
 			if (objectIn != null) {
