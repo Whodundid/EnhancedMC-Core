@@ -31,6 +31,7 @@ public class EGuiHeader extends EnhancedGuiObject {
 	protected boolean drawBackground = true;
 	protected boolean drawHeader = true;
 	protected boolean drawParentFocus = true;
+	protected boolean moving = false;
 	
 	protected EGuiHeader() {}
 	public EGuiHeader(IEnhancedGuiObject parentIn) { this(parentIn, true, 19, ""); }
@@ -81,7 +82,7 @@ public class EGuiHeader extends EnhancedGuiObject {
 	@Override
 	public void drawObject(int mX, int mY, float ticks) {
 		IEnhancedTopParent top = getTopParent();
-		if (top.getModifyingObject() == parent && top.getModifyType() == ObjectModifyType.Move && !Mouse.isButtonDown(0)) {
+		if (!moving && top.getModifyingObject() == parent && top.getModifyType() == ObjectModifyType.Move && !Mouse.isButtonDown(0)) {
 			top.clearModifyingObject();
 		}
 		
@@ -177,19 +178,17 @@ public class EGuiHeader extends EnhancedGuiObject {
 	}
 	
 	protected void handleMove() {
-		if (!parent.isPositionLocked()) {
-			IEnhancedTopParent topParent = getTopParent();
-			if (moveButton.getPressedButton() == 0) {
+		if (!moving) {
+			if (!parent.isPositionLocked()) {
+				IEnhancedTopParent topParent = getTopParent();
 				if (topParent.isMoving()) { topParent.clearModifyingObject(); }
 				else {
 					topParent.setModifyingObject(parent, ObjectModifyType.Move);
 					topParent.setModifyMousePos(mX, mY);
+					moving = true;
 				}
-			} else if (moveButton.getPressedButton() == 1) {
-				topParent.clearModifyingObject();
-				parent.resetPosition();
 			}
-		}
+		} else { moving = false; }
 	}
 	
 	protected void handleFileUp() {
