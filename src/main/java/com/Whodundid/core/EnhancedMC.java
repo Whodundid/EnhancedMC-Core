@@ -2,6 +2,7 @@ package com.Whodundid.core;
 
 import com.Whodundid.core.coreSubMod.EnhancedMCMod;
 import com.Whodundid.core.debug.DebugFunctions;
+import com.Whodundid.core.debug.console.ConsoleCommandHandler;
 import com.Whodundid.core.enhancedGui.types.EnhancedGui;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
@@ -60,6 +61,7 @@ public final class EnhancedMC {
 	public static final Logger EMCLogger = LogManager.getLogger("EnhancedMC");
 	public static EFontRenderer fontRenderer;
 	private static final EnhancedMCRenderer renderer = EnhancedMCRenderer.getInstance();
+	private static final ConsoleCommandHandler console = ConsoleCommandHandler.getInstance();
 	private static EventListener eventListener;
 	private static boolean isInitialized = false;
 	public static int updateCounter = 0;
@@ -306,6 +308,7 @@ public final class EnhancedMC {
 	public static EventListener getEventListener() { return eventListener; }
 	public static EFontRenderer getFontRenderer() { return fontRenderer; }
 	public static EnhancedMCRenderer getRenderer() { return renderer; }
+	public static ConsoleCommandHandler getConsole() { return console; }
 	public static boolean isInitialized() { return isInitialized; }
 	public static void log(Level levelIn, String msg) { EMCLogger.log(levelIn, msg); }
 	public static void info(String msg) { EMCLogger.log(Level.INFO, msg); }
