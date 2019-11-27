@@ -26,6 +26,8 @@ public class EGuiTextField extends EnhancedActionObject {
 	public int enabledColor = 14737632;
 	public int disabledColor = 7368816;
 	public int mainDrawColor = enabledColor;
+	public int backgroundColor = 0xff000000;
+	public int borderColor = -6250336;
 	protected boolean editable = true;
 	protected boolean enableBackgroundDrawing = true;
 	protected boolean alwaysDrawCursor = false;
@@ -47,11 +49,12 @@ public class EGuiTextField extends EnhancedActionObject {
 	@Override
 	public void drawObject(int mX, int mY, float ticks) {
 		if (getEnableBackgroundDrawing()) {
-			drawRect(startX - 1, startY - 1, endX + 3, endY + 1, -6250336);
-			drawRect(startX, startY, endX + 2, endY, 0xff000000);
+			drawRect(startX - 1, startY - 1, endX + 3, endY + 1, borderColor);
+			drawRect(startX, startY, endX + 2, endY, backgroundColor);
 		}
 		
 		int drawColor = isEnabled() ? mainDrawColor : disabledColor;
+		//System.out.println(this + " " + drawColor);
 		int j = cursorPosition - lineScrollOffset;
 		int k = selectionEnd - lineScrollOffset;
 		String s = fontRenderer.trimStringToWidth(text.substring(lineScrollOffset), getWidth());
@@ -74,7 +77,7 @@ public class EGuiTextField extends EnhancedActionObject {
 		if (k > s.length()) { k = s.length(); }
 		if (s.length() > 0) {
 			String s1 = flag ? s.substring(0, j) : s;
-			j1 = drawStringWithShadow(s1, l, i1, drawColor);
+			j1 = drawString(s1, l, i1, drawColor);
 		}
 		
 		boolean flag2 = cursorPosition < text.length() || text.length() >= getMaxStringLength();
@@ -92,7 +95,7 @@ public class EGuiTextField extends EnhancedActionObject {
 		
 		if (drawCursorFlag) {
 			if (flag2) { drawRect(k1, i1 - 1, k1 + 1, i1 + 1 + fontRenderer.FONT_HEIGHT, -3092272); }
-			else { drawStringWithShadow("_", k1, i1, drawColor); }
+			else { drawString("_", k1, i1, drawColor); }
 		}
 		
 		if (k != j) {
@@ -393,6 +396,8 @@ public class EGuiTextField extends EnhancedActionObject {
 	public EGuiTextField setTextWhenEmptyColor(int colorIn) { textWhenEmptyColor = colorIn; return this; }
 	public EGuiTextField moveCursorBy(int moveAmount) { setCursorPosition(selectionEnd + moveAmount); return this; }
 	public EGuiTextField clear() { setText(""); return this; }
+	public EGuiTextField setBackgroundColor(int colorIn) { backgroundColor = colorIn; return this; }
+	public EGuiTextField setBorderColor(int colorIn) { borderColor = colorIn; return this; }
 	
 	public void updateCursorCounter() { cursorCounter++; }
 	public int getMaxStringLength() { return maxStringLength; }

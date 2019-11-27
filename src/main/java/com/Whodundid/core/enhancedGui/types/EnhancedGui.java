@@ -88,6 +88,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	public boolean useCustomPosition = false;
 	protected boolean backwardsTraverseable = true;
 	protected boolean hasBeenInitialized = false;
+	protected boolean objectInit = false;
 	protected boolean enabled = true;
 	protected boolean visible = true;
 	public boolean isMouseHover = false;
@@ -191,6 +192,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 		
 		try {
 			initObjects();
+			objectInit = true;
 		} catch (ObjectInitException e) { e.printStackTrace(); }
 		hasBeenInitialized = true;
 	}
@@ -362,6 +364,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	
 	//init
 	@Override public boolean isInit() { return hasBeenInitialized; }
+	@Override public boolean isObjectInit() { return objectInit; }
 	@Override public EnhancedGui completeInit() { hasBeenInitialized = true; return this; }
 	@Override public void initObjects() throws ObjectInitException {}
 	@Override

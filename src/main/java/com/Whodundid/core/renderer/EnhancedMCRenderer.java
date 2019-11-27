@@ -61,6 +61,7 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	protected EObjectGroup objectGroup;
 	protected boolean enabled = true;
 	protected boolean visible = true;
+	protected boolean objectInit = false;
 	public int mX = 0, mY = 0;
 	protected boolean hasProxy = false;
 	protected IRendererProxy proxy;
@@ -90,12 +91,14 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	
 	//init
 	@Override public boolean isInit() { return true; }
+	@Override public boolean isObjectInit() { return objectInit; }
 	/** Effectively does nothing in the renderer. */
 	@Override public EnhancedMCRenderer completeInit() { return this; }
 	@Override
 	public void initObjects() {
 		//addObject(new SettingsGuiMain());
 		//addObject(new EGuiContainer(this, 15, 205, 100, 100).setDisplayString("Baccon"));
+		objectInit = true;
 	}
 	@Override
 	public void reInitObjects() {

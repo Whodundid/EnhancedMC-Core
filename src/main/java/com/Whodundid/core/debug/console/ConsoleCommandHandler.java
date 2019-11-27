@@ -1,6 +1,6 @@
 package com.Whodundid.core.debug.console;
 
-import com.Whodundid.core.debug.console.commands.IConsoleCommand;
+import com.Whodundid.core.debug.console.commands.*;
 import com.Whodundid.core.debug.console.gui.EConsole;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
@@ -27,18 +27,24 @@ public class ConsoleCommandHandler {
 	}
 	
 	private void registerBaseCommands(boolean runVisually) {
-		
+		registerCommand(new Help(), runVisually);
+		registerCommand(new ReregisterCommands(), runVisually);
+		registerCommand(new ClearConsole(), runVisually);
+		registerCommand(new ClearConsoleHistory(), runVisually);
+		registerCommand(new DebugControl(), runVisually);
+		registerCommand(new DebugCommandRunner(), runVisually);
 	}
 	
-	public void registerCommand(IConsoleCommand command, boolean runVisually) {
+	public void registerCommand(IConsoleCommand command, boolean runVisually) { registerCommand(null, command, runVisually); }
+	public void registerCommand(EConsole conIn, IConsoleCommand command, boolean runVisually) {
 		commandList.add(command);
-		//if (runVisually) { man.getConsole().writeln("Registering command: " + command.getName(), Color.ORANGE); }
+		if (conIn != null & runVisually) { conIn.writeln("Registering command: " + command.getName(), 0xffaa00); }
 		commands.put(command.getName(), command);
-		//if (runVisually) { man.getConsole().writeln("Registering command call: " + command.getName(), Color.ORANGE); }
+		if (conIn != null & runVisually) { conIn.writeln("Registering command call: " + command.getName(), 0xffaa00); }
 		if (command.getAliases() != null) {
 			for (int i = 0; i < command.getAliases().size(); i++) {
 				commands.put(command.getAliases().get(i), command);
-				//if (runVisually) { man.getConsole().writeln("Registering command alias: " + command.getAliases().get(i), Color.ORANGE); }
+				if (conIn != null & runVisually) { conIn.writeln("Registering command alias: " + command.getAliases().get(i), 0xffaa00); }
 			}
 		}
 	}
@@ -57,7 +63,7 @@ public class ConsoleCommandHandler {
 				IConsoleCommand command = commands.getBoxWithObj(baseCommand).getValue();
 				
 				if (command == null) {
-					//man.getConsole().writeln("Unrecognized command.", Color.RED);
+					conIn.writeln("Unrecognized command.", 0xff5555);
 					return;
 				}
 				
@@ -80,25 +86,24 @@ public class ConsoleCommandHandler {
 				return;
 			}
 		}
-		//man.getConsole().writeln("Unrecognized command.", Color.RED);
+		conIn.writeln("Unrecognized command.", 0xff5555);
 	}
 	
-	public synchronized void reregisterAllCommands(boolean runVisually) {
+	public synchronized void reregisterAllCommands(boolean runVisually) { reregisterAllCommands(null, runVisually); }
+	public synchronized void reregisterAllCommands(EConsole conIn, boolean runVisually) {
 		Iterator<IConsoleCommand> a = commandList.iterator();
 		while (a.hasNext()) {
 			String commandName = a.next().getName();
-			//if (runVisually) { man.getConsole().writeln("Unregistering command: " + commandName, Color.ORANGE); }
+			if (conIn != null & runVisually) { conIn.writeln("Unregistering command: " + commandName, 0x00ffdc); }
 			a.remove();
 		}
 		Iterator<StorageBox<String, IConsoleCommand>> b = commands.iterator();
 		while (b.hasNext()) {
 			String commandName = b.next().getObject();
-			//if (runVisually) { man.getConsole().writeln("Unregistering command call: " + commandName, Color.ORANGE); }
+			if (conIn != null & runVisually) { conIn.writeln("Unregistering command alias: " + commandName, 0x00ffdc); }
 		}
 		registerBaseCommands(runVisually);
-		for (IConsoleCommand command : customCommandList) {
-			registerCommand(command, runVisually);
-		}
+		customCommandList.forEach(c -> registerCommand(c, runVisually));
 	}
 	
 	public IConsoleCommand getCommand(String commandName) {

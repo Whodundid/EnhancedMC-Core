@@ -18,6 +18,7 @@ public class EGuiTextArea<obj> extends EGuiScrollList {
 	TextAreaLine currentLine, longestLine;
 	protected boolean editable = true;
 	protected boolean drawLineNumbers = false;
+	protected int maxWidth = Integer.MAX_VALUE;
 	
 	public EGuiTextArea(IEnhancedGuiObject parentIn, int x, int y, int widthIn, int heightIn) {
 		this(parentIn, x, y, widthIn, heightIn, false);
@@ -74,46 +75,31 @@ public class EGuiTextArea<obj> extends EGuiScrollList {
 		int moveArg = moveDown ? 1 : 0;
 		EDimension ld = this.getListDimensions();
 		lineIn.setDimensions(3, 1 + (textDocument.size() * 10), ld.width, 10);
-		if (textDocument.size() % 2 == 1) {
-			EGuiRect back = new EGuiRect(this, 0, 2 + (textDocument.size() * 10), ld.width, 12 + (textDocument.size() * 10), 0x1a000000);
-			addObjectToList(back.setClickable(false));
-		}
+		//if (textDocument.size() % 2 == 1) {
+		//	EGuiRect back = new EGuiRect(this, 0, 2 + (textDocument.size() * 10), ld.width, 12 + (textDocument.size() * 10), 0x1a000000);
+		//	addObjectToList(back.setClickable(false));
+		//}
 		textDocument.add(lineIn);
 		addObjectToList(lineIn);
 		fitDocumentInDims();
 		return lineIn;
 	}
 	
-	public TextAreaLine getLineWithText(String textIn) {
-		for (TextAreaLine l : textDocument) {
-			if (l.getText().equals(textIn)) { return l; }
-		}
-		return null;
+	public EGuiTextArea insertTextLine() { return insertTextLine("", 0xffffff, -1); }
+	public EGuiTextArea insertTextLine(int atPos) { return insertTextLine("", 0xffffff, atPos); }
+	public EGuiTextArea insertTextLine(String textIn) { return insertTextLine(textIn, 0xffffff, -1); }
+	public EGuiTextArea insertTextLine(String textIn, int atPos) { return insertTextLine(textIn, 0xffffff, atPos); }
+	public EGuiTextArea insertTextLine(String textIn, int colorIn, int atPos) {
+		return this;
 	}
 	
-	public TextAreaLine getLineWithObject(Object objectIn) {
-		for (TextAreaLine l : textDocument) {
-			if (l.getStoredObj() == null) {
-				if (objectIn == null) { return l; }
-			} else if (l.getStoredObj().equals(objectIn)) { return l; }
-		}
-		return null;
-	}
-	
-	public TextAreaLine getLineWithTextAndObject(String textIn, Object objectIn) {
-		for (TextAreaLine l : textDocument) {
-			if (l.getStoredObj() == null ) {
-				if (l.getText().equals(textIn) && objectIn == null) { return l; }
-			} else if (l.getText().equals(textIn) && l.getStoredObj().equals(objectIn)) { return l; }
-		}
-		return null;
-	}
-	
-	public TextAreaLine getTextLineWithLineNumber(int lineNumberIn) {
-		if (lineNumberIn >= 1 && lineNumberIn <= textDocument.size()) {
-			for (TextAreaLine l : textDocument) { if (l.getLineNumber() == lineNumberIn) { return l; } }
-		}
-		return null;
+	public EGuiTextArea deleteLine() { return deleteLine(getCurrentLine()); }
+	public EGuiTextArea deleteLine(int lineNumber) { return deleteLine(getTextLine(lineNumber)); }
+	public EGuiTextArea deleteLine(TextAreaLine lineIn) {
+		textDocument.remove(lineIn);
+		removeObjectFromList(lineIn);
+		fitDocumentInDims();
+		return this;
 	}
 	
 	public EGuiTextArea setSelectedLine(TextAreaLine lineIn) { return setSelectedLine(lineIn, true); }
@@ -125,6 +111,21 @@ public class EGuiTextArea<obj> extends EGuiScrollList {
 				//makeLineNumberDrawn(currentLine.getLineNumber());
 			}
 		}
+		return this;
+	}
+	
+	public EGuiTextArea setLineNumberDrawn(int lineNumber) { return setLineNumberDrawn(getTextLine(lineNumber)); }
+	public EGuiTextArea setLineNumberDrawn(TextAreaLine lineIn) {
+		return this;
+	}
+	
+	public EGuiTextArea setMaxLineWidth(int widthIn) {
+		return this;
+	}
+	
+	public EGuiTextArea indentLine() { return indentLine(getCurrentLine()); }
+	public EGuiTextArea indentLine(int lineNumber) { return indentLine(getTextLine(lineNumber)); }
+	public EGuiTextArea indentLine(TextAreaLine lineIn) {
 		return this;
 	}
 	
@@ -156,6 +157,49 @@ public class EGuiTextArea<obj> extends EGuiScrollList {
 		//if (vs != null) { vs.setScrollBarPos(prevScroll); }
 	}
 	
+	public TextAreaLine getTextLine(int numIn) {
+		if (numIn >= 1 && numIn < textDocument.size()) {
+			int first = 0;
+			int last = textDocument.size();
+			int mid = (first + last) / 2;
+			while (first <= last) {
+				TextAreaLine l = textDocument.get(mid);
+				if (l != null) {
+					if (l.getLineNumber() == numIn) { return l; }
+					else if (l.getLineNumber() < numIn) { first = mid + 1; }
+					else { last = mid - 1; }
+				}
+				mid = (first + last) / 2;
+			}
+		}
+		return null;
+	}
+	
+	public TextAreaLine getLineWithText(String textIn) {
+		for (TextAreaLine l : textDocument) {
+			if (l.getText().equals(textIn)) { return l; }
+		}
+		return null;
+	}
+	
+	public TextAreaLine getLineWithObject(Object objectIn) {
+		for (TextAreaLine l : textDocument) {
+			if (l.getStoredObj() == null) {
+				if (objectIn == null) { return l; }
+			} else if (l.getStoredObj().equals(objectIn)) { return l; }
+		}
+		return null;
+	}
+	
+	public TextAreaLine getLineWithTextAndObject(String textIn, Object objectIn) {
+		for (TextAreaLine l : textDocument) {
+			if (l.getStoredObj() == null ) {
+				if (l.getText().equals(textIn) && objectIn == null) { return l; }
+			} else if (l.getText().equals(textIn) && l.getStoredObj().equals(objectIn)) { return l; }
+		}
+		return null;
+	}
+	
 	public TextAreaLine getLongestTextLine() {
 		TextAreaLine longest = null;
 		int longestLen = 0;
@@ -172,6 +216,8 @@ public class EGuiTextArea<obj> extends EGuiScrollList {
 	}
 	
 	public EGuiTextArea clear() {
+		setListWidth(width - 2);
+		setListHeight(0);
 		Iterator it = guiObjects.iterator();
 		while (it.hasNext()) {
 			if (it.next() instanceof TextAreaLine) { it.remove(); }
@@ -196,6 +242,5 @@ public class EGuiTextArea<obj> extends EGuiScrollList {
 	public boolean hasLineNumbers() { return drawLineNumbers; }
 	public boolean isEditable() { return editable; }
 	public TextAreaLine getCurrentLine() { return currentLine; }
-	public TextAreaLine getTextLine(int numIn) { return numIn >= 0 && numIn < textDocument.size() ? textDocument.get(numIn) : null; }
 	public EArrayList<TextAreaLine> getTextDocument() { return textDocument; }
 }

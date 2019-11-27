@@ -37,7 +37,8 @@ public class EGuiScrollList extends EnhancedGuiObject {
 	int scrollableWidth = 0;
 	protected EArrayList<IEnhancedGuiObject> listObjsToBeRemoved = new EArrayList();
 	protected EArrayList<IEnhancedGuiObject> listObjsToBeAdded = new EArrayList();
-	int backgroundColor = 0xff4D4D4D;
+	protected int backgroundColor = 0xff4D4D4D;
+	protected int borderColor = 0xff000000;
 	protected int heightToBeSet = 0, widthToBeSet = 0;
 	boolean vScrollVis = true;
 	boolean hScrollVis = true;
@@ -74,7 +75,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 	@Override
 	public void drawObject(int mXIn, int mYIn, float ticks) {
 		updateBeforeNextDraw(mXIn, mYIn);
-		drawRect(startX, startY, endX, endY, 0xff000000);
+		drawRect(startX, startY, endX, endY, borderColor);
 		
 		verticalScroll.setVisible(isVScrollDrawn());
 		horizontalScroll.setVisible(isHScrollDrawn());
@@ -349,6 +350,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 	public void clearList() { listContents.forEach(o -> removeObject(o)); }
 	
 	public EGuiScrollList setBackgroundColor(int colorIn) { backgroundColor = colorIn; return this; }
+	public EGuiScrollList setBorderColor(int colorIn) { borderColor = colorIn; return this; }
 	public EGuiScrollList setVScrollDrawn(boolean valIn) { vScrollVis = valIn; if (verticalScroll != null) { verticalScroll.setVisible(valIn); } updateVisuals(); return this; }
 	public EGuiScrollList setHScrollDrawn(boolean valIn) { hScrollVis = valIn; if (horizontalScroll != null) { horizontalScroll.setVisible(valIn); } updateVisuals(); return this; }
 	public EGuiScrollList setResetDrawn(boolean valIn) { resetVis = valIn; if (reset != null) { reset.setVisible(valIn); } updateVisuals(); return this; }

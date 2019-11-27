@@ -47,7 +47,6 @@ import net.minecraftforge.fml.common.ModContainer;
 //First Added: 9-14-18
 //Author: Hunter Bragg
 
-@SuppressWarnings("unused")
 public class DebugFunctions {
 
 	static Minecraft mc = Minecraft.getMinecraft();
@@ -56,15 +55,16 @@ public class DebugFunctions {
 		runDebugFunction(function.getDebugCommandID());
 	}
 
-	public static void runDebugFunction(int functionID) {
+	public static boolean runDebugFunction(int functionID) {
 		try {
 			switch (functionID) {
-			case 0: debug_0(); break;
-			case 1: debug_1(); break;
-			case 2: debug_2(); break;
-			case 3: debug_3(); break;
+			case 0: debug_0(); return true;
+			case 1: debug_1(); return true;
+			case 2: debug_2(); return true;
+			case 3: debug_3(); return true;
 			}
 		} catch (Throwable e) { e.printStackTrace(); }
+		return false;
 	}
 
 	private static void debug_0() throws Throwable {

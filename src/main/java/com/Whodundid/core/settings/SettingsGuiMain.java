@@ -4,6 +4,7 @@ import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.coreSubMod.EnhancedMCMod;
 import com.Whodundid.core.debug.ExperimentGui;
 import com.Whodundid.core.debug.ImportantGui;
+import com.Whodundid.core.debug.console.gui.EConsole;
 import com.Whodundid.core.enhancedGui.StaticEGuiObject;
 import com.Whodundid.core.enhancedGui.guiObjectUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
@@ -41,7 +42,7 @@ import com.Whodundid.core.util.storageUtil.EDimension;
 public class SettingsGuiMain extends WindowParent {
 	
 	EGuiButton keyBindGui, reloadConfigs, problem;
-	EGuiButton experimentGui, disableDebugMode;
+	EGuiButton experimentGui, disableDebugMode, consoleBtn;
 	EGuiButton hiddenButton1, hiddenButton2;
 	EGuiScrollList scrollList;
 	EGuiTextField searchField;
@@ -59,10 +60,11 @@ public class SettingsGuiMain extends WindowParent {
 	public void initObjects() {
 		setHeader(new EGuiHeader(this));
 		
-		reloadConfigs = new EGuiButton(this, startX + 5, endY - 25, 90, 20, "Reload Configs");
-		keyBindGui = new EGuiButton(this, endX - 95, endY - 25, 90, 20, "MC KeyBinds");
+		reloadConfigs = new EGuiButton(this, startX + 5, endY - 25, 92, 20, "Reload Configs");
+		keyBindGui = new EGuiButton(this, endX - 97, endY - 25, 92, 20, "MC KeyBinds");
 		experimentGui = new EGuiButton(this, 1, res.getScaledHeight() - 21, 85, 20, "ExperimentGui");
 		disableDebugMode = new EGuiButton(this, experimentGui.endX + 1, res.getScaledHeight() - 21, 85, 20, "Disable Debug");
+		consoleBtn = new EGuiButton(this, reloadConfigs.endX + 3, endY - 25, keyBindGui.startX - reloadConfigs.endX - 6, 20);
 		problem = new EGuiButton(this, endX - 17, startY + 2, 15, 15).setTextures(Resources.guiProblemOpen, Resources.guiProblemOpenSel);
 		
 		problem.setVisible(RegisteredSubMods.getIncompatibleModsList().isNotEmpty());
@@ -129,7 +131,7 @@ public class SettingsGuiMain extends WindowParent {
 		//add all objects first
 		addObject(scrollList, problem, searchField, keyBindGui, reloadConfigs);
 		addObject(hiddenButton1, hiddenButton2);
-		addObject(experimentGui, disableDebugMode);
+		addObject(experimentGui, disableDebugMode, consoleBtn);
 		
 		objectGroup = new EObjectGroup(this);
 		objectGroup.addObjects(getAllChildren());
@@ -277,6 +279,7 @@ public class SettingsGuiMain extends WindowParent {
 				leftPress = 0;
 				rightPress = 0;
 			}
+			if (object == consoleBtn) { EnhancedMC.displayEGui(new EConsole()); }
 			if (object == problem) { EnhancedMC.displayEGui(new IncompatibleWindowList()); }
 		}
 	}

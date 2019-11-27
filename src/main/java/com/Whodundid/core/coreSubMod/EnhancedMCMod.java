@@ -12,6 +12,7 @@ public class EnhancedMCMod extends SubMod {
 	public static final ModSetting emcMenuOverride = new ModSetting();
 	public static final ModSetting useDebugKey = new ModSetting(false);
 	public static final ModSetting showIncompats = new ModSetting(false);
+	public static final ModSetting enableConsole = new ModSetting(false);
 	
 	public EnhancedMCMod() {
 		super(SubModType.CORE);

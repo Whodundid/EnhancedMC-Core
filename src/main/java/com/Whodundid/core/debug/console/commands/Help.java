@@ -7,7 +7,7 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 
 public class Help implements IConsoleCommand {
 	
-	ConsoleCommandHandler handler = EnhancedMC.getConsole();
+	ConsoleCommandHandler handler;
 	
 	@Override public String getName() { return "help"; }
 	@Override public EArrayList<String> getAliases() { return null; }
@@ -16,30 +16,32 @@ public class Help implements IConsoleCommand {
 	
 	@Override
 	public void runCommand(EConsole conIn, EArrayList<String> args, boolean runVisually) {
+		handler = EnhancedMC.getConsole();
 		if (args.size() == 0) {
 			for (IConsoleCommand command : handler.getCommandList()) {
 				if (command.getAliases() == null) {
-					//man.getConsole().writeln(command.getName(), Color.ORANGE);
+					conIn.writeln(command.getName(), 0xffaa00);
 				} else {
-					//man.getConsole().write(command.getName() + ": ", Color.ORANGE);
+					conIn.writeln(command.getName() + ": ", 0xffaa00);
+					String a = "";
 					for (int i = 0; i < command.getAliases().size(); i++) {
 						String commandAlias = command.getAliases().get(i);
-						if (i == command.getAliases().size() - 1) {
-							//man.getConsole().write(commandAlias, Color.CYAN);
-						} else {
-							//man.getConsole().write(commandAlias + ", ", Color.CYAN);
-						}							
+						if (i == command.getAliases().size() - 1) { a += commandAlias; }
+						else { a += (commandAlias + ", "); }
 					}
-					//man.getConsole().writeln();
+					conIn.writeln(a, 0x22ff88);
 				}					
 			}
-			//man.getConsole().writeln("To see help information on a specific command, type help followed by the command.", Color.WHITE);
+			conIn.writeln("To see help information on a specific command, type help followed by the command.", 0xFF00DD);
 		} else if (args.size() == 1) {
 			String commandName = args.get(0);
-			//if (man.getConsole().getConsoleCommandHandler().getCommandNames().contains(commandName)) {
-			//	IConsoleCommand command = man.getConsole().getConsoleCommandHandler().getCommand(commandName);
-			//	man.getConsole().writeln(command.getCommandHelpInfo(), Color.YELLOW);
-			//}
+			if (handler.getCommandNames().contains(commandName)) {
+				IConsoleCommand command = handler.getCommand(commandName);
+				conIn.writeln(command.getCommandHelpInfo(), 0xff5599);
+			}
+			else {
+				conIn.writeln("Unrecognized command name", 0xff5555);
+			}
 		}
 	}
 }

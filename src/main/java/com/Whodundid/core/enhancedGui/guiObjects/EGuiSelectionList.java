@@ -88,7 +88,7 @@ public class EGuiSelectionList extends WindowParent implements IEnhancedActionOb
 			};
 			selectionList.addTextLine(l);
 		}
-		if (!selectionList.getTextDocument().isEmpty()) { selectionList.setSelectedLine(selectionList.getTextLineWithLineNumber(1)); }
+		if (!selectionList.getTextDocument().isEmpty()) { selectionList.setSelectedLine(selectionList.getTextLine(1)); }
 	}
 	
 	protected void selectCurrentOptionAndClose() {

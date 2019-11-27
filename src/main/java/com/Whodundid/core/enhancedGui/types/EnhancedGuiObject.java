@@ -77,7 +77,6 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	protected ScaledResolution res;
 	protected IEnhancedGuiObject parent, focusObjectOnClose;
 	protected EDimension boundaryDimension;
-	//protected EGuiFocusLockBorder border;
 	protected EArrayList<IEnhancedGuiObject> guiObjects = new EArrayList();
 	protected EArrayList<IEnhancedGuiObject> objsToBeRemoved = new EArrayList();
 	protected EArrayList<IEnhancedGuiObject> objsToBeAdded = new EArrayList();
@@ -85,6 +84,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	protected ScreenLocation oldArea = ScreenLocation.out;
 	protected EObjectGroup objectGroup;
 	private boolean hasBeenInitialized = false;
+	private boolean objectInit = false;
 	protected boolean enabled = true;
 	protected boolean visible = true;
 	public boolean mouseEntered = false;
@@ -151,11 +151,12 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	
 	//init
 	@Override public boolean isInit() { return hasBeenInitialized; }
-	@Override public EnhancedGuiObject completeInit() { hasBeenInitialized = true; return this; }
+	@Override public boolean isObjectInit() { return objectInit; }
+	@Override public EnhancedGuiObject completeInit() { hasBeenInitialized = true; objectInit = true; return this; }
 	@Override public void initObjects() throws ObjectInitException {}
 	@Override
 	public void reInitObjects() throws ObjectInitException {
-		hasBeenInitialized = false;
+		objectInit = false;
 		IEnhancedTopParent p = getTopParent();
 		EArrayList<IEnhancedGuiObject> children = getAllChildren();
 		if (!p.isResizing()) {
@@ -166,7 +167,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 		guiObjects.clear();
 		
 		initObjects();
-		hasBeenInitialized = true;
+		objectInit = true;
 	}
 	@Override public void onAdded() {}
 	//@Override public void reInit(int newWidth, int newHeight) {}

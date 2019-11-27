@@ -18,6 +18,8 @@ public interface IEnhancedGuiObject {
 	
 	/** Returns true if this object has been fully initialized with all of its values and children. */
 	public boolean isInit();
+	/** Returns true if initObjects has been fully completed. */
+	public boolean isObjectInit();
 	/** Internal method used to denote that this object and all of its children have been fully initialized. */
 	public IEnhancedGuiObject completeInit();
 	/** Event fired from the top parent upon being fully added to the parent so that this object can safely initialize all of it's own children. */
