@@ -18,6 +18,7 @@ public abstract class WindowParent extends EnhancedGuiObject implements IWindowP
 	public WindowParent guiInstance;
 	protected EGuiHeader header;
 	protected boolean moveWithParent = false;
+	protected boolean pinned = false;
 	protected Stack<Object> guiHistory = new Stack();
 	protected Object oldObject = null;
 	public static int defaultWidth = 220, defaultHeight = 255;
@@ -81,6 +82,9 @@ public abstract class WindowParent extends EnhancedGuiObject implements IWindowP
 		addObject(headerIn);
 		return this;
 	}
+	
+	@Override public boolean isPinned() { return pinned; }
+	@Override public WindowParent setPinned(boolean val) { pinned = val; return this; }
 	
 	@Override
 	public Stack<Object> getGuiHistory() { return guiHistory; }

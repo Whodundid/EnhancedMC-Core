@@ -20,7 +20,7 @@ import org.lwjgl.input.Mouse;
 
 public class EGuiHeader extends EnhancedGuiObject {
 	
-	public EGuiButton fileUpButton, moveButton, closeButton;
+	public EGuiButton fileUpButton, moveButton, closeButton, pinButton;
 	public boolean fullClose = false;
 	public boolean drawDefault = true;
 	public boolean drawTitle = true;
@@ -45,7 +45,8 @@ public class EGuiHeader extends EnhancedGuiObject {
 		
 		if (drawDefault) {
 			addFileUpButton();
-			addMoveButton();
+			addPinButton();
+			//addMoveButton();
 			addCloseButton();
 			
 			if (titleIn.isEmpty()) {
@@ -62,6 +63,18 @@ public class EGuiHeader extends EnhancedGuiObject {
 		fileUpButton = new EGuiButton(this, endX - 52, startY + 2, 16, 16, "");
 		fileUpButton.setTextures(Resources.guiFileUpButton, Resources.guiFileUpButtonSel).setVisible(false);
 		addObject(fileUpButton);
+		return this;
+	}
+	
+	protected EGuiHeader addPinButton() {
+		pinButton = new EGuiButton(this, endX - 35, startY + 2, 16, 16, "");
+		IWindowParent p = getWindowParent();
+		if (p != null) {
+			pinButton.setButtonTexture(p.isPinned() ? Resources.guiPinButtonOpen : Resources.guiPinButton);
+			pinButton.setButtonSelTexture(p.isPinned() ? Resources.guiPinButtonOpenSel : Resources.guiPinButtonSel);
+			pinButton.setDrawBackground(true).setBackgroundColor(0xffbb0000).setPersistent(true);
+			addObject(pinButton);
+		}
 		return this;
 	}
 	
@@ -133,7 +146,7 @@ public class EGuiHeader extends EnhancedGuiObject {
 	public EGuiHeader setEnabled(boolean val) {
 		drawHeader = val;
 		if (drawDefault) {
-			moveButton.setVisible(val).setPersistent(val);
+			//moveButton.setVisible(val).setPersistent(val);
 			closeButton.setVisible(val).setPersistent(val);
 			if (getWindowParent() != null) {
 				if (fileUpButton != null) { fileUpButton.setVisible(val && getWindowParent().getGuiHistory() != null && !getWindowParent().getGuiHistory().isEmpty()); }
@@ -145,14 +158,12 @@ public class EGuiHeader extends EnhancedGuiObject {
 	
 	protected void headerClick(int button) {
 		getParent().bringToFront();
-		if (moveButton != null && moveButton.checkDraw()) {
-			IEnhancedTopParent topParent = getTopParent();
-			if (button == 0) {
-				topParent.setModifyingObject(parent, ObjectModifyType.Move);
-				topParent.setModifyMousePos(mX, mY);
-			}
-			else { topParent.clearModifyingObject(); }
+		IEnhancedTopParent topParent = getTopParent();
+		if (button == 0) {
+			topParent.setModifyingObject(parent, ObjectModifyType.Move);
+			topParent.setModifyMousePos(mX, mY);
 		}
+		else { topParent.clearModifyingObject(); }
 	}
 	
 	public EGuiHeader updateFileUpButtonVisibility() {
@@ -169,6 +180,7 @@ public class EGuiHeader extends EnhancedGuiObject {
 	@Override
 	public void actionPerformed(IEnhancedActionObject object) {
 		if (object == closeButton) { handleClose(); }
+		if (object == pinButton) { handlePin(); }
 		if (object == moveButton) { handleMove(); }
 		if (object == fileUpButton) { handleFileUp(); }
 	}
@@ -189,6 +201,15 @@ public class EGuiHeader extends EnhancedGuiObject {
 				}
 			}
 		} else { moving = false; }
+	}
+	
+	protected void handlePin() {
+		IWindowParent p = getWindowParent();
+		if (p != null) {
+			if (pinButton.getPressedButton() == 0) { p.setPinned(!p.isPinned()); }
+			pinButton.setButtonTexture(p.isPinned() ? Resources.guiPinButtonOpen : Resources.guiPinButton);
+			pinButton.setButtonSelTexture(p.isPinned() ? Resources.guiPinButtonOpenSel : Resources.guiPinButtonSel);
+		}
 	}
 	
 	protected void handleFileUp() {

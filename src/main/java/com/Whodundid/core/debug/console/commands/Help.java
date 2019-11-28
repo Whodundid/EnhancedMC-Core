@@ -23,7 +23,7 @@ public class Help implements IConsoleCommand {
 					conIn.writeln(command.getName(), 0xffaa00);
 				} else {
 					conIn.writeln(command.getName() + ": ", 0xffaa00);
-					String a = "";
+					String a = "  -";
 					for (int i = 0; i < command.getAliases().size(); i++) {
 						String commandAlias = command.getAliases().get(i);
 						if (i == command.getAliases().size() - 1) { a += commandAlias; }
@@ -37,7 +37,7 @@ public class Help implements IConsoleCommand {
 			String commandName = args.get(0);
 			if (handler.getCommandNames().contains(commandName)) {
 				IConsoleCommand command = handler.getCommand(commandName);
-				conIn.writeln(command.getCommandHelpInfo(), 0xff5599);
+				conIn.writeln(command.getCommandHelpInfo(), 0xffff00);
 			}
 			else {
 				conIn.writeln("Unrecognized command name", 0xff5555);

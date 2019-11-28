@@ -92,7 +92,6 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	protected boolean hasFocus = false;
 	protected boolean focusLock = false;
 	protected boolean persistent = false;
-	protected boolean pinned = false;
 	protected boolean resizeable = false;
 	protected boolean clickable = true;
 	protected int minWidth = 0;
@@ -239,12 +238,10 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	@Override public boolean isEnabled() { return enabled; }
 	@Override public boolean isVisible() { return visible; }
 	@Override public boolean isPersistent() { return persistent; }
-	@Override public boolean isPinned() { return pinned; }
 	@Override public boolean isBoundaryEnforced() { return boundaryDimension != null; }
 	@Override public EnhancedGuiObject setEnabled(boolean val) { enabled = val; return this; }
 	@Override public EnhancedGuiObject setVisible(boolean val) { visible = val; return this; }
 	@Override public EnhancedGuiObject setPersistent(boolean val) { persistent = val; return this; }
-	@Override public EnhancedGuiObject setPinned(boolean val) { pinned = val; return this; }
 	@Override public EnhancedGuiObject setBoundaryEnforcer(EDimension dimIn) { boundaryDimension = new EDimension(dimIn); return this; }
 	@Override public EDimension getBoundaryEnforcer() { return boundaryDimension; }
 	

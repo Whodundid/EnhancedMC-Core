@@ -216,6 +216,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 		if (horizontalScroll != null) {
 			scrollableWidth = widthIn;
 			horizontalScroll.setHighVal(widthIn);
+			updateVisuals();
 		} else { widthToBeSet = widthIn; }
 		return this;
 	}
@@ -223,6 +224,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 		if (verticalScroll != null) {
 			scrollableHeight = heightIn;
 			verticalScroll.setHighVal(heightIn);
+			updateVisuals();
 		} else { heightToBeSet = heightIn; }
 		return this;
 	}
@@ -232,12 +234,12 @@ public class EGuiScrollList extends EnhancedGuiObject {
 		return this;
 	}
 	public EGuiScrollList growListWidth(int amount) {
-		if (horizontalScroll != null) { setListWidth(getListWidth() + amount); }
+		if (horizontalScroll != null) { setListWidth(getListWidth() + amount); updateVisuals(); }
 		else { widthToBeSet += amount; }
 		return this;
 	}
 	public EGuiScrollList growListHeight(int amount) {
-		if (verticalScroll != null) { setListHeight(getListHeight() + amount); }
+		if (verticalScroll != null) { setListHeight(getListHeight() + amount); updateVisuals(); }
 		else { heightToBeSet += amount; }
 		return this;
 	}
@@ -343,7 +345,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 		}
 		if (isHScrollDrawn() && isVScrollDrawn()) {
 			EDimension h = horizontalScroll.getDimensions();
-			horizontalScroll.setDimensions(h.startX, h.startY, h.width - verticalScroll.width - 1, h.height);
+			horizontalScroll.setDimensions(h.startX, h.startY, width - verticalScroll.width - 3, h.height);
 		}
 	}
 	

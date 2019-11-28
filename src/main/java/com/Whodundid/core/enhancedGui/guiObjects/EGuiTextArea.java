@@ -136,7 +136,7 @@ public class EGuiTextArea<obj> extends EGuiScrollList {
 		
 		//reset list values
 		setListHeight(0);
-		setListWidth(width);
+		setListWidth(width - 2);
 		
 		if (textDocument.size() > 0) {
 			growListHeight(1);
@@ -144,10 +144,10 @@ public class EGuiTextArea<obj> extends EGuiScrollList {
 			growListHeight(1);
 			
 			int len = getLongestLineLength();
-			setListWidth(len > 0 ? len : getListWidth());
+			setListWidth(len > getListWidth() ? len + 10 : getListWidth());
 			
-			if (verticalScroll != null) { if (scrollableHeight > (height - 2)) { growListWidth(11); } }
-			else if (heightToBeSet > (height - 2)) { growListWidth(8); }
+			//if (verticalScroll != null) { if (scrollableHeight > (height - 2)) { growListWidth(15); } }
+			//else if (heightToBeSet > (height - 2)) { growListWidth(15); }
 			
 			if (horizontalScroll != null) {	if (scrollableWidth > (width - 2)) { growListHeight(10); } }
 			growListHeight(4);
@@ -211,7 +211,7 @@ public class EGuiTextArea<obj> extends EGuiScrollList {
 	}
 	
 	public int getLongestLineLength() {
-		if (longestLine == null) { longestLine = getLongestTextLine(); }
+		longestLine = getLongestTextLine();
 		return longestLine != null ? fontRenderer.getStringWidth(longestLine.getText()) : - 1;
 	}
 	

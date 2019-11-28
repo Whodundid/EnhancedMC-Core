@@ -131,7 +131,10 @@ public class SettingsGuiMain extends WindowParent {
 		//add all objects first
 		addObject(scrollList, problem, searchField, keyBindGui, reloadConfigs);
 		addObject(hiddenButton1, hiddenButton2);
-		addObject(experimentGui, disableDebugMode, consoleBtn);
+		addObject(experimentGui, disableDebugMode);
+		
+		EnhancedMCMod em = (EnhancedMCMod) RegisteredSubMods.getMod(SubModType.CORE);
+		if (em.enableConsole.get()) { addObject(consoleBtn); }
 		
 		objectGroup = new EObjectGroup(this);
 		objectGroup.addObjects(getAllChildren());

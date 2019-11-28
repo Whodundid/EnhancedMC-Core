@@ -440,12 +440,10 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override public boolean isEnabled() { return enabled; }
 	@Override public boolean isVisible() { return visible; }
 	@Override public boolean isPersistent() { return persistent; }
-	@Override public boolean isPinned() { return pinned; }
 	@Override public boolean isBoundaryEnforced() { return false; }
 	@Override public EnhancedGui setEnabled(boolean val) { enabled = val; return this; }
 	@Override public EnhancedGui setVisible(boolean val) { visible = val; return this; }
 	@Override public EnhancedGui setPersistent(boolean val) { return this; }
-	@Override public EnhancedGui setPinned(boolean val) { pinned = val; return this; }
 	@Override public EnhancedGui setBoundaryEnforcer(EDimension dimIn) { return this; }
 	@Override public EDimension getBoundaryEnforcer() { return getDimensions(); }
 	
@@ -627,6 +625,9 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	//IWindowParent Overrides
 	//-------------------------
 	
+	@Override public boolean isPinned() { return pinned; }
+	@Override public EnhancedGui setPinned(boolean val) { pinned = val; return this; }
+	
 	@Override
 	public Stack<Object> getGuiHistory() { return guiHistory; }
 	@Override
@@ -665,8 +666,8 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	//objects
 	@Override public IEnhancedGuiObject getHighestZLevelObject() { return StaticTopParent.getHighestZLevelObject(this); }
 	@Override public IEnhancedGuiObject removeUnpinnedObjects() {
-		guiObjects.stream().filter(o -> !o.isPinned()).forEach(o -> removeObject(o));
-		objsToBeAdded.stream().filter(o -> !o.isPinned()).forEach(o -> removeObject(o));
+		guiObjects.stream().filter(o -> o instanceof IWindowParent).filter(o -> !((IWindowParent) o).isPinned()).forEach(o -> removeObject(o));
+		objsToBeAdded.stream().filter(o -> o instanceof IWindowParent).filter(o -> !((IWindowParent) o).isPinned()).forEach(o -> removeObject(o));
 		return this;
 	}
 	

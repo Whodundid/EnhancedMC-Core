@@ -20,6 +20,7 @@ import com.Whodundid.core.enhancedGui.types.EnhancedGui;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
+import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.util.renderUtil.CursorHelper;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
@@ -147,12 +148,10 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	@Override public boolean isEnabled() { return enabled; }
 	@Override public boolean isVisible() { return visible; }
 	@Override public boolean isPersistent() { return true; }
-	@Override public boolean isPinned() { return false; }
 	@Override public boolean isBoundaryEnforced() { return false; }
 	@Override public EnhancedMCRenderer setEnabled(boolean val) { enabled = val; return this; }
 	@Override public EnhancedMCRenderer setVisible(boolean val) { visible = val; return this; }
 	@Override public EnhancedMCRenderer setPersistent(boolean val) { return this; }
-	@Override public EnhancedMCRenderer setPinned(boolean val) { return this; }
 	@Override public EnhancedMCRenderer setBoundaryEnforcer(EDimension dimIn) { return this; }
 	@Override public EDimension getBoundaryEnforcer() { return getDimensions(); }
 	
@@ -290,8 +289,8 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	//objects
 	@Override public IEnhancedGuiObject getHighestZLevelObject() { return StaticTopParent.getHighestZLevelObject(this); }
 	@Override public IEnhancedGuiObject removeUnpinnedObjects() {
-		guiObjects.stream().filter(o -> !o.isPinned()).forEach(o -> removeObject(o));
-		objsToBeAdded.stream().filter(o -> !o.isPinned()).forEach(o -> removeObject(o));
+		guiObjects.stream().filter(o -> o instanceof IWindowParent).filter(o -> !((IWindowParent) o).isPinned()).forEach(o -> removeObject(o));
+		objsToBeAdded.stream().filter(o -> o instanceof IWindowParent).filter(o -> !((IWindowParent) o).isPinned()).forEach(o -> removeObject(o));
 		return this;
 	}
 	

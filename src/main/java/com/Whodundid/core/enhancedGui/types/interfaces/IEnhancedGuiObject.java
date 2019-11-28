@@ -65,8 +65,6 @@ public interface IEnhancedGuiObject {
 	public boolean isVisible();
 	/** Returns true if this object will be drawn regardless of it being visible or enabled. */
 	public boolean isPersistent();
-	/** Returns true if this object will remain on the hud when a RendererProxyGui is closed. */
-	public boolean isPinned();
 	/** Returns true if this object's mouse checks are enforced by a boundary. */
 	public boolean isBoundaryEnforced();
 	/** Set this object's enabled state. */
@@ -75,8 +73,6 @@ public interface IEnhancedGuiObject {
 	public IEnhancedGuiObject setVisible(boolean val);
 	/** Sets this object to be drawn regardless of it being visible or enabled. */
 	public IEnhancedGuiObject setPersistent(boolean val);
-	/** Sets this object to remain drawn on the renderer even when an IRendererProxy gui is displayed. */
-	public IEnhancedGuiObject setPinned(boolean val);
 	/** Specifies a region that this object will adhere to for mouse checks. */
 	public IEnhancedGuiObject setBoundaryEnforcer(EDimension dimIn);
 	/** Returns an EDimension object containing the boundary this object is bounded by */

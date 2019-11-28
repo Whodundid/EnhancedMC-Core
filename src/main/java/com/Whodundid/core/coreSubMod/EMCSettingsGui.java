@@ -10,7 +10,7 @@ import com.Whodundid.core.subMod.SubModType;
 public class EMCSettingsGui extends WindowParent {
 	
 	EnhancedMCMod mod = (EnhancedMCMod) RegisteredSubMods.getMod(SubModType.CORE);
-	EGuiButton menuOverride, showIncompats, useDebugKey;
+	EGuiButton menuOverride, showIncompats, useDebugKey, showConsole;
 	
 	@Override
 	public void initGui() {
@@ -25,9 +25,10 @@ public class EMCSettingsGui extends WindowParent {
 		
 		menuOverride = new EGuiButton(this, startX + 11, startY + 25, 60, 20).setTrueFalseButton(true, EnhancedMCMod.emcMenuOverride);
 		showIncompats = new EGuiButton(this, startX + 11, menuOverride.endY + 5, 60, 20).setTrueFalseButton(true, EnhancedMCMod.showIncompats);
-		useDebugKey = new EGuiButton(this, startX + 11, showIncompats.endY + 5, 60, 20).setTrueFalseButton(true, EnhancedMCMod.useDebugKey);
+		showConsole = new EGuiButton(this, startX + 11, showIncompats.endY + 5, 60, 20).setTrueFalseButton(true, EnhancedMCMod.enableConsole);
+		useDebugKey = new EGuiButton(this, startX + 11, showConsole.endY + 5, 60, 20).setTrueFalseButton(true, EnhancedMCMod.useDebugKey);
 		
-		addObject(menuOverride, showIncompats, useDebugKey);
+		addObject(menuOverride, showIncompats, showConsole, useDebugKey);
 	}
 	
 	@Override
@@ -39,9 +40,10 @@ public class EMCSettingsGui extends WindowParent {
 		
 		drawCenteredStringWithShadow("Enhanced MC Settings", midX, startY + 6, 0xffbb00);
 		
-		drawStringWithShadow("Override Pause Menu", startX + 80, startY + 31, 0xb2b2b2);
-		drawStringWithShadow("Display Incompatible Mods", startX + 80, startY + 56, 0xb2b2b2);
-		drawStringWithShadow("Use Debug Key", startX + 80, startY + 81, 0xb2b2b2);
+		drawStringWithShadow("Override Pause Menu", startX + 80, menuOverride.midY - 4, 0xb2b2b2);
+		drawStringWithShadow("Display Incompatible Mods", startX + 80, showIncompats.midY - 4, 0xb2b2b2);
+		drawStringWithShadow("Enable EMC Terminal", startX + 80, showConsole.midY - 4, 0xb2b2b2);
+		drawStringWithShadow("Use Debug Key", startX + 80, useDebugKey.midY - 4, 0xb2b2b2);
 		
 		super.drawObject(mXIn, mYIn, ticks);
 	}
@@ -50,6 +52,7 @@ public class EMCSettingsGui extends WindowParent {
 	public void actionPerformed(IEnhancedActionObject object) {
 		if (object == menuOverride) { menuOverride.toggleTrueFalse(mod.emcMenuOverride, mod, false); }
 		if (object == showIncompats) { showIncompats.toggleTrueFalse(mod.showIncompats, mod, false); }
+		if (object == showConsole) { showConsole.toggleTrueFalse(mod.enableConsole, mod, false); }
 		if (object == useDebugKey) { useDebugKey.toggleTrueFalse(mod.useDebugKey, mod, false); }
 	}
 }
