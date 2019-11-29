@@ -29,7 +29,8 @@ public interface IEnhancedTopParent extends IEnhancedGuiObject {
 	//objects
 	
 	public IEnhancedGuiObject getHighestZLevelObject();
-	public IEnhancedGuiObject removeUnpinnedObjects();
+	public IEnhancedTopParent removeUnpinnedObjects();
+	public boolean hasPinnedObjects();
 	
 	//focus
 	

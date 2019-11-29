@@ -305,6 +305,13 @@ public final class EnhancedMC {
 	public static boolean isDebugMode() { return enableDebugFunctions; }
 	public static void setDebugMode(boolean val) { enableDebugFunctions = val; }
 	
+	public static void openSettingsGui() {
+		mc.displayGuiScreen(new RendererProxyGui());
+		if (!isEGuiOpen(SettingsGuiMain.class)) {
+			displayEGui(new SettingsGuiMain());
+		}
+	}
+	
 	public static EventListener getEventListener() { return eventListener; }
 	public static EFontRenderer getFontRenderer() { return fontRenderer; }
 	public static EnhancedMCRenderer getRenderer() { return renderer; }
@@ -314,7 +321,6 @@ public final class EnhancedMC {
 	public static void info(String msg) { EMCLogger.log(Level.INFO, msg); }
 	public static void error(String msg) { EMCLogger.log(Level.ERROR, msg); }
 	public static void error(String msg, Throwable throwableIn) { EMCLogger.log(Level.ERROR, msg, throwableIn); }
-	public static void openSettingsGui() { displayEGui(new SettingsGuiMain()); }
 	
 	protected static void createdByHunterBragg() {}
 }

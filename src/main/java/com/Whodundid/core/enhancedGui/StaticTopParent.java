@@ -12,6 +12,7 @@ import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.MouseType;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectModifyType;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
+import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.events.emcEvents.ModCalloutEvent;
 import com.Whodundid.core.renderer.RendererRCM;
 import com.Whodundid.core.subMod.RegisteredSubMods;
@@ -81,12 +82,13 @@ public class StaticTopParent extends EGui {
 	}
 	public static void keyPressed(IEnhancedTopParent objIn, char typedChar, int keyCode) {
 		IEnhancedGuiObject fo = objIn.getFocusedObject();
-		if (keyCode == 1) {
-			IEnhancedGuiObject highest = objIn.getHighestZLevelObject();
-			if (highest != null) { highest.close(); }
-		}
 		objIn.postEvent(new EventKeyboard(objIn, typedChar, keyCode, KeyboardType.Pressed));
 		if (fo != null && fo != objIn) { fo.keyPressed(Keyboard.getEventCharacter(), Keyboard.getEventKey()); }
+		if (keyCode == 1) {
+			objIn.removeUnpinnedObjects();
+			mc.displayGuiScreen(null);
+			mc.setIngameFocus();
+		}
 	}
 	public static void keyReleased(IEnhancedTopParent objIn, char typedChar, int keyCode) {
 		IEnhancedGuiObject fo = objIn.getFocusedObject();
@@ -126,6 +128,23 @@ public class StaticTopParent extends EGui {
 			return highest;
 		}
 		return null;
+	}
+	public static IEnhancedTopParent removeUnpinnedObjects(IEnhancedTopParent objIn) {
+		for (IEnhancedGuiObject o : EArrayList.combineLists(objIn.getImmediateChildren(), objIn.getObjectsToBeAdded())) {
+			if (o instanceof IWindowParent) {
+				if (!((IWindowParent) o).isPinned()) { objIn.removeObject(o); }
+			}
+			else { objIn.removeObject(o); }
+		}
+		return objIn;
+	}
+	public static boolean hasPinnedObjects(IEnhancedTopParent objIn) {
+		for (IEnhancedGuiObject o : EArrayList.combineLists(objIn.getImmediateChildren(), objIn.getObjectsToBeAdded())) {
+			if (o instanceof IWindowParent) {
+				if (((IWindowParent) o).isPinned()) { return true; }
+			}
+		}
+		return false;
 	}
 	
 	//focus

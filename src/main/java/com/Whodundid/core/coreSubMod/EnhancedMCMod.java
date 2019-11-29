@@ -6,6 +6,8 @@ import com.Whodundid.core.settings.SettingsGuiMain;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.subMod.SubModType;
 import com.Whodundid.core.util.storageUtil.ModSetting;
+import net.minecraftforge.client.event.MouseEvent;
+import org.lwjgl.input.Keyboard;
 
 public class EnhancedMCMod extends SubMod {
 	

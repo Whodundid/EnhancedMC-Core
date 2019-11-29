@@ -288,11 +288,8 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	
 	//objects
 	@Override public IEnhancedGuiObject getHighestZLevelObject() { return StaticTopParent.getHighestZLevelObject(this); }
-	@Override public IEnhancedGuiObject removeUnpinnedObjects() {
-		guiObjects.stream().filter(o -> o instanceof IWindowParent).filter(o -> !((IWindowParent) o).isPinned()).forEach(o -> removeObject(o));
-		objsToBeAdded.stream().filter(o -> o instanceof IWindowParent).filter(o -> !((IWindowParent) o).isPinned()).forEach(o -> removeObject(o));
-		return this;
-	}
+	@Override public IEnhancedTopParent removeUnpinnedObjects() { return StaticTopParent.removeUnpinnedObjects(this); }
+	@Override public boolean hasPinnedObjects() { return StaticTopParent.hasPinnedObjects(this); }
 	
 	//focus
 	@Override public IEnhancedGuiObject getDefaultFocusObject() { return defaultFocusObject; }

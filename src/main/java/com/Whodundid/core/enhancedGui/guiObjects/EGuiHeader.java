@@ -20,7 +20,7 @@ import org.lwjgl.input.Mouse;
 
 public class EGuiHeader extends EnhancedGuiObject {
 	
-	public EGuiButton fileUpButton, moveButton, closeButton, pinButton;
+	public EGuiButton fileUpButton, closeButton, pinButton;
 	public boolean fullClose = false;
 	public boolean drawDefault = true;
 	public boolean drawTitle = true;
@@ -54,7 +54,7 @@ public class EGuiHeader extends EnhancedGuiObject {
 			}
 			
 			EObjectGroup group = new EObjectGroup(getParent());
-			group.addObject(this, fileUpButton, moveButton, closeButton);
+			group.addObject(this, fileUpButton, pinButton, closeButton);
 			setObjectGroup(group);
 		}
 	}
@@ -75,13 +75,6 @@ public class EGuiHeader extends EnhancedGuiObject {
 			pinButton.setDrawBackground(true).setBackgroundColor(0xffbb0000).setPersistent(true);
 			addObject(pinButton);
 		}
-		return this;
-	}
-	
-	protected EGuiHeader addMoveButton() {
-		moveButton = new EGuiButton(this, endX - 35, startY + 2, 16, 16, "");
-		moveButton.setTextures(Resources.guiMoveButton, Resources.guiMoveButtonSel).setPersistent(true);
-		addObject(moveButton);
 		return this;
 	}
 	
@@ -181,26 +174,11 @@ public class EGuiHeader extends EnhancedGuiObject {
 	public void actionPerformed(IEnhancedActionObject object) {
 		if (object == closeButton) { handleClose(); }
 		if (object == pinButton) { handlePin(); }
-		if (object == moveButton) { handleMove(); }
 		if (object == fileUpButton) { handleFileUp(); }
 	}
 	
 	protected void handleClose() {
 		parent.close();
-	}
-	
-	protected void handleMove() {
-		if (!moving) {
-			if (!parent.isPositionLocked()) {
-				IEnhancedTopParent topParent = getTopParent();
-				if (topParent.isMoving()) { topParent.clearModifyingObject(); }
-				else {
-					topParent.setModifyingObject(parent, ObjectModifyType.Move);
-					topParent.setModifyMousePos(mX, mY);
-					moving = true;
-				}
-			}
-		} else { moving = false; }
 	}
 	
 	protected void handlePin() {
@@ -221,7 +199,7 @@ public class EGuiHeader extends EnhancedGuiObject {
 	
 	public EGuiHeader setDrawButtons(boolean val) {
 		if (fileUpButton != null) { fileUpButton.setVisible(val); }
-		if (moveButton != null) { moveButton.setVisible(val); }
+		if (pinButton != null) { pinButton.setVisible(val); }
 		if (closeButton != null) { closeButton.setVisible(val); }
 		return this;
 	}
