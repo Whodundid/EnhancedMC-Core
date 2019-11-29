@@ -251,7 +251,7 @@ public class TextAreaLine<obj> extends EGuiTextField {
 		} else {
 			if (lineEquals && (textRecentlyEntered || drawCursor)) {
 				int textCursorPosLength = fontRenderer.getStringWidth(text.substring(0, cursorPosition)); //this is not finished -- does not check for horizontal position
-				drawRect(startX + textCursorPosLength, startY + 1, startX + textCursorPosLength + 1, endY, 0xffb2b2b2);
+				drawRect(startX + textCursorPosLength - 1, startY + 1, startX + textCursorPosLength, endY, 0xffb2b2b2);
 			}
 			//drawStringWithShadow(text, startX, startY + 2, enabledColor);
 		}
