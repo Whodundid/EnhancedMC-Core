@@ -68,6 +68,13 @@ public class EArrayList<E> extends AbstractList<E> {
 		return this;
 	}
 	
+	public static <E> EArrayList<E> combineLists(List<E> a, List<E> b) {
+		EArrayList<E> l = new EArrayList();
+		if (a != null) { l.addAll(a); }
+		if (b != null) { l.addAll(b); }
+		return l;
+	}
+	
 	public boolean allowsDuplicates() { return allowDuplicates; }
 	
 	public void trimToSize() {
