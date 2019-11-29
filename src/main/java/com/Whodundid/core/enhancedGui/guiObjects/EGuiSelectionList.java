@@ -55,10 +55,10 @@ public class EGuiSelectionList extends WindowParent implements IEnhancedActionOb
 		header.setTitle(headerString);
 		header.setTitleColor(headerStringColor);
 		
-		select = new EGuiButton(this, startX + 10, endY - 28, 80, 20, "Select");
-		cancelSel = new EGuiButton(this, endX - 90, endY - 28, 80, 20, "Cancel");
+		select = new EGuiButton(this, startX + 5, endY - 25, 80, 20, "Select");
+		cancelSel = new EGuiButton(this, endX - 85, endY - 25, 80, 20, "Cancel");
 		
-		selectionList = new EGuiTextArea(this, startX + 10, startY + 10, width - 20, height - 45, false) {
+		selectionList = new EGuiTextArea(this, startX + 5, startY + 5, width - 10, height - 35, false) {
 			@Override
 			public void keyPressed(char typedChar, int keyCode) {
 				super.keyPressed(typedChar, keyCode);
@@ -88,7 +88,7 @@ public class EGuiSelectionList extends WindowParent implements IEnhancedActionOb
 			};
 			selectionList.addTextLine(l);
 		}
-		if (!selectionList.getTextDocument().isEmpty()) { selectionList.setSelectedLine(selectionList.getTextLine(1)); }
+		if (!selectionList.getTextDocument().isEmpty()) { selectionList.setSelectedLine(selectionList.getTextLine(0)); }
 	}
 	
 	protected void selectCurrentOptionAndClose() {
