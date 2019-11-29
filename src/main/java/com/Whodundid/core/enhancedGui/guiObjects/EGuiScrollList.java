@@ -341,7 +341,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 	private void updateVisuals() {
 		if (isVScrollDrawn()) {
 			EDimension v = verticalScroll.getDimensions();
-			verticalScroll.setDimensions(v.startX, v.startY, v.width, v.height - (isResetDrawn() ? 4 : 0));
+			verticalScroll.setDimensions(v.startX, v.startY, v.width, height - 2 - (isResetDrawn() ? 4 : 0));
 		}
 		if (isHScrollDrawn() && isVScrollDrawn()) {
 			EDimension h = horizontalScroll.getDimensions();
