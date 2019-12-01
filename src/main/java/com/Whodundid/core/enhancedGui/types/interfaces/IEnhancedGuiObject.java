@@ -35,14 +35,8 @@ public interface IEnhancedGuiObject {
 	public void drawObject(int mX, int mY, float ticks);
 	/** Event fired from this object's pre draw setup to perform cursorImage changes. */
 	public void updateCursorImage();
-	/** Set this object to draw a text box at the mosue's location if the mouse has hovered for a short period of time. */
-	public IEnhancedGuiObject setDrawHoverText(boolean val);
-	/** Returns true if this object will draw hovering text at the mouse's location upon hovering for a short period of time. */
-	public boolean drawsHoverText();
-	/** Sets the text that will be drawn when the mouse has hovered over this object for a short period of time. */
-	public IEnhancedGuiObject setHoverText(String textIn);
-	/** Returns the text that will be drawn when the mouse hovers over this object for a short period of time. */
-	public String getHoverText();
+	/** Event fired from the top parent when the mouse has been hovering over this object for a short period of time. */
+	public void onMouseHover();
 	
 	//obj ids
 	

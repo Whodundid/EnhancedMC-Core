@@ -46,8 +46,6 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	protected IEnhancedGuiObject objectRequestingFocus, focusedObject, defaultFocusObject, focusLockObject;
 	protected IEnhancedGuiObject toFront, toBack;
 	protected IEnhancedGuiObject hoveringTextObject;
-	public boolean drawHoverText = false;
-	public String hoverText = "";
 	public long mouseHoverTime = 0l;
 	public long hoverRefTime = 0l;
 	public StorageBox<Integer, Integer> oldMousePos = new StorageBox();
@@ -132,10 +130,7 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 		GlStateManager.popMatrix();
 	}
 	@Override public void updateCursorImage() {}
-	@Override public EnhancedMCRenderer setDrawHoverText(boolean val) { return this; }
-	@Override public boolean drawsHoverText() { return false; }
-	@Override public EnhancedMCRenderer setHoverText(String textIn) { return this; }
-	@Override public String getHoverText() { return ""; }
+	@Override public void onMouseHover() {}
 	
 	//obj ids;
 	@Override public int getObjectID() { return 0; }
@@ -341,7 +336,7 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 		else { mX = mXIn; mY = mYIn; }
 		if (!CursorHelper.isNormalCursor() && getHighestZObjectUnderMouse() == null) { CursorHelper.reset(); }
 		checkMouseHover();
-		oldMousePos.setValues(mXIn, mYIn);
+		oldMousePos.setValues(mX, mY);
 		if (!objsToBeRemoved.isEmpty()) { StaticEGuiObject.removeObjects(this, objsToBeRemoved); }
 		if (!objsToBeAdded.isEmpty()) { StaticEGuiObject.addObjects(this, objsToBeAdded); }
 		updateZLayers();
@@ -357,20 +352,22 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	}
 	
 	public void checkMouseHover() {
-		if (getTopParent().getHighestZObjectUnderMouse() != null) {
+		if (getHighestZObjectUnderMouse() != null) {
 			if (mX == oldMousePos.getObject() && mY == oldMousePos.getValue()) {
 				mouseHoverTime = (System.currentTimeMillis() - hoverRefTime);
 				if (mouseHoverTime >= 1000) {
-					getTopParent().setObjectWithHoveringText(getTopParent().getHighestZObjectUnderMouse());
+					setObjectWithHoveringText(getHighestZObjectUnderMouse());
 				}
 			}
 			else {
 				mouseHoverTime = 0l;
 				hoverRefTime = System.currentTimeMillis();
+				setObjectWithHoveringText(null);
 			}
 		}
 		else if (mouseHoverTime > 0l) {
 			mouseHoverTime = 0l;
+			if (getObjectWithHoveringText() != null) { setObjectWithHoveringText(null); }
 		}
 	}
 	

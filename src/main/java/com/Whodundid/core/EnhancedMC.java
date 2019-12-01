@@ -310,6 +310,10 @@ public final class EnhancedMC {
 		if (!isEGuiOpen(SettingsGuiMain.class)) {
 			displayEGui(new SettingsGuiMain());
 		}
+		else {
+			WindowParent s = getWindowInstance(SettingsGuiMain.class);
+			if (s != null) { s.requestFocus(); }
+		}
 	}
 	
 	public static EventListener getEventListener() { return eventListener; }

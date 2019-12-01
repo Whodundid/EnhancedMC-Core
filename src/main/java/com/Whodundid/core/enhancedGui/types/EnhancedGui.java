@@ -106,8 +106,6 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	public int objZLevel = 0;
 	public int objectId = -1;
 	protected String objectName = "noname";
-	public boolean drawHoverText = false;
-	public String hoverText = "";
 	public long mouseHoverTime = 0l;
 	public long hoverRefTime = 0l;
 	public StorageBox<Integer, Integer> oldMousePos = new StorageBox(0, 0);
@@ -424,10 +422,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 			}
 		}
 	}
-	@Override public EnhancedGui setDrawHoverText(boolean val) { drawHoverText = val; return this; }
-	@Override public boolean drawsHoverText() { return drawHoverText; }
-	@Override public EnhancedGui setHoverText(String textIn) { hoverText = textIn; return this; }
-	@Override public String getHoverText() { return hoverText; }
+	@Override public void onMouseHover() {}
 	
 	//obj ids
 	@Override public int getObjectID() { return objectId; }

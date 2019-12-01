@@ -101,8 +101,6 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	public int objZLevel = 0;
 	public int objectId = -1;
 	protected String objectName = "noname";
-	public boolean drawHoverText = false;
-	public String hoverText = "";
 	public int startXPos, startYPos, startWidth, startHeight;
 	public int startX, startY, endX, endY;
 	public int width, height;
@@ -222,10 +220,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 			}
 		}
 	}
-	@Override public EnhancedGuiObject setDrawHoverText(boolean val) { drawHoverText = val; return this; }
-	@Override public boolean drawsHoverText() { return drawHoverText; }
-	@Override public EnhancedGuiObject setHoverText(String textIn) { hoverText = textIn; return this; }
-	@Override public String getHoverText() { return hoverText; }
+	@Override public void onMouseHover() {}
 	
 	//obj ids
 	@Override public int getObjectID() { return objectId; }
