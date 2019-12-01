@@ -67,6 +67,13 @@ public class EObjectGroup {
 		return false;
 	}
 	
+	public boolean isMouseOverAny(int mXIn, int mYIn) {
+		for (IEnhancedGuiObject o : objects) {
+			if (o.isMouseHover(mXIn, mYIn)) { return true; }
+		}
+		return false;
+	}
+	
 	public EObjectGroup setGroupParent(IEnhancedGuiObject parentIn) { groupParent = parentIn; return this; }
 	
 	public EArrayList<IEnhancedGuiObject> getObjects() { return objects; }
