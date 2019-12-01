@@ -1,11 +1,14 @@
 package com.Whodundid.core.coreSubMod;
 
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.enhancedGui.types.EnhancedGui;
+import com.Whodundid.core.renderer.IRendererProxy;
 import com.Whodundid.core.settings.KeyBindGui;
 import com.Whodundid.core.settings.SettingsGuiMain;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.subMod.SubModType;
 import com.Whodundid.core.util.storageUtil.ModSetting;
+import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.MouseEvent;
 import org.lwjgl.input.Keyboard;
 
@@ -25,5 +28,12 @@ public class EnhancedMCMod extends SubMod {
 		setMainGui(new EMCSettingsGui());
 		addGui(new SettingsGuiMain(), new KeyBindGui());
 		isDisableable = false;
+	}
+	
+	@Override
+	public void eventInitGui(GuiScreenEvent.InitGuiEvent e) {
+		if (!(e.gui instanceof EnhancedGui || e.gui instanceof IRendererProxy)) {
+			EnhancedMC.getRenderer().removeUnpinnedObjects();
+		}
 	}
 }
