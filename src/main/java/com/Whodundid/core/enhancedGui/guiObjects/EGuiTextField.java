@@ -164,6 +164,8 @@ public class EGuiTextField extends EnhancedActionObject {
 						if (isEnabled()) { deleteWords(1); }
 					} else if (isEnabled()) { deleteFromCursor(1); }
 					break;
+				case 1: //esc
+					break;
 				default:
 					if (isEnabled() && ChatAllowedCharacters.isAllowedCharacter(typedChar)) {
 						if (onlyAcceptLetters) { if (Character.isLetter(typedChar)) { writeText(Character.toString(typedChar)); } }
