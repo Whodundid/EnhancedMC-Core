@@ -1,55 +1,60 @@
-package com.Whodundid.core.debug.console;
+package com.Whodundid.core.debug.terminal;
 
-import com.Whodundid.core.debug.console.commands.*;
-import com.Whodundid.core.debug.console.gui.EConsole;
+import com.Whodundid.core.debug.terminal.commands.*;
+import com.Whodundid.core.debug.terminal.gui.ETerminal;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 import java.util.Iterator;
 import java.util.List;
 
-public class ConsoleCommandHandler {
+public class TerminalCommandHandler {
 
-	private static ConsoleCommandHandler instance;
+	private static TerminalCommandHandler instance;
 	protected StorageBoxHolder<String, IConsoleCommand> commands;
 	protected EArrayList<IConsoleCommand> commandList;
 	protected EArrayList<IConsoleCommand> customCommandList;
 	
-	public static ConsoleCommandHandler getInstance() {
-		return instance == null ? instance = new ConsoleCommandHandler() : instance;
+	public static TerminalCommandHandler getInstance() {
+		return instance == null ? instance = new TerminalCommandHandler() : instance;
 	}
 	
-	private ConsoleCommandHandler() {
+	private TerminalCommandHandler() {
 		commands = new StorageBoxHolder();
 		commandList = new EArrayList();
 		customCommandList = new EArrayList();
 		registerBaseCommands(false);
 	}
 	
-	private void registerBaseCommands(boolean runVisually) {
-		registerCommand(new Help(), runVisually);
-		registerCommand(new ReregisterCommands(), runVisually);
-		registerCommand(new ClearConsole(), runVisually);
-		registerCommand(new ClearConsoleHistory(), runVisually);
-		registerCommand(new DebugControl(), runVisually);
-		registerCommand(new DebugCommandRunner(), runVisually);
+	
+	private void registerBaseCommands(boolean runVisually) { registerBaseCommands(null, runVisually); }
+	private void registerBaseCommands(ETerminal conIn, boolean runVisually) {
+		registerCommand(conIn, new Help(), runVisually);
+		registerCommand(conIn, new ReregisterCommands(), runVisually);
+		registerCommand(conIn, new ClearTerminal(), runVisually);
+		registerCommand(conIn, new ClearTerminalHistory(), runVisually);
+		registerCommand(conIn, new DebugControl(), runVisually);
+		registerCommand(conIn, new DebugCommandRunner(), runVisually);
+		registerCommand(conIn, new ListCMD(), runVisually);
+		registerCommand(conIn, new DisconnectServer(), runVisually);
+		registerCommand(conIn, new ConnectServer(), runVisually);
+		registerCommand(conIn, new Say(), runVisually);
 	}
 	
 	public void registerCommand(IConsoleCommand command, boolean runVisually) { registerCommand(null, command, runVisually); }
-	public void registerCommand(EConsole conIn, IConsoleCommand command, boolean runVisually) {
+	public void registerCommand(ETerminal conIn, IConsoleCommand command, boolean runVisually) {
 		commandList.add(command);
-		if (conIn != null & runVisually) { conIn.writeln("Registering command: " + command.getName(), 0xffaa00); }
 		commands.put(command.getName(), command);
-		if (conIn != null & runVisually) { conIn.writeln("Registering command call: " + command.getName(), 0xffaa00); }
+		if (conIn != null & runVisually) { conIn.writeln("Registering command call: " + command.getName(), 0xffff00); }
 		if (command.getAliases() != null) {
 			for (int i = 0; i < command.getAliases().size(); i++) {
 				commands.put(command.getAliases().get(i), command);
-				if (conIn != null & runVisually) { conIn.writeln("Registering command alias: " + command.getAliases().get(i), 0xffaa00); }
+				if (conIn != null & runVisually) { conIn.writeln("Registering command alias: " + command.getAliases().get(i), 0x55ff55); }
 			}
 		}
 	}
 	
-	public void executeCommand(EConsole conIn, String cmd) {
+	public void executeCommand(ETerminal conIn, String cmd) {
 		cmd = cmd.trim().toLowerCase();
 		String[] commandParts = cmd.split(" ");
 		EArrayList<String> commandArguments = new EArrayList();
@@ -90,20 +95,20 @@ public class ConsoleCommandHandler {
 	}
 	
 	public synchronized void reregisterAllCommands(boolean runVisually) { reregisterAllCommands(null, runVisually); }
-	public synchronized void reregisterAllCommands(EConsole conIn, boolean runVisually) {
+	public synchronized void reregisterAllCommands(ETerminal conIn, boolean runVisually) {
 		Iterator<IConsoleCommand> a = commandList.iterator();
 		while (a.hasNext()) {
 			String commandName = a.next().getName();
-			if (conIn != null & runVisually) { conIn.writeln("Unregistering command: " + commandName, 0x00ffdc); }
+			if (conIn != null & runVisually) { conIn.writeln("Unregistering command: " + commandName, 0xb2b2b2); }
 			a.remove();
 		}
 		Iterator<StorageBox<String, IConsoleCommand>> b = commands.iterator();
 		while (b.hasNext()) {
 			String commandName = b.next().getObject();
-			if (conIn != null & runVisually) { conIn.writeln("Unregistering command alias: " + commandName, 0x00ffdc); }
+			if (conIn != null & runVisually) { conIn.writeln("Unregistering command alias: " + commandName, 0xb2b2b2); }
 		}
-		registerBaseCommands(runVisually);
-		customCommandList.forEach(c -> registerCommand(c, runVisually));
+		registerBaseCommands(conIn, runVisually);
+		customCommandList.forEach(c -> registerCommand(conIn, c, runVisually));
 	}
 	
 	public IConsoleCommand getCommand(String commandName) {

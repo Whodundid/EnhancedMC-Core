@@ -1,6 +1,6 @@
-package com.Whodundid.core.debug.console.commands;
+package com.Whodundid.core.debug.terminal.commands;
 
-import com.Whodundid.core.debug.console.gui.EConsole;
+import com.Whodundid.core.debug.terminal.gui.ETerminal;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
 public interface IConsoleCommand {
@@ -8,5 +8,6 @@ public interface IConsoleCommand {
 	public EArrayList<String> getAliases();
 	public String getCommandHelpInfo();
 	public String getCommandErrorInfo(String arg);
-	public void runCommand(EConsole conIn, EArrayList<String> args, boolean runVisually);
+	public EArrayList<String> getTabCompleteList();
+	public void runCommand(ETerminal conIn, EArrayList<String> args, boolean runVisually);
 }
