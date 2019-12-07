@@ -4,15 +4,15 @@ import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.coreSubMod.EnhancedMCMod;
 import com.Whodundid.core.debug.ExperimentGui;
 import com.Whodundid.core.debug.ImportantGui;
-import com.Whodundid.core.debug.console.gui.EConsole;
+import com.Whodundid.core.debug.terminal.gui.ETerminal;
 import com.Whodundid.core.enhancedGui.StaticEGuiObject;
-import com.Whodundid.core.enhancedGui.guiObjectUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiLabel;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiRect;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiScrollList;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextField;
+import com.Whodundid.core.enhancedGui.guiUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventKeyboard;
 import com.Whodundid.core.enhancedGui.guiUtil.events.ObjectEvent;
 import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.KeyboardType;
@@ -60,8 +60,18 @@ public class SettingsGuiMain extends WindowParent {
 	public void initObjects() {
 		setHeader(new EGuiHeader(this));
 		
+		SettingsGuiMain mm = this;
+		
 		reloadConfigs = new EGuiButton(this, startX + 5, endY - 25, 92, 20, "Reload Configs");
-		keyBindGui = new EGuiButton(this, endX - 97, endY - 25, 92, 20, "MC KeyBinds");
+		keyBindGui = new EGuiButton(this, endX - 97, endY - 25, 92, 20, "MC KeyBinds") {
+			@Override
+			public void mousePressed(int mXIn, int mYIn, int button) {
+				if (button == 1) {
+					guiInstance.addObject(new SettingsRCM(mm, mXIn, mYIn, new KeyBindGui(), "Keybinds"));
+				}
+				super.mousePressed(mXIn, mYIn, button);
+			}
+		};
 		experimentGui = new EGuiButton(this, 1, res.getScaledHeight() - 21, 85, 20, "ExperimentGui");
 		disableDebugMode = new EGuiButton(this, experimentGui.endX + 1, res.getScaledHeight() - 21, 85, 20, "Disable Debug");
 		consoleBtn = new EGuiButton(this, reloadConfigs.endX + 3, endY - 25, keyBindGui.startX - reloadConfigs.endX - 6, 20);
@@ -134,7 +144,7 @@ public class SettingsGuiMain extends WindowParent {
 		addObject(experimentGui, disableDebugMode);
 		
 		EnhancedMCMod em = (EnhancedMCMod) RegisteredSubMods.getMod(SubModType.CORE);
-		if (em.enableConsole.get()) { addObject(consoleBtn); }
+		if (em.enableTerminal.get()) { addObject(consoleBtn); }
 		
 		objectGroup = new EObjectGroup(this);
 		objectGroup.addObjects(getAllChildren());
@@ -282,7 +292,7 @@ public class SettingsGuiMain extends WindowParent {
 				leftPress = 0;
 				rightPress = 0;
 			}
-			if (object == consoleBtn) { EnhancedMC.displayEGui(new EConsole()); }
+			if (object == consoleBtn) { EnhancedMC.displayEGui(new ETerminal()); }
 			if (object == problem) { EnhancedMC.displayEGui(new IncompatibleWindowList()); }
 		}
 	}
@@ -302,10 +312,8 @@ public class SettingsGuiMain extends WindowParent {
 		if (searchField != null) { searchField.requestFocus(); searchField.setText("" + typedChar); }
 	}
 	
-	public void openRCM(int mXIn, int mYIn) { openRCM(mXIn, mYIn); }
-	public void openRCM(int mXIn, int mYIn, SubMod modIn) {
-		addObject(rcm = new SettingsRCM(this, mXIn, mYIn, modIn));
-	}
+	public void openRCM(int mXIn, int mYIn) { addObject(rcm = new SettingsRCM(this, mXIn, mYIn)); }
+	public void openRCM(int mXIn, int mYIn, SubMod modIn) { addObject(rcm = new SettingsRCM(this, mXIn, mYIn, modIn)); }
 	
 	public void updateList() {
 		if (scrollList != null) {

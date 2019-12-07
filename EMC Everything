@@ -11,7 +11,7 @@ Images:
         2. Open in new window
         3. For toggling enabled state
     SubMods (general)
-        1. Logo/Image for each
+D       1. Logo/Image for each
     
 Sounds:
     Notifications:
@@ -32,7 +32,8 @@ F   1. Object window z-layering
 
     3. InGameChatWindow doesn't open at mouse position from RendererRCM.
     
-    4. All EGuiObjects are removed when the entire screen is resized. -------------------------- Unsure on alternative
+F   4. All EGuiObjects are removed when the entire screen is resized. -------------------------- Unsure on alternative
+        -Made it so that all unpinned objects are removed instead
     
     5. When shift-scrolling EGuiTextAreas, the thumb appears to go beyond the scrollbars boundary.
     
@@ -41,7 +42,8 @@ F   6. When reloading mod configs from the SettingsGuiMain, the results are not 
     
     7. When resizing an EGuiTextArea, the scrollable dimensions don't seem to properly fit certain objects.
     
-    8. When resizing, an EGuiTextArea will lose all additions to it's document.
+F   8. When resizing, an EGuiTextArea will lose all additions to it's document.
+        -Objects need to handle this individually.
     
 F   9. If a focusLockObject is present, the flashing red border only displays once and never again until reset.
     
@@ -76,7 +78,11 @@ F?  18. When resizing an object, its' focus is lost.
             --Removed Line: 'if (mod != null && !mod.isResizeable() && mType.equals(ObjectModifyType.Resize)) { objIn.setModifyingObject(mod, ObjectModifyType.None); }'
             -Not Completely, it still loses it if the resizing position is the top right corner
     
-    19. Move button on windows does not work at all.
+C   19. Move button on windows does not work at all.
+
+    20. When pressing enter while a chatWindow is open, the chatWindow is closed (even if it's not in focus) and all other windows remain open (even if they aren't pinned).
+    
+    21. Change EGuiScrollBar to an actionObject.
     
 
 
@@ -91,7 +97,7 @@ EnhancedChat: (MAIN PRIORITY AFTER CORE)
     
     5. Config loading issues.
     
-    6. Pinned Chat Windows don't stay pinned when renderer proxy is closed.
+F   6. Pinned Chat Windows don't stay pinned when renderer proxy is closed.
     
     
     
@@ -121,39 +127,39 @@ Parkour AI:
 Missing/Broken Quality of Life Issues
 -------------------------------------
 
-1. When using the FileUpButton to return to the main settings gui, the scroll position is not remembered.
+  1. When using the FileUpButton to return to the main settings gui, the scroll position is not remembered.
 
-2. When a vanilla gui is opened, the renderer proxy is effectively closed - breaking the control bridge.
-   This would be fine if it weren't for the fact that the EGuiObjects remain on screen.
+F 2. When a vanilla gui is opened, the renderer proxy is effectively closed - breaking the control bridge.
+     This would be fine if it weren't for the fact that the EGuiObjects remain on screen.
    
-3. RCM does not appear for 'MC KeyBinds' button in SettingsGuiMain.
+  3. RCM does not appear for 'MC KeyBinds' button in SettingsGuiMain.
 
-4. While the scale of everything does change with Minecraft's gui scaling, some objects really do not
-   fit well in the larger scales. (ie. InGameChatWindow, MiniMapGui, etc.)
+  4. While the scale of everything does change with Minecraft's gui scaling, some objects really do not
+     fit well in the larger scales. (ie. InGameChatWindow, MiniMapGui, etc.)
    
-   On the largest scaling mode, nothing actually fits well..
+     On the largest scaling mode, nothing actually fits well..
 
 
 --------------------------------
 Unfinished/Planned Core Features
 --------------------------------
 
- 1. Hovering Events
- 2. Notification System
- 3. Quick Bar for Frequently Used Mods
- 4. EMC Console
- 5. Display SubMod Picture/Icon when hovering over mod in SettingsGuiMain and in SubModInfoDialogueBox
- 6. Customize-able color palletes/themes for EMC
- 7. Resizeable Settings Menu
- 8. SubMod Categories -- Organize and display each mod categorically in the SettingsGuiMain
- 9. Animated windows and notifications
-10. EMC In-Game Server Browser
-11. System to check for updates in background
-12. Finish PlayerFacing API
-13. Toggle sounds from the EMC Core SubMod gui
-14. Select sounds for each notification from the EMC Core SubMod gui
-15. Finish EGuiColorPicker
-16. Redo EGuiDropDownList
+D 1. Hovering Events
+  2. Notification System
+  3. Quick Bar for Frequently Used Mods
+D 4. EMC Console
+  5. Display SubMod Picture/Icon when hovering over mod in SettingsGuiMain and in SubModInfoDialogueBox
+  6. Customize-able color palletes/themes for EMC
+  7. Resizeable Settings Menu
+  8. SubMod Categories -- Organize and display each mod categorically in the SettingsGuiMain
+  9. Animated windows and notifications
+ 10. EMC In-Game Server Browser
+ 11. System to check for updates in background
+ 12. Finish PlayerFacing API
+ 13. Toggle sounds from the EMC Core SubMod gui
+ 14. Select sounds for each notification from the EMC Core SubMod gui
+ 15. Finish EGuiColorPicker
+ 16. Redo EGuiDropDownList
 
 
 ----------

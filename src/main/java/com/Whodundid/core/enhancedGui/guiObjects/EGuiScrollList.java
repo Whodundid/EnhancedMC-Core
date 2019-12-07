@@ -53,8 +53,8 @@ public class EGuiScrollList extends EnhancedGuiObject {
 	
 	@Override
 	public void initObjects() throws ObjectInitException {
-		verticalScroll = new EGuiScrollBar(this, height - 2, height - 2, ScreenLocation.right);
-		horizontalScroll = new EGuiScrollBar(this, width - 2, width - 2, ScreenLocation.bot);
+		verticalScroll = new EGuiScrollBar(this, height - 2, scrollableHeight, ScreenLocation.right);
+		horizontalScroll = new EGuiScrollBar(this, width - 2, scrollableWidth, ScreenLocation.bot);
 		
 		reset = new EGuiButton(this, endX - 5, endY - 5, 5, 5);
 		
@@ -81,12 +81,9 @@ public class EGuiScrollList extends EnhancedGuiObject {
 		horizontalScroll.setVisible(isHScrollDrawn());
 		reset.setVisible(isResetDrawn());
 		
-		int vScrollPos = verticalScroll.getScrollPos() - verticalScroll.getVisibleAmount();
-		int hScrollPos = horizontalScroll.getScrollPos() - horizontalScroll.getVisibleAmount();
-		
 		int scale = res.getScaleFactor();
 		try {
-			if (checkDraw()) {
+			if (checkDraw() && height > (isHScrollDrawn() ? 5 : 2) && width > (isVScrollDrawn() ? 5 : 2)) {
 				GlStateManager.pushMatrix();
 				GlStateManager.enableBlend();
 				
@@ -101,26 +98,21 @@ public class EGuiScrollList extends EnhancedGuiObject {
 				//draw background
 				drawRect(startX + 1, startY + 1, endX - 1, endY - 1, backgroundColor);
 				
-				synchronized (listContents) {
-					for (IEnhancedGuiObject o : listContents) {
-						if (o.checkDraw()) {
-		    				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-		    				EDimension d = o.getDimensions();
-		    				o.setPosition(o.getInitialPosition().getObject() - hScrollPos, o.getInitialPosition().getValue() - vScrollPos);
-		    	        	o.drawObject(mXIn, mYIn, ticks);
-		    			}
-					}
+				for (IEnhancedGuiObject o : listContents) {
+					if (o.checkDraw()) {
+	    				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+	    				EDimension d = o.getDimensions();
+	    				o.drawObject(mXIn, mYIn, ticks);
+	    			}
 				}
 				GL11.glDisable(GL11.GL_SCISSOR_TEST);
 				
 				//draw non list contents as normal (non scissored)
-				synchronized (guiObjects) {
-					for (IEnhancedGuiObject o : guiObjects) {
-						if (o.checkDraw() && listContents.notContains(o)) {
-		    				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-		    	        	o.drawObject(mXIn, mYIn, ticks);
-		    			}
-					}
+				for (IEnhancedGuiObject o : guiObjects) {
+					if (o.checkDraw() && listContents.notContains(o)) {
+	    				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+	    	        	o.drawObject(mXIn, mYIn, ticks);
+	    			}
 				}
 				
 				GlStateManager.popMatrix();
@@ -158,21 +150,29 @@ public class EGuiScrollList extends EnhancedGuiObject {
 		EDimension d = getDimensions();
 		StorageBox<Integer, Integer> loc = new StorageBox(d.startX, d.startY);
 		StorageBoxHolder<IEnhancedGuiObject, StorageBox<Integer, Integer>> previousLocations = new StorageBoxHolder();
-		EArrayList<IEnhancedGuiObject> objs = new EArrayList(getAllChildren());
+		EArrayList<IEnhancedGuiObject> objs = new EArrayList();
+		objs.addAll(getImmediateChildren());
+		objs.addAll(getObjectsToBeAdded());
 		for (IEnhancedGuiObject o : objs) {
-			if (listContents.contains(o) || listObjsToBeAdded.contains(o)) {
-				previousLocations.add(o, new StorageBox(o.getDimensions().startX, o.getDimensions().startY));
-			} else {
-				previousLocations.add(o, new StorageBox(o.getDimensions().startX - loc.getObject(), o.getDimensions().startY - loc.getValue()));
-			}
+			previousLocations.add(o, new StorageBox(o.getDimensions().startX - loc.getObject(), o.getDimensions().startY - loc.getValue()));
 		}
 		setDimensions(newX, newY, d.width, d.height);
 		for (IEnhancedGuiObject o : objs) {
-			if (listContents.contains(o) || listObjsToBeAdded.contains(o)) {
+			if (!o.isPositionLocked()) {
 				StorageBox<Integer, Integer> oldLoc = previousLocations.getBoxWithObj(o).getValue();
-				o.setPosition((newX + oldLoc.getObject()) - startX, (newY + oldLoc.getValue()) - startY);
-			} else {
-				StorageBox<Integer, Integer> oldLoc = previousLocations.getBoxWithObj(o).getValue();
+				o.setInitialPosition(newX + oldLoc.getObject(), newY + oldLoc.getValue());
+				
+				if (listContents.contains(o) || listObjsToBeAdded.contains(o)) {
+					int eX = endX - (isVScrollDrawn() ? verticalScroll.width + 2 : 1);
+					int eY = endY - (isHScrollDrawn() ? horizontalScroll.height - 4 : 1);
+					
+					EDimension bounds = new EDimension(startX + 1, startY + 1, eX, eY);
+					
+					o.setBoundaryEnforcer(getDimensions());
+					for (IEnhancedGuiObject q : o.getImmediateChildren()) { q.setBoundaryEnforcer(bounds); }
+					for (IEnhancedGuiObject q : o.getObjectsToBeAdded()) { q.setBoundaryEnforcer(bounds); }
+				}
+				
 				o.setPosition(newX + oldLoc.getObject(), newY + oldLoc.getValue());
 			}
 		}
@@ -185,11 +185,18 @@ public class EGuiScrollList extends EnhancedGuiObject {
 			verticalScroll.reset();
 			horizontalScroll.reset();
 		}
+		if (object == verticalScroll || object == horizontalScroll) {
+			int vScrollPos = verticalScroll.getScrollPos() - verticalScroll.getVisibleAmount();
+			int hScrollPos = horizontalScroll.getScrollPos() - horizontalScroll.getVisibleAmount();
+			for (IEnhancedGuiObject o : listContents) {
+				o.setPosition(o.getInitialPosition().getObject() - hScrollPos, o.getInitialPosition().getValue() - vScrollPos);
+			}
+		}
 	}
 	
 	public EDimension getListDimensions() {
-		int w = (endX - (isVScrollDrawn() ? verticalScroll.width + 2 : 2)) - startX - 1;
-		int h = (endY - (isHScrollDrawn() ? horizontalScroll.height - 4 : 1)) - startY - 1;
+		int w = (endX - (isVScrollDrawn() ? verticalScroll.width + 3 : 2)) - startX;
+		int h = (endY - (isHScrollDrawn() ? horizontalScroll.height - 4 : 1)) - startY - 2;
 		return new EDimension(0, 0, w, h);
 	}
 	
@@ -245,8 +252,54 @@ public class EGuiScrollList extends EnhancedGuiObject {
 	}
 	
 	public EGuiScrollList addObjectToList(IEnhancedGuiObject... objsIn) {
-		listObjsToBeAdded.addAll(objsIn);
-		objsToBeAdded.addAll(objsIn);
+		for (IEnhancedGuiObject o : objsIn) {
+			try {
+				if (o != null && o != this) {
+					if (o instanceof EnhancedGui) { continue; }
+					if (o instanceof EGuiHeader && hasHeader()) { 
+						 throw new HeaderAlreadyExistsException(getHeader());
+					}
+					
+					int eX = endX - (isVScrollDrawn() ? verticalScroll.width + 2 : 2);
+					int eY = endY - (isHScrollDrawn() ? horizontalScroll.height - 4 : 1);
+					
+					EDimension bounds = new EDimension(startX + 1, startY + 1, eX, eY);
+					
+					//apply offset to all added objects so their location is relative to this scrollList
+					EDimension dims = o.getDimensions();
+					o.setDimensions(startX + dims.startX, startY + dims.startY, dims.width, dims.height);
+					
+					/*
+					for (IEnhancedGuiObject q : o.getImmediateChildren()) {
+						EDimension qd = q.getDimensions();
+						q.setDimensions(startX + qd.startX, startY + qd.startY, qd.width, qd.height);
+					}
+					for (IEnhancedGuiObject q : o.getObjectsToBeAdded()) {
+						EDimension qd = q.getDimensions();
+						q.setDimensions(startX + qd.startX, startY + qd.startY, qd.width, qd.height);
+					}
+					*/
+					
+					try {
+						o.setParent(this).initObjects();
+						o.setZLevel(getZLevel() + 1);
+						if (o instanceof WindowParent) { ((WindowParent) o).initGui(); }
+						o.completeInit();
+					} catch (ObjectInitException e) { e.printStackTrace(); }
+					
+					//limit the boundary of each object to the list's boundary
+					o.setBoundaryEnforcer(bounds);
+					for (IEnhancedGuiObject q : o.getImmediateChildren()) { q.setBoundaryEnforcer(bounds); }
+					for (IEnhancedGuiObject q : o.getObjectsToBeAdded()) { q.setBoundaryEnforcer(bounds); }
+					
+					//replace the original intial position coordinates with the relative ones
+					o.setInitialPosition(o.getDimensions().startX, o.getDimensions().startY);
+					
+					listObjsToBeAdded.add(o);
+					objsToBeAdded.add(o);
+				}
+			} catch (HeaderAlreadyExistsException e) { e.printStackTrace(); }
+		}
 		return this;
 	}
 	
@@ -267,8 +320,8 @@ public class EGuiScrollList extends EnhancedGuiObject {
 	protected void updateBeforeNextDraw(int mXIn, int mYIn) {
 		res = new ScaledResolution(mc);
 		mX = mXIn; mY = mYIn;
-		if (!mouseEntered && isMouseHover(mX, mY)) { mouseEntered = true; mouseEntered(mX, mY); }
-		if (mouseEntered && !isMouseHover(mX, mY)) { mouseEntered = false; mouseExited(mX, mY); }
+		if (!mouseEntered && isMouseOver(mX, mY)) { mouseEntered = true; mouseEntered(mX, mY); }
+		if (mouseEntered && !isMouseOver(mX, mY)) { mouseEntered = false; mouseExited(mX, mY); }
 		if (!objsToBeRemoved.isEmpty()) { StaticEGuiObject.removeObjects(this, objsToBeRemoved); }
 		if (!objsToBeAdded.isEmpty()) { StaticEGuiObject.addObjects(this, objsToBeAdded); }
 		if (!listObjsToBeRemoved.isEmpty()) { removeListObjects(); }
@@ -299,41 +352,9 @@ public class EGuiScrollList extends EnhancedGuiObject {
 	
 	protected void addListObjects() {
 		for (IEnhancedGuiObject o : listObjsToBeAdded) {
-			try {
-				if (o != null && o != this) {
-					if (o instanceof EnhancedGui) { continue; }
-					if (o instanceof EGuiHeader && hasHeader()) { 
-						 throw new HeaderAlreadyExistsException(getHeader());
-					}
-					
-					int eX = endX - (isVScrollDrawn() ? verticalScroll.width + 2 : 2);
-					int eY = endY - (isHScrollDrawn() ? horizontalScroll.height - 4 : 1);
-					
-					EDimension bounds = new EDimension(startX + 1, startY + 1, eX, eY);
-					
-					//apply offset to all added objects so their location is relative to this scrollList
-					EDimension dims = o.getDimensions();
-					o.setDimensions(startX + dims.startX, startY + dims.startY, dims.width, dims.height);
-					
-					//limit the boundary of each object to the list's boundary
-					o.setBoundaryEnforcer(bounds);
-					for (IEnhancedGuiObject q : o.getImmediateChildren()) { q.setBoundaryEnforcer(bounds); }
-					for (IEnhancedGuiObject q : o.getObjectsToBeAdded()) { q.setBoundaryEnforcer(bounds); }
-					
-					//replace the original intial position coordinates with the relative ones
-					o.setInitialPosition(o.getDimensions().startX, o.getDimensions().startY);
-					
-					try {
-						o.setParent(this).initObjects();
-						o.setZLevel(getZLevel() + 1);
-						if (o instanceof WindowParent) { ((WindowParent) o).initGui(); }
-						o.completeInit();
-					} catch (ObjectInitException e) { e.printStackTrace(); }
-					listContents.add(o);
-					o.onAdded();
-					postEvent(new EventObjects(this, o, ObjectEventType.ObjectAdded));
-				}
-			} catch (HeaderAlreadyExistsException e) { e.printStackTrace(); }
+			listContents.add(o);
+			//o.onAdded();
+			//postEvent(new EventObjects(this, o, ObjectEventType.ObjectAdded));
 		}
 		listObjsToBeAdded.clear();
 	}

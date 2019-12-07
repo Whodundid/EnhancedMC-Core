@@ -1,7 +1,7 @@
 package com.Whodundid.core.enhancedGui.guiObjects;
 
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
-import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.EnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EDimension;
@@ -14,12 +14,13 @@ import net.minecraft.util.MathHelper;
 //First Added: Oct 3, 2018
 //Author: Hunter Bragg
 
-public class EGuiScrollBar extends EnhancedGuiObject {
+public class EGuiScrollBar extends EnhancedActionObject { //CHANGE TO ACTION OBJECT!
 	
 	public boolean vertical = false;
 	public int scrollBarThickness = 3;
 	public int thumbSize = 50;
 	public int scrollPos = 0;
+	protected int lastScrollChange = 0;
 	public int highVal = 0;
 	protected double interval = 0;
 	protected int blockIncrement = 0;
@@ -102,8 +103,8 @@ public class EGuiScrollBar extends EnhancedGuiObject {
 	@Override
 	public void drawObject(int mX, int mY, float ticks) {
 		if (isScrolling && mousePos != null && mousePos.getObject() != null && mousePos.getValue() != null) {
-			if (vertical) { moveThumb(0, mY - mousePos.getValue()); }
-			else { moveThumb(mX - mousePos.getObject(), 0); }
+			if (vertical && mY - mousePos.getValue() != 0) { moveThumb(0, mY - mousePos.getValue()); }
+			else if (mX - mousePos.getObject() != 0) { moveThumb(mX - mousePos.getObject(), 0); }
 			mousePos.setValues(mX, mY);
 		}
 		drawRect(startX, startY, startX + width, startY + height, 0xff666666);
@@ -160,6 +161,8 @@ public class EGuiScrollBar extends EnhancedGuiObject {
 			}
 		}
 		calculateScrollPos();
+		lastScrollChange = vertical ? newY : newX;
+		getActionReciever().actionPerformed(this);
 	}
 	
 	public boolean isMouseInThumb(int mX, int mY) {
@@ -167,6 +170,7 @@ public class EGuiScrollBar extends EnhancedGuiObject {
 	}
 	
 	public EGuiScrollBar setScrollBarPos(int pos) {
+		//lastScrollChange = scrollPos + -;
 		pos = pos < visibleAmount ? visibleAmount : pos;
 		pos = pos > highVal ? highVal : pos;
 		//System.out.println("pos pos: " + pos);
@@ -182,6 +186,7 @@ public class EGuiScrollBar extends EnhancedGuiObject {
 			thumbEndX = thumbStartX + thumbSize;
 			thumbEndY = endY;
 		}
+		getActionReciever().actionPerformed(this);
 		return this;
 	}
 	
@@ -228,6 +233,7 @@ public class EGuiScrollBar extends EnhancedGuiObject {
 	
 	public boolean drawVertical() { return vertical; }
 	public boolean isThumbRendered() { return renderThumb; }
+	public int getLastScrollChange() { return lastScrollChange; }
 	public int getScrollBarThickness() { return scrollBarThickness; }
 	public int getThumbSize() { return thumbSize; }
 	public int getScrollPos() { return scrollPos; }

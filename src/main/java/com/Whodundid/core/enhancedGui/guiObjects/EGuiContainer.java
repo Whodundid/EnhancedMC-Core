@@ -47,6 +47,14 @@ public class EGuiContainer extends EnhancedGuiObject {
 			drawRect(startX + 1, startY + 1, startX + drawWidth, startY + titleAreaHeight - 1, titleBackgroundColor);
 			drawStringWithShadow(title, startX + 4, startY + 5, titleColor);
 		}
+		
+		//int scale = res.getScaleFactor();
+		//GL11.glScissor(
+		//		((startX + 1) * scale),
+		//		(Display.getHeight() - startY * scale) - (height) * scale,
+		//		(width - 2) * scale,
+		//		(height) * scale);
+		
 		super.drawObject(mXIn, mYIn, ticks);
 	}
 	

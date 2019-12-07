@@ -2,7 +2,7 @@ package com.Whodundid.core;
 
 import com.Whodundid.core.coreSubMod.EnhancedMCMod;
 import com.Whodundid.core.debug.DebugFunctions;
-import com.Whodundid.core.debug.console.ConsoleCommandHandler;
+import com.Whodundid.core.debug.terminal.TerminalCommandHandler;
 import com.Whodundid.core.enhancedGui.types.EnhancedGui;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
@@ -61,12 +61,12 @@ public final class EnhancedMC {
 	public static final Logger EMCLogger = LogManager.getLogger("EnhancedMC");
 	public static EFontRenderer fontRenderer;
 	private static final EnhancedMCRenderer renderer = EnhancedMCRenderer.getInstance();
-	private static final ConsoleCommandHandler console = ConsoleCommandHandler.getInstance();
+	private static final TerminalCommandHandler terminal = TerminalCommandHandler.getInstance();
 	private static EventListener eventListener;
 	private static boolean isInitialized = false;
 	public static int updateCounter = 0;
 	public static boolean enableDebugFunctions = false;
-	public final EnhancedMCMod modInstance = new EnhancedMCMod();
+	public static final EnhancedMCMod modInstance = new EnhancedMCMod();
 	public final Resources resources = new Resources();
 	public static boolean safeRemoteDesktopMode = false;
 	
@@ -226,12 +226,14 @@ public final class EnhancedMC {
 		return guiIn != null ? (WindowParent) renderer.getAllChildren().stream().filter(o -> o.getClass().equals(guiIn)).findFirst().get() : null;
 	}
 	
-	public static void displayEGui(IWindowParent guiIn) { displayEGui(guiIn, null, false, CenterType.screen); }
-	public static void displayEGui(IWindowParent guiIn, CenterType loc) { displayEGui(guiIn, null, false, loc); }
-	public static void displayEGui(IWindowParent guiIn, Object oldObject) { displayEGui(guiIn, oldObject, true, CenterType.object); }
-	public static void displayEGui(IWindowParent guiIn, Object oldObject, boolean transferHistory) { displayEGui(guiIn, oldObject, transferHistory, CenterType.object); }
-	public static void displayEGui(IWindowParent guiIn, Object oldObject, CenterType loc) { displayEGui(guiIn, oldObject, true, loc); }
-	public static void displayEGui(IWindowParent guiIn, Object oldObject, boolean transferHistory, CenterType loc) {
+	public static void displayEGui(IWindowParent guiIn) { displayEGui(guiIn, null, false, false, CenterType.screen); }
+	public static void displayEGui(IWindowParent guiIn, CenterType loc) { displayEGui(guiIn, null, false, false, loc); }
+	public static void displayEGui(IWindowParent guiIn, Object oldObject) { displayEGui(guiIn, oldObject, true, true, CenterType.object); }
+	public static void displayEGui(IWindowParent guiIn, Object oldObject, CenterType loc) { displayEGui(guiIn, oldObject, true, true, loc); }
+	public static void displayEGui(IWindowParent guiIn, Object oldObject, boolean closeOld, CenterType loc) { displayEGui(guiIn, oldObject, closeOld, true, loc); }
+	public static void displayEGui(IWindowParent guiIn, Object oldObject, boolean closeOld) { displayEGui(guiIn, oldObject, closeOld, true, CenterType.object); }
+	public static void displayEGui(IWindowParent guiIn, Object oldObject, boolean closeOld, boolean transferHistory) { displayEGui(guiIn, oldObject, closeOld, transferHistory, CenterType.object); }
+	public static void displayEGui(IWindowParent guiIn, Object oldObject, boolean closeOld, boolean transferHistory, CenterType loc) {
 		if (guiIn == null) { mc.displayGuiScreen(null); }
 		if (mc.currentScreen == null || !(mc.currentScreen instanceof RendererProxyGui)) { mc.displayGuiScreen(new RendererProxyGui()); }
 		if (guiIn != null) {
@@ -239,7 +241,7 @@ public final class EnhancedMC {
 			else {
 				renderer.addObject(guiIn);
 				if (oldObject instanceof GuiScreen) { mc.displayGuiScreen(null); }
-				else if (oldObject instanceof IWindowParent) { ((IWindowParent) oldObject).close(); }
+				else if (oldObject instanceof IWindowParent && closeOld) { ((IWindowParent) oldObject).close(); }
 			}
 			if (transferHistory && oldObject instanceof IWindowParent) {
 				IWindowParent old = (IWindowParent) oldObject;
@@ -279,6 +281,13 @@ public final class EnhancedMC {
 				sY = objDim.startY;
 				break;
 			}
+		case objectIndent:
+			if (objectIn != null) {
+				EDimension objDim = objectIn.getDimensions();
+				sX = objDim.startX + 25;
+				sY = objDim.startY + 25;
+				break;
+			}
 		case screen:
 			sX = (res.getScaledWidth() / 2) - (gDim.width / 2);
 			sY = (res.getScaledHeight() / 2) - (gDim.height / 2);
@@ -290,7 +299,10 @@ public final class EnhancedMC {
 		sY = (sY - headerHeight) < 2 ? 2 + headerHeight : sY;
 		sX = sX + gDim.width > res.getScaledWidth() ? -1 + sX - (sX + gDim.width - res.getScaledWidth()) : sX;
 		sY = sY + gDim.height > res.getScaledHeight() ? -2 + sY - (sY + gDim.height - res.getScaledHeight()) : sY;
+		//System.out.println("setting: " + sX + " " + sY);
+		//System.out.println("guiDims a: " + guiIn.getDimensions());
 		guiIn.setPosition(sX, sY);
+		//System.out.println("guiDims b: " + guiIn.getDimensions());
 	}
 	
 	private static SubMod getMod(String modNameIn, EArrayList<SubMod> checkList) {
@@ -316,10 +328,11 @@ public final class EnhancedMC {
 		}
 	}
 	
+	public static EnhancedMCMod getEMCMod() { return modInstance; }
 	public static EventListener getEventListener() { return eventListener; }
 	public static EFontRenderer getFontRenderer() { return fontRenderer; }
 	public static EnhancedMCRenderer getRenderer() { return renderer; }
-	public static ConsoleCommandHandler getConsole() { return console; }
+	public static TerminalCommandHandler getTerminal() { return terminal; }
 	public static boolean isInitialized() { return isInitialized; }
 	public static void log(Level levelIn, String msg) { EMCLogger.log(levelIn, msg); }
 	public static void info(String msg) { EMCLogger.log(Level.INFO, msg); }

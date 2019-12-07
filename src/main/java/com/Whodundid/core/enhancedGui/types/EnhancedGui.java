@@ -4,10 +4,10 @@ import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.debug.DebugFunctions;
 import com.Whodundid.core.enhancedGui.StaticEGuiObject;
 import com.Whodundid.core.enhancedGui.StaticTopParent;
-import com.Whodundid.core.enhancedGui.guiObjectUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiFocusLockBorder;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
+import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.EGuiFocusLockBorder;
+import com.Whodundid.core.enhancedGui.guiUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventAction;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventKeyboard;
@@ -98,6 +98,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	protected boolean positionLocked = false;
 	protected boolean persistent = false;
 	protected boolean pinned = false;
+	protected boolean pinnable = true;
 	protected boolean closeAndRecenter = false;
 	protected int minWidth = 0;
 	protected int minHeight = 0;
@@ -106,6 +107,8 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	public int objZLevel = 0;
 	public int objectId = -1;
 	protected String objectName = "noname";
+	protected String hoverText = "";
+	protected int hoverTextColor = 0xb2b2b2;
 	public long mouseHoverTime = 0l;
 	public long hoverRefTime = 0l;
 	public StorageBox<Integer, Integer> oldMousePos = new StorageBox(0, 0);
@@ -186,7 +189,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 		header = new EGuiHeader(this);
 		header.setPersistent(true);
 		addObject(header);
-		header.updateFileUpButtonVisibility();
+		header.updateButtonVisibility();
 		
 		try {
 			initObjects();
@@ -422,7 +425,9 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 			}
 		}
 	}
-	@Override public void onMouseHover() {}
+	@Override public void onMouseHover(int mX, int mY) {}
+	@Override public EnhancedGui setHoverText(String textIn) { hoverText = textIn; return this; }
+	@Override public EnhancedGui setHoverTextColor(int colorIn) { hoverTextColor = colorIn; return this; }
 	
 	//obj ids
 	@Override public int getObjectID() { return objectId; }
@@ -580,7 +585,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override public void mouseEntered(int mX, int mY) { postEvent(new EventMouse(this, mX, mY, -1, MouseType.Entered)); }
 	@Override public void mouseExited(int mX, int mY) { postEvent(new EventMouse(this, mX, mY, -1, MouseType.Exited)); }
 	@Override public boolean isMouseInside(int mX, int mY) { return mX >= startX && mX <= endX && mY >= startY && mY <= endY; }
-	@Override public boolean isMouseHover(int mX, int mY) { return isMouseInside(mX, mY) && this.equals(getTopParent().getHighestZObjectUnderMouse()); }
+	@Override public boolean isMouseOver(int mX, int mY) { return isMouseInside(mX, mY) && this.equals(getTopParent().getHighestZObjectUnderMouse()); }
 	@Override public boolean isClickable() { return clickable; }
 	@Override public IEnhancedGuiObject setClickable(boolean valIn) { clickable = valIn; return this; }
 	
@@ -621,14 +626,16 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	//-------------------------
 	
 	@Override public boolean isPinned() { return pinned; }
+	@Override public boolean isPinnable() { return pinnable; }
 	@Override public EnhancedGui setPinned(boolean val) { pinned = val; return this; }
+	@Override public EnhancedGui setPinnable(boolean val) { pinnable = val; return this; }
 	
 	@Override
 	public Stack<Object> getGuiHistory() { return guiHistory; }
 	@Override
 	public EnhancedGui setGuiHistory(Stack<Object> historyIn) {
 		guiHistory = historyIn;
-		if (header != null) { header.updateFileUpButtonVisibility(); }
+		if (header != null) { header.updateButtonVisibility(); }
 		return this;
 	}
 	
@@ -844,8 +851,8 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 		mX = mXIn; mY = mYIn;
 		checkMouseHover();
 		oldMousePos.setValues(mXIn, mYIn);
-		if (!mouseEntered && isMouseHover(mX, mY)) { mouseEntered = true; mouseEntered(mX, mY); }
-		if (mouseEntered && !isMouseHover(mX, mY)) { mouseEntered = false; mouseExited(mX, mY); }
+		if (!mouseEntered && isMouseOver(mX, mY)) { mouseEntered = true; mouseEntered(mX, mY); }
+		if (mouseEntered && !isMouseOver(mX, mY)) { mouseEntered = false; mouseExited(mX, mY); }
 		if (!objsToBeRemoved.isEmpty()) { StaticEGuiObject.removeObjects(this, objsToBeRemoved); }
 		if (!objsToBeAdded.isEmpty()) { StaticEGuiObject.addObjects(this, objsToBeAdded); }
 		updateZLayers();

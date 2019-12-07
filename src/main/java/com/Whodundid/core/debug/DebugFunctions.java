@@ -26,6 +26,7 @@ import com.Whodundid.core.util.playerUtil.Direction;
 import com.Whodundid.core.util.playerUtil.PlayerFacing;
 import com.Whodundid.core.util.playerUtil.PlayerMovement;
 import com.Whodundid.core.util.storageUtil.StorageBox;
+import com.Whodundid.enhancedChat.EnhancedChatMod;
 import com.Whodundid.miniMap.MiniMapMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiDisconnected;
@@ -68,6 +69,8 @@ public class DebugFunctions {
 	}
 
 	private static void debug_0() throws Throwable {
+		EnhancedChatMod modd = (EnhancedChatMod) RegisteredSubMods.getMod(SubModType.ENHANCEDCHAT);
+		modd.msgLengthLimit = 1500;
 		//System.out.println("here " + (PlayerFacing.isFacingPlayer() ? PlayerFacing.getFacingPlayerName() : "no one"));
 		//System.out.println(" " + mc.ingameGUI);
 		
@@ -79,9 +82,9 @@ public class DebugFunctions {
 				mapMod.findPlayer = PlayerFacing.getFacingPlayerName();
 			}
 		}
+		*/
 		
-		
-		//EnhancedMC.getRenderer().reInitObjects();
+		EnhancedMC.getRenderer().reInitObjects();
 		
 		/*
 		Thread t = new Thread() {

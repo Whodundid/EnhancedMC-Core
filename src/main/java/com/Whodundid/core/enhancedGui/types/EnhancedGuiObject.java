@@ -2,11 +2,11 @@ package com.Whodundid.core.enhancedGui.types;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.StaticEGuiObject;
-import com.Whodundid.core.enhancedGui.guiObjectUtil.EObjectGroup;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiFocusLockBorder;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiLinkConfirmationDialogueBox;
+import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.EGuiFocusLockBorder;
+import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.EGuiLinkConfirmationDialogueBox;
 import com.Whodundid.core.enhancedGui.guiUtil.EGui;
+import com.Whodundid.core.enhancedGui.guiUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventAction;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventMouse;
@@ -101,6 +101,8 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	public int objZLevel = 0;
 	public int objectId = -1;
 	protected String objectName = "noname";
+	protected String hoverText = "";
+	protected int hoverTextColor = 0xb2b2b2;
 	public int startXPos, startYPos, startWidth, startHeight;
 	public int startX, startY, endX, endY;
 	public int width, height;
@@ -167,7 +169,6 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 		objectInit = true;
 	}
 	@Override public void onAdded() {}
-	//@Override public void reInit(int newWidth, int newHeight) {}
 	
 	//main draw
 	@Override
@@ -216,11 +217,31 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 					}
 				} else {
 					CursorHelper.setCursor(null);
-				}				
+				}
 			}
 		}
 	}
-	@Override public void onMouseHover() {}
+	@Override public void onMouseHover(int mX, int mY) {
+		if (hoverText != null && !hoverText.isEmpty()) {
+			int strWidth = fontRenderer.getStringWidth(hoverText);
+			int sX = mX + 8;
+			int sY = mY - 7;
+			
+			sX = sX < 0 ? 1 : sX;
+			sY = (sY - 7) < 2 ? 2 + 7 : sY;
+			sX = sX + strWidth + 10 > res.getScaledWidth() ? -1 + sX - (sX + strWidth + 10 - res.getScaledWidth() + 6) : sX;
+			sY = sY + 16 > res.getScaledHeight() ? -2 + sY - (sY + 16 - res.getScaledHeight() + 6) : sY;
+			
+			int eX = sX + strWidth + 10;
+			int eY = sY + 16;
+			
+			drawRect(sX, sY, sX + strWidth + 10, sY + 16, 0xff000000);
+			drawRect(sX + 1, sY + 1, eX - 1, eY - 1, 0xff323232);
+			drawStringWithShadow(hoverText, sX + 5, sY + 4, 0x00D1FF);
+		}
+	}
+	@Override public EnhancedGuiObject setHoverText(String textIn) { hoverText = textIn; return this; }
+	@Override public IEnhancedGuiObject setHoverTextColor(int colorIn) { hoverTextColor = colorIn; return this; }
 	
 	//obj ids
 	@Override public int getObjectID() { return objectId; }
@@ -371,13 +392,15 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	@Override public void mouseExited(int mX, int mY) { postEvent(new EventMouse(this, mX, mY, -1, MouseType.Exited)); }
 	@Override
 	public boolean isMouseInside(int mX, int mY) {
+		
 		if (isBoundaryEnforced()) {
 			EDimension b = boundaryDimension;
+			//System.out.print(this + " " + getDimensions() + "[" + mX + "," + mY + "][" + (mX >= startX && mX >= b.startX && mX <= endX && mX <= b.endX && mY >= startY && mY >= b.startY && mY <= endY && mY <= b.endY) + "]\n");
 			return mX >= startX && mX >= b.startX && mX <= endX && mX <= b.endX && mY >= startY && mY >= b.startY && mY <= endY && mY <= b.endY;
 		}
 		return mX >= startX && mX <= endX && mY >= startY && mY <= endY;
 	}
-	@Override public boolean isMouseHover(int mX, int mY) { return isMouseInside(mX, mY) && this.equals(getTopParent().getHighestZObjectUnderMouse()); }
+	@Override public boolean isMouseOver(int mX, int mY) { return isMouseInside(mX, mY) && this.equals(getTopParent().getHighestZObjectUnderMouse()); }
 	@Override public boolean isClickable() { return clickable; }
 	@Override public IEnhancedGuiObject setClickable(boolean valIn) { clickable = valIn; return this; }
 	
@@ -424,8 +447,8 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 		postEvent(new EventRedraw(this));
 		res = new ScaledResolution(mc);
 		mX = mXIn; mY = mYIn;
-		if (!mouseEntered && isMouseHover(mX, mY)) { mouseEntered = true; mouseEntered(mX, mY); }
-		if (mouseEntered && !isMouseHover(mX, mY)) { mouseEntered = false; mouseExited(mX, mY); }
+		if (!mouseEntered && isMouseOver(mX, mY)) { mouseEntered = true; mouseEntered(mX, mY); }
+		if (mouseEntered && !isMouseOver(mX, mY)) { mouseEntered = false; mouseExited(mX, mY); }
 		if (!objsToBeRemoved.isEmpty()) { StaticEGuiObject.removeObjects(this, objsToBeRemoved); }
 		if (!objsToBeAdded.isEmpty()) { StaticEGuiObject.addObjects(this, objsToBeAdded); }
 		updateCursorImage();

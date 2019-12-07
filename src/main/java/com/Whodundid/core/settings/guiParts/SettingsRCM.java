@@ -9,6 +9,7 @@ import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.subMod.gui.SubModErrorType;
 import com.Whodundid.core.subMod.util.SubModEnabler;
 import com.Whodundid.core.subMod.util.SubModErrorDisplay;
+import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.renderUtil.Resources;
 
 public class SettingsRCM extends EGuiRightClickMenu {
@@ -68,7 +69,7 @@ public class SettingsRCM extends EGuiRightClickMenu {
 	private void openNewWindow() {
 		try {
 			IWindowParent g = mod != null ? mod.getMainGui() : gui;
-			if (g != null) { EnhancedMC.displayEGui(g); }
+			if (g != null) { EnhancedMC.displayEGui(g, window, false, false, CenterType.objectIndent); }
 			else { SubModErrorDisplay.displayError(SubModErrorType.NOGUI, mod); }
 		} catch (Exception e) { e.printStackTrace(); }
 	}

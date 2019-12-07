@@ -153,6 +153,7 @@ public class StaticEGuiObject {
 			startY = 0;
 			height = sHeight;
 		}
+		//System.out.println("dims to be set: " + startX + " " + startY + " " + width + " " + height);
 		obj.setDimensions(startX, startY, width, height);
 	}
 	
@@ -174,7 +175,7 @@ public class StaticEGuiObject {
 					if (o != parent && parent.getImmediateChildren().notContains(o) && parent.getObjectsToBeAdded().notContains(o)) {
 						if (o instanceof EnhancedGui) { continue; }
 						if (o instanceof EGuiHeader && parent.hasHeader()) { 
-							throw new HeaderAlreadyExistsException(parent.getHeader());
+							throw new HeaderAlreadyExistsException(parent.getHeader()); //remove this exception -- it's pointless
 						}
 						try {
 							if (o instanceof WindowParent) { ((WindowParent) o).initGui(); }
@@ -206,18 +207,15 @@ public class StaticEGuiObject {
 		objsWithChildren.forEach(c -> workList.addAll(c.getImmediateChildren()));
 		objsWithChildren.forEach(c -> workList.addAll(c.getObjectsToBeAdded()));
 		
-		while (true) {
-			if (!workList.isEmpty()) {
-				foundObjs.addAll(workList);
-				objsWithChildren.clear();
-				workList.stream().filter(o -> !o.getImmediateChildren().isEmpty()).forEach(objsWithChildren::add);
-				workList.stream().filter(o -> !o.getObjectsToBeAdded().isEmpty()).forEach(objsWithChildren::add);
-				workList.clear();
-				objsWithChildren.forEach(c -> workList.addAll(c.getImmediateChildren()));
-				objsWithChildren.forEach(c -> workList.addAll(c.getObjectsToBeAdded()));
-			} else { break; }
+		while (workList.isNotEmpty()) {
+			foundObjs.addAll(workList);
+			objsWithChildren.clear();
+			workList.stream().filter(o -> !o.getImmediateChildren().isEmpty()).forEach(objsWithChildren::add);
+			workList.stream().filter(o -> !o.getObjectsToBeAdded().isEmpty()).forEach(objsWithChildren::add);
+			workList.clear();
+			objsWithChildren.forEach(c -> workList.addAll(c.getImmediateChildren()));
+			objsWithChildren.forEach(c -> workList.addAll(c.getObjectsToBeAdded()));
 		}
-		
 		return foundObjs;
 	}
 	public static EArrayList<IEnhancedGuiObject> getAllChildrenUnderMouse(IEnhancedGuiObject obj, int mX, int mY) {
@@ -274,7 +272,7 @@ public class StaticEGuiObject {
 	public static void parseMousePosition(IEnhancedGuiObject objIn, int mX, int mY) { objIn.getImmediateChildren().stream().filter(o -> o.isMouseInside(mX, mY)).forEach(o -> o.parseMousePosition(mX, mY)); }
 	public static void mousePressed(IEnhancedGuiObject objIn, int mX, int mY, int button) {
 		objIn.postEvent(new EventMouse(objIn, mX, mY, button, MouseType.Pressed));
-		if (!objIn.hasFocus() && objIn.isMouseHover(mX, mY)) { objIn.requestFocus(); }
+		if (!objIn.hasFocus() && objIn.isMouseOver(mX, mY)) { objIn.requestFocus(); }
 		if (button == 0 && objIn.isResizeable() && !objIn.getEdgeAreaMouseIsOn().equals(ScreenLocation.out)) {
 			objIn.getTopParent().setResizingDir(objIn.getEdgeAreaMouseIsOn());
 			objIn.getTopParent().setModifyMousePos(mX, mY);

@@ -2,7 +2,7 @@ package com.Whodundid.core.renderer;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiRightClickMenu;
-import com.Whodundid.core.enhancedGui.guiObjects.EMCGuiSelectionList;
+import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.EMCGuiSelectionList;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.events.emcEvents.ModCalloutEvent;
@@ -18,10 +18,10 @@ public class RendererRCM extends EGuiRightClickMenu {
 	public RendererRCM(IEnhancedGuiObject parentIn, int x, int y) {
 		super(parentIn, x, y);
 		
-		addOption("Open EMC Settings", Resources.guiSettingsButton);
 		if (RegisteredSubMods.isModRegEn(SubModType.ENHANCEDCHAT)) { addOption("New Chat Window"); }
+		addOption("New Window");
+		addOption("Open EMC Settings", Resources.guiSettingsButton);
 		addOption("Close All Objects");
-		addOption("Open Gui...");
 		
 		setRunActionOnPress(true);
 		setActionReciever(this);
@@ -36,7 +36,7 @@ public class RendererRCM extends EGuiRightClickMenu {
 			case "Open EMC Settings": openSettings(); break;
 			case "New Chat Window": openChatWindow(); break;
 			case "Close All Objects": clearScreen(); break;
-			case "Open Gui...": openGui(); break;
+			case "New Window": openGui(); break;
 			}
 		}
 	}

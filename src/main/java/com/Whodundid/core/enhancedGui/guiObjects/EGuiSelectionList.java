@@ -1,6 +1,6 @@
 package com.Whodundid.core.enhancedGui.guiObjects;
 
-import com.Whodundid.core.enhancedGui.guiObjectUtil.TextAreaLine;
+import com.Whodundid.core.enhancedGui.guiParts.TextAreaLine;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
@@ -15,16 +15,16 @@ import net.minecraft.client.gui.ScaledResolution;
 
 public class EGuiSelectionList extends WindowParent implements IEnhancedActionObject {
 	
-	EGuiButton select, cancelSel;
-	EGuiTextArea selectionList;
-	Object defaultSelectionObject = null;
-	StorageBoxHolder<String, ?> listContents = null;
-	Object selectedObject = null;
-	Object storedObject = null;
-	EArrayList<Object> additionalValues = null;
-	String headerString = "Make A Selection..";
-	IEnhancedGuiObject actionReciever;
-	int headerStringColor = 0xb2b2b2;
+	protected EGuiButton select, cancelSel;
+	protected EGuiTextArea selectionList;
+	protected Object defaultSelectionObject = null;
+	protected StorageBoxHolder<String, ?> listContents = null;
+	protected Object selectedObject = null;
+	protected Object storedObject = null;
+	protected EArrayList<Object> additionalValues = null;
+	protected String headerString = "Make A Selection..";
+	protected IEnhancedGuiObject actionReciever;
+	protected int headerStringColor = 0xb2b2b2;
 	
 	protected EGuiSelectionList() {}
 	public EGuiSelectionList(IEnhancedGuiObject parentIn, StorageBoxHolder<String, ?> objectListIn) { this(parentIn, true, objectListIn, null); }

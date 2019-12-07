@@ -1,7 +1,7 @@
 package com.Whodundid.core.enhancedGui.guiObjects;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.enhancedGui.guiObjectUtil.EObjectGroup;
+import com.Whodundid.core.enhancedGui.guiUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
 import com.Whodundid.core.enhancedGui.types.EnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
@@ -77,7 +77,7 @@ public class EGuiTextField extends EnhancedActionObject {
 		if (k > s.length()) { k = s.length(); }
 		if (s.length() > 0) {
 			String s1 = flag ? s.substring(0, j) : s;
-			j1 = drawString(s1, l, i1, drawColor);
+			j1 = drawStringWithShadow(s1, l, i1, drawColor);
 		}
 		
 		boolean flag2 = cursorPosition < text.length() || text.length() >= getMaxStringLength();
@@ -95,7 +95,7 @@ public class EGuiTextField extends EnhancedActionObject {
 		
 		if (drawCursorFlag) {
 			if (flag2) { drawRect(k1, i1 - 1, k1 + 1, i1 + 1 + fontRenderer.FONT_HEIGHT, -3092272); }
-			else { drawString("_", k1, i1, drawColor); }
+			else { drawStringWithShadow("_", k1, i1, drawColor); }
 		}
 		
 		if (k != j) {

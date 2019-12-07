@@ -9,15 +9,14 @@ import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.subMod.SubModType;
 import com.Whodundid.core.util.storageUtil.ModSetting;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.client.event.MouseEvent;
-import org.lwjgl.input.Keyboard;
 
 public class EnhancedMCMod extends SubMod {
 	
 	public static final ModSetting emcMenuOverride = new ModSetting();
 	public static final ModSetting useDebugKey = new ModSetting(false);
 	public static final ModSetting showIncompats = new ModSetting(false);
-	public static final ModSetting enableConsole = new ModSetting(false);
+	public static final ModSetting enableTerminal = new ModSetting(false);
+	public static final ModSetting drawChatOnGui = new ModSetting();
 	
 	public EnhancedMCMod() {
 		super(SubModType.CORE);

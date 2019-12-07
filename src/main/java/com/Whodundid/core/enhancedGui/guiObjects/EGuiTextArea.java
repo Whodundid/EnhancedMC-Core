@@ -1,6 +1,6 @@
 package com.Whodundid.core.enhancedGui.guiObjects;
 
-import com.Whodundid.core.enhancedGui.guiObjectUtil.TextAreaLine;
+import com.Whodundid.core.enhancedGui.guiParts.TextAreaLine;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.storageUtil.EArrayList;
@@ -149,8 +149,8 @@ public class EGuiTextArea<obj> extends EGuiScrollList {
 			//if (verticalScroll != null) { if (scrollableHeight > (height - 2)) { growListWidth(15); } }
 			//else if (heightToBeSet > (height - 2)) { growListWidth(15); }
 			
-			if (horizontalScroll != null) {	if (scrollableWidth > (width - 2)) { growListHeight(10); } }
-			growListHeight(4);
+			if (horizontalScroll != null) {	if (scrollableWidth > (width - 2)) { growListHeight(9); } }
+			growListHeight(2);
 		}
 		
 		//return to original scroll position
@@ -158,11 +158,11 @@ public class EGuiTextArea<obj> extends EGuiScrollList {
 	}
 	
 	public TextAreaLine getTextLine(int numIn) {
-		if (numIn >= 1 && numIn < textDocument.size()) {
+		if (numIn >= 0 && numIn < textDocument.size()) {
 			int first = 0;
 			int last = textDocument.size();
 			int mid = (first + last) / 2;
-			while (first <= last) {
+			while (first <= last && mid < textDocument.size()) {
 				TextAreaLine l = textDocument.get(mid);
 				if (l != null) {
 					if (l.getLineNumber() == numIn) { return l; }

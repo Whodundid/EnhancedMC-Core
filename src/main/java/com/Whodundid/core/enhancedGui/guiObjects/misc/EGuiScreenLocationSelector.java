@@ -1,6 +1,7 @@
-package com.Whodundid.core.enhancedGui.guiObjects;
+package com.Whodundid.core.enhancedGui.guiObjects.misc;
 
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.types.EnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;

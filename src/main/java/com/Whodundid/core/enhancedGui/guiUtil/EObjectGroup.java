@@ -1,4 +1,4 @@
-package com.Whodundid.core.enhancedGui.guiObjectUtil;
+package com.Whodundid.core.enhancedGui.guiUtil;
 
 import com.Whodundid.core.enhancedGui.guiUtil.events.ObjectEvent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
@@ -69,7 +69,7 @@ public class EObjectGroup {
 	
 	public boolean isMouseOverAny(int mXIn, int mYIn) {
 		for (IEnhancedGuiObject o : objects) {
-			if (o.isMouseHover(mXIn, mYIn)) { return true; }
+			if (o.isMouseOver(mXIn, mYIn)) { return true; }
 		}
 		return false;
 	}

@@ -1,7 +1,7 @@
 package com.Whodundid.core.enhancedGui.types.interfaces;
 
-import com.Whodundid.core.enhancedGui.guiObjectUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
+import com.Whodundid.core.enhancedGui.guiUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
 import com.Whodundid.core.enhancedGui.guiUtil.events.ObjectEvent;
 import com.Whodundid.core.enhancedGui.guiUtil.events.ObjectEventHandler;
@@ -36,7 +36,11 @@ public interface IEnhancedGuiObject {
 	/** Event fired from this object's pre draw setup to perform cursorImage changes. */
 	public void updateCursorImage();
 	/** Event fired from the top parent when the mouse has been hovering over this object for a short period of time. */
-	public void onMouseHover();
+	public void onMouseHover(int mX, int mY);
+	/** Sets generic mouse hovering background with specified text. */
+	public IEnhancedGuiObject setHoverText(String textIn);
+	/** Sets hover text color. */
+	public IEnhancedGuiObject setHoverTextColor(int colorIn);
 	
 	//obj ids
 	
@@ -209,7 +213,7 @@ public interface IEnhancedGuiObject {
 	/** Returns true if the mouse is currently inside this object. If a boundary enforcer is set, this method will return true if the mouse is inside of the the specified boundary. */
 	public boolean isMouseInside(int mX, int mY);
 	/** Returns true if the mouse is currently inside this object and that this is the top most object insideo fthe parent. */
-	public boolean isMouseHover(int mX, int mY);
+	public boolean isMouseOver(int mX, int mY);
 	/** Returns true if this object can be clicked on. */
 	public boolean isClickable();
 	/** Specifies if this object can be clicked on. */

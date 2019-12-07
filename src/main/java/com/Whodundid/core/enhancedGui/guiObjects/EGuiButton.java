@@ -45,14 +45,15 @@ public class EGuiButton extends EnhancedActionObject implements IEnhancedActionO
 				if (drawString) { super.drawObject(mX, mY, ticks); }
 			}
 		};
-		displayLabel.setDrawCentered(drawCentered);
+		//System.out.println(this.getParent() + " : " + this + " label dims: " + displayLabel.getDimensions());
+		displayLabel.setDrawCentered(drawCentered).setClickable(false);
 		addObject(displayLabel);
 	}
 
 	@Override
 	public void drawObject(int mX, int mY, float ticks) {
 		if (drawBackground) { drawRect(startX, startY, endX, endY, backgroundColor); }
-		boolean mouseHover = isMouseHover(mX, mY);
+		boolean mouseHover = isMouseOver(mX, mY);
 		boolean mouseCheck = !Mouse.isButtonDown(0) && mouseHover;
 		int stringColor = isEnabled() ? (mouseCheck ? (color == 14737632 ? textHoverColor : color) : color) : color + 0xbbbbbb;
 		displayLabel.setDisplayStringColor(stringColor);

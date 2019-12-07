@@ -19,6 +19,7 @@ public abstract class WindowParent extends EnhancedGuiObject implements IWindowP
 	protected EGuiHeader header;
 	protected boolean moveWithParent = false;
 	protected boolean pinned = false;
+	protected boolean pinnable = true;
 	protected Stack<Object> guiHistory = new Stack();
 	protected Object oldObject = null;
 	public static int defaultWidth = 220, defaultHeight = 255;
@@ -78,20 +79,22 @@ public abstract class WindowParent extends EnhancedGuiObject implements IWindowP
 	public WindowParent setHeader(EGuiHeader headerIn) {
 		if (header != null) { removeObject(header); }
 		header = headerIn;
-		if (header != null) { header.updateFileUpButtonVisibility(); }
+		if (header != null) { header.updateButtonVisibility(); }
 		addObject(headerIn);
 		return this;
 	}
 	
 	@Override public boolean isPinned() { return pinned; }
+	@Override public boolean isPinnable() { return pinnable; }
 	@Override public WindowParent setPinned(boolean val) { pinned = val; return this; }
+	@Override public WindowParent setPinnable(boolean val) { pinnable = val; return this; }
 	
 	@Override
 	public Stack<Object> getGuiHistory() { return guiHistory; }
 	@Override
 	public WindowParent setGuiHistory(Stack<Object> historyIn) {
 		guiHistory = historyIn;
-		if (header != null) { header.updateFileUpButtonVisibility(); }
+		if (header != null) { header.updateButtonVisibility(); }
 		return this;
 	}
 	
@@ -102,7 +105,7 @@ public abstract class WindowParent extends EnhancedGuiObject implements IWindowP
 				try {
 					WindowParent newGui = ((WindowParent) Class.forName(oldGuiPass.getClass().getName()).getConstructor().newInstance());
 					newGui.setGuiHistory(((WindowParent) oldGuiPass).getGuiHistory());
-					EnhancedMC.displayEGui(newGui, this, false, CenterType.object);
+					EnhancedMC.displayEGui(newGui, this, true, false, CenterType.object);
 				} catch (Exception e) { e.printStackTrace(); }
 			}
 			else if (oldGuiPass instanceof GuiScreen) {

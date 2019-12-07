@@ -24,14 +24,13 @@ public class EGuiLabel extends EnhancedGuiObject {
 		this(parentIn, xPos, yPos, stringIn, 0xffffff);
 	}
 	public EGuiLabel(IEnhancedGuiObject parentIn, int xPos, int yPos, String stringIn, int colorIn) {
-		init(parentIn, xPos, yPos);
+		init(parentIn, xPos, yPos, fontRenderer.getStringWidth(stringIn), fontRenderer.FONT_HEIGHT);
 		displayString = stringIn;
 		displayStringColor = colorIn;
 	}
 	
 	@Override
 	public void drawObject(int mX, int mY, float ticks) {
-		//System.out.println(displayString);
 		if (wordWrap && wordWrappedLines != null) {
 			int i = 0;
 			for (String s : wordWrappedLines) {

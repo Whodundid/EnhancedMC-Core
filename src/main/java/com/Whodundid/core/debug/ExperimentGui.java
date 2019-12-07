@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiColorPicker;
+import com.Whodundid.core.enhancedGui.guiObjects.EGuiContainer;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiDialogueBox;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
@@ -75,8 +76,9 @@ public class ExperimentGui extends WindowParent {
 	
 	@Override
 	public void initGui() {
-		centerObjectWithSize(defaultWidth, defaultHeight);
-		super.initGui();
+		//EDimension d = this.getDimensions();
+		setDimensions(startX, startY, defaultWidth, defaultHeight);
+		//centerObjectWithSize(defaultWidth, defaultHeight);
 		setObjectName("Experiment Gui");
 		setResizeable(true);
 	}
@@ -87,6 +89,32 @@ public class ExperimentGui extends WindowParent {
 		header.setTitleColor(0x000000);
 		header.setParentFocusDrawn(false);
 		
+		/*
+		EGuiContainer con = new EGuiContainer(this, startX + 5, startY + 5, width - 10, height - 10);
+		EGuiContainer a = new EGuiContainer(con, startX + 7, startY + 24, 100, 120);
+		EGuiContainer b = new EGuiContainer(con, startX + 113, startY + 24, 100, 120);
+		EGuiContainer i = new EGuiContainer(a, startX + 12, startY + 48, 80, 80);
+		EGuiContainer ii = new EGuiContainer(b, startX + 123, startY + 48, 80, 80);
+		
+		con.setTitle("Con");
+		a.setTitle("a");
+		b.setTitle("b");
+		i.setTitle("i");
+		ii.setTitle("ii");
+		
+		con.addObject(a, b);
+		a.addObject(i);
+		b.addObject(ii);
+		
+		EGuiButton btn1 = new EGuiButton(i, startX + 20, startY + 70, 60, 20, "button 1");
+		EGuiButton btn2 = new EGuiButton(ii, startX + 130, startY + 70, 60, 20, "button 2");
+		i.addObject(btn1);
+		ii.addObject(btn2);
+		
+		this.addObject(con);
+		*/
+		
+		/*
 		WindowParent inner = new WindowParent(this, endX + 15, midY - 5, 219, 190) {
 			@Override
 			public void drawObject(int mXIn, int mYIn, float ticks) {
@@ -128,12 +156,27 @@ public class ExperimentGui extends WindowParent {
 		};
 		
 		window2.setHeader(new EGuiHeader(window2));
+		*/
 		
 		textArea = new EGuiTextArea(this, startX + 5, startY + 5, width - 10, height - 10, true, false).setDrawLineNumbers(true);
-		textArea.addTextLine("this is an intentionally very long line of text to test horizontal scrolling!");
+		//textArea.addTextLine("this is an intentionally very long line of text to test horizontal scrolling!");
 		for (int i = 1; i <= 60; i++) { textArea.addTextLine(i + " cow"); }
 		addObject(textArea);
 		textArea.addTextLine("this is an intentionally very long line of text to test horizontal scrolling!");
+		
+		
+		/*
+		EGuiContainer con = new EGuiContainer(this, startX + 5, startY + 5, width - 10, height - 10).setTitle("testy cat");
+		System.out.println("con Dims: " + con.getDimensions());
+		EGuiScrollList l = new EGuiScrollList(con, startX + 7, startY + 24, width - 14, height - 31);
+		System.out.println("list dims: " + l.getDimensions());
+		EGuiButton beUtton = new EGuiButton(l, 5, 5, 100, 20, "Beeeee utton");
+		System.out.println("button dims: " + beUtton.getDimensions() + " : " + beUtton);
+		l.addObjectToList(beUtton);
+		//System.out.println(beUtton.getDimensions());
+		con.addObject(l);
+		addObject(con);
+		*/
 		
 		//enableHeader(false);
 		//EScreenLocationSelector selector = new EScreenLocationSelector(this, wPos - 300, hPos - 200, 100);
@@ -177,9 +220,9 @@ public class ExperimentGui extends WindowParent {
 		//addObject(chatWindow);
 		
 		
-		colorPicker = new EGuiColorPicker(this, 150, 150);
+		//colorPicker = new EGuiColorPicker(this, 150, 150);
 		
-		EGuiPlayerViewer viewer = new EGuiPlayerViewer(colorPicker, startX + 35, startY + 30, 150, 200);
+		//EGuiPlayerViewer viewer = new EGuiPlayerViewer(colorPicker, startX + 35, startY + 30, 150, 200);
 		//addObject(viewer);
 		//viewer.setHSliderOrientation(ScreenLocation.top);
 		//viewer.setVSliderOrientation(ScreenLocation.left);
@@ -304,11 +347,12 @@ public class ExperimentGui extends WindowParent {
 	@Override
 	public void mousePressed(int mX, int mY, int button) {
 		super.mousePressed(mX, mY, button);
-		if (textArea != null) {
+		testMethod2();
+		//if (textArea != null) {
 			//textArea.addTextLine("clicked " + mX + ", " + mY + " with button " + button, 0xffaa00);
 			//EGuiScrollBar b = textArea.getVScrollBar();
 			//if (b != null) { b.setScrollBarPos(b.getHighVal()); }
-		}
+		//}
 	}
 	
 	@Override
@@ -366,11 +410,19 @@ public class ExperimentGui extends WindowParent {
 		scrollList.renderVScrollBarThumb(size > 8);
 	}
 	
+	public void testMethod2() {
+		if (textArea != null) {
+			//long start = System.nanoTime();
+			System.out.println(textArea.getTextLine(60));
+			//System.out.println(System.nanoTime() - start);
+		}
+	}
+	
 	public void testMethodWithArgs(String[] args) {
 		
 	}
 	
-	public int testMethod2() {
+	public int testMethodInt() {
 		return 0;
 	}
 	

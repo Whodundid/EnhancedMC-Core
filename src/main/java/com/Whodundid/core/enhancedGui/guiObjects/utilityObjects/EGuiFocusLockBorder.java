@@ -1,4 +1,4 @@
-package com.Whodundid.core.enhancedGui.guiObjects;
+package com.Whodundid.core.enhancedGui.guiObjects.utilityObjects;
 
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;

@@ -66,7 +66,7 @@ public class StaticTopParent extends EGui {
 	}
 	public static void mouseScrolled(IEnhancedTopParent objIn, int mX, int mY, int change) {
 		objIn.postEvent(new EventMouse(objIn, mX, mY, -1, MouseType.Scrolled));
-		if (objIn.isMouseInsideObject(mX, mY)) {
+		if (objIn.getHighestZLevelObject() != null) {
 			for (IEnhancedGuiObject o : objIn.getImmediateChildren()) {
 				if (o.isMouseInside(mX, mY) && o.checkDraw()) { o.mouseScrolled(change); }
 			}
@@ -173,7 +173,6 @@ public class StaticTopParent extends EGui {
 			EventFocus event = focusQueue.pop();
 			if (event.getFocusObject() != null) {
 				IEnhancedGuiObject obj = event.getFocusObject();
-				//System.out.println("new focus event: " + obj + " " + event.getFocusType());
 				if (children.contains(obj)) { //only allow object which are a part of the parent to request focus from the parent
 					if (objIn.doesFocusLockExist()) {
 						if (obj.equals(objIn.getFocusLockObject()) || obj.isChildOfObject(objIn.getFocusLockObject()) || obj instanceof EGuiHeader) {
@@ -199,7 +198,6 @@ public class StaticTopParent extends EGui {
 		}
 	}
 	private static void passFocus(IEnhancedTopParent par, IEnhancedGuiObject from, IEnhancedGuiObject to, EventFocus event) {
-		//System.out.println("FOCUS PASS EVENT: from: " + from + " to: " + to + " event: " + event.getFocusType());
 		if (from != null) { from.onFocusLost(event); }
 		par.setFocusedObject(to);
 		to.onFocusGained(event);
@@ -256,11 +254,17 @@ public class StaticTopParent extends EGui {
 	}
 	public static EArrayList<IEnhancedGuiObject> getAllObjectsUnderMouse(IEnhancedTopParent objIn, int mX, int mY) {
 		EArrayList<IEnhancedGuiObject> underMouse = new EArrayList();
+		long start = System.nanoTime();
+		EArrayList<IEnhancedGuiObject> children = objIn.getAllChildren();
+		//System.out.println(Math.abs(System.nanoTime() - start));
 		for (IEnhancedGuiObject o : objIn.getAllChildren()) {
 			if (o.isVisible() && o.isClickable()) {
+				//System.out.print(o.getClass().getSimpleName() + "[" +o.isMouseInside(mX, mY) + "] ");
 				if (o.isMouseInside(mX, mY) || (o.isResizeable() && o.isMouseOnObjEdge(mX, mY))) { underMouse.add(o); }
 			}
 		}
+		//System.out.println();
+		
 		return underMouse;
 	}
  }

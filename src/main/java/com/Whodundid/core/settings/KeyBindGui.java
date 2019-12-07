@@ -1,8 +1,8 @@
 package com.Whodundid.core.settings;
 
-import com.Whodundid.core.enhancedGui.guiObjectUtil.TextAreaLine;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextArea;
+import com.Whodundid.core.enhancedGui.guiParts.TextAreaLine;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;

@@ -1,6 +1,10 @@
-package com.Whodundid.core.enhancedGui.guiObjects;
+package com.Whodundid.core.enhancedGui.guiObjects.utilityObjects;
 
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
+import com.Whodundid.core.enhancedGui.guiObjects.EGuiDialogueBox;
+import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
+import com.Whodundid.core.enhancedGui.guiObjects.EGuiLabel;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import net.minecraft.client.gui.GuiScreen;

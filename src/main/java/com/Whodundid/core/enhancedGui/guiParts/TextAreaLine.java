@@ -1,4 +1,4 @@
-package com.Whodundid.core.enhancedGui.guiObjectUtil;
+package com.Whodundid.core.enhancedGui.guiParts;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiLabel;
@@ -177,7 +177,7 @@ public class TextAreaLine<obj> extends EGuiTextField {
 	@Override 
 	public void mousePressed(int mX, int mY, int button) {
 		try {
-			if (isMouseHover(mX, mY)) { requestFocus(); }
+			if (isMouseOver(mX, mY)) { requestFocus(); }
 			if (button == 0) {
 				if (clicked && System.currentTimeMillis() - doubleClickTimer < doubleClickThreshold) { onDoubleClick(); clicked = false; doubleClickTimer = 0l; }
 				if (!clicked) { clicked = true; doubleClickTimer = System.currentTimeMillis(); }

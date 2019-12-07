@@ -3,9 +3,9 @@ package com.Whodundid.core.renderer;
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.StaticEGuiObject;
 import com.Whodundid.core.enhancedGui.StaticTopParent;
-import com.Whodundid.core.enhancedGui.guiObjectUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
 import com.Whodundid.core.enhancedGui.guiUtil.EGui;
+import com.Whodundid.core.enhancedGui.guiUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventAction;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
 import com.Whodundid.core.enhancedGui.guiUtil.events.EventModify;
@@ -20,17 +20,24 @@ import com.Whodundid.core.enhancedGui.types.EnhancedGui;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
-import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
+import com.Whodundid.core.util.miscUtil.NetPlayerComparator;
+import com.Whodundid.core.util.renderUtil.BlockDrawer;
 import com.Whodundid.core.util.renderUtil.CursorHelper;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.StorageBox;
+import com.google.common.collect.Ordering;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 
 //Last edited: Apr 10, 2019
@@ -95,6 +102,7 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	@Override public EnhancedMCRenderer completeInit() { return this; }
 	@Override
 	public void initObjects() {
+		//addObject(new EGuiPlayerViewer(this, 50, 50, 100, 150));
 		//addObject(new SettingsGuiMain());
 		//addObject(new EGuiContainer(this, 15, 205, 100, 100).setDisplayString("Baccon"));
 		objectInit = true;
@@ -124,13 +132,15 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 					}
 				}
 			});
-			
+			if (getObjectWithHoveringText() != null) { getObjectWithHoveringText().onMouseHover(mX, mY); }
 			if (EnhancedMC.isDebugMode() && !mc.gameSettings.showDebugInfo) { drawDebugInfo(); }
 		}
 		GlStateManager.popMatrix();
 	}
 	@Override public void updateCursorImage() {}
-	@Override public void onMouseHover() {}
+	@Override public void onMouseHover(int mX, int mY) {}
+	@Override public EnhancedMCRenderer setHoverText(String textIn) { return this; }
+	@Override public EnhancedMCRenderer setHoverTextColor(int colorIn) { return this; }
 	
 	//obj ids;
 	@Override public int getObjectID() { return 0; }
@@ -237,7 +247,7 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	@Override public void mouseEntered(int mX, int mY) { postEvent(new EventMouse(this, mX, mY, -1, MouseType.Entered)); }
 	@Override public void mouseExited(int mX, int mY) { postEvent(new EventMouse(this, mX, mY, -1, MouseType.Exited)); }
 	@Override public boolean isMouseInside(int mX, int mY) { return false; }
-	@Override public boolean isMouseHover(int mX, int mY) { return isMouseInside(mX, mY) && equals(getTopParent().getHighestZObjectUnderMouse()); }
+	@Override public boolean isMouseOver(int mX, int mY) { return isMouseInside(mX, mY) && equals(getTopParent().getHighestZObjectUnderMouse()); }
 	@Override public boolean isClickable() { return true; }
 	@Override public IEnhancedGuiObject setClickable(boolean valIn) { return this; }
 	
@@ -333,7 +343,7 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 			EnhancedGui gui = (EnhancedGui) mc.currentScreen;
 			mX = gui.mX; mY = gui.mY;
 		}
-		else { mX = mXIn; mY = mYIn; }
+		else { mX = -1; mY = -1; }
 		if (!CursorHelper.isNormalCursor() && getHighestZObjectUnderMouse() == null) { CursorHelper.reset(); }
 		checkMouseHover();
 		oldMousePos.setValues(mX, mY);
