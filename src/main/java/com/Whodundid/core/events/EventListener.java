@@ -136,7 +136,7 @@ public class EventListener {
 	@SubscribeEvent
 	public void onPreOverlayRender(RenderGameOverlayEvent.Pre e) {
 		if (EnhancedMC.isInitialized()) {
-			if (e.type == ElementType.CHAT && mc.currentScreen instanceof RendererProxyGui) { e.setCanceled(true); }
+			if (e.type == ElementType.CHAT && mc.currentScreen instanceof RendererProxyGui && !EnhancedMC.getEMCMod().drawChatOnGui.get()) { e.setCanceled(true); }
 			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventPreOverlayRenderTick(e));
 		}
 	}
@@ -194,7 +194,7 @@ public class EventListener {
 			CursorHelper.reset();
 			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventWorldUnload(e));
 			BlockDrawer.clearBlocks();
-			EnhancedMC.getRenderer().getImmediateChildren().clear();
+			EnhancedMC.getRenderer().removeUnpinnedObjects();
 		}
 	}
 	
