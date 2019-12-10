@@ -1,16 +1,16 @@
 package com.Whodundid.core.enhancedGui;
 
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventKeyboard;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventModify;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventMouse;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventObjects;
-import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.KeyboardType;
-import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.MouseType;
-import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectEventType;
-import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectModifyType;
-import com.Whodundid.core.enhancedGui.guiUtil.exceptions.HeaderAlreadyExistsException;
-import com.Whodundid.core.enhancedGui.guiUtil.exceptions.ObjectInitException;
+import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
+import com.Whodundid.core.enhancedGui.objectEvents.EventKeyboard;
+import com.Whodundid.core.enhancedGui.objectEvents.EventModify;
+import com.Whodundid.core.enhancedGui.objectEvents.EventMouse;
+import com.Whodundid.core.enhancedGui.objectEvents.EventObjects;
+import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.KeyboardType;
+import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.MouseType;
+import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.ObjectEventType;
+import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.ObjectModifyType;
+import com.Whodundid.core.enhancedGui.objectExceptions.HeaderAlreadyExistsException;
+import com.Whodundid.core.enhancedGui.objectExceptions.ObjectInitException;
 import com.Whodundid.core.enhancedGui.types.EnhancedGui;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
@@ -22,27 +22,29 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
-import java.util.Iterator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 
 public class StaticEGuiObject {
 	
 	//size
+	/** Returns true if the object has an EGuiHeader. */
 	public static boolean hasHeader(IEnhancedGuiObject obj) { return getHeader(obj) != null; }
+	/** Returns this objects EGuiHeader, if there is one. */
 	public static EGuiHeader getHeader(IEnhancedGuiObject obj) {
-		EArrayList<IEnhancedGuiObject> children = new EArrayList();
-		children.addAll(obj.getImmediateChildren());
-		children.addAll(obj.getObjectsToBeAdded());
-		for (IEnhancedGuiObject o : children) { if (o instanceof EGuiHeader) { return (EGuiHeader) o; } }
+		for (IEnhancedGuiObject o : EArrayList.combineLists(obj.getImmediateChildren(), obj.getObjectsToBeAdded())) {
+			if (o instanceof EGuiHeader) { return (EGuiHeader) o; }
+		}
 		return null;
 	}
+	/** Generic object resizing algorithm. */
 	public static void resize(IEnhancedGuiObject obj, int xIn, int yIn, ScreenLocation areaIn) {
-		obj.postEvent(new EventModify(obj, obj, ObjectModifyType.Resize));
-		if (xIn != 0 || yIn != 0) {
+		obj.postEvent(new EventModify(obj, obj, ObjectModifyType.Resize)); //post an event
+		if (xIn != 0 || yIn != 0) { //make sure that there is actually a change in the cursor position
 			EDimension d = obj.getDimensions();
 			int x = 0, y = 0, w = 0, h = 0;
 			boolean e = false, s = false;
+			//perform resizing on different sides depending on the side that's being resized
 			switch (areaIn) {
 			case top: x = d.startX; y = d.startY + yIn; w = d.width; h = d.height - yIn; break;
 			case bot: x = d.startX; y = d.startY; w = d.width; h = d.height + yIn; break;
@@ -54,6 +56,7 @@ public class StaticEGuiObject {
 			case botLeft: x = d.startX + xIn; y = d.startY; w = d.width - xIn; h = d.height + yIn; break;
 			default: break;
 			}
+			//restrict the object to its allowed minimum width
 			if (w < obj.getMinimumWidth()) {
 				w = obj.getMinimumWidth();
 				switch (areaIn) {
@@ -62,6 +65,7 @@ public class StaticEGuiObject {
 				default: break;
 				}
 			}
+			//restrict the object to its allowed maximum width
 			if (w > obj.getMaximumWidth()) {
 				w = obj.getMaximumWidth();
 				switch (areaIn) {
@@ -70,6 +74,7 @@ public class StaticEGuiObject {
 				default: break;
 				}
 			}
+			//restrict the object to its allowed minimum height
 			if (h < obj.getMinimumHeight()) {
 				h = obj.getMinimumHeight();
 				switch (areaIn) {
@@ -78,6 +83,7 @@ public class StaticEGuiObject {
 				default: break;
 				}
 			}
+			//restrict the object to its allowed maximum height
 			if (h > obj.getMaximumHeight()) {
 				h = obj.getMaximumHeight();
 				switch (areaIn) {
@@ -86,80 +92,82 @@ public class StaticEGuiObject {
 				default: break;
 				}
 			}
-			obj.setDimensions(x, y, w, h);
+			obj.setDimensions(x, y, w, h); //set the dimensions of the object to the resized dimensions
 			try {
+				//(lazy approach) remake all the children based on the resized dimensions
 				obj.reInitObjects();
 			} catch (ObjectInitException q) { q.printStackTrace(); }
 		}
 	}
 	
 	//position
+	/** Translates the specified object by a given x and y amount. */
 	public static void move(IEnhancedGuiObject obj, int newX, int newY) {
-		obj.postEvent(new EventModify(obj, obj, ObjectModifyType.Move));
-		if (!obj.isPositionLocked()) {
-			EArrayList<IEnhancedGuiObject> objs = new EArrayList(obj.getImmediateChildren());
-			objs.addAll(obj.getObjectsToBeAdded());
-			Iterator<IEnhancedGuiObject> it = objs.iterator();
-			while (it.hasNext()) {
-				IEnhancedGuiObject o = it.next();
-				if (!o.isPositionLocked()) {
-					if (o instanceof WindowParent) {
+		obj.postEvent(new EventModify(obj, obj, ObjectModifyType.Move)); //post an event
+		if (!obj.isPositionLocked()) { //only allow the object to be moved if it's not locked in place
+			//get all of the children in the object
+			for (IEnhancedGuiObject o : EArrayList.combineLists(obj.getImmediateChildren(), obj.getObjectsToBeAdded())) {
+				if (!o.isPositionLocked()) { //only move the child if it's not locked in place
+					if (o instanceof WindowParent) { //only move the window if it moves with the parent
 						if (((WindowParent) o).movesWithParent()) { o.move(newX, newY); }
 					} else { o.move(newX, newY); }
 				}
 			}
 			EDimension d = obj.getDimensions();
-			obj.setDimensions(d.startX + newX, d.startY + newY, d.width, d.height);
-			if (obj.isBoundaryEnforced()) {
+			obj.setDimensions(d.startX + newX, d.startY + newY, d.width, d.height); //offset the original position by the specified offset
+			if (obj.isBoundaryEnforced()) { //also move the boundary enforcer, if there is one
 				EDimension b = obj.getBoundaryEnforcer();
 				obj.getBoundaryEnforcer().setPosition(b.startX + newX, b.startY + newY);
 			}
 		}
 	}
+	/** Moves the object to the specified x and y coordinates. */
 	public static void setPosition(IEnhancedGuiObject obj, int newX, int newY) {
 		EDimension d = obj.getDimensions();
-		StorageBox<Integer, Integer> loc = new StorageBox(d.startX, d.startY);
+		StorageBox<Integer, Integer> loc = new StorageBox(d.startX, d.startY); //the object's current position for shorter code
 		StorageBoxHolder<IEnhancedGuiObject, StorageBox<Integer, Integer>> previousLocations = new StorageBoxHolder();
-		EArrayList<IEnhancedGuiObject> objs = new EArrayList();
-		objs.addAll(obj.getImmediateChildren());
-		objs.addAll(obj.getObjectsToBeAdded());
-		for (IEnhancedGuiObject o : objs) {
+		EArrayList<IEnhancedGuiObject> objs = EArrayList.combineLists(obj.getImmediateChildren(), obj.getObjectsToBeAdded());
+		for (IEnhancedGuiObject o : objs) { //get each of the object's children's relative positions
 			previousLocations.add(o, new StorageBox(o.getDimensions().startX - loc.getObject(), o.getDimensions().startY - loc.getValue()));
 		}
-		obj.setDimensions(newX, newY, d.width, d.height);
+		obj.setDimensions(newX, newY, d.width, d.height); //move the object to the new position
 		for (IEnhancedGuiObject o : objs) {
-			if (!o.isPositionLocked()) {
+			if (!o.isPositionLocked()) { //don't move the child if its position is locked
 				StorageBox<Integer, Integer> oldLoc = previousLocations.getBoxWithObj(o).getValue();
-				o.setPosition(newX + oldLoc.getObject(), newY + oldLoc.getValue());
+				o.setPosition(newX + oldLoc.getObject(), newY + oldLoc.getValue()); //move the child to the new location with the parent's offest
 			}
 		}
 	}
+	/** Centers the object and all of its children in the middle of the screen with the specified dimensions. */
 	public static void centerObjectWithSize(IEnhancedGuiObject obj, int widthIn, int heightIn) {
-		ScaledResolution res = new ScaledResolution(Minecraft.getMinecraft());
+		ScaledResolution res = new ScaledResolution(Minecraft.getMinecraft()); //get the screen size
 		int sWidth = res.getScaledWidth();
 		int sHeight = res.getScaledHeight();
 		int startX, startY, width, height;
-		if (sWidth >= widthIn) {
+		if (sWidth >= widthIn) { //check if the screen width is larger than the desired object width
+			//if it is, set the xPos so that it will be in the middle of the screen
 			startX = (sWidth - widthIn) / 2;
 			width = widthIn;
-		} else {
+		} else { //otherwise, restrict the object's width to the screen's width
 			startX = 0;
 			width = sWidth;
-		};
-		if (sHeight >= heightIn) {
+		}
+		if (sHeight >= heightIn) { //check if the screen height is larger than the desired object height
+			//if it is, set the yPos so that it will be in the middle of the screen
 			startY = (sHeight - heightIn) / 2;
 			height = heightIn;
-		} else {
+		} else { //otherwise, restrict the object's width to the screen's height
 			startY = 0;
 			height = sHeight;
 		}
-		//System.out.println("dims to be set: " + startX + " " + startY + " " + width + " " + height);
-		obj.setDimensions(startX, startY, width, height);
+		obj.setDimensions(startX, startY, width, height); //apply the dimensions to the object
 	}
 	
 	//objects
+	/** Returns true if the given object is a child of the specified parent. */
 	public static boolean isChildOfObject(IEnhancedGuiObject child, IEnhancedGuiObject parent) {
 		IEnhancedGuiObject curObj = child;
+		//recursively check if the child's lineage contain's the specified parent
 		while (curObj != null && curObj.getParent() != null) {
 			if (curObj.getParent().equals(curObj)) { return false; }
 			if (curObj.getParent().equals(parent)) { return true; }
@@ -167,33 +175,36 @@ public class StaticEGuiObject {
 		}
 		return false;
 	}
+	/** Start the process of adding a child to this object. Children are fully added on the next draw cycle. */
 	public static void addObject(IEnhancedGuiObject parent, IEnhancedGuiObject... objsIn) {
-		EArrayList<IEnhancedGuiObject> addingObjects = new EArrayList();
 		for (IEnhancedGuiObject o : objsIn) {
 			try {
-				if (o != null) {
+				if (o != null) { //only add if the object isn't null
+					//don't let the object be added to itself, or if the object is already in the object
 					if (o != parent && parent.getImmediateChildren().notContains(o) && parent.getObjectsToBeAdded().notContains(o)) {
-						if (o instanceof EnhancedGui) { continue; }
+						if (o instanceof EnhancedGui) { continue; } //don't add GuiScreens
 						if (o instanceof EGuiHeader && parent.hasHeader()) { 
 							throw new HeaderAlreadyExistsException(parent.getHeader()); //remove this exception -- it's pointless
 						}
 						try {
-							if (o instanceof WindowParent) { ((WindowParent) o).initGui(); }
-							o.setParent(parent).initObjects();
-							o.setZLevel(parent.getZLevel() + o.getZLevel() + 1);
+							if (o instanceof WindowParent) { ((WindowParent) o).initGui(); } //if it's a window, do it's init
+							o.setParent(parent).initObjects(); //initialize all of the children's children
+							o.setZLevel(parent.getZLevel() + o.getZLevel() + 1); //increment the child's z layer based off of the parent
+							//if the parent has a boundary enforcer, apply it to the child as well
 							if (parent.isBoundaryEnforced()) { o.setBoundaryEnforcer(parent.getBoundaryEnforcer()); }
-							o.completeInit();
+							o.completeInit(); //tell the child that it has been fully initialized and that it is ready to be added on the next draw cycle
 						} catch (ObjectInitException e) { e.printStackTrace(); }
-						addingObjects.add(o);
+						parent.getObjectsToBeAdded().add(o); //give the processed child to the parent so that it will be added
 					}
 				}
 			} catch (HeaderAlreadyExistsException e) { e.printStackTrace(); }
 		}
-		parent.getObjectsToBeAdded().addAll(addingObjects);
 	}
+	/** Start the process of removing a child from this object. Children are fully removed on the next draw cycle. */
 	public static void removeObject(IEnhancedGuiObject parent, IEnhancedGuiObject... objsIn) {
 		parent.getObjectsToBeRemoved().addAll(objsIn);
 	}
+	/** Returns a list containing every single child from every object in the specified object. */
 	public static EArrayList<IEnhancedGuiObject> getAllChildren(IEnhancedGuiObject obj) {
 		EArrayList<IEnhancedGuiObject> foundObjs = new EArrayList();
 		EArrayList<IEnhancedGuiObject> objsWithChildren = new EArrayList();
@@ -207,34 +218,46 @@ public class StaticEGuiObject {
 		objsWithChildren.forEach(c -> workList.addAll(c.getImmediateChildren()));
 		objsWithChildren.forEach(c -> workList.addAll(c.getObjectsToBeAdded()));
 		
+		//only work as long as there are still child layers to process
 		while (workList.isNotEmpty()) {
+			//update the foundObjs
 			foundObjs.addAll(workList);
+			
+			//for the current layer, find all objects that have children
 			objsWithChildren.clear();
 			workList.stream().filter(o -> !o.getImmediateChildren().isEmpty()).forEach(objsWithChildren::add);
 			workList.stream().filter(o -> !o.getObjectsToBeAdded().isEmpty()).forEach(objsWithChildren::add);
+			
+			//put all children on the next layer into the work list
 			workList.clear();
 			objsWithChildren.forEach(c -> workList.addAll(c.getImmediateChildren()));
 			objsWithChildren.forEach(c -> workList.addAll(c.getObjectsToBeAdded()));
 		}
 		return foundObjs;
 	}
+	/** Returns a list of all children currently under the cursor. */
 	public static EArrayList<IEnhancedGuiObject> getAllChildrenUnderMouse(IEnhancedGuiObject obj, int mX, int mY) {
 		EArrayList<IEnhancedGuiObject> l = new EArrayList();
+		//only add objects if they are visible and if the cursor is over them.
 		obj.getAllChildren().stream().filter(o -> o.checkDraw() && o.isMouseInside(mX, mY)).forEach(l::add);
 		return l;
 	}
 	
 	//parents
+	/* Returns the topParent for the specified object. */
 	public static IEnhancedTopParent getTopParent(IEnhancedGuiObject obj) {
 		IEnhancedGuiObject parentObj = obj.getParent();
+		//recursively check through the object's parent lineage to see if that parent is a topParent
 		while (parentObj != null) {
 			if (parentObj instanceof IEnhancedTopParent) { return (IEnhancedTopParent) parentObj; }
 			if (parentObj.getParent() != null) { parentObj = parentObj.getParent(); }
 		}
 		return obj instanceof IEnhancedTopParent ? (IEnhancedTopParent) obj : null;
 	}
+	/** Returns the parent window for the specified object, if there is one. */
 	public static IWindowParent getWindowParent(IEnhancedGuiObject obj) {
 		IEnhancedGuiObject parentObject = obj.getParent();
+		//recursively check through the object's parent lineage to see if that parent is a window
 		while (parentObject != null && !(parentObject instanceof IEnhancedTopParent)) {
 			if (parentObject instanceof IWindowParent) { return (IWindowParent) parentObject; }
 			if (parentObject.getParent() != null) { parentObject = parentObject.getParent(); }
@@ -281,13 +304,15 @@ public class StaticEGuiObject {
 	}
 	public static void mouseReleased(IEnhancedGuiObject objIn, int mX, int mY, int button) {
 		objIn.postEvent(new EventMouse(objIn, mX, mY, button, MouseType.Released));
-		if (objIn.getTopParent().isResizing()) { objIn.getTopParent().clearModifyingObject(); }
+		if (objIn.getTopParent().getModifyType() == ObjectModifyType.Resize) { objIn.getTopParent().clearModifyingObject(); }
 		if (objIn.getTopParent().getDefaultFocusObject() != null) { objIn.getTopParent().getDefaultFocusObject().requestFocus(); }
 	}
 	public static void mouseDragged(IEnhancedGuiObject objIn, int mX, int mY, int button, long timeSinceLastClick) {}
 	public static void mouseScolled(IEnhancedGuiObject objIn, int mX, int mY, int change) {
 		objIn.postEvent(new EventMouse(objIn, mX, mY, -1, MouseType.Scrolled));
-		objIn.getImmediateChildren().forEach(o -> o.mouseScrolled(change));
+		for (IEnhancedGuiObject o : objIn.getImmediateChildren()) {
+			if (o.isMouseInside(mX, mY) && o.checkDraw()) { o.mouseScrolled(change); }
+		}
 	}
 	public static void keyPressed(IEnhancedGuiObject objIn, char typedChar, int keyCode) {
 		objIn.postEvent(new EventKeyboard(objIn, typedChar, keyCode, KeyboardType.Pressed));
@@ -351,6 +376,6 @@ public class StaticEGuiObject {
 	}
 	
 	public static void setEnabled(boolean val, IEnhancedGuiObject... objs) { for (IEnhancedGuiObject o : objs) { o.setEnabled(val); } }
-	public static void setVisibility(boolean val, IEnhancedGuiObject... objs) { for (IEnhancedGuiObject o : objs) { o.setVisible(val); } }
-	public static void setPersistence(boolean val, IEnhancedGuiObject... objs) { for (IEnhancedGuiObject o : objs) { o.setPersistent(val); } }
+	public static void setVisible(boolean val, IEnhancedGuiObject... objs) { for (IEnhancedGuiObject o : objs) { o.setVisible(val); } }
+	public static void setPersistent(boolean val, IEnhancedGuiObject... objs) { for (IEnhancedGuiObject o : objs) { o.setPersistent(val); } }
 }

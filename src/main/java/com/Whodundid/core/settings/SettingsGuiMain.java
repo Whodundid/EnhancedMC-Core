@@ -6,16 +6,16 @@ import com.Whodundid.core.debug.ExperimentGui;
 import com.Whodundid.core.debug.ImportantGui;
 import com.Whodundid.core.debug.terminal.gui.ETerminal;
 import com.Whodundid.core.enhancedGui.StaticEGuiObject;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiLabel;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiRect;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiScrollList;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextField;
+import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
+import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
+import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiLabel;
+import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiRect;
+import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiScrollList;
+import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiTextField;
 import com.Whodundid.core.enhancedGui.guiUtil.EObjectGroup;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventKeyboard;
-import com.Whodundid.core.enhancedGui.guiUtil.events.ObjectEvent;
-import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.KeyboardType;
+import com.Whodundid.core.enhancedGui.objectEvents.EventKeyboard;
+import com.Whodundid.core.enhancedGui.objectEvents.ObjectEvent;
+import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.KeyboardType;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
@@ -74,7 +74,15 @@ public class SettingsGuiMain extends WindowParent {
 		};
 		experimentGui = new EGuiButton(this, 1, res.getScaledHeight() - 21, 85, 20, "ExperimentGui");
 		disableDebugMode = new EGuiButton(this, experimentGui.endX + 1, res.getScaledHeight() - 21, 85, 20, "Disable Debug");
-		consoleBtn = new EGuiButton(this, reloadConfigs.endX + 3, endY - 25, keyBindGui.startX - reloadConfigs.endX - 6, 20);
+		consoleBtn = new EGuiButton(this, reloadConfigs.endX + 3, endY - 25, keyBindGui.startX - reloadConfigs.endX - 6, 20) {
+			@Override
+			public void mousePressed(int mXIn, int mYIn, int button) {
+				if (button == 1) {
+					guiInstance.addObject(new SettingsRCM(mm, mXIn, mYIn, new ETerminal(), "EMC Terminal"));
+				}
+				super.mousePressed(mXIn, mYIn, button);
+			}
+		};
 		problem = new EGuiButton(this, endX - 17, startY + 2, 15, 15).setTextures(Resources.guiProblemOpen, Resources.guiProblemOpenSel);
 		
 		problem.setVisible(RegisteredSubMods.getIncompatibleModsList().isNotEmpty());
@@ -90,7 +98,7 @@ public class SettingsGuiMain extends WindowParent {
 		experimentGui.setPositionLocked(true);
 		disableDebugMode.setVisible(EnhancedMC.isDebugMode());
 		disableDebugMode.setPositionLocked(true);
-		StaticEGuiObject.setPersistence(true, keyBindGui, reloadConfigs);
+		StaticEGuiObject.setPersistent(true, keyBindGui, reloadConfigs);
 		
 		hiddenButton1 = new EGuiButton(this, startX + 1, startY + 1, 10, 10) {
 			@Override public void performAction() {
@@ -292,7 +300,7 @@ public class SettingsGuiMain extends WindowParent {
 				leftPress = 0;
 				rightPress = 0;
 			}
-			if (object == consoleBtn) { EnhancedMC.displayEGui(new ETerminal()); }
+			if (object == consoleBtn) { EnhancedMC.displayEGui(new ETerminal(), this); }
 			if (object == problem) { EnhancedMC.displayEGui(new IncompatibleWindowList()); }
 		}
 	}
@@ -302,14 +310,17 @@ public class SettingsGuiMain extends WindowParent {
 		if (e instanceof EventKeyboard) {
 			EventKeyboard kbe = (EventKeyboard) e;
 			if (kbe.getKeyboardType() == KeyboardType.Pressed) {
-				if (searchField != null) { searchField.requestFocus(); searchField.setText("" + kbe.getEventChar()); }
+				if (searchField != null && kbe.getEventKey() != 1) {
+					searchField.requestFocus();
+					searchField.writeText("" + kbe.getEventChar());
+				}
 			}
 		}
 	}
 	
 	@Override
 	public void keyPressed(char typedChar, int keyCode) {
-		if (searchField != null) { searchField.requestFocus(); searchField.setText("" + typedChar); }
+		if (searchField != null && keyCode != 1) { searchField.requestFocus(); searchField.writeText("" + typedChar); }
 	}
 	
 	public void openRCM(int mXIn, int mYIn) { addObject(rcm = new SettingsRCM(this, mXIn, mYIn)); }

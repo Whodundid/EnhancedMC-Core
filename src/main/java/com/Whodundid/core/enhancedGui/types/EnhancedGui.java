@@ -4,24 +4,24 @@ import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.debug.DebugFunctions;
 import com.Whodundid.core.enhancedGui.StaticEGuiObject;
 import com.Whodundid.core.enhancedGui.StaticTopParent;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
+import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
+import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.EGuiFocusLockBorder;
 import com.Whodundid.core.enhancedGui.guiUtil.EObjectGroup;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventAction;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventKeyboard;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventMouse;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventObjects;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventRedraw;
-import com.Whodundid.core.enhancedGui.guiUtil.events.ObjectEvent;
-import com.Whodundid.core.enhancedGui.guiUtil.events.ObjectEventHandler;
-import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.FocusType;
-import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.KeyboardType;
-import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.MouseType;
-import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectEventType;
-import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectModifyType;
-import com.Whodundid.core.enhancedGui.guiUtil.exceptions.ObjectInitException;
+import com.Whodundid.core.enhancedGui.objectEvents.EventAction;
+import com.Whodundid.core.enhancedGui.objectEvents.EventFocus;
+import com.Whodundid.core.enhancedGui.objectEvents.EventKeyboard;
+import com.Whodundid.core.enhancedGui.objectEvents.EventMouse;
+import com.Whodundid.core.enhancedGui.objectEvents.EventObjects;
+import com.Whodundid.core.enhancedGui.objectEvents.EventRedraw;
+import com.Whodundid.core.enhancedGui.objectEvents.ObjectEvent;
+import com.Whodundid.core.enhancedGui.objectEvents.ObjectEventHandler;
+import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.FocusType;
+import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.KeyboardType;
+import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.MouseType;
+import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.ObjectEventType;
+import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.ObjectModifyType;
+import com.Whodundid.core.enhancedGui.objectExceptions.ObjectInitException;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
@@ -100,6 +100,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	protected boolean pinned = false;
 	protected boolean pinnable = true;
 	protected boolean closeAndRecenter = false;
+	protected boolean firstDraw = false;
 	protected int minWidth = 0;
 	protected int minHeight = 0;
 	protected int maxWidth = 0;
@@ -238,7 +239,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	}
 	protected void mouseUnclicked(int mX, int mY, int button) {
 		if (modifyingObject != null && modifyType == ObjectModifyType.MoveAlreadyClicked) { modifyType = ObjectModifyType.None; modifyingObject = null; }
-		if (isResizing()) { modifyType = ObjectModifyType.None; modifyingObject = null; }
+		if (modifyType == ObjectModifyType.Resize) { modifyType = ObjectModifyType.None; modifyingObject = null; }
 		mouseReleased(mX, mY, button);
 		EnhancedMC.getRenderer().mouseReleased(mX, mY, button);
 		if (focusedObject != null && focusedObject != this) { focusedObject.mouseReleased(mX, mY, button); }
@@ -372,7 +373,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	public void reInitObjects() throws ObjectInitException {
 		IEnhancedTopParent p = getTopParent();
 		EArrayList<IEnhancedGuiObject> children = getAllChildren();
-		if (!p.isResizing()) {
+		if (!(p.getModifyType() == ObjectModifyType.Resize)) {
 			if (children.contains(p.getFocusedObject())) { p.clearFocusedObject(); }
 			if (children.contains(p.getFocusLockObject())) { p.clearFocusLockObject(); }
 			if (children.contains(p.getModifyingObject())) { p.clearModifyingObject(); }
@@ -392,11 +393,23 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 			GlStateManager.pushMatrix();
 			GlStateManager.enableBlend();
 			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-			guiObjects.stream().filter(o -> o.checkDraw()).forEach(o -> { GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F); o.drawObject(mX, mY, ticks); });
+			guiObjects.stream().filter(o -> o.checkDraw()).forEach(o -> {
+				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+				if (!o.hasFirstDraw()) { o.onFirstDraw(); }
+				o.drawObject(mX, mY, ticks);
+				if (focusLockObject != null && !o.equals(focusLockObject)) {
+					if (o.isVisible()) {
+						EDimension d = o.getDimensions();
+						drawRect(d.startX, d.startY, d.endX, d.endY, 0x77000000);
+					}
+				}
+			});
 			if (EnhancedMC.isDebugMode() && !mc.gameSettings.showDebugInfo) { drawDebugInfo(); }
 			GlStateManager.popMatrix();
 		}
 	}
+	@Override public void onFirstDraw() {}
+	@Override public boolean hasFirstDraw() { return firstDraw; }
 	@Override
 	public void updateCursorImage() {
 		if (isResizeable()) {
@@ -441,6 +454,8 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override public boolean isVisible() { return visible; }
 	@Override public boolean isPersistent() { return persistent; }
 	@Override public boolean isBoundaryEnforced() { return false; }
+	@Override public boolean isResizing() { return getTopParent().getModifyingObject() == this && getTopParent().getModifyType() == ObjectModifyType.Resize; }
+	@Override public boolean isMoving() { return getTopParent().getModifyingObject() == this && getTopParent().getModifyType() == ObjectModifyType.Move; }
 	@Override public EnhancedGui setEnabled(boolean val) { enabled = val; return this; }
 	@Override public EnhancedGui setVisible(boolean val) { visible = val; return this; }
 	@Override public EnhancedGui setPersistent(boolean val) { return this; }
@@ -667,8 +682,8 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	
 	//objects
 	@Override public IEnhancedGuiObject getHighestZLevelObject() { return StaticTopParent.getHighestZLevelObject(this); }
-	@Override public IEnhancedTopParent removeUnpinnedObjects() { return StaticTopParent.removeUnpinnedObjects(this); }
-	@Override public boolean hasPinnedObjects() { return StaticTopParent.hasPinnedObjects(this); }
+	@Override public IEnhancedTopParent removeUnpinnedObjects() { return StaticTopParent.removeUnpinnedWindows(this); }
+	@Override public boolean hasPinnedObjects() { return StaticTopParent.hasPinnedWindows(this); }
 	
 	//focus
 	@Override public IEnhancedGuiObject getDefaultFocusObject() { return defaultFocusObject; }
@@ -744,8 +759,6 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	}
 	
 	//object modification
-	@Override public boolean isMoving() { return modifyType.equals(ObjectModifyType.Move); }
-	@Override public boolean isResizing() { return modifyType.equals(ObjectModifyType.Resize); }
 	@Override public ObjectModifyType getModifyType() { return modifyType; }
 	@Override public EnhancedGui setModifyingObject(IEnhancedGuiObject objIn, ObjectModifyType typeIn) { modifyingObject = objIn; modifyType = typeIn; return this; }
 	@Override public EnhancedGui setResizingDir(ScreenLocation areaIn) { resizingDir = areaIn; return this; }

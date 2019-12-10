@@ -1,8 +1,8 @@
 package com.Whodundid.core.settings.guiParts;
 
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiDialogueBox;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextArea;
+import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.textArea.EGuiTextArea;
+import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
+import com.Whodundid.core.enhancedGui.guiObjects.windows.EGuiDialogueBox;
 import com.Whodundid.core.renderer.EnhancedMCRenderer;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.subMod.SubModSettings;
@@ -60,7 +60,7 @@ public class ReloaderDialogueBox extends EGuiDialogueBox {
 		if (failedMods.isNotEmpty()) {
 			display.addTextLine("Failed to fully reload mods:", 0xff5555);
 			for (StorageBox<SubMod, Reason> box : failedMods) {
-				display.addTextLine(EnumChatFormatting.GRAY + "    " + box.getObject().getName() + " : " + EnumChatFormatting.DARK_PURPLE + EnumChatFormatting.ITALIC + box.getValue());
+				display.addTextLine(EnumChatFormatting.GRAY + "    " + box.getObject().getName() + " : " + EnumChatFormatting.DARK_PURPLE + EnumChatFormatting.ITALIC + box.getValue().msg);
 			}
 		}
 		
@@ -77,6 +77,16 @@ public class ReloaderDialogueBox extends EGuiDialogueBox {
 		addObject(display);
 	}
 		
-	private enum Reason { Saving, Loading, In_General; }
+	private enum Reason {
+		Saving("Saving Config"),
+		Loading("Loading Config"),
+		In_General("Unknown Error!");
+		
+		public String msg = "";
+		
+		private Reason(String reason) {
+			msg = reason;
+		}
+	}
 }
 

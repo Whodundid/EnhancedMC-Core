@@ -1,14 +1,13 @@
 package com.Whodundid.core.debug.terminal.gui;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextArea;
-import com.Whodundid.core.enhancedGui.guiParts.TextAreaLine;
+import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.textArea.EGuiTextArea;
+import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.textArea.TextAreaLine;
 import com.Whodundid.core.enhancedGui.guiUtil.EObjectGroup;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventMouse;
-import com.Whodundid.core.enhancedGui.guiUtil.events.ObjectEvent;
-import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.FocusType;
-import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.MouseType;
+import com.Whodundid.core.enhancedGui.objectEvents.EventFocus;
+import com.Whodundid.core.enhancedGui.objectEvents.EventMouse;
+import com.Whodundid.core.enhancedGui.objectEvents.ObjectEvent;
+import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.MouseType;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
@@ -27,8 +26,8 @@ public class ETerminal extends WindowParent {
 	@Override
 	public void initGui() {
 		setObjectName("EMC Terminal");
-		centerObjectWithSize(300, 150);
-		setMinimumDims(60, 25);
+		setDimensions(startX, startY, 300, 153);
+		setMinimumDims(70, 25);
 		setResizeable(true);
 		super.initGui();
 	}
@@ -71,7 +70,7 @@ public class ETerminal extends WindowParent {
 	
 	@Override
 	public void onFocusGained(EventFocus e) {
-		if (e.getFocusType() == FocusType.Transfer) { inputField.requestFocus(); }
+		//if (e.getFocusType() == FocusType.Transfer) { inputField.requestFocus(); }
 	}
 	
 	@Override

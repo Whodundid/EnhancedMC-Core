@@ -1,8 +1,8 @@
 package com.Whodundid.core.subMod;
 
+import com.Whodundid.core.coreEvents.emcEvents.ChatLineCreatedEvent;
+import com.Whodundid.core.coreEvents.emcEvents.ModCalloutEvent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
-import com.Whodundid.core.events.emcEvents.ChatLineCreatedEvent;
-import com.Whodundid.core.events.emcEvents.ModCalloutEvent;
 import com.Whodundid.core.subMod.config.SubModConfigManager;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;

@@ -1,5 +1,15 @@
 package com.Whodundid.core.util.renderUtil;
 
 public enum CenterType {
-	screen, cursor, object, objectCorner, objectIndent, none;
+	screen,
+	botLeftScreen,
+	topLeftScreen,
+	botRightScreen,
+	topRightScreen,
+	cursor,
+	cursorCorner,
+	object,
+	objectCorner,
+	objectIndent,
+	none;
 }

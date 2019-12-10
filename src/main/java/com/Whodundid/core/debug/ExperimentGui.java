@@ -1,28 +1,30 @@
 package com.Whodundid.core.debug;
 
 import java.awt.Color;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Scanner;
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiColorPicker;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiContainer;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiDialogueBox;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiLabel;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiPlayerViewer;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiScrollList;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiSlider;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextArea;
-import com.Whodundid.core.enhancedGui.guiObjects.misc.KeyOverlay;
+import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
+import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.textArea.EGuiTextArea;
+import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
+import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiContainer;
+import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiLabel;
+import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiRightClickMenu;
+import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiScrollBar;
+import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiScrollList;
+import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiSlider;
+import com.Whodundid.core.enhancedGui.guiObjects.miscObjects.KeyOverlay;
+import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.EGuiPlayerViewer;
+import com.Whodundid.core.enhancedGui.guiObjects.windows.EGuiColorPicker;
+import com.Whodundid.core.enhancedGui.guiObjects.windows.EGuiDialogueBox;
 import com.Whodundid.core.enhancedGui.types.EnhancedGui;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiRightClickMenu;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiScrollBar;
 import com.Whodundid.core.settings.KeyBindGui;
 import com.Whodundid.core.settings.SettingsGuiMain;
 import com.Whodundid.core.subMod.RegisteredSubMods;
@@ -159,7 +161,30 @@ public class ExperimentGui extends WindowParent {
 		*/
 		
 		textArea = new EGuiTextArea(this, startX + 5, startY + 5, width - 10, height - 10, true, false).setDrawLineNumbers(true);
-		//textArea.addTextLine("this is an intentionally very long line of text to test horizontal scrolling!");
+		textArea.addTextLine("this is an intentionally very long line of text to test horizontal scrolling!");
+		
+		/*
+		File gFile = null;
+		
+		String path = System.getProperty("user.dir");
+		try {
+			if (path != null && path.length() >= 5) {
+				path = path.substring(0, path.length() - 3);
+				path += "src\\main\\java\\com\\Whodundid\\core\\enhancedGui\\StaticEGuiObject.java";
+				
+				gFile = new File(path);
+				Scanner reader = null;
+				
+				if (gFile.exists()) {
+					reader = new Scanner(gFile);
+					while (reader.hasNextLine()) { textArea.addTextLine(reader.nextLine()); }
+				}
+				
+				if (reader != null) { reader.close(); }
+			}
+		} catch (Exception e) { e.printStackTrace(); }
+		*/
+		
 		for (int i = 1; i <= 60; i++) { textArea.addTextLine(i + " cow"); }
 		addObject(textArea);
 		textArea.addTextLine("this is an intentionally very long line of text to test horizontal scrolling!");
@@ -330,7 +355,9 @@ public class ExperimentGui extends WindowParent {
 	public EnhancedGuiObject resize(int xIn, int yIn, ScreenLocation areaIn) {
 		if (textArea != null) {
 			//EArrayList doc = textArea.getTextDocument();
+			int pos = textArea.getVScrollBar().getScrollPos();
 			super.resize(xIn, yIn, areaIn);
+			textArea.getVScrollBar().setScrollBarPos(pos);
 			//textArea.setTextDocument(doc);
 		} else {
 			super.resize(xIn, yIn, areaIn);

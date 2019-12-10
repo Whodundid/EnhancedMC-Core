@@ -1,19 +1,19 @@
 package com.Whodundid.core.enhancedGui;
 
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
+import com.Whodundid.core.coreEvents.emcEvents.ModCalloutEvent;
+import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
+import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiUtil.EGui;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventKeyboard;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventMouse;
-import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.FocusType;
-import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.KeyboardType;
-import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.MouseType;
-import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectModifyType;
+import com.Whodundid.core.enhancedGui.objectEvents.EventFocus;
+import com.Whodundid.core.enhancedGui.objectEvents.EventKeyboard;
+import com.Whodundid.core.enhancedGui.objectEvents.EventMouse;
+import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.FocusType;
+import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.KeyboardType;
+import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.MouseType;
+import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.ObjectModifyType;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
-import com.Whodundid.core.events.emcEvents.ModCalloutEvent;
 import com.Whodundid.core.renderer.RendererRCM;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubModType;
@@ -29,48 +29,56 @@ import org.lwjgl.input.Keyboard;
 public class StaticTopParent extends EGui {
 
 	//basic inputs
+	/** Notify the focused object that a mouse button was just pressed. */
 	public static void mousePressed(IEnhancedTopParent objIn, int mX, int mY, int button, Deque<EventFocus> focusQueue) {
-		objIn.postEvent(new EventMouse(objIn, mX, mY, button, MouseType.Pressed));
-		IEnhancedGuiObject underMouse = objIn.getHighestZObjectUnderMouse();
+		objIn.postEvent(new EventMouse(objIn, mX, mY, button, MouseType.Pressed)); //post an event
+		IEnhancedGuiObject underMouse = objIn.getHighestZObjectUnderMouse(); //get the highest object under the mouse
 		
-		if (objIn.getFocusLockObject() != null) {
-			if (underMouse != null) {
+		if (objIn.getFocusLockObject() != null) { //first check if there is a focusLock
+			if (underMouse != null) { //if there is, then check if there is actually anything under the cursor
+				//allow focus to be passed to the object under the cursor if it is the focusLockObject, a child of the focusLockObject or an EGuiHeader
 				if (underMouse.equals(objIn.getFocusLockObject()) || underMouse.isChildOfObject(objIn.getFocusLockObject()) || underMouse instanceof EGuiHeader) {
 					focusQueue.add(new EventFocus(objIn, underMouse, FocusType.MousePress, button, mX, mY));
-				} else { objIn.getFocusLockObject().bringToFront(); objIn.getFocusLockObject().drawFocusLockBorder(); }
-			} else { objIn.getFocusLockObject().bringToFront(); objIn.getFocusLockObject().drawFocusLockBorder(); }
+				} else { objIn.getFocusLockObject().bringToFront(); objIn.getFocusLockObject().drawFocusLockBorder(); } //otherwise, annoy the user
+			} else { objIn.getFocusLockObject().bringToFront(); objIn.getFocusLockObject().drawFocusLockBorder(); } //otherwise, annoy the user
 		}
-		else if (underMouse != null) {
+		else if (underMouse != null) { //if there is no lock, check if there was actually an object under the cursor
+			//check if the object is the focused object, if it is, pass the event to it, otherwise, start a focus request
 			if (underMouse.equals(objIn.getFocusedObject())) { objIn.getFocusedObject().mousePressed(mX, mY, button); }
 			else { focusQueue.add(new EventFocus(objIn, underMouse, FocusType.MousePress, button, mX, mY)); }
 		}
-		else {
+		else { //there was no lock and there was nothing under the cursor
 			objIn.clearFocusedObject();
-			if (button == 1) {
+			if (button == 1) { //open a right click menu if the right mouse button was pressed
 				objIn.addObject(new RendererRCM(objIn, mX, mY));
 			}
 		}
 	}
+	/** Notify the focused object that a mouse button was just released. */
 	public static void mouseReleased(IEnhancedTopParent objIn, int mX, int mY, int button) {
-		objIn.postEvent(new EventMouse(objIn, mX, mY, button, MouseType.Released));
+		objIn.postEvent(new EventMouse(objIn, mX, mY, button, MouseType.Released)); //post an event
+		//clear the modifying object if it the modify type was MoveAlreadyClicked -- mainly used for headers to stop moving when the mouse is released
 		if (objIn.getModifyingObject() != null && objIn.getModifyType() == ObjectModifyType.MoveAlreadyClicked) {
 			objIn.setModifyingObject(objIn.getModifyingObject(), ObjectModifyType.None);
 		}
+		//pass the event to the focused object, if it exists and if it isn't the parent itself
 		if (objIn.getFocusedObject() != null && objIn.getFocusedObject() != objIn) { objIn.getFocusedObject().mouseReleased(mX, mY, button); }
-		if (objIn.isResizing()) { objIn.clearModifyingObject(); }
-		if (objIn.getDefaultFocusObject() != null) { objIn.getDefaultFocusObject().requestFocus(); }
+		if (objIn.getModifyType() == ObjectModifyType.Resize) { objIn.clearModifyingObject(); } //stop resizing windows when the mouse isn't pressed
+		if (objIn.getDefaultFocusObject() != null) { objIn.getDefaultFocusObject().requestFocus(); } //transfer focus back to the defaultFocusObject, if it exists
 	}
+	/** Notify the focused object that the mouse was just dragged. */
 	public static void mouseDragged(IEnhancedTopParent objIn, int mX, int mY, int button, long timeSinceLastClick) {
 		IEnhancedGuiObject fo = objIn.getFocusedObject();
 		if (fo != null && fo != objIn) { fo.mouseDragged(mX, mY, button, timeSinceLastClick); }
 	}
+	/** Notify any objects under the cursor that the mouse was just scrolled. */
 	public static void mouseScrolled(IEnhancedTopParent objIn, int mX, int mY, int change) {
 		objIn.postEvent(new EventMouse(objIn, mX, mY, -1, MouseType.Scrolled));
-		if (objIn.getHighestZLevelObject() != null) {
+		if (objIn.getHighestZObjectUnderMouse() != null) { //if there are actually any objects under the mouse
 			for (IEnhancedGuiObject o : objIn.getImmediateChildren()) {
-				if (o.isMouseInside(mX, mY) && o.checkDraw()) { o.mouseScrolled(change); }
+				if (o.isMouseInside(mX, mY) && o.checkDraw()) { o.mouseScrolled(change); } //only notify them if they are actually under the cursor and visible
 			}
-		} else {
+		} else { //if there were no objects under the mouse, scroll the chat
 			if (RegisteredSubMods.isModRegistered(SubModType.ENHANCEDCHAT)) {
 				ModCalloutEvent callout = new ModCalloutEvent(objIn, "has chat window"); // I AM NOT SURE IF THIS ACTUALLY ACCOMPLISHED ANYTHING!
 				if (MinecraftForge.EVENT_BUS.post(callout)) {
@@ -80,67 +88,88 @@ public class StaticTopParent extends EGui {
 			}
 		}
 	}
+	/** Notify the focused object that the keyboard just had a key pressed. */
 	public static void keyPressed(IEnhancedTopParent objIn, char typedChar, int keyCode) {
 		IEnhancedGuiObject fo = objIn.getFocusedObject();
-		objIn.postEvent(new EventKeyboard(objIn, typedChar, keyCode, KeyboardType.Pressed));
+		objIn.postEvent(new EventKeyboard(objIn, typedChar, keyCode, KeyboardType.Pressed)); //post a new event too
 		if (fo != null && fo != objIn) { fo.keyPressed(Keyboard.getEventCharacter(), Keyboard.getEventKey()); }
-		if (keyCode == 1) {
+		if (keyCode == 1) { //check if the pressed key was escape in which case all unpinned objects will be removed and the proxy gui is closed
 			objIn.removeUnpinnedObjects();
 			mc.displayGuiScreen(null);
 			mc.setIngameFocus();
 		}
 	}
+	/** Notify the focused object that the keyboard just had a key released. */
 	public static void keyReleased(IEnhancedTopParent objIn, char typedChar, int keyCode) {
 		IEnhancedGuiObject fo = objIn.getFocusedObject();
-		objIn.postEvent(new EventKeyboard(objIn, typedChar, keyCode, KeyboardType.Released));
+		objIn.postEvent(new EventKeyboard(objIn, typedChar, keyCode, KeyboardType.Released)); //post a new event too
 		if (fo != null && fo != objIn) { fo.keyReleased(Keyboard.getEventCharacter(), Keyboard.getEventKey()); }
 	}
 	
 	//drawing
+	/** Debug method used to display topParent information in the top left corner of the screen. */
 	public static void drawDebugInfo(IEnhancedTopParent objIn) {
+		//draw what the topParent is
 		drawStringWithShadow("TopParent: " + objIn.getTopParent(), 3, 2, 0x70f3ff);
+		
+		//draw the currently focused object - if it's a button, show that too
 		if (objIn.getFocusedObject() instanceof EGuiButton) {
 			drawStringWithShadow("FocuedObject: " + (((EGuiButton) objIn.getFocusedObject()).getDisplayString().isEmpty() ? objIn.getFocusedObject() : "EGuiButton: " +
 													((EGuiButton) objIn.getFocusedObject()).getDisplayString()), 3, 12, 0x70f3ff);
 		}
 		else { drawStringWithShadow("FocuedObject: " + objIn.getFocusedObject(), 3, 12, 0x70f3ff); }
+		
+		//draw the current focusLockObject - if it's a button, show that too
 		if (objIn.getFocusLockObject() instanceof EGuiButton) {
 			drawStringWithShadow("FocusLockObject: " + (((EGuiButton) objIn.getFocusLockObject()).getDisplayString().isEmpty() ? objIn.getFocusedObject() : "EGuiButton: " +
 													((EGuiButton) objIn.getFocusLockObject()).getDisplayString()), 3, 22, 0x70f3ff);
 		}
 		else { drawStringWithShadow("FocusLockObject: " + objIn.getFocusLockObject(), 3, 22, 0x70f3ff); }
+		
+		//draw the topParent's current immediate children
 		drawStringWithShadow("objs: " + objIn.getImmediateChildren(), 3, 32, 0x70f3ff);
+		
+		//draw the topParent's current modifying object and type
 		drawStringWithShadow("ModifyingObject & type: (" + objIn.getModifyingObject() + " : " + objIn.getModifyType() + ")", 3, 42, 0x70f3ff);
+		
+		//draw the highest object currently under the mouse
 		IEnhancedGuiObject ho = objIn.getHighestZObjectUnderMouse();
 		drawStringWithShadow("Object under mouse: " + ho + " " + (ho != null ? ho.getZLevel() : -1), 3, 52, 0xffbb00);
 		
+		//draw the current mouse position
 		drawStringWithShadow("(" + EMouseHelper.mX + ", " + EMouseHelper.mY + ")", 3, 62, 0xffbb00);
 	}
 	
 	//objects
+	/** Returns the object with the highest z level, this could even be the topParent itself. */
 	public static IEnhancedGuiObject getHighestZLevelObject(IEnhancedTopParent objIn) {
 		EArrayList<IEnhancedGuiObject> objs = objIn.getImmediateChildren();
 		if (objs.isNotEmpty()) {
 			IEnhancedGuiObject highest = objs.get(0);
+			if (objIn.getZLevel() > highest.getZLevel()) { highest = objIn; }
 			for (IEnhancedGuiObject o : objIn.getImmediateChildren()) {
 				if (o.getZLevel() > highest.getZLevel()) { highest = o; }
 			}
 			return highest;
 		}
-		return null;
+		return objIn;
 	}
-	public static IEnhancedTopParent removeUnpinnedObjects(IEnhancedTopParent objIn) {
+	/** Removes all windows from the topParent that are not pinned. */
+	public static IEnhancedTopParent removeUnpinnedWindows(IEnhancedTopParent objIn) {
+		//check in both the current objects and the objects that will be added
 		for (IEnhancedGuiObject o : EArrayList.combineLists(objIn.getImmediateChildren(), objIn.getObjectsToBeAdded())) {
-			if (o instanceof IWindowParent) {
+			if (o instanceof IWindowParent) { //only windows can be pinned
 				if (!((IWindowParent) o).isPinned()) { objIn.removeObject(o); }
 			}
 			else { objIn.removeObject(o); }
 		}
 		return objIn;
 	}
-	public static boolean hasPinnedObjects(IEnhancedTopParent objIn) {
+	/** Returns true if there are any pinned windows within the specified topParent. */
+	public static boolean hasPinnedWindows(IEnhancedTopParent objIn) {
+		//check in both the current objects and the objects that will be added
 		for (IEnhancedGuiObject o : EArrayList.combineLists(objIn.getImmediateChildren(), objIn.getObjectsToBeAdded())) {
-			if (o instanceof IWindowParent) {
+			if (o instanceof IWindowParent) { //only windows can be pinned
 				if (((IWindowParent) o).isPinned()) { return true; }
 			}
 		}
@@ -148,33 +177,44 @@ public class StaticTopParent extends EGui {
 	}
 	
 	//focus
+	/** Removes any object that possesses a focus lock on the specified topParent. */
 	public static void clearFocusLockObject(IEnhancedTopParent objIn) {
 		if (objIn.getFocusLockObject() != null) { objIn.getFocusLockObject().onFocusLost(new EventFocus(objIn, objIn.getFocusLockObject(), FocusType.Lost)); }
 		objIn.setFocusLockObject(null); 
 	}
+	/** Forces the currently focused object, if there is one, to return focus to either the defaultFocusObject, if there is one, or the topParent. */
 	public static void clearFocusedObject(IEnhancedTopParent objIn) {
 		IEnhancedGuiObject fo = objIn.getFocusedObject();
 		if (fo != null && fo != objIn) {
 			fo.onFocusLost(new EventFocus(objIn, fo, FocusType.Lost));
-			fo.relinquishFocus();
+			//transfer focus back to the defaultFocusObject or the topParent
+			if (objIn.getDefaultFocusObject() != null) { objIn.setFocusedObject(objIn.getDefaultFocusObject()); }
+			else { objIn.setFocusedObject(objIn); }
 		}
-		objIn.setFocusedObject(objIn);
+		else {
+			//if there is not a focused object, transfer focus to either the defaultFocusObject or the topParent
+			if (objIn.getDefaultFocusObject() != null) { objIn.setFocusedObject(objIn.getDefaultFocusObject()); }
+			else { objIn.setFocusedObject(objIn); }
+		}
 	}
+	/** Method used to process focus events that are present in the specified topParent. */
 	public static void updateFocus(IEnhancedTopParent objIn, Deque<EventFocus> focusQueue) {
 		IEnhancedGuiObject mod = objIn.getModifyingObject();
 		ObjectModifyType mType = objIn.getModifyType();
 		
+		//remove any lingering focused objects if they are no longer within in the parent
 		EArrayList<IEnhancedGuiObject> children = objIn.getAllChildren();
 		if (objIn.getFocusedObject() != null && !children.contains(objIn.getFocusedObject())) { objIn.clearFocusedObject(); }
 		if (objIn.getFocusLockObject() != null && !children.contains(objIn.getFocusLockObject())) { objIn.clearFocusLockObject(); }
 		if (objIn.getDefaultFocusObject() != null && !children.contains(objIn.getDefaultFocusObject())) { objIn.setDefaultFocusObject(null); }
 		
+		//don't process any events if there aren't any to process
 		if (!focusQueue.isEmpty()) {
 			EventFocus event = focusQueue.pop();
 			if (event.getFocusObject() != null) {
 				IEnhancedGuiObject obj = event.getFocusObject();
 				if (children.contains(obj)) { //only allow object which are a part of the parent to request focus from the parent
-					if (objIn.doesFocusLockExist()) {
+					if (objIn.doesFocusLockExist()) { //check for a focus lock and, if it exists, only allow focus to transfer to headers or the focusLockObject
 						if (obj.equals(objIn.getFocusLockObject()) || obj.isChildOfObject(objIn.getFocusLockObject()) || obj instanceof EGuiHeader) {
 							passFocus(objIn, objIn.getFocusedObject(), obj, event);
 						}
@@ -182,21 +222,23 @@ public class StaticTopParent extends EGui {
 							passFocus(objIn, objIn.getFocusedObject(), objIn.getFocusLockObject(), new EventFocus(objIn, objIn.getFocusLockObject(), FocusType.DefaultFocusObject));
 						}
 					} else {
+						//if there is already an object in focus, transfer the focus to the requesting object
 						if (objIn.getFocusedObject() != null) { passFocus(objIn, objIn.getFocusedObject(), obj, event); }
 						else {
-							if (objIn.getFocusedObject() != null && obj != objIn) { passFocus(objIn, objIn.getFocusedObject(), obj, event); }
-							else {
-								if (objIn.getDefaultFocusObject() != null) { passFocus(objIn, objIn.getFocusedObject(), objIn.getDefaultFocusObject(), event); }
-								else { passFocus(objIn, objIn.getFocusedObject(), objIn, event); }
-							}
+							//otherwise, pass focus to a defaultFocusObject, if there is one, else pass it back to the topParent
+							if (objIn.getDefaultFocusObject() != null) { passFocus(objIn, objIn.getFocusedObject(), objIn.getDefaultFocusObject(), event); }
+							else { passFocus(objIn, objIn.getFocusedObject(), objIn, event); }
 						}
 					}
+				} else { //the object is the topParent itself
+					passFocus(objIn, objIn.getFocusedObject(), objIn, event);
 				}
 			}
 		} else if (objIn.getFocusedObject() == null) {
 			passFocus(objIn, objIn.getFocusedObject(), objIn, new EventFocus(objIn, objIn, FocusType.DefaultFocusObject));
 		}
 	}
+	/** Internal method used to quickly transfer focus from old object to new object. */
 	private static void passFocus(IEnhancedTopParent par, IEnhancedGuiObject from, IEnhancedGuiObject to, EventFocus event) {
 		if (from != null) { from.onFocusLost(event); }
 		par.setFocusedObject(to);
@@ -204,20 +246,25 @@ public class StaticTopParent extends EGui {
 	}
 	
 	//mouse checks
+	/** Returns true if the mouse is over any object edge. */
 	public static boolean isMouseOnObjEdge(IEnhancedTopParent objIn, int mX, int mY) {
 		return getEdgeAreaMouseIsOn(objIn, mX, mY) != ScreenLocation.out;
 	}
+	/** Returns the ScreenLocation type of any object the mouse is currently over. */
 	public static ScreenLocation getEdgeAreaMouseIsOn(IEnhancedTopParent objIn, int mX, int mY) {
-		for (IEnhancedGuiObject o : objIn.getImmediateChildren()) {
+		//check in both the objects on screen and the objects being added
+		for (IEnhancedGuiObject o : EArrayList.combineLists(objIn.getImmediateChildren(), objIn.getObjectsToBeAdded())) {
 			ScreenLocation loc = o.getEdgeAreaMouseIsOn();
 			if (loc != ScreenLocation.out) { return loc; }
 		}
-		return ScreenLocation.out;
+		return ScreenLocation.out; //otherwise, return out becuse it wasn't under an object edge
 	}
+	/** Returns true if the cursor is currently inside an EGuiHeader object. */
 	public static boolean isMouseInsideHeader(IEnhancedTopParent objIn, int mX, int mY) {
 		for (IEnhancedGuiObject o : objIn.getAllChildrenUnderMouse()) { if (o instanceof EGuiHeader) { return true; } }
 		return false;
 	}
+	/** Returns the object that has the highest z level under the cursor. */
 	public static IEnhancedGuiObject getHighestZObjectUnderMouse(IEnhancedTopParent objIn) {
 		try {
 			EArrayList<IEnhancedGuiObject> underMouse = objIn.getAllObjectsUnderMouse();
@@ -242,6 +289,7 @@ public class StaticTopParent extends EGui {
 				
 				IEnhancedGuiObject highest = null;
 				
+				//filter for the highest object
 				for (IEnhancedGuiObject o : box.getValue()) {
 					if (highest == null) { highest = o; }
 					else if (o.getZLevel() > highest.getZLevel()) { highest = o; }
@@ -252,19 +300,20 @@ public class StaticTopParent extends EGui {
 		} catch (Exception e) { e.printStackTrace(); }
 		return null;
 	}
+	/** Returns a list of all objects that currently under the cursor. */
 	public static EArrayList<IEnhancedGuiObject> getAllObjectsUnderMouse(IEnhancedTopParent objIn, int mX, int mY) {
 		EArrayList<IEnhancedGuiObject> underMouse = new EArrayList();
-		long start = System.nanoTime();
 		EArrayList<IEnhancedGuiObject> children = objIn.getAllChildren();
-		//System.out.println(Math.abs(System.nanoTime() - start));
-		for (IEnhancedGuiObject o : objIn.getAllChildren()) {
-			if (o.isVisible() && o.isClickable()) {
-				//System.out.print(o.getClass().getSimpleName() + "[" +o.isMouseInside(mX, mY) + "] ");
-				if (o.isMouseInside(mX, mY) || (o.isResizeable() && o.isMouseOnObjEdge(mX, mY))) { underMouse.add(o); }
+		//don't check if an object is being resized
+		if (objIn.getModifyType() != ObjectModifyType.Resize) {
+			for (IEnhancedGuiObject o : objIn.getAllChildren()) {
+				//check if the object can even be selected
+				if (o.isVisible() && o.isClickable()) {
+					//then check if the mouse is in or around the object if it's resizeable
+					if (o.isMouseInside(mX, mY) || (o.isResizeable() && o.isMouseOnObjEdge(mX, mY))) { underMouse.add(o); }
+				}
 			}
 		}
-		//System.out.println();
-		
 		return underMouse;
 	}
  }

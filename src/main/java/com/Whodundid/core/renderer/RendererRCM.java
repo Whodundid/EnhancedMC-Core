@@ -1,17 +1,15 @@
 package com.Whodundid.core.renderer;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiRightClickMenu;
-import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.EMCGuiSelectionList;
+import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiRightClickMenu;
+import com.Whodundid.core.enhancedGui.guiObjects.windows.EMCGuiSelectionList;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
-import com.Whodundid.core.events.emcEvents.ModCalloutEvent;
 import com.Whodundid.core.settings.SettingsGuiMain;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubModType;
 import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.renderUtil.Resources;
-import net.minecraftforge.common.MinecraftForge;
 
 public class RendererRCM extends EGuiRightClickMenu {
 	
@@ -33,10 +31,10 @@ public class RendererRCM extends EGuiRightClickMenu {
 	public void actionPerformed(IEnhancedActionObject object) {
 		if (object == this) {
 			switch ((String) getSelectedObject()) {
-			case "Open EMC Settings": openSettings(); break;
 			case "New Chat Window": openChatWindow(); break;
-			case "Close All Objects": clearScreen(); break;
 			case "New Window": openGui(); break;
+			case "Open EMC Settings": openSettings(); break;
+			case "Close All Objects": clearScreen(); break;
 			}
 		}
 	}
@@ -46,7 +44,9 @@ public class RendererRCM extends EGuiRightClickMenu {
 	}
 	
 	private void openChatWindow() {
-		MinecraftForge.EVENT_BUS.post(new ModCalloutEvent(this, "add window"));
+		if (RegisteredSubMods.isModRegEn(SubModType.ENHANCEDCHAT)) {
+			RegisteredSubMods.getMod(SubModType.ENHANCEDCHAT).sendArgs("EnhancedChat: add window cursor");
+		}
 	}
 	
 	private void openGui() {

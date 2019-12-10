@@ -41,7 +41,6 @@ public class CoreConfig extends SubModConfigFile {
 				mod.enableTerminal.set(getConfigVal("Enable Terminal:", Boolean.class, true));
 				mod.useDebugKey.set(getConfigVal("Use Debug Key:", Boolean.class, false));
 				EnhancedMC.setDebugMode(getConfigVal("enable debug:", Boolean.class, false));
-				
 				return true;
 			}
 		} catch (Exception e) { e.printStackTrace(); }

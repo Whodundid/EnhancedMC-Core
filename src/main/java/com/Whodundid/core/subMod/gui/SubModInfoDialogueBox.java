@@ -1,11 +1,11 @@
 package com.Whodundid.core.subMod.gui;
 
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiDialogueBox;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiLabel;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiRect;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextArea;
+import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
+import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.textArea.EGuiTextArea;
+import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
+import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiLabel;
+import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiRect;
+import com.Whodundid.core.enhancedGui.guiObjects.windows.EGuiDialogueBox;
 import com.Whodundid.core.renderer.EnhancedMCRenderer;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.util.storageUtil.StorageBox;
@@ -36,6 +36,7 @@ public class SubModInfoDialogueBox extends EGuiDialogueBox {
 		setResizeable(true);
 		setMinimumWidth(140).setMinimumHeight(160);
 		setObjectName("Mod Info");
+		setPinnable(false);
 	}
 	
 	@Override

@@ -12,7 +12,7 @@ public class Help implements IConsoleCommand {
 	
 	@Override public String getName() { return "help"; }
 	@Override public EArrayList<String> getAliases() { return null; }
-	@Override public String getCommandHelpInfo() { return "List all console commands and display help info on a specific command."; }
+	@Override public String getCommandHelpInfo() { return "List all commands with aliases and can display info on a specific command."; }
 	@Override public String getCommandErrorInfo(String arg) { return null; }
 	@Override public EArrayList<String> getTabCompleteList() { return null; }
 	

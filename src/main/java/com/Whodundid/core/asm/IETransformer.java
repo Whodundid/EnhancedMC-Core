@@ -11,7 +11,7 @@ public abstract class IETransformer {
 	public byte[] start(byte[] classIn, boolean isObfuscatedIn) {
 		isObfuscated = isObfuscatedIn;
 		
-		System.out.println("Attempting " + getClassName() + " transform");
+		System.out.println("EMC: Attempting " + getClassName() + " transform");
 		
 		try {
 			ClassNode node = new ClassNode();

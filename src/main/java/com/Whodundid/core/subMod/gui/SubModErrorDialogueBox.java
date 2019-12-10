@@ -1,9 +1,9 @@
 package com.Whodundid.core.subMod.gui;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiButton;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiDialogueBox;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
+import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
+import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
+import com.Whodundid.core.enhancedGui.guiObjects.windows.EGuiDialogueBox;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.settings.SettingsGuiMain;
 import com.Whodundid.core.subMod.SubMod;
@@ -39,6 +39,7 @@ public class SubModErrorDialogueBox extends EGuiDialogueBox {
 		setMessageColor(0xff5555);
 		bringToFront();
 		setObjectName("Error");
+		setPinnable(false);
 	}
 	
 	@Override

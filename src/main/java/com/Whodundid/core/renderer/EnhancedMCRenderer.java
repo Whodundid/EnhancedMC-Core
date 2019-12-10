@@ -3,41 +3,33 @@ package com.Whodundid.core.renderer;
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.StaticEGuiObject;
 import com.Whodundid.core.enhancedGui.StaticTopParent;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
+import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
 import com.Whodundid.core.enhancedGui.guiUtil.EGui;
 import com.Whodundid.core.enhancedGui.guiUtil.EObjectGroup;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventAction;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventModify;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventMouse;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventRedraw;
-import com.Whodundid.core.enhancedGui.guiUtil.events.ObjectEvent;
-import com.Whodundid.core.enhancedGui.guiUtil.events.ObjectEventHandler;
-import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.FocusType;
-import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.MouseType;
-import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectModifyType;
+import com.Whodundid.core.enhancedGui.objectEvents.EventAction;
+import com.Whodundid.core.enhancedGui.objectEvents.EventFocus;
+import com.Whodundid.core.enhancedGui.objectEvents.EventModify;
+import com.Whodundid.core.enhancedGui.objectEvents.EventMouse;
+import com.Whodundid.core.enhancedGui.objectEvents.EventRedraw;
+import com.Whodundid.core.enhancedGui.objectEvents.ObjectEvent;
+import com.Whodundid.core.enhancedGui.objectEvents.ObjectEventHandler;
+import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.FocusType;
+import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.MouseType;
+import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.ObjectModifyType;
 import com.Whodundid.core.enhancedGui.types.EnhancedGui;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
-import com.Whodundid.core.util.miscUtil.NetPlayerComparator;
-import com.Whodundid.core.util.renderUtil.BlockDrawer;
 import com.Whodundid.core.util.renderUtil.CursorHelper;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.StorageBox;
-import com.google.common.collect.Ordering;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.network.NetHandlerPlayClient;
-import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.BlockPos;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 
 //Last edited: Apr 10, 2019
@@ -68,6 +60,7 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	protected boolean enabled = true;
 	protected boolean visible = true;
 	protected boolean objectInit = false;
+	protected boolean firstDraw = false;
 	public int mX = 0, mY = 0;
 	protected boolean hasProxy = false;
 	protected IRendererProxy proxy;
@@ -124,11 +117,12 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 		if (visible) {
 			guiObjects.stream().filter(o -> o.checkDraw()).forEach(o -> {
 				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+				if (!o.hasFirstDraw()) { o.onFirstDraw(); o.onFirstDraw(); }
 				o.drawObject(mX, mY, ticks);
 				if (focusLockObject != null && !o.equals(focusLockObject)) {
 					if (o.isVisible()) {
 						EDimension d = o.getDimensions();
-						this.drawRect(d.startX, d.startY, d.endX, d.endY, 0x77000000);
+						drawRect(d.startX, d.startY, d.endX, d.endY, 0x77000000);
 					}
 				}
 			});
@@ -137,6 +131,8 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 		}
 		GlStateManager.popMatrix();
 	}
+	@Override public void onFirstDraw() {}
+	@Override public boolean hasFirstDraw() { return firstDraw; }
 	@Override public void updateCursorImage() {}
 	@Override public void onMouseHover(int mX, int mY) {}
 	@Override public EnhancedMCRenderer setHoverText(String textIn) { return this; }
@@ -154,6 +150,8 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	@Override public boolean isVisible() { return visible; }
 	@Override public boolean isPersistent() { return true; }
 	@Override public boolean isBoundaryEnforced() { return false; }
+	@Override public boolean isResizing() { return getTopParent().getModifyingObject() == this && getTopParent().getModifyType() == ObjectModifyType.Resize; }
+	@Override public boolean isMoving() { return getTopParent().getModifyingObject() == this && getTopParent().getModifyType() == ObjectModifyType.Move; }
 	@Override public EnhancedMCRenderer setEnabled(boolean val) { enabled = val; return this; }
 	@Override public EnhancedMCRenderer setVisible(boolean val) { visible = val; return this; }
 	@Override public EnhancedMCRenderer setPersistent(boolean val) { return this; }
@@ -293,8 +291,8 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	
 	//objects
 	@Override public IEnhancedGuiObject getHighestZLevelObject() { return StaticTopParent.getHighestZLevelObject(this); }
-	@Override public IEnhancedTopParent removeUnpinnedObjects() { return StaticTopParent.removeUnpinnedObjects(this); }
-	@Override public boolean hasPinnedObjects() { return StaticTopParent.hasPinnedObjects(this); }
+	@Override public IEnhancedTopParent removeUnpinnedObjects() { return StaticTopParent.removeUnpinnedWindows(this); }
+	@Override public boolean hasPinnedObjects() { return StaticTopParent.hasPinnedWindows(this); }
 	
 	//focus
 	@Override public IEnhancedGuiObject getDefaultFocusObject() { return defaultFocusObject; }
@@ -310,8 +308,6 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	@Override public void updateFocus() { StaticTopParent.updateFocus(this, focusQueue); }
 	
 	//object modification
-	@Override public boolean isMoving() { return modifyType.equals(ObjectModifyType.Move); }
-	@Override public boolean isResizing() { return modifyType.equals(ObjectModifyType.Resize); }
 	@Override public ObjectModifyType getModifyType() { return modifyType; }
 	@Override public EnhancedMCRenderer setModifyingObject(IEnhancedGuiObject objIn, ObjectModifyType typeIn) { modifyingObject = objIn; modifyType = typeIn; return this; }
 	@Override public EnhancedMCRenderer setResizingDir(ScreenLocation areaIn) { resizingDir = areaIn; return this; }
@@ -344,7 +340,7 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 			mX = gui.mX; mY = gui.mY;
 		}
 		else { mX = -1; mY = -1; }
-		if (!CursorHelper.isNormalCursor() && getHighestZObjectUnderMouse() == null) { CursorHelper.reset(); }
+		if (!CursorHelper.isNormalCursor() && getHighestZObjectUnderMouse() == null && modifyType != ObjectModifyType.Resize) { CursorHelper.reset(); }
 		checkMouseHover();
 		oldMousePos.setValues(mX, mY);
 		if (!objsToBeRemoved.isEmpty()) { StaticEGuiObject.removeObjects(this, objsToBeRemoved); }

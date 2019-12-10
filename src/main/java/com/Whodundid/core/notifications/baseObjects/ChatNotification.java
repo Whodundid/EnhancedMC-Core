@@ -12,7 +12,7 @@ public class ChatNotification extends NotificationObject {
 
 	@Override
 	protected void setup() {
-		if (this.note != null) {
+		if (note != null) {
 			
 		}
 	}

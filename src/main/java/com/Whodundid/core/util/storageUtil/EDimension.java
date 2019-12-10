@@ -72,7 +72,8 @@ public class EDimension {
 	public EDimension translateHorizontal(int amount) { startX += amount; return this; }
 	public EDimension translateVertical(int amount) { startY += amount; return this; }
 	
-	public boolean isFullyCovering(EDimension dimIn) { return startX > dimIn.startX && startY > dimIn.startY && endX > dimIn.endX && endY > dimIn.endY; }
+	public boolean contains(EDimension dimIn) { return startX <= dimIn.endX && startY <= dimIn.endY && endX >= dimIn.startX && endY >= dimIn.startY; }
+	public boolean fullyContains(EDimension dimIn) { return startX < dimIn.startX && startY < dimIn.startY && endX > dimIn.endX && endY > dimIn.endY; }
 	public boolean isGreaterThan(EDimension dimIn) { return startX > dimIn.startX && startY > dimIn.startY && width > dimIn.width && height > dimIn.height; }
 	public boolean isLessThan(EDimension dimIn) { return startX < dimIn.startX && startY < dimIn.startY && width < dimIn.width && height < dimIn.height; }
 	public boolean isEqualTo(EDimension dimIn) { return startX == dimIn.startX && startY == dimIn.startY && width == dimIn.width && height == dimIn.height; }

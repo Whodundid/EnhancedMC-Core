@@ -51,10 +51,10 @@ public class ChatCommandFixer extends IETransformer {
 					method.instructions.insertBefore(targetNode, toInsert);
 					method.instructions.insert(afterReturn, lNode);
 					
-					System.out.println("inserting byte code into GuiScreen");
+					System.out.println("EMC: GuiScreen transform successful!");
 				}
 				else {
-					System.out.println("GUISCREEN CHAT ASM TRANSFORM FAILED");
+					System.out.println("EMC: GUISCREEN ASM TRANSFORM FAILED!");
 				}
 			}
 		}

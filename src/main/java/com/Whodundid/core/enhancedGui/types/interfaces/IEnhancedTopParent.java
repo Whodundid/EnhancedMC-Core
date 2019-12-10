@@ -1,6 +1,6 @@
 package com.Whodundid.core.enhancedGui.types.interfaces;
 
-import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectModifyType;
+import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.ObjectModifyType;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
@@ -48,8 +48,6 @@ public interface IEnhancedTopParent extends IEnhancedGuiObject {
 	
 	//object modification
 	
-	public boolean isMoving();
-	public boolean isResizing();
 	public ObjectModifyType getModifyType();
 	public IEnhancedTopParent setResizingDir(ScreenLocation areaIn);
 	public IEnhancedTopParent setModifyingObject(IEnhancedGuiObject objIn, ObjectModifyType typeIn);

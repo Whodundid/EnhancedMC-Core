@@ -1,7 +1,7 @@
 package com.Whodundid.core.settings.guiParts;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiRightClickMenu;
+import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiRightClickMenu;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.settings.SettingsGuiMain;

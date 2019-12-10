@@ -1,5 +1,6 @@
 package com.Whodundid.core;
 
+import com.Whodundid.core.coreEvents.EventListener;
 import com.Whodundid.core.coreSubMod.EnhancedMCMod;
 import com.Whodundid.core.debug.DebugFunctions;
 import com.Whodundid.core.debug.terminal.TerminalCommandHandler;
@@ -7,7 +8,6 @@ import com.Whodundid.core.enhancedGui.types.EnhancedGui;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
-import com.Whodundid.core.events.EventListener;
 import com.Whodundid.core.renderer.EnhancedMCRenderer;
 import com.Whodundid.core.renderer.RendererProxyGui;
 import com.Whodundid.core.settings.SettingsGuiMain;
@@ -263,9 +263,33 @@ public final class EnhancedMC {
 		int sY = 0;
 		
 		switch (typeIn) {
+		case screen:
+			sX = (res.getScaledWidth() / 2) - (gDim.width / 2);
+			sY = (res.getScaledHeight() / 2) - (gDim.height / 2);
+			break;
+		case botLeftScreen:
+			sX = 1;
+			sY = res.getScaledHeight() - 2 - gDim.height;
+			break;
+		case topLeftScreen:
+			sX = 1;
+			sY = 2;
+			break;
+		case botRightScreen:
+			sX = res.getScaledWidth() - 1 - gDim.width;
+			sY = res.getScaledHeight() - 2 - gDim.height;
+			break;
+		case topRightScreen:
+			sX = res.getScaledWidth() - 1 - gDim.width;
+			sY = 2;
+			break;
 		case cursor:
 			sX = EMouseHelper.mX - (gDim.width / 2);
 			sY = EMouseHelper.mY - (gDim.height - headerHeight) / 2 + (gDim.height / 7);
+			break;
+		case cursorCorner:
+			sX = EMouseHelper.mX;
+			sY = EMouseHelper.mY;
 			break;
 		case object:
 			if (objectIn != null) {
@@ -288,10 +312,6 @@ public final class EnhancedMC {
 				sY = objDim.startY + 25;
 				break;
 			}
-		case screen:
-			sX = (res.getScaledWidth() / 2) - (gDim.width / 2);
-			sY = (res.getScaledHeight() / 2) - (gDim.height / 2);
-			break;
 		default: break;
 		}
 		
@@ -299,10 +319,7 @@ public final class EnhancedMC {
 		sY = (sY - headerHeight) < 2 ? 2 + headerHeight : sY;
 		sX = sX + gDim.width > res.getScaledWidth() ? -1 + sX - (sX + gDim.width - res.getScaledWidth()) : sX;
 		sY = sY + gDim.height > res.getScaledHeight() ? -2 + sY - (sY + gDim.height - res.getScaledHeight()) : sY;
-		//System.out.println("setting: " + sX + " " + sY);
-		//System.out.println("guiDims a: " + guiIn.getDimensions());
 		guiIn.setPosition(sX, sY);
-		//System.out.println("guiDims b: " + guiIn.getDimensions());
 	}
 	
 	private static SubMod getMod(String modNameIn, EArrayList<SubMod> checkList) {

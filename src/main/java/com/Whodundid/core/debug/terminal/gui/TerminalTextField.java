@@ -1,6 +1,6 @@
 package com.Whodundid.core.debug.terminal.gui;
 
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiTextField;
+import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiTextField;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
 public class TerminalTextField extends EGuiTextField {

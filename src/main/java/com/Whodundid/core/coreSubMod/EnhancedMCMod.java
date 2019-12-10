@@ -12,11 +12,11 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 
 public class EnhancedMCMod extends SubMod {
 	
-	public static final ModSetting emcMenuOverride = new ModSetting();
+	public static final ModSetting emcMenuOverride = new ModSetting(true);
 	public static final ModSetting useDebugKey = new ModSetting(false);
 	public static final ModSetting showIncompats = new ModSetting(false);
 	public static final ModSetting enableTerminal = new ModSetting(false);
-	public static final ModSetting drawChatOnGui = new ModSetting();
+	public static final ModSetting drawChatOnGui = new ModSetting(true);
 	
 	public EnhancedMCMod() {
 		super(SubModType.CORE);
@@ -24,7 +24,7 @@ public class EnhancedMCMod extends SubMod {
 		author = "Whodundid";
 		configManager.setMainConfig(new CoreConfig(this, "enhancedMCCore"));
 		setEnabled(true);
-		setMainGui(new EMCSettingsGui());
+		setMainGui(new CoreSettingsGui());
 		addGui(new SettingsGuiMain(), new KeyBindGui());
 		isDisableable = false;
 	}

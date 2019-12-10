@@ -2,22 +2,24 @@ package com.Whodundid.core.enhancedGui.types;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.StaticEGuiObject;
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
+import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
 import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.EGuiFocusLockBorder;
-import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.EGuiLinkConfirmationDialogueBox;
+import com.Whodundid.core.enhancedGui.guiObjects.windows.EGuiLinkConfirmationDialogueBox;
 import com.Whodundid.core.enhancedGui.guiUtil.EGui;
 import com.Whodundid.core.enhancedGui.guiUtil.EObjectGroup;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventAction;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventMouse;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventObjects;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventRedraw;
-import com.Whodundid.core.enhancedGui.guiUtil.events.ObjectEvent;
-import com.Whodundid.core.enhancedGui.guiUtil.events.ObjectEventHandler;
-import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.FocusType;
-import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.MouseType;
-import com.Whodundid.core.enhancedGui.guiUtil.events.eventUtil.ObjectEventType;
-import com.Whodundid.core.enhancedGui.guiUtil.exceptions.ObjectInitException;
+import com.Whodundid.core.enhancedGui.objectEvents.EventAction;
+import com.Whodundid.core.enhancedGui.objectEvents.EventFirstDraw;
+import com.Whodundid.core.enhancedGui.objectEvents.EventFocus;
+import com.Whodundid.core.enhancedGui.objectEvents.EventMouse;
+import com.Whodundid.core.enhancedGui.objectEvents.EventObjects;
+import com.Whodundid.core.enhancedGui.objectEvents.EventRedraw;
+import com.Whodundid.core.enhancedGui.objectEvents.ObjectEvent;
+import com.Whodundid.core.enhancedGui.objectEvents.ObjectEventHandler;
+import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.FocusType;
+import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.MouseType;
+import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.ObjectEventType;
+import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.ObjectModifyType;
+import com.Whodundid.core.enhancedGui.objectExceptions.ObjectInitException;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
@@ -94,6 +96,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	protected boolean persistent = false;
 	protected boolean resizeable = false;
 	protected boolean clickable = true;
+	protected boolean firstDraw = false;
 	protected int minWidth = 0;
 	protected int minHeight = 0;
 	protected int maxWidth = Integer.MAX_VALUE;
@@ -158,7 +161,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 		objectInit = false;
 		IEnhancedTopParent p = getTopParent();
 		EArrayList<IEnhancedGuiObject> children = getAllChildren();
-		if (!p.isResizing()) {
+		if (!(p.getModifyType() == ObjectModifyType.Resize)) {
 			if (children.contains(p.getFocusedObject())) { p.clearFocusedObject(); }
 			if (children.contains(p.getFocusLockObject())) { p.clearFocusLockObject(); }
 			if (children.contains(p.getModifyingObject())) { p.clearModifyingObject(); }
@@ -179,6 +182,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 				GlStateManager.pushMatrix();
 				GlStateManager.enableBlend();
 				guiObjects.stream().filter(o -> o.checkDraw()).forEach(o -> {
+					if (!o.hasFirstDraw()) { o.onFirstDraw(); o.onFirstDraw(); }
 					o.drawObject(mX, mY, ticks);
 					IEnhancedGuiObject f = getTopParent().getFocusLockObject();
 					if (f != null && o instanceof EGuiHeader && (!o.equals(f) && !f.getAllChildren().contains(o))) {
@@ -192,9 +196,11 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 			}
 		} catch (Exception e) { e.printStackTrace(); }
 	}
+	@Override public void onFirstDraw() { postEvent(new EventFirstDraw(this)); firstDraw = true; }
+	@Override public boolean hasFirstDraw() { return firstDraw; }
 	@Override
 	public void updateCursorImage() {
-		if (isResizeable() && !EnhancedMC.safeRemoteDesktopMode) {
+		if (isResizeable() && !EnhancedMC.safeRemoteDesktopMode && getTopParent().getModifyType() != ObjectModifyType.Resize) {
 			int rStartY = hasHeader() ? getHeader().startY : startY;
 			ScreenLocation newArea = getEdgeAreaMouseIsOn();
 			if (newArea != oldArea) {
@@ -255,6 +261,8 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	@Override public boolean isVisible() { return visible; }
 	@Override public boolean isPersistent() { return persistent; }
 	@Override public boolean isBoundaryEnforced() { return boundaryDimension != null; }
+	@Override public boolean isResizing() { return getTopParent().getModifyingObject() == this && getTopParent().getModifyType() == ObjectModifyType.Resize; }
+	@Override public boolean isMoving() { return getTopParent().getModifyingObject() == this && getTopParent().getModifyType() == ObjectModifyType.Move; }
 	@Override public EnhancedGuiObject setEnabled(boolean val) { enabled = val; return this; }
 	@Override public EnhancedGuiObject setVisible(boolean val) { visible = val; return this; }
 	@Override public EnhancedGuiObject setPersistent(boolean val) { persistent = val; return this; }

@@ -55,9 +55,9 @@ public class ChatGrabber extends IETransformer {
 					toInsert.add(new InsnNode(POP));
 					
 					method.instructions.insert(targetNode, toInsert);
-					System.out.println("Byte code inserted into GuiNewChat");
+					System.out.println("EMC: GuiNewChat transform successful!");
 				}
-				else { System.out.println("Could not find the corresponding GuiNewChat target node!"); }
+				else { System.out.println("EMC: GUINEWCHAT ASM TRANSFORM FAILED!"); }
 			}
 		}
 	}

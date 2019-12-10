@@ -1,11 +1,11 @@
 package com.Whodundid.core.enhancedGui.types.interfaces;
 
-import com.Whodundid.core.enhancedGui.guiObjects.EGuiHeader;
+import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
 import com.Whodundid.core.enhancedGui.guiUtil.EObjectGroup;
-import com.Whodundid.core.enhancedGui.guiUtil.events.EventFocus;
-import com.Whodundid.core.enhancedGui.guiUtil.events.ObjectEvent;
-import com.Whodundid.core.enhancedGui.guiUtil.events.ObjectEventHandler;
-import com.Whodundid.core.enhancedGui.guiUtil.exceptions.ObjectInitException;
+import com.Whodundid.core.enhancedGui.objectEvents.EventFocus;
+import com.Whodundid.core.enhancedGui.objectEvents.ObjectEvent;
+import com.Whodundid.core.enhancedGui.objectEvents.ObjectEventHandler;
+import com.Whodundid.core.enhancedGui.objectExceptions.ObjectInitException;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
@@ -33,6 +33,10 @@ public interface IEnhancedGuiObject {
 	
 	/** Event fired from the top parent to draw this object. */
 	public void drawObject(int mX, int mY, float ticks);
+	/** Event fired from the top parent when the object is drawn for the first time. */
+	public void onFirstDraw();
+	/** Returns true if this object has been drawn at least once. */
+	public boolean hasFirstDraw();
 	/** Event fired from this object's pre draw setup to perform cursorImage changes. */
 	public void updateCursorImage();
 	/** Event fired from the top parent when the mouse has been hovering over this object for a short period of time. */
@@ -55,7 +59,7 @@ public interface IEnhancedGuiObject {
 	
 	//drawing checks
 	
-	/** Returns true if this object will be drawn on the next draw cycle. */
+	/** Returns true if this object is elligible be drawn on the next draw cycle. */
 	public boolean checkDraw();
 	/** Returns true if this object is currently enabled. */
 	public boolean isEnabled();
@@ -65,6 +69,10 @@ public interface IEnhancedGuiObject {
 	public boolean isPersistent();
 	/** Returns true if this object's mouse checks are enforced by a boundary. */
 	public boolean isBoundaryEnforced();
+	/** Returns true if this object is resizing. */
+	public boolean isResizing();
+	/** Returns true if this object is moving. */
+	public boolean isMoving();
 	/** Set this object's enabled state. */
 	public IEnhancedGuiObject setEnabled(boolean val);
 	/** Set this object's visibility. A non-visible object can still run actions if it is still enabled. */
