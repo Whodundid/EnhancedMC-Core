@@ -111,6 +111,7 @@ public abstract class WorldHelper {
 		case 73: return 0xF92100; //redstone ore
 		case 98: case 109: return 0x7D7D7D; //stonebrick
 		case 112: case 114: return 0x37181E; //netherbrick
+		case 144: return 0xf23373; //head
 		case 153: return 0xFFFFFF; //nether quartz ore
 		case 159: //stained clays
 			switch (state.getBlock().getMetaFromState(state)) {
