@@ -93,25 +93,25 @@ public interface IEnhancedGuiObject {
 	/** If this object has a header, returns the header object, otherwise returns null. */
 	public EGuiHeader getHeader();
 	/** Returns the minimum width that this object can have. */
-	public int getMinimumWidth();
+	public int getMinWidth();
 	/** Returns the minimum height that this object can have. */
-	public int getMinimumHeight();
+	public int getMinHeight();
 	/** Returns the maximum width that this object can have. */
-	public int getMaximumWidth();
+	public int getMaxWidth();
 	/** Returns the maximum height that this object can have. */
-	public int getMaximumHeight();
+	public int getMaxHeight();
 	/** Sets both the minimum width and height for this object. */
-	public IEnhancedGuiObject setMinimumDims(int widthIn, int heightIn);
+	public IEnhancedGuiObject setMinDims(int widthIn, int heightIn);
 	/** Sets both the maximum width and height for this object. */
-	public IEnhancedGuiObject setMaximumDims(int widthIn, int heightIn);
+	public IEnhancedGuiObject setMaxDims(int widthIn, int heightIn);
 	/** Sets the minimum width for this object when resizing. */
-	public IEnhancedGuiObject setMinimumWidth(int widthIn);
+	public IEnhancedGuiObject setMinWidth(int widthIn);
 	/** Sets the minimum height for this object when resizing. */
-	public IEnhancedGuiObject setMinimumHeight(int heightIn);
+	public IEnhancedGuiObject setMinHeight(int heightIn);
 	/** Sets the maximum width for this object when resizing. */
-	public IEnhancedGuiObject setMaximumWidth(int widthIn);
+	public IEnhancedGuiObject setMaxWidth(int widthIn);
 	/** Sets the maximum height for this object when resizing. */
-	public IEnhancedGuiObject setMaximumHeight(int heightIn);
+	public IEnhancedGuiObject setMaxHeight(int heightIn);
 	/** Sets whether this object can be resized or not. */
 	public IEnhancedGuiObject setResizeable(boolean val);
 	/** Resizes this object by an amount in both the x and y axies, specified by the given Direction. */
@@ -146,7 +146,7 @@ public interface IEnhancedGuiObject {
 	//objects
 	
 	/** Checks if this object is a child of the specified object. */
-	public boolean isChildOfObject(IEnhancedGuiObject objIn);
+	public boolean isChild(IEnhancedGuiObject objIn);
 	/** Adds a child IEnhancedGuiObject to this object. The object is added before the next draw cycle. */
 	public IEnhancedGuiObject addObject(IEnhancedGuiObject... objsIn);
 	/** Removes a child IEnhancedGuiObject to this object. If this object does not contain the specified child, no action is performed. The object is removed before the next draw cycle. */
@@ -158,11 +158,11 @@ public interface IEnhancedGuiObject {
 	/** Event fired when any object within the object group fires an event. */
 	public void onGroupNotification(ObjectEvent e);
 	/** Returns a list of all objects that are directly children of this object. */
-	public EArrayList<IEnhancedGuiObject> getImmediateChildren();
+	public EArrayList<IEnhancedGuiObject> getObjects();
 	/** Returns a list of all objects that are going to be added on the next draw cycle */
-	public EArrayList<IEnhancedGuiObject> getObjectsToBeAdded();
+	public EArrayList<IEnhancedGuiObject> getAddingObjects();
 	/** Returns a list of all objects that are going to be removed on the next draw cycle */
-	public EArrayList<IEnhancedGuiObject> getObjectsToBeRemoved();
+	public EArrayList<IEnhancedGuiObject> getRemovingObjects();
 	/** Returns a list of all objects that descend from this parent. */
 	public EArrayList<IEnhancedGuiObject> getAllChildren();
 	/** Returns a list of all children from 'getAllChildren()' that are currently under the mouse. */
@@ -207,6 +207,10 @@ public interface IEnhancedGuiObject {
 	public void drawFocusLockBorder();
 	/** Signals the top parent to try transfering focus to this object on the next draw cycle. If another object has a focus lock, this object will not receive focus */ 
 	public IEnhancedGuiObject requestFocus();
+	/** Returns the object that will recieve foucs by default when the base object has foucs transfered to it. */
+	public IEnhancedGuiObject getDefaultFocusObject();
+	/** Sets a default focus object for this object. When the main object recieves focus, the top parent will attempt to transfer focus to the specified default focus object. */
+	public IEnhancedGuiObject setDefaultFocusObject(IEnhancedGuiObject objectIn);
 	
 	//mouse checks
 	
@@ -220,7 +224,7 @@ public interface IEnhancedGuiObject {
 	public void mouseExited(int mX, int mY);
 	/** Returns true if the mouse is currently inside this object. If a boundary enforcer is set, this method will return true if the mouse is inside of the the specified boundary. */
 	public boolean isMouseInside(int mX, int mY);
-	/** Returns true if the mouse is currently inside this object and that this is the top most object insideo fthe parent. */
+	/** Returns true if the mouse is currently inside this object and that this is the top most object inside of the parent. */
 	public boolean isMouseOver(int mX, int mY);
 	/** Returns true if this object can be clicked on. */
 	public boolean isClickable();
@@ -260,14 +264,16 @@ public interface IEnhancedGuiObject {
 	//action
 	
 	/** Event called whenever a child IEnhancedActionObject's action is triggered. */
-	public void actionPerformed(IEnhancedActionObject object);
+	public void actionPerformed(IEnhancedActionObject object, Object... args);
 	
 	//close object
 	
+	/** Returns whether this object can be closed or not. */
+	public boolean isCloseable();
+	/** Sets whether this object can be closed or not. */
+	public IEnhancedGuiObject setCloseable(boolean val);
 	/** Removes this object and all of it's children from the immeadiate a parent. Removes any present focus locks on this object and returns focus back to the top parent. */
 	public void close();
-	/** Closes fully */
-	public void closeFull();
 	/** Event fired when object is closed. */
 	public void onClosed();
 	/** Upon closing, this object will attempt to transfer it's focus to the specified object if possible. */

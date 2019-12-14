@@ -1,16 +1,17 @@
-package com.Whodundid.core.debug.terminal.commands;
+package com.Whodundid.core.debug.terminal.terminalCommand.commands;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.debug.DebugFunctions;
 import com.Whodundid.core.debug.terminal.gui.ETerminal;
+import com.Whodundid.core.debug.terminal.terminalCommand.IConsoleCommand;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
 public class DebugControl implements IConsoleCommand {
 
 	@Override public String getName() { return "debug"; }
-	@Override public EArrayList<String> getAliases() { return new EArrayList<String>("deb"); }
-	@Override public String getCommandHelpInfo() { return "Toggles debug mode for EMC."; }
-	@Override public String getCommandErrorInfo(String arg) { return "This command does not take arguments"; }
+	@Override public EArrayList<String> getAliases() { return new EArrayList<String>("deb", "dev"); }
+	@Override public String getHelpInfo(boolean runVisually) { return "Toggles debug mode for EMC."; }
+	@Override public String getUsage() { return "ex: deb | deb 0"; }
 	@Override public EArrayList<String> getTabCompleteList() { return null; }
 	
 	@Override

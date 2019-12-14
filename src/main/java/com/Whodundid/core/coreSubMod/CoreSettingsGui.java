@@ -23,7 +23,7 @@ public class CoreSettingsGui extends WindowParent {
 	public void initGui() {
 		setObjectName("EMC Core Mod Settings");
 		setDimensions(startX, startY, defaultWidth, defaultHeight);
-		setMinimumDims(170, 75);
+		setMinDims(170, 75);
 		setResizeable(true);
 		super.initGui();
 	}
@@ -118,7 +118,7 @@ public class CoreSettingsGui extends WindowParent {
 	}
 	
 	@Override
-	public void actionPerformed(IEnhancedActionObject object) {
+	public void actionPerformed(IEnhancedActionObject object, Object... args) {
 		if (object == menuOverride) { menuOverride.toggleTrueFalse(mod.emcMenuOverride, mod, false); }
 		if (object == drawChat) { drawChat.toggleTrueFalse(mod.drawChatOnGui, mod, false); }
 		if (object == showIncompats) { showIncompats.toggleTrueFalse(mod.showIncompats, mod, false); }

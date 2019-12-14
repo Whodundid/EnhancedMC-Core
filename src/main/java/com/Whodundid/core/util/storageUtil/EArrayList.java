@@ -165,6 +165,21 @@ public class EArrayList<E> extends AbstractList<E> {
         return a;
     }
 	
+	public E getFirstInstanceOf(Class<?> cIn) {
+		for (Object e : elementData) {
+			if (cIn.isInstance(e)) { return (E) e; }
+		}
+		return null;
+	}
+	
+	public EArrayList<E> getAllInstancesOf(Class<?> cIn) {
+		EArrayList<E> instances = new EArrayList();
+		for (Object e : elementData) {
+			if (cIn.isInstance(e)) { instances.add((E) e); }
+		}
+		return instances;
+	}
+	
 	protected E getElementData(int index) { return (E) elementData[index]; }
 	
 	public int size() { return size; }
@@ -174,6 +189,15 @@ public class EArrayList<E> extends AbstractList<E> {
 	public boolean notContains(Object o) { return !contains(o); }
 	public Object[] toArray() { return Arrays.copyOf(elementData, size); }
 
+	public EArrayList<E> removeAllInstancesOf(Class<?> cIn) {
+		EArrayList<E> toBeRemoved = new EArrayList();
+		for (Object e : elementData) {
+			if (cIn.isInstance(e)) { toBeRemoved.add((E) e); }
+		}
+		for (E e : toBeRemoved) { remove(e); }
+		return this;
+	}
+	
 	public boolean containsInstanceOf(Class<?> cIn) {
 		for (Object e : elementData) {
 			if (cIn.isInstance(e)) { return true; }
@@ -181,7 +205,7 @@ public class EArrayList<E> extends AbstractList<E> {
 		return false;
 	}
 	
-	public boolean notContainsInstanceOf(Class<?> cIn) {
+	public boolean containsNoInstanceOf(Class<?> cIn) {
 		for (Object e : elementData) {
 			if (cIn.isInstance(e)) { return false; }
 		}

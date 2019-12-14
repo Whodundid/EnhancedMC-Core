@@ -96,6 +96,48 @@ public class EUtil {
 		return true;
 	}
 	
+	public static int findStartingIndex(String toSearch, String toFind) {
+		if (toSearch != null && !toSearch.isEmpty() && toFind.length() <= toSearch.length()) {
+			String cur = "";
+			int index = 0;
+			int j = 0;
+			for (int i = 0; i < toSearch.length() - toFind.length() + 1; i++) {
+				if (cur.equals(toFind)) { return index; }
+				if (toSearch.charAt(i) == toFind.charAt(j)) {
+					cur += toSearch.charAt(i);
+					j++;
+				}
+				else if (toSearch.charAt(i) == toFind.charAt(0)) {
+					cur = "" + toSearch.charAt(i);
+					index = i + 1;
+					j = 1;
+				}
+				else {
+					cur = "";
+					index = i + 1;
+					j = 0;
+				}
+			}
+		}
+		return -1;
+	}
+	
+	public static String getFullEMCSourceFilePath(Class classIn) {
+		String path = System.getProperty("user.dir");
+		if (path != null && path.length() >= 5) { path = path.substring(0, path.length() - 3); }
+		String fullPath = classIn.getProtectionDomain().getCodeSource().getLocation().getPath();
+		String p = "src\\main\\java" + fullPath.substring(EUtil.findStartingIndex(fullPath, "/com/Whodundid/"), fullPath.length() - 5) + "java";
+		p = p.replace("/", "\\");
+		return path + p;
+	}
+	
+	public static String getRelativeEMCSourceFilePath(Class classIn) {
+		String fullPath = classIn.getProtectionDomain().getCodeSource().getLocation().getPath();
+		String p = fullPath.substring(EUtil.findStartingIndex(fullPath, "com/Whodundid/"), fullPath.length() - 5) + "java";
+		p = p.replace("/", "\\");
+		return p;
+	}
+	
 	public static int getImageWidth(ResourceLocation locIn) {
 		try {
 			IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(locIn);

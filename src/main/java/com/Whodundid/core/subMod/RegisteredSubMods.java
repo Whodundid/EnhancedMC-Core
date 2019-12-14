@@ -118,6 +118,18 @@ public final class RegisteredSubMods {
 		return null;
 	}
 	
+	public static SubMod getModByAlias(String aliasIn) {
+		if (aliasIn != null && !aliasIn.isEmpty()) {
+			aliasIn = aliasIn.toLowerCase();
+			for (SubMod m : allMods) {
+				for (String s : m.getNameAliases()) {
+					if (s.equals(aliasIn)) { return m; }
+				}
+			}
+		}
+		return null;
+	}
+	
 	//returns a file object with the expected location for the specified submod
 	public static File getModConfigBaseFileLocation(SubModType typeIn) {
 		return new File("EnhancedMC" + "/" + typeIn.modName);

@@ -26,6 +26,7 @@ public class EnhancedMCMod extends SubMod {
 		setEnabled(true);
 		setMainGui(new CoreSettingsGui());
 		addGui(new SettingsGuiMain(), new KeyBindGui());
+		setAliases("enhancedmc", "emc", "core");
 		isDisableable = false;
 	}
 	

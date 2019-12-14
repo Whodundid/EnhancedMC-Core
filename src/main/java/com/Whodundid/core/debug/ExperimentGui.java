@@ -161,9 +161,9 @@ public class ExperimentGui extends WindowParent {
 		*/
 		
 		textArea = new EGuiTextArea(this, startX + 5, startY + 5, width - 10, height - 10, true, false).setDrawLineNumbers(true);
-		textArea.addTextLine("this is an intentionally very long line of text to test horizontal scrolling!");
+		//textArea.addTextLine("this is an intentionally very long line of text to test horizontal scrolling!");
 		
-		/*
+		
 		File gFile = null;
 		
 		String path = System.getProperty("user.dir");
@@ -183,11 +183,11 @@ public class ExperimentGui extends WindowParent {
 				if (reader != null) { reader.close(); }
 			}
 		} catch (Exception e) { e.printStackTrace(); }
-		*/
 		
-		for (int i = 1; i <= 60; i++) { textArea.addTextLine(i + " cow"); }
+		
+		//for (int i = 1; i <= 60; i++) { textArea.addTextLine(i + " cow"); }
 		addObject(textArea);
-		textArea.addTextLine("this is an intentionally very long line of text to test horizontal scrolling!");
+		//textArea.addTextLine("this is an intentionally very long line of text to test horizontal scrolling!");
 		
 		
 		/*
@@ -403,7 +403,7 @@ public class ExperimentGui extends WindowParent {
 	}
 	
 	@Override
-	public void actionPerformed(IEnhancedActionObject object) {
+	public void actionPerformed(IEnhancedActionObject object, Object... args) {
 		if (object.equals(test1)) {
 			//ChatWindowFrame f = c.getChatWindow(ChatType.LOBBY);
 			//if (f != null) { f.setVisible(true); }

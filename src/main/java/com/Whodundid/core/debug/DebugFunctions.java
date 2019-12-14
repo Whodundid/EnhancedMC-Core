@@ -1,5 +1,11 @@
 package com.Whodundid.core.debug;
 
+import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.coreEvents.emcEvents.ChatLineCreatedEvent;
+import com.Whodundid.core.enhancedGui.guiObjects.windows.EGuiColorPicker;
+import com.Whodundid.core.util.EUtil;
+import com.Whodundid.windowHUD.windowObjects.hotbar.HotBarRenderer;
+import java.io.File;
 import net.minecraft.client.Minecraft;
 
 //Last edited: 12-12-18
@@ -28,7 +34,9 @@ public class DebugFunctions {
 	}
 
 	private static void debug_0() throws Throwable {
-		
+		//EnhancedMC.getRenderer().addObject(new HotBarRenderer());
+		//System.out.println(EUtil.getFullEMCSourceFilePath(EnhancedMC.class));
+		EnhancedMC.getRenderer().addObject(new EGuiColorPicker(EnhancedMC.getRenderer(), 150, 150));
 	}
 	
 	private static void debug_1() throws Throwable {

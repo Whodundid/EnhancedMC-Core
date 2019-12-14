@@ -40,7 +40,7 @@ public class ChatGrabber extends IETransformer {
 					
 					toInsert.add(new LabelNode());
 					toInsert.add(new FieldInsnNode(GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lnet/minecraftforge/fml/common/eventhandler/EventBus;"));
-					toInsert.add(new TypeInsnNode(NEW, "com/Whodundid/core/events/emcEvents/ChatLineCreatedEvent"));
+					toInsert.add(new TypeInsnNode(NEW, "com/Whodundid/core/coreEvents/emcEvents/ChatLineCreatedEvent"));
 					toInsert.add(new InsnNode(DUP));
 					toInsert.add(new TypeInsnNode(NEW, "com/Whodundid/core/util/chatUtil/TimedChatLine"));
 					toInsert.add(new InsnNode(DUP));
@@ -50,7 +50,7 @@ public class ChatGrabber extends IETransformer {
 					toInsert.add(new VarInsnNode(ALOAD, 1));
 					toInsert.add(new VarInsnNode(ILOAD, 2));
 					toInsert.add(new MethodInsnNode(INVOKESPECIAL, "com/Whodundid/core/util/chatUtil/TimedChatLine", "<init>", "(ILnet/minecraft/util/IChatComponent;I)V", false));
-					toInsert.add(new MethodInsnNode(INVOKESPECIAL, "com/Whodundid/core/events/emcEvents/ChatLineCreatedEvent", "<init>", "(Lcom/Whodundid/core/util/chatUtil/TimedChatLine;)V", false));
+					toInsert.add(new MethodInsnNode(INVOKESPECIAL, "com/Whodundid/core/coreEvents/emcEvents/ChatLineCreatedEvent", "<init>", "(Lcom/Whodundid/core/util/chatUtil/TimedChatLine;)V", false));
 					toInsert.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraftforge/fml/common/eventhandler/EventBus", "post", "(Lnet/minecraftforge/fml/common/eventhandler/Event;)Z", false));
 					toInsert.add(new InsnNode(POP));
 					

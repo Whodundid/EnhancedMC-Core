@@ -199,10 +199,20 @@ public class EventListener {
 	}
 	
 	@SubscribeEvent
-	public void onWorldLoad(WorldEvent.Load e) {
+	@SideOnly(Side.CLIENT)
+	public void onWorldLoadClient(WorldEvent.Load e) {
 		if (EnhancedMC.isInitialized()) {
 			CursorHelper.reset();
-			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventWorldLoad(e));
+			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventWorldLoadClient(e));
+		}
+	}
+	
+	@SubscribeEvent
+	@SideOnly(Side.SERVER)
+	public void onWorldLoadServer(WorldEvent.Load e) {
+		if (EnhancedMC.isInitialized()) {
+			CursorHelper.reset();
+			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventWorldLoadServer(e));
 		}
 	}
 	

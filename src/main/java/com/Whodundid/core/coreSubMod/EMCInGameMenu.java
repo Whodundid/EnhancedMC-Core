@@ -70,7 +70,7 @@ public class EMCInGameMenu extends EnhancedGui {
 	}
 	
 	@Override
-	public void actionPerformed(IEnhancedActionObject object) {
+	public void actionPerformed(IEnhancedActionObject object, Object... args) {
 		if (object.equals(backToGame)) { closeGui(true); }
 		if (object.equals(achievements)) { if (mc.thePlayer != null) { mc.displayGuiScreen(new GuiAchievements(this, mc.thePlayer.getStatFileWriter())); } }
 		if (object.equals(stats)) { if (mc.thePlayer != null) { mc.displayGuiScreen(new GuiStats(this, mc.thePlayer.getStatFileWriter())); } }

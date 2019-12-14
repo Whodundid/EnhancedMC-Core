@@ -105,7 +105,7 @@ public abstract class WindowParent extends EnhancedGuiObject implements IWindowP
 				try {
 					WindowParent newGui = ((WindowParent) Class.forName(oldGuiPass.getClass().getName()).getConstructor().newInstance());
 					newGui.setGuiHistory(((WindowParent) oldGuiPass).getGuiHistory());
-					EnhancedMC.displayEGui(newGui, this, true, false, CenterType.object);
+					EnhancedMC.displayEGui(newGui, this, true, true, false, CenterType.object);
 				} catch (Exception e) { e.printStackTrace(); }
 			}
 			else if (oldGuiPass instanceof GuiScreen) {

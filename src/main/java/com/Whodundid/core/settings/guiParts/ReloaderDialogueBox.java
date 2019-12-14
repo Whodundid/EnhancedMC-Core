@@ -24,7 +24,7 @@ public class ReloaderDialogueBox extends EGuiDialogueBox {
 		getTopParent().setFocusLockObject(this);
 		
 		setResizeable(true);
-		setMinimumDims(150, 49);
+		setMinDims(150, 49);
 		
 		SubModSettings.loadConfig();
 		

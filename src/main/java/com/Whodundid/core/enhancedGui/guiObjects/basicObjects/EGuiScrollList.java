@@ -102,7 +102,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 				drawRect(startX + 1, startY + 1, endX - 1, endY - 1, backgroundColor);
 				
 				//only draw the objects that are actually in the viewable area
-				for (IEnhancedGuiObject o : drawnListObjects) {
+				for (IEnhancedGuiObject o : this.drawnListObjects) {
 					if (o.checkDraw()) {
 						if (!o.hasFirstDraw()) { o.onFirstDraw(); o.onFirstDraw(); }
 	    				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
@@ -164,8 +164,8 @@ public class EGuiScrollList extends EnhancedGuiObject {
 		StorageBox<Integer, Integer> loc = new StorageBox(d.startX, d.startY);
 		StorageBoxHolder<IEnhancedGuiObject, StorageBox<Integer, Integer>> previousLocations = new StorageBoxHolder();
 		EArrayList<IEnhancedGuiObject> objs = new EArrayList();
-		objs.addAll(getImmediateChildren());
-		objs.addAll(getObjectsToBeAdded());
+		objs.addAll(getObjects());
+		objs.addAll(getAddingObjects());
 		for (IEnhancedGuiObject o : objs) {
 			previousLocations.add(o, new StorageBox(o.getDimensions().startX - loc.getObject(), o.getDimensions().startY - loc.getValue()));
 		}
@@ -182,8 +182,8 @@ public class EGuiScrollList extends EnhancedGuiObject {
 					EDimension bounds = new EDimension(startX + 1, startY + 1, eX, eY);
 					
 					o.setBoundaryEnforcer(getDimensions());
-					for (IEnhancedGuiObject q : o.getImmediateChildren()) { q.setBoundaryEnforcer(bounds); }
-					for (IEnhancedGuiObject q : o.getObjectsToBeAdded()) { q.setBoundaryEnforcer(bounds); }
+					for (IEnhancedGuiObject q : o.getObjects()) { q.setBoundaryEnforcer(bounds); }
+					for (IEnhancedGuiObject q : o.getAddingObjects()) { q.setBoundaryEnforcer(bounds); }
 				}
 				
 				o.setPosition(newX + oldLoc.getObject(), newY + oldLoc.getValue());
@@ -193,7 +193,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 	}
 	
 	@Override
-	public void actionPerformed(IEnhancedActionObject object) {
+	public void actionPerformed(IEnhancedActionObject object, Object... args) {
 		if (object == reset) {
 			verticalScroll.reset();
 			horizontalScroll.reset();
@@ -289,17 +289,6 @@ public class EGuiScrollList extends EnhancedGuiObject {
 					EDimension dims = o.getDimensions();
 					o.setDimensions(startX + dims.startX, startY + dims.startY, dims.width, dims.height);
 					
-					/*
-					for (IEnhancedGuiObject q : o.getImmediateChildren()) {
-						EDimension qd = q.getDimensions();
-						q.setDimensions(startX + qd.startX, startY + qd.startY, qd.width, qd.height);
-					}
-					for (IEnhancedGuiObject q : o.getObjectsToBeAdded()) {
-						EDimension qd = q.getDimensions();
-						q.setDimensions(startX + qd.startX, startY + qd.startY, qd.width, qd.height);
-					}
-					*/
-					
 					try {
 						o.setParent(this).initObjects();
 						o.setZLevel(getZLevel() + 1);
@@ -309,8 +298,8 @@ public class EGuiScrollList extends EnhancedGuiObject {
 					
 					//limit the boundary of each object to the list's boundary
 					o.setBoundaryEnforcer(bounds);
-					for (IEnhancedGuiObject q : o.getImmediateChildren()) { q.setBoundaryEnforcer(bounds); }
-					for (IEnhancedGuiObject q : o.getObjectsToBeAdded()) { q.setBoundaryEnforcer(bounds); }
+					for (IEnhancedGuiObject q : o.getObjects()) { q.setBoundaryEnforcer(bounds); }
+					for (IEnhancedGuiObject q : o.getAddingObjects()) { q.setBoundaryEnforcer(bounds); }
 					
 					//replace the original intial position coordinates with the relative ones
 					o.setInitialPosition(o.getDimensions().startX, o.getDimensions().startY);
@@ -356,7 +345,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 				while (it.hasNext()) {
 					if (o.equals(it.next())) {
 						if (!o.equals(getTopParent().getFocusedObject())) {
-							for (IEnhancedGuiObject child : o.getImmediateChildren()) {
+							for (IEnhancedGuiObject child : o.getObjects()) {
 								if (child.equals(getTopParent().getFocusedObject())) { child.relinquishFocus(); }
 							}
 						} else { o.relinquishFocus(); }

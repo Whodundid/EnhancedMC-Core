@@ -33,7 +33,7 @@ public class KeyBindGui extends WindowParent {
 		centerObjectWithSize(380, 254);
 		super.initGui();
 		setResizeable(true);
-		setMinimumDims(150, 150);
+		setMinDims(150, 150);
 	}
 	
 	@Override
@@ -223,7 +223,7 @@ public class KeyBindGui extends WindowParent {
 	}
 	
 	@Override
-	public void actionPerformed(IEnhancedActionObject object) {
+	public void actionPerformed(IEnhancedActionObject object, Object... args) {
 		if (object == changeKey) {
 			changing = true;
 			changeKey.setDisplayString(EnumChatFormatting.WHITE + "> " + EnumChatFormatting.YELLOW + changeKey.getDisplayString() + EnumChatFormatting.WHITE + " <");

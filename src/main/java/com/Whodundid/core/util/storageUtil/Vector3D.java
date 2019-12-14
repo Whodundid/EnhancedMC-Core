@@ -32,7 +32,7 @@ public class Vector3D {
 	 * @param vecIn {@code Vector3D}
 	 */
 	public Vector3D(Vector3D vecIn) {
-		set(vecIn.x, vecIn.y, vecIn.z);
+		if (vecIn != null) { set(vecIn.x, vecIn.y, vecIn.z); }
 	}
 	
 	/** 
@@ -41,7 +41,7 @@ public class Vector3D {
 	 * @see com.Whodundid.core.util.storageUtil.Vector3DInt
 	 */
 	public Vector3D(Vector3DInt vecIn) {
-		set(vecIn.x, vecIn.y, vecIn.z);
+		if (vecIn != null) { set(vecIn.x, vecIn.y, vecIn.z); }
 	}
 	
 	/** 
@@ -50,7 +50,7 @@ public class Vector3D {
 	 * @see net.minecraft.util.Vec3
 	 */
 	public Vector3D(Vec3 vecIn) {
-		set(vecIn.xCoord, vecIn.yCoord, vecIn.zCoord);
+		if (vecIn != null) { set(vecIn.xCoord, vecIn.yCoord, vecIn.zCoord); }
 	}
 	
 	/**
@@ -59,11 +59,11 @@ public class Vector3D {
 	 * @see net.minecraft.util.Vec3i
 	 */
 	public Vector3D(Vec3i vecIn) {
-		set(vecIn.getX(), vecIn.getY(), vecIn.getZ());
+		if (vecIn != null) { set(vecIn.getX(), vecIn.getY(), vecIn.getZ()); }
 	}
 	
 	public Vector3D(BlockPos posIn) {
-		set(posIn.getX(), posIn.getY(), posIn.getZ());
+		if (posIn != null) { set(posIn.getX(), posIn.getY(), posIn.getZ()); }
 	}
 	
 	/**
@@ -85,7 +85,7 @@ public class Vector3D {
 	 * @return {@code Vector3D}
 	 */
 	public Vector3D set(Vector3D vecIn) {
-		set(vecIn.x, vecIn.y, vecIn.z);
+		if (vecIn != null) { set(vecIn.x, vecIn.y, vecIn.z); }
 		return this; 
 	}
 	
@@ -96,7 +96,7 @@ public class Vector3D {
 	 * @see com.Whodundid.core.util.storageUtil.Vector3DInt
 	 */
 	public Vector3D set(Vector3DInt vecIn) {
-		set(vecIn.x, vecIn.y, vecIn.z);
+		if (vecIn != null) { set(vecIn.x, vecIn.y, vecIn.z); }
 		return this; 
 	}
 	
@@ -107,7 +107,7 @@ public class Vector3D {
 	 * @see net.minecraft.util.Vec3
 	 */
 	public Vector3D set(Vec3 vecIn) {
-		set(vecIn.xCoord, vecIn.yCoord, vecIn.zCoord);
+		if (vecIn != null) { set(vecIn.xCoord, vecIn.yCoord, vecIn.zCoord); }
 		return this;
 	}
 	
@@ -118,7 +118,7 @@ public class Vector3D {
 	 * @see net.minecraft.util.Vec3i
 	 */
 	public Vector3D set(Vec3i vecIn) {
-		set(vecIn.getX(), vecIn.getY(), vecIn.getZ());
+		if (vecIn != null) { set(vecIn.getX(), vecIn.getY(), vecIn.getZ()); }
 		return this;
 	}
 	

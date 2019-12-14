@@ -20,6 +20,7 @@ import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.event.world.WorldEvent.Load;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
 
@@ -34,6 +35,7 @@ public abstract class SubMod {
 	protected StorageBoxHolder<String, String> dependencies = new StorageBoxHolder().noDuplicates();
 	protected StorageBoxHolder<String, String> softDependencies = new StorageBoxHolder().noDuplicates();
 	protected String modName = "noname";
+	protected EArrayList<String> nameAliases = new EArrayList();
 	protected SubModConfigManager configManager;
 	protected boolean enabled = false;
 	protected String version = "unspecified";
@@ -55,6 +57,7 @@ public abstract class SubMod {
 	public boolean isDisableable() { return isDisableable; }
 	public boolean isIncompatible() { return incompatible; }
 	public EArrayList<IWindowParent> getGuis() { return guis; }
+	public EArrayList<String> getNameAliases() { return nameAliases; }
 	public StorageBoxHolder<String, String> getDependencies() { return dependencies; }
 	public StorageBoxHolder<String, String> getSoftDependencies() { return softDependencies; }
 	public IWindowParent getMainGui() throws Exception { return mainGui != null ? mainGui.getClass().newInstance() : null; }
@@ -65,6 +68,13 @@ public abstract class SubMod {
 	public String getName() { return modName; }
 	public String getAuthor() { return author; }
 	public String getVersionDate() { return versionDate; }
+	
+	public SubMod setAliases(String alias, String... additional) {
+		nameAliases.clear();
+		nameAliases.add(alias);
+		for (String s : additional) { nameAliases.add(s); }
+		return this;
+	}
 	
 	public SubMod addDependency(SubModType typeIn, String versionIn) { return addDependency(SubModType.getModName(typeIn), versionIn); }
 	public SubMod addDependency(String nameIn, String versionIn) {
@@ -113,7 +123,8 @@ public abstract class SubMod {
 	public void eventKey(KeyInputEvent e) {}
 	public void eventChat(ClientChatReceivedEvent e) {}
 	public void eventChatLineCreated(ChatLineCreatedEvent e) {}
-	public void eventWorldLoad(WorldEvent.Load e) {}
+	public void eventWorldLoadClient(WorldEvent.Load e) {}
+	public void eventWorldLoadServer(Load e) {}
 	public void eventWorldUnload(WorldEvent.Unload e) {}
 	public void eventInitGui(GuiScreenEvent.InitGuiEvent e) {}
 	public void eventServerJoin(EntityJoinWorldEvent e) {}

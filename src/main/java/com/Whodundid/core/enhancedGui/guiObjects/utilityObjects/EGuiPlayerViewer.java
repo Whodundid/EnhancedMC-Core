@@ -48,7 +48,7 @@ public class EGuiPlayerViewer extends EnhancedGuiObject {
 	}
 	
 	@Override
-	public void actionPerformed(IEnhancedActionObject object) {
+	public void actionPerformed(IEnhancedActionObject object, Object... args) {
 		if (object == reset) {
 			hSlider.reset();
 			vSlider.reset();

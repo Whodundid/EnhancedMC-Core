@@ -38,7 +38,7 @@ public class IncompatibleWindowList extends EGuiDialogueBox {
 		getTopParent().setFocusLockObject(this);
 		setZLevel(99999);
 		setResizeable(true);
-		setMinimumWidth(160).setMinimumHeight(101);
+		setMinWidth(160).setMinHeight(101);
 		setPinnable(false);
 	}
 	

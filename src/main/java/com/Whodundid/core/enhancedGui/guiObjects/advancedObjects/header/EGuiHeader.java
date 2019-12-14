@@ -150,7 +150,7 @@ public class EGuiHeader extends EnhancedGuiObject {
 				if (fileUpButton != null) { fileUpButton.setVisible(val && getWindowParent().getGuiHistory() != null && !getWindowParent().getGuiHistory().isEmpty()); }
 			}
 		}
-		for (IEnhancedGuiObject o : getImmediateChildren()) { o.setVisible(val); }
+		for (IEnhancedGuiObject o : getObjects()) { o.setVisible(val); }
 		return this;
 	}
 	
@@ -188,7 +188,7 @@ public class EGuiHeader extends EnhancedGuiObject {
 	}
 	
 	@Override
-	public void actionPerformed(IEnhancedActionObject object) {
+	public void actionPerformed(IEnhancedActionObject object, Object... args) {
 		if (object == closeButton) { handleClose(); }
 		if (object == pinButton) { handlePin(); }
 		if (object == fileUpButton) { handleFileUp(); }

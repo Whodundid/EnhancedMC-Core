@@ -20,6 +20,10 @@ public class TerminalTextField extends EGuiTextField {
 	
 	@Override
 	public void keyPressed(char typedChar, int keyCode) {
+		if (keyCode == 28) { //enter
+			term.historyLine = 0;
+			term.preservedInput = "";
+		}
 		if (keyCode == 200) { //up
 			if (term.historyLine < term.cmdHistory.size()) {
 				if (term.lastUsed == 0) {
@@ -34,18 +38,19 @@ public class TerminalTextField extends EGuiTextField {
 			term.lastUsed = 1;
 		}
 		else if (keyCode == 208) { //down
-			if (term.historyLine <= term.cmdHistory.size() && term.historyLine > 0) {
+			if (term.historyLine <= term.cmdHistory.size() && term.historyLine > 1) {
 				if (term.historyLine == term.cmdHistory.size() || term.lastUsed == 1) { term.historyLine -= 2; }
 				else { term.historyLine -= 1; }
 				setText(getHistoryLine(term.historyLine));
 				term.lastUsed = 0;
-			} else if (term.historyLine == 0) { 
-				setText("");
+			} else if (term.historyLine <= 1) { 
+				setText(term.preservedInput);
 				term.lastUsed = 2;
 			}
 		}
 		else {
 			super.keyPressed(typedChar, keyCode);
+			if (term.historyLine <= 0) { term.preservedInput = getText(); }
 		}
 	}
 	

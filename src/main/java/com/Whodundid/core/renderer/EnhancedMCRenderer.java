@@ -42,7 +42,8 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	public static EnhancedMCRenderer instance;
 	protected ScaledResolution res;
 	protected IEnhancedGuiObject modifyingObject;
-	protected IEnhancedGuiObject objectRequestingFocus, focusedObject, defaultFocusObject, focusLockObject;
+	protected IEnhancedGuiObject objectRequestingFocus, focusedObject, focusLockObject;
+	protected IEnhancedGuiObject defaultFocusObject;
 	protected IEnhancedGuiObject toFront, toBack;
 	protected IEnhancedGuiObject hoveringTextObject;
 	public long mouseHoverTime = 0l;
@@ -64,6 +65,7 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	public int mX = 0, mY = 0;
 	protected boolean hasProxy = false;
 	protected IRendererProxy proxy;
+	public static float hotbarTicks = 0;
 	
 	public static EnhancedMCRenderer getInstance() {
 		return instance == null ? instance = new EnhancedMCRenderer() : instance;
@@ -95,6 +97,7 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	@Override public EnhancedMCRenderer completeInit() { return this; }
 	@Override
 	public void initObjects() {
+		//addObject(hotBarRenderer = HotBarRenderer.getInstance(this));
 		//addObject(new EGuiPlayerViewer(this, 50, 50, 100, 150));
 		//addObject(new SettingsGuiMain());
 		//addObject(new EGuiContainer(this, 15, 205, 100, 100).setDisplayString("Baccon"));
@@ -162,16 +165,16 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	@Override public boolean hasHeader() { return false; }
 	@Override public boolean isResizeable() { return false; }
 	@Override public EGuiHeader getHeader() { return null; }
-	@Override public int getMinimumWidth() { return res.getScaledWidth(); }
-	@Override public int getMinimumHeight() { return res.getScaledHeight(); }
-	@Override public int getMaximumWidth() { return res.getScaledWidth(); }
-	@Override public int getMaximumHeight() { return res.getScaledHeight(); }
-	@Override public EnhancedMCRenderer setMinimumDims(int widthIn, int heightIn) { return this; }
-	@Override public EnhancedMCRenderer setMaximumDims(int widthIn, int heightIn) { return this; }
-	@Override public EnhancedMCRenderer setMinimumWidth(int widthIn) { return this; }
-	@Override public EnhancedMCRenderer setMinimumHeight(int heightIn) { return this; }
-	@Override public EnhancedMCRenderer setMaximumWidth(int widthIn) { return this; }
-	@Override public EnhancedMCRenderer setMaximumHeight(int heightIn) { return this; }
+	@Override public int getMinWidth() { return res.getScaledWidth(); }
+	@Override public int getMinHeight() { return res.getScaledHeight(); }
+	@Override public int getMaxWidth() { return res.getScaledWidth(); }
+	@Override public int getMaxHeight() { return res.getScaledHeight(); }
+	@Override public EnhancedMCRenderer setMinDims(int widthIn, int heightIn) { return this; }
+	@Override public EnhancedMCRenderer setMaxDims(int widthIn, int heightIn) { return this; }
+	@Override public EnhancedMCRenderer setMinWidth(int widthIn) { return this; }
+	@Override public EnhancedMCRenderer setMinHeight(int heightIn) { return this; }
+	@Override public EnhancedMCRenderer setMaxWidth(int widthIn) { return this; }
+	@Override public EnhancedMCRenderer setMaxHeight(int heightIn) { return this; }
 	@Override public EnhancedMCRenderer setResizeable(boolean val) { return this; }
 	@Override public EnhancedMCRenderer resize(int xIn, int yIn, ScreenLocation areaIn) { return postEvent(new EventModify(this, this, ObjectModifyType.Resize)); }
 	
@@ -189,15 +192,15 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	@Override public EDimension getDimensions() { return new EDimension(0, 0, res.getScaledWidth(), res.getScaledWidth()); }
 	
 	//objects
-	@Override public boolean isChildOfObject(IEnhancedGuiObject objIn) { return false; }
+	@Override public boolean isChild(IEnhancedGuiObject objIn) { return false; }
 	@Override public EnhancedMCRenderer addObject(IEnhancedGuiObject... objsIn) { StaticEGuiObject.addObject(this, objsIn); return this; }
 	@Override public EnhancedMCRenderer removeObject(IEnhancedGuiObject... objsIn) { StaticEGuiObject.removeObject(this, objsIn); return this; }
 	@Override public EObjectGroup getObjectGroup() { return objectGroup; }
 	@Override public EnhancedMCRenderer setObjectGroup(EObjectGroup groupIn) { objectGroup = groupIn; return this; }
 	@Override public void onGroupNotification(ObjectEvent e) {}
-	@Override public EArrayList<IEnhancedGuiObject> getImmediateChildren() { return guiObjects; }
-	@Override public EArrayList<IEnhancedGuiObject> getObjectsToBeAdded() { return objsToBeAdded; }
-	@Override public EArrayList<IEnhancedGuiObject> getObjectsToBeRemoved() { return objsToBeRemoved; }
+	@Override public EArrayList<IEnhancedGuiObject> getObjects() { return guiObjects; }
+	@Override public EArrayList<IEnhancedGuiObject> getAddingObjects() { return objsToBeAdded; }
+	@Override public EArrayList<IEnhancedGuiObject> getRemovingObjects() { return objsToBeRemoved; }
 	@Override public EArrayList<IEnhancedGuiObject> getAllChildren() { return StaticEGuiObject.getAllChildren(this); }
 	@Override public EArrayList<IEnhancedGuiObject> getAllChildrenUnderMouse() { return StaticEGuiObject.getAllChildrenUnderMouse(this, mX, mY); }
 	
@@ -222,7 +225,12 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 		}
 		return false;
 	}
-	@Override public void onFocusGained(EventFocus eventIn) { postEvent(new EventFocus(this, this, FocusType.Gained)); }
+	@Override
+	public void onFocusGained(EventFocus eventIn) {
+		postEvent(new EventFocus(this, this, FocusType.Gained));
+		if (eventIn.getFocusType().equals(FocusType.MousePress)) { mousePressed(eventIn.getMX(), eventIn.getMY(), eventIn.getActionCode()); }
+		if (defaultFocusObject != null) { defaultFocusObject.requestFocus(); }
+	}
 	@Override public void onFocusLost(EventFocus eventIn) { postEvent(new EventFocus(this, this, FocusType.Lost)); }
 	@Override
 	public void transferFocus(IEnhancedGuiObject objIn) {
@@ -240,6 +248,8 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 		if (!hasFocus() && !doesFocusLockExist()) { setObjectRequestingFocus(this); }
 		return this;
 	}
+	@Override public IEnhancedGuiObject getDefaultFocusObject() { return defaultFocusObject; }
+	@Override public IEnhancedGuiObject setDefaultFocusObject(IEnhancedGuiObject objIn) { defaultFocusObject = objIn; return this; }
 	
 	//mouse checks
 	@Override public void mouseEntered(int mX, int mY) { postEvent(new EventMouse(this, mX, mY, -1, MouseType.Entered)); }
@@ -266,11 +276,12 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	@Override public void onListen(ObjectEvent e) {}
 	
 	//action object
-	@Override public void actionPerformed(IEnhancedActionObject object) { postEvent(new EventAction(this, object)); }
+	@Override public void actionPerformed(IEnhancedActionObject object, Object... args) { postEvent(new EventAction(this, object, args)); }
 	
 	//close object
+	@Override public boolean isCloseable() { return false; }
+	@Override public IEnhancedGuiObject setCloseable(boolean val) { return this; }
 	@Override public void close() {}
-	@Override public void closeFull() {}
 	@Override public void onClosed() {}
 	@Override public EnhancedMCRenderer setFocusedObjectOnClose(IEnhancedGuiObject objIn) { System.out.println("FOOL! Dagoth Ur cannot be closed, I am a god!"); return this; }
 	
@@ -295,8 +306,6 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	@Override public boolean hasPinnedObjects() { return StaticTopParent.hasPinnedWindows(this); }
 	
 	//focus
-	@Override public IEnhancedGuiObject getDefaultFocusObject() { return defaultFocusObject; }
-	@Override public EnhancedMCRenderer setDefaultFocusObject(IEnhancedGuiObject objIn) { defaultFocusObject = objIn; return this; }
 	@Override public IEnhancedGuiObject getFocusedObject() { return focusedObject; }
 	@Override public EnhancedMCRenderer setFocusedObject(IEnhancedGuiObject objIn) { focusedObject = objIn; return this; }
 	@Override public EnhancedMCRenderer setObjectRequestingFocus(IEnhancedGuiObject objIn) { focusQueue.add(new EventFocus(this, objIn, FocusType.Transfer)); return this; }
@@ -406,8 +415,8 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	}
 	
 	public void windowResized(int newWidth, int newHeight) {
-		guiObjects.clear();
-		objsToBeAdded.clear();
+		for (IEnhancedGuiObject o : guiObjects) { if (o.isCloseable()) { o.close(); } }
+		for (IEnhancedGuiObject o : objsToBeAdded) { if (o.isCloseable()) { o.close(); } }
 		objsToBeRemoved.clear();
 		toFront = null;
 		toBack = null;

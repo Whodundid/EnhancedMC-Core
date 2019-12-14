@@ -106,16 +106,31 @@ public class EGuiColorPicker extends WindowParent {
 	
 	private void drawPallete() {
 		try {
+			
 			sX = startX + 15;
 			sY = startY + 15;
 			eX = sX + (list.size() / div) + 4;
 			eY = sY + (list.size() / div) + 4;
-			drawRect(sX - 1, sY - 1, eX, eY + 1, 0xff000000);
+			int drawHeight = eY - sY;
 			
-			for (int i = 0; i < list.size() / div; i++) {
-				int c = 0xff000000 + list.get(i * div);
-				drawRect(sX + (i * 1), sY, sX + ((i * 1) + 4), eY, c);
+			char dog = 'c';
+			int mask = 1 << 95;
+			//if ()
+			
+			//System.out.println("ye: " + mask);
+			
+			//System.out.printf("shifted val: %x  hex val: %x\n", (Integer.parseInt("" + ((int) (255.0 / drawHeight) << 24), 16)), 0x010000000);
+			//System.out.println();
+			//drawRect(sX - 1, sY - 1, eX, eY + 1, 0x11000000);
+			
+			for (int j = 0; j < drawHeight; j++) {
+				for (int i = 0; i < list.size() / div; i++) {
+					int c = 0xff000000 + list.get(i * div);
+					//drawRect(sX + i, sY + j, sX + i + 4, sY + j + 1, c);
+				}
+				drawRect(sX, sY + j, eX, sY + j + 1, (0x66ffffff / drawHeight) * j);
 			}
+			
 			
 			//EArrayList<Integer> blackList = new EArrayList();
 			//for (int i = 0; i < 255; i++) {
@@ -143,7 +158,7 @@ public class EGuiColorPicker extends WindowParent {
 	}
 	
 	@Override
-	public void actionPerformed(IEnhancedActionObject object) {
+	public void actionPerformed(IEnhancedActionObject object, Object... args) {
 		if (object == select) { getParent().actionPerformed(object); }
 		if (object == cancel) { close(); }
 	}

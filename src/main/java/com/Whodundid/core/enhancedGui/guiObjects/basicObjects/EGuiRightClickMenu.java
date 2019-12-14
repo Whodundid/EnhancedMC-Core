@@ -3,7 +3,8 @@ package com.Whodundid.core.enhancedGui.guiObjects.basicObjects;
 import com.Whodundid.core.enhancedGui.objectEvents.EventMouse;
 import com.Whodundid.core.enhancedGui.objectEvents.ObjectEvent;
 import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.MouseType;
-import com.Whodundid.core.enhancedGui.types.EnhancedActionObject;
+import com.Whodundid.core.enhancedGui.types.WindowParent;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
@@ -15,7 +16,7 @@ import net.minecraft.util.ResourceLocation;
 //First Added: Oct 26, 2018
 //Author: Hunter Bragg
 
-public class EGuiRightClickMenu extends EnhancedActionObject {
+public class EGuiRightClickMenu extends WindowParent implements IEnhancedActionObject {
 	
 	EGuiRightClickMenu instance = null;
 	protected StorageBoxHolder<String, EGuiButton> options = new StorageBoxHolder();
@@ -24,15 +25,19 @@ public class EGuiRightClickMenu extends EnhancedActionObject {
 	public int optionHeight = 17;
 	public int titleHeight = 14;
 	public int backgroundColor = 0xff4b4b4b;
-	public int titleBackgroundColor = 0xff383838;
+	public int titleBackgroundColor = 0xff1f1f1f;
 	public int separatorLineColor = 0xff000000;
 	public int borderColor = 0xff000000;
+	protected Object selectedObject = null;
+	protected IEnhancedGuiObject actionReciever;
+	protected boolean runActionOnPress = false;
 	
 	public EGuiRightClickMenu(IEnhancedGuiObject parentIn, int x, int y) {
 		init(parentIn, x, y, 125, 15);
 		setZLevel(1000);
 		instance = this;
 		getTopParent().registerListener(this);
+		actionReciever = parentIn;
 		
 		title = new EGuiLabel(this, 0, 0, "");
 		title.setVisible(useTitle);
@@ -189,4 +194,12 @@ public class EGuiRightClickMenu extends EnhancedActionObject {
 	public int getTitleHeight() { return titleHeight; }
 	public EGuiLabel getTitle() { return title; }
 	public boolean hasTitle() { return useTitle; }
+	
+	@Override public boolean runActionOnPress() { return false; }
+	@Override public EGuiRightClickMenu setRunActionOnPress(boolean val) { return null; }
+	@Override public void performAction() {}
+	@Override public EGuiRightClickMenu setActionReciever(IEnhancedGuiObject objIn) { actionReciever = objIn; return this; }
+	@Override public IEnhancedGuiObject getActionReciever() { return actionReciever; }
+	@Override public EGuiRightClickMenu setSelectedObject(Object objIn) { selectedObject = objIn; return this; }
+	@Override public Object getSelectedObject() { return selectedObject; }
 }

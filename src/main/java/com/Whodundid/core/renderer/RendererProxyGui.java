@@ -44,7 +44,10 @@ public class RendererProxyGui extends GuiScreen implements IRendererProxy {
 	public void drawScreen(int mXIn, int mYIn, float ticks) {
 		mX = mXIn;
 		mY = mYIn;
-		if (renderer.getImmediateChildren().isEmpty()) { mc.displayGuiScreen(null); mc.setIngameFocus(); }
+		if (renderer.getObjects().isEmpty()) {
+			mc.displayGuiScreen(null);
+			mc.setIngameFocus();
+		}
 	}
 
 	// basic inputs

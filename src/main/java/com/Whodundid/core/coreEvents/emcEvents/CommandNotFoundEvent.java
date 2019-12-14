@@ -10,5 +10,5 @@ public class CommandNotFoundEvent extends Event {
 		attemptedCommand = attemptedCommandIn;
 	}
 	
-	public String getAttemptedCommang() { return attemptedCommand; }
+	public String getAttemptedCommand() { return attemptedCommand; }
 }

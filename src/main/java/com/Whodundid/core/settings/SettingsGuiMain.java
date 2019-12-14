@@ -284,7 +284,7 @@ public class SettingsGuiMain extends WindowParent {
 	}
 	
 	@Override
-	public void actionPerformed(IEnhancedActionObject object) {
+	public void actionPerformed(IEnhancedActionObject object, Object... args) {
 		if (object.runActionOnPress()) { object.performAction(); }
 		else {
 			if (object == keyBindGui) { EnhancedMC.displayEGui(new KeyBindGui(), this); }
@@ -300,7 +300,7 @@ public class SettingsGuiMain extends WindowParent {
 				leftPress = 0;
 				rightPress = 0;
 			}
-			if (object == consoleBtn) { EnhancedMC.displayEGui(new ETerminal(), this); }
+			if (object == consoleBtn) { EnhancedMC.displayEGui(new ETerminal(), this, true, false, true, CenterType.objectIndent); }
 			if (object == problem) { EnhancedMC.displayEGui(new IncompatibleWindowList()); }
 		}
 	}

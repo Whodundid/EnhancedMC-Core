@@ -127,7 +127,7 @@ public class EGuiSelectionList extends WindowParent implements IEnhancedActionOb
 	}
 	
 	@Override
-	public void actionPerformed(IEnhancedActionObject object) {
+	public void actionPerformed(IEnhancedActionObject object, Object... args) {
 		if (object.equals(select)) { selectCurrentOptionAndClose(); }
 		if (object.equals(cancelSel)) { close(); }
 	}

@@ -32,7 +32,7 @@ public class EGuiDialogueBox extends WindowParent {
 		requestFocus();
 		getTopParent().setFocusLockObject(this);
 		setResizeable(true);
-		setMinimumDims(101, 101);
+		setMinDims(101, 101);
 	}
 	
 	@Override

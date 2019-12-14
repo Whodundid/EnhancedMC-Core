@@ -47,7 +47,7 @@ public class SettingsRCM extends EGuiRightClickMenu {
 	}
 	
 	@Override
-	public void actionPerformed(IEnhancedActionObject object) {
+	public void actionPerformed(IEnhancedActionObject object, Object... args) {
 		if (object == this) {
 			switch ((String) getSelectedObject()) {
 			case "Open": open(); break;
@@ -69,7 +69,7 @@ public class SettingsRCM extends EGuiRightClickMenu {
 	private void openNewWindow() {
 		try {
 			IWindowParent g = mod != null ? mod.getMainGui() : gui;
-			if (g != null) { EnhancedMC.displayEGui(g, window, false, false, CenterType.objectIndent); }
+			if (g != null) { EnhancedMC.displayEGui(g, window, true, false, false, CenterType.objectIndent); }
 			else { SubModErrorDisplay.displayError(SubModErrorType.NOGUI, mod); }
 		} catch (Exception e) { e.printStackTrace(); }
 	}

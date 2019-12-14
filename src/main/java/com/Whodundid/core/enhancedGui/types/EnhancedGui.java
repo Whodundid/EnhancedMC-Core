@@ -27,8 +27,8 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.util.chatUtil.EChatUtil;
-import com.Whodundid.core.util.miscUtil.EFontRenderer;
 import com.Whodundid.core.util.renderUtil.CenterType;
+import com.Whodundid.core.util.renderUtil.EFontRenderer;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
@@ -101,6 +101,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	protected boolean pinnable = true;
 	protected boolean closeAndRecenter = false;
 	protected boolean firstDraw = false;
+	protected boolean closeable = true;
 	protected int minWidth = 0;
 	protected int minHeight = 0;
 	protected int maxWidth = 0;
@@ -221,7 +222,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 			}
 			else if (focusedObject != null && focusedObject != this) {
 				if (focusLockObject != null) {
-					if (underMouse.equals(focusLockObject) || underMouse.isChildOfObject(focusLockObject) || underMouse instanceof EGuiHeader) {
+					if (underMouse.equals(focusLockObject) || underMouse.isChild(focusLockObject) || underMouse instanceof EGuiHeader) {
 						focusQueue.add(new EventFocus(this, underMouse, FocusType.MousePress, button, mX, mY));
 					} else { focusLockObject.drawFocusLockBorder(); }
 				}
@@ -466,16 +467,16 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override public boolean hasHeader() { return StaticEGuiObject.hasHeader(this); }
 	@Override public boolean isResizeable() { return resizeable; }
 	@Override public EGuiHeader getHeader() { return StaticEGuiObject.getHeader(this); }
-	@Override public int getMinimumWidth() { return minWidth; }
-	@Override public int getMinimumHeight() { return minHeight; }
-	@Override public int getMaximumWidth() { return maxWidth; }
-	@Override public int getMaximumHeight() { return maxHeight; }
-	@Override public EnhancedGui setMinimumDims(int widthIn, int heightIn) { setMinimumWidth(widthIn).setMinimumHeight(heightIn); return this; }
-	@Override public EnhancedGui setMaximumDims(int widthIn, int heightIn) { setMaximumWidth(widthIn).setMaximumHeight(heightIn); return this; }
-	@Override public EnhancedGui setMinimumWidth(int widthIn) { minWidth = widthIn; return this; }
-	@Override public EnhancedGui setMinimumHeight(int heightIn) { minHeight = heightIn; return this; }
-	@Override public EnhancedGui setMaximumWidth(int widthIn) { maxWidth = widthIn; return this; }
-	@Override public EnhancedGui setMaximumHeight(int heightIn) { maxHeight = heightIn; return this; }
+	@Override public int getMinWidth() { return minWidth; }
+	@Override public int getMinHeight() { return minHeight; }
+	@Override public int getMaxWidth() { return maxWidth; }
+	@Override public int getMaxHeight() { return maxHeight; }
+	@Override public EnhancedGui setMinDims(int widthIn, int heightIn) { setMinWidth(widthIn).setMinHeight(heightIn); return this; }
+	@Override public EnhancedGui setMaxDims(int widthIn, int heightIn) { setMaxWidth(widthIn).setMaxHeight(heightIn); return this; }
+	@Override public EnhancedGui setMinWidth(int widthIn) { minWidth = widthIn; return this; }
+	@Override public EnhancedGui setMinHeight(int heightIn) { minHeight = heightIn; return this; }
+	@Override public EnhancedGui setMaxWidth(int widthIn) { maxWidth = widthIn; return this; }
+	@Override public EnhancedGui setMaxHeight(int heightIn) { maxHeight = heightIn; return this; }
 	@Override public EnhancedGui setResizeable(boolean val) { resizeable = val; return this; }
 	@Override public EnhancedGui resize(int xIn, int yIn, ScreenLocation areaIn) { StaticEGuiObject.resize(this, xIn, yIn, areaIn); return this; }
 	
@@ -531,15 +532,15 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override public EDimension getDimensions() { return new EDimension(startX, startY, endX, endY); }
 	
 	//objects
-	@Override public boolean isChildOfObject(IEnhancedGuiObject objIn) { return StaticEGuiObject.isChildOfObject(this, objIn); }
+	@Override public boolean isChild(IEnhancedGuiObject objIn) { return StaticEGuiObject.isChildOfObject(this, objIn); }
 	@Override public EnhancedGui addObject(IEnhancedGuiObject... objsIn) { StaticEGuiObject.addObject(this, objsIn); return this; }
 	@Override public EnhancedGui removeObject(IEnhancedGuiObject... objsIn) { objsToBeRemoved.addAll(objsIn); return this; }
 	@Override public EObjectGroup getObjectGroup() { return objectGroup; }
 	@Override public EnhancedGui setObjectGroup(EObjectGroup groupIn) { objectGroup = groupIn; return this; }
 	@Override public void onGroupNotification(ObjectEvent e) {}
-	@Override public EArrayList<IEnhancedGuiObject> getImmediateChildren() { return guiObjects; }
-	@Override public EArrayList<IEnhancedGuiObject> getObjectsToBeAdded() { return objsToBeAdded; }
-	@Override public EArrayList<IEnhancedGuiObject> getObjectsToBeRemoved() { return objsToBeRemoved; }
+	@Override public EArrayList<IEnhancedGuiObject> getObjects() { return guiObjects; }
+	@Override public EArrayList<IEnhancedGuiObject> getAddingObjects() { return objsToBeAdded; }
+	@Override public EArrayList<IEnhancedGuiObject> getRemovingObjects() { return objsToBeRemoved; }
 	@Override public EArrayList<IEnhancedGuiObject> getAllChildren() { return StaticEGuiObject.getAllChildren(this); }
 	@Override public EArrayList<IEnhancedGuiObject> getAllChildrenUnderMouse() { return StaticEGuiObject.getAllChildrenUnderMouse(this, mX, mY); }
 	
@@ -568,7 +569,8 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override
 	public void onFocusGained(EventFocus eventIn) {
 		postEvent(new EventFocus(this, this, FocusType.Gained));
-		if (eventIn.getFocusType().equals(FocusType.MousePress)) { mousePressed(eventIn.getMouseX(), eventIn.getMouseY(), eventIn.getActionCode()); }
+		if (eventIn.getFocusType().equals(FocusType.MousePress)) { mousePressed(eventIn.getMX(), eventIn.getMY(), eventIn.getActionCode()); }
+		if (defaultFocusObject != null) { defaultFocusObject.requestFocus(); }
 	}
 	@Override public void onFocusLost(EventFocus eventIn) { postEvent(new EventFocus(this, this, FocusType.Lost)); }
 	@Override
@@ -580,7 +582,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	}
 	@Override
 	public void drawFocusLockBorder() {
-		if (checkDraw() && guiObjects.notContainsInstanceOf(EGuiFocusLockBorder.class)) {
+		if (checkDraw() && guiObjects.containsNoInstanceOf(EGuiFocusLockBorder.class)) {
 			if (hasHeader() && getHeader().isEnabled()) {
 				addObject(new EGuiFocusLockBorder(this, getHeader().startX, getHeader().startY, width, height + getHeader().height));
 			} else { addObject(new EGuiFocusLockBorder(this)); }
@@ -595,6 +597,8 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 		}
 		return this;
 	}
+	@Override public IEnhancedGuiObject getDefaultFocusObject() { return defaultFocusObject; }
+	@Override public IEnhancedGuiObject setDefaultFocusObject(IEnhancedGuiObject objIn) { defaultFocusObject = objIn; return this; }
 	
 	//mouse checks
 	@Override public void mouseEntered(int mX, int mY) { postEvent(new EventMouse(this, mX, mY, -1, MouseType.Entered)); }
@@ -628,11 +632,12 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override public void onListen(ObjectEvent e) {}
 	
 	//action object
-	@Override public void actionPerformed(IEnhancedActionObject object) { postEvent(new EventAction(this, object)); }
+	@Override public void actionPerformed(IEnhancedActionObject object, Object... args) { postEvent(new EventAction(this, object, args)); }
 	
 	//close object
-	@Override public void close() { postEvent(new EventObjects(this, this, ObjectEventType.Close)); closeGui(true); }
-	@Override public void closeFull() { closeGui(true); }
+	@Override public boolean isCloseable() { return closeable; }
+	@Override public IEnhancedGuiObject setCloseable(boolean val) { closeable = val; return this; }
+	@Override public void close() { if (closeable) { postEvent(new EventObjects(this, this, ObjectEventType.Close)); closeGui(true); } }
 	@Override public void onClosed() {}
 	@Override public EnhancedGui setFocusedObjectOnClose(IEnhancedGuiObject objIn) { focusObjectOnClose = objIn; return this; }
 	
@@ -686,8 +691,6 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override public boolean hasPinnedObjects() { return StaticTopParent.hasPinnedWindows(this); }
 	
 	//focus
-	@Override public IEnhancedGuiObject getDefaultFocusObject() { return defaultFocusObject; }
-	@Override public EnhancedGui setDefaultFocusObject(IEnhancedGuiObject objIn) { defaultFocusObject = objIn; return this; }
 	@Override public IEnhancedGuiObject getFocusedObject() { return focusedObject; }
 	@Override public IEnhancedTopParent setFocusedObject(IEnhancedGuiObject objIn) { focusedObject = objIn; return this; }
 	@Override public EnhancedGui setObjectRequestingFocus(IEnhancedGuiObject objIn) { focusQueue.add(new EventFocus(this, objIn, FocusType.Transfer)); return this; }
@@ -718,7 +721,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 			if (event.getFocusObject() != null) {
 				IEnhancedGuiObject obj = event.getFocusObject();
 				if (doesFocusLockExist()) {
-					if (obj.equals(focusLockObject) || obj.isChildOfObject(focusLockObject) || obj instanceof EGuiHeader) {
+					if (obj.equals(focusLockObject) || obj.isChild(focusLockObject) || obj instanceof EGuiHeader) {
 						focusedObject.onFocusLost(event);
 						focusedObject = obj;
 						focusedObject.onFocusGained(event);
@@ -941,10 +944,6 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
     protected int drawCenteredString(String text, int x, int y, int color) { return fontRenderer.drawStringI(text, x - fontRenderer.getStringWidth(text) / 2, y, color); }
 	protected int drawStringWithShadow(String text, int x, int y, int color) { return fontRenderer.drawStringWithShadowI(text, x, y, color); }
 	protected int drawCenteredStringWithShadow(String text, int x, int y, int color) { return fontRenderer.drawStringWithShadowI(text, x - fontRenderer.getStringWidth(text) / 2, y, color); }
-	protected int drawString(String text, int x, int y, int color, float height) { return fontRenderer.drawStringIH(text, x, y, color, height); }
-    protected int drawCenteredString(String text, int x, int y, int color, float height) { return fontRenderer.drawStringIH(text, x - fontRenderer.getStringWidth(text) / 2, y, color, height); }
-	protected int drawStringWithShadow(String text, int x, int y, int color, float height) { return fontRenderer.drawStringWithShadowIH(text, x, y, color, height); }
-	protected int drawCenteredStringWithShadow(String text, int x, int y, int color, float height) { return fontRenderer.drawStringWithShadowIH(text, x - fontRenderer.getStringWidth(text) / 2, y, color, height); }
 	
 	public static void drawCustomSizedTexture(int x, int y, double u, double v, double width, double height, double textureWidth, double textureHeight) {
         double f = 1.0 / textureWidth;

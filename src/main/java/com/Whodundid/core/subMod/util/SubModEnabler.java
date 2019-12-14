@@ -1,5 +1,6 @@
 package com.Whodundid.core.subMod.util;
 
+import com.Whodundid.core.debug.terminal.gui.ETerminal;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.subMod.SubModSettings;
@@ -9,20 +10,108 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 
 public class SubModEnabler {
 
-	public static boolean toggleEnabled(String modNameIn) { return toggleEnabled(RegisteredSubMods.getMod(modNameIn)); }
-	public static boolean toggleEnabled(SubModType typeIn) { return toggleEnabled(RegisteredSubMods.getMod(typeIn)); }
-	public static boolean toggleEnabled(SubMod modIn) {
+	public static boolean enableMod(String modNameIn) { return enableMod(RegisteredSubMods.getMod(modNameIn), null); }
+	public static boolean enableMod(SubModType typeIn) { return enableMod(RegisteredSubMods.getMod(typeIn), null); }
+	public static boolean enableMod(SubMod modIn) { return enableMod(modIn, null); }
+	public static boolean enableMod(String modNameIn, ETerminal conIn) { return enableMod(RegisteredSubMods.getMod(modNameIn), conIn); }
+	public static boolean enableMod(SubModType typeIn, ETerminal conIn) { return enableMod(RegisteredSubMods.getMod(typeIn), conIn); }
+	public static boolean enableMod(SubMod modIn, ETerminal conIn) {
 		try {
 			if (modIn != null) {
-				if (modIn.isEnabled()) { tryDisable(modIn); }
+				if (!modIn.isEnabled()) { tryEnable(modIn); }
+				
+				SubModSettings.updateModState(modIn, true);
+				return true;
+			}
+		}
+		catch (SubModToggleException e) {
+			if (conIn != null) {
+				String message = "Mods: (";
+				for (SubMod m : e.getModList()) { message += (m.getName() + ", "); }
+				message = message.substring(0, message.length() - 2);
+				message += ")";
+				message += " are required to enable " + modIn.getName() + ".";
+			}
+			else { SubModErrorDisplay.displayError(e.getErrorType(), modIn, e.getModList()); }
+		}
+		catch (Exception e) {
+			if (conIn != null) { conIn.badError(e.getMessage()); }
+			else { SubModErrorDisplay.displayError(SubModErrorType.ERROR, modIn, e); }
+		}
+		return false;
+	}
+	
+	public static boolean disableMod(String modNameIn) { return disableMod(RegisteredSubMods.getMod(modNameIn), null); }
+	public static boolean disableMod(SubModType typeIn) { return disableMod(RegisteredSubMods.getMod(typeIn), null); }
+	public static boolean disableMod(SubMod modIn) { return disableMod(modIn, null); }
+	public static boolean disableMod(String modNameIn, ETerminal conIn) { return disableMod(RegisteredSubMods.getMod(modNameIn), conIn); }
+	public static boolean disableMod(SubModType typeIn, ETerminal conIn) { return disableMod(RegisteredSubMods.getMod(typeIn), conIn); }
+	public static boolean disableMod(SubMod modIn, ETerminal conIn) {
+		try {
+			if (modIn != null) {
+				if (modIn.isEnabled()) {
+					if (!modIn.isDisableable()) {
+						if (conIn != null) { conIn.error(modIn.getName() + " cannot be disabled!"); }
+					}
+					else { tryDisable(modIn); }
+				}
+				
+				SubModSettings.updateModState(modIn, false);
+				return true;
+			}
+		}
+		catch (SubModToggleException e) {
+			if (conIn != null) {
+				String message = "Mods: (";
+				for (SubMod m : e.getModList()) { message += (m.getName() + ", "); }
+				message = message.substring(0, message.length() - 2);
+				message += ")";
+				message += " require " + modIn.getName() + " to properly function.";
+			}
+			else { SubModErrorDisplay.displayError(e.getErrorType(), modIn, e.getModList()); }
+		}
+		catch (Exception e) {
+			if (conIn != null) { conIn.badError(e.getMessage()); }
+			else { SubModErrorDisplay.displayError(SubModErrorType.ERROR, modIn, e); }
+		}
+		return false;
+	}
+	
+	public static boolean toggleEnabled(String modNameIn) { return toggleEnabled(RegisteredSubMods.getMod(modNameIn), null); }
+	public static boolean toggleEnabled(SubModType typeIn) { return toggleEnabled(RegisteredSubMods.getMod(typeIn), null); }
+	public static boolean toggleEnabled(SubMod modIn) { return toggleEnabled(modIn, null); }
+	public static boolean toggleEnabled(String modNameIn, ETerminal conIn) { return toggleEnabled(RegisteredSubMods.getMod(modNameIn), conIn); }
+	public static boolean toggleEnabled(SubModType typeIn, ETerminal conIn) { return toggleEnabled(RegisteredSubMods.getMod(typeIn), conIn); }
+	public static boolean toggleEnabled(SubMod modIn, ETerminal conIn) {
+		try {
+			if (modIn != null) {
+				if (modIn.isEnabled()) {
+					if (!modIn.isDisableable()) {
+						if (conIn != null) { conIn.error(modIn.getName() + " cannot be disabled!"); }
+					}
+					else { tryDisable(modIn); }
+				}
 				else { tryEnable(modIn); }
 				
 				SubModSettings.updateModState(modIn, !modIn.isEnabled());
 				return true;
 			}
 		} 
-		catch (SubModToggleException e) { SubModErrorDisplay.displayError(e.getErrorType(), modIn, e.getModList()); }
-		catch (Exception e) { SubModErrorDisplay.displayError(SubModErrorType.ERROR, modIn, e); }
+		catch (SubModToggleException e) {
+			if (conIn != null) {
+				String message = "Mods: (";
+				for (SubMod m : e.getModList()) { message += (m.getName() + ", "); }
+				message = message.substring(0, message.length() - 2);
+				message += ")";
+				if (modIn.isEnabled()) { message += " require " + modIn.getName() + " to properly function."; }
+				else { message += " are required to enable " + modIn.getName() + "."; }
+			}
+			else { SubModErrorDisplay.displayError(e.getErrorType(), modIn, e.getModList()); }
+		}
+		catch (Exception e) {
+			if (conIn != null) { conIn.badError(e.getMessage()); }
+			else { SubModErrorDisplay.displayError(SubModErrorType.ERROR, modIn, e); }
+		}
 		return false;
 	}
 	

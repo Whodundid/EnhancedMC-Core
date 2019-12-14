@@ -64,7 +64,7 @@ public class SettingsMenuContainer extends EnhancedGuiObject {
 	}
 	
 	@Override
-	public void actionPerformed(IEnhancedActionObject object) {
+	public void actionPerformed(IEnhancedActionObject object, Object... args) {
 		if (object == settings) { openSettings(); }
 		if (object == enable) { toggleEnable(); }
 		if (object == info) { openInfo(); }

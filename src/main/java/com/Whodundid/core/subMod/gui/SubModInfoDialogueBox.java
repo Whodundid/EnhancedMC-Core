@@ -1,6 +1,5 @@
 package com.Whodundid.core.subMod.gui;
 
-import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.textArea.EGuiTextArea;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiLabel;
@@ -34,14 +33,14 @@ public class SubModInfoDialogueBox extends EGuiDialogueBox {
 		getTopParent().setFocusLockObject(this);
 		bringToFront();
 		setResizeable(true);
-		setMinimumWidth(140).setMinimumHeight(160);
+		setMinWidth(140).setMinHeight(160);
 		setObjectName("Mod Info");
 		setPinnable(false);
 	}
 	
 	@Override
 	public void initObjects() {
-		this.setHeader(new EGuiHeader(this));
+		defaultHeader(this);
 		
 		topLine = new EGuiRect(this, startX + 1, startY + 16, endX - 1, startY + 17, 0xff000000);
 		addObject(topLine);

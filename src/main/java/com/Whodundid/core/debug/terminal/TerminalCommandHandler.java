@@ -1,7 +1,8 @@
 package com.Whodundid.core.debug.terminal;
 
-import com.Whodundid.core.debug.terminal.commands.*;
 import com.Whodundid.core.debug.terminal.gui.ETerminal;
+import com.Whodundid.core.debug.terminal.terminalCommand.IConsoleCommand;
+import com.Whodundid.core.debug.terminal.terminalCommand.commands.*;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
@@ -10,6 +11,7 @@ import java.util.List;
 
 public class TerminalCommandHandler {
 
+	public static final String version = "1.0";
 	private static TerminalCommandHandler instance;
 	protected StorageBoxHolder<String, IConsoleCommand> commands;
 	protected EArrayList<IConsoleCommand> commandList;
@@ -33,12 +35,18 @@ public class TerminalCommandHandler {
 		registerCommand(conIn, new ReregisterCommands(), runVisually);
 		registerCommand(conIn, new ClearTerminal(), runVisually);
 		registerCommand(conIn, new ClearTerminalHistory(), runVisually);
+		registerCommand(conIn, new ClearObjects(), runVisually);
 		registerCommand(conIn, new DebugControl(), runVisually);
-		registerCommand(conIn, new DebugCommandRunner(), runVisually);
 		registerCommand(conIn, new ListCMD(), runVisually);
-		registerCommand(conIn, new DisconnectServer(), runVisually);
-		registerCommand(conIn, new ConnectServer(), runVisually);
 		registerCommand(conIn, new Say(), runVisually);
+		registerCommand(conIn, new Exit(), runVisually);
+		registerCommand(conIn, new ModInfo(), runVisually);
+		registerCommand(conIn, new Config(), runVisually);
+		registerCommand(conIn, new Version(), runVisually);
+		registerCommand(conIn, new EnableMod(), runVisually);
+		registerCommand(conIn, new DisableMod(), runVisually);
+		registerCommand(conIn, new ToggleSafeRM(), runVisually);
+		registerCommand(conIn, new Server(), runVisually);
 	}
 	
 	public void registerCommand(IConsoleCommand command, boolean runVisually) { registerCommand(null, command, runVisually); }
@@ -76,7 +84,7 @@ public class TerminalCommandHandler {
 				Iterator<String> i = commandArguments.iterator();
 				while (i.hasNext()) {
 					String arg = i.next();
-					if (arg.equals("-v")) {
+					if (arg.equals("-i")) {
 						runVisually = true;
 						i.remove();
 						break;
@@ -86,7 +94,7 @@ public class TerminalCommandHandler {
 				command.runCommand(conIn, commandArguments, runVisually);
 				
 				if (!command.getName().equals("clear")) {
-					//man.getConsole().writeln();
+					conIn.writeln();
 				}				
 				return;
 			}
@@ -109,6 +117,8 @@ public class TerminalCommandHandler {
 		}
 		registerBaseCommands(conIn, runVisually);
 		customCommandList.forEach(c -> registerCommand(conIn, c, runVisually));
+		
+		//add way for sub mods to reregister their commands as well
 	}
 	
 	public IConsoleCommand getCommand(String commandName) {

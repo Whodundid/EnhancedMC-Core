@@ -65,7 +65,7 @@ public class EGuiScreenLocationSelector extends EnhancedActionObject {
 	}
 	
 	@Override
-	public void actionPerformed(IEnhancedActionObject object) {
+	public void actionPerformed(IEnhancedActionObject object, Object... args) {
 		if (object.equals(bLeft)) { obj.setLocation(ScreenLocation.botLeft); }
 		if (object.equals(bRight)) { obj.setLocation(ScreenLocation.botRight); }
 		if (object.equals(tLeft)) { obj.setLocation(ScreenLocation.topLeft); }

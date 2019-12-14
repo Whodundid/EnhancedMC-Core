@@ -15,10 +15,11 @@ import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.subMod.SubModSettings;
 import com.Whodundid.core.subMod.SubModType;
-import com.Whodundid.core.util.miscUtil.EFontRenderer;
 import com.Whodundid.core.util.miscUtil.EMouseHelper;
 import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.renderUtil.CursorHelper;
+import com.Whodundid.core.util.renderUtil.EFontRenderer;
+import com.Whodundid.core.util.renderUtil.EItemDrawer;
 import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
@@ -63,6 +64,7 @@ public final class EnhancedMC {
 	private static final EnhancedMCRenderer renderer = EnhancedMCRenderer.getInstance();
 	private static final TerminalCommandHandler terminal = TerminalCommandHandler.getInstance();
 	private static EventListener eventListener;
+	private static EItemDrawer itemDrawer;
 	private static boolean isInitialized = false;
 	public static int updateCounter = 0;
 	public static boolean enableDebugFunctions = false;
@@ -96,7 +98,8 @@ public final class EnhancedMC {
             fontRenderer.setBidiFlag(mc.getLanguageManager().isCurrentLanguageBidirectional());
         }
 		((IReloadableResourceManager) mc.getResourceManager()).registerReloadListener(fontRenderer);
-    	
+    	itemDrawer = new EItemDrawer();
+		
     	//register commands
     	ClientCommandHandler h = ClientCommandHandler.instance;
 	}
@@ -226,14 +229,17 @@ public final class EnhancedMC {
 		return guiIn != null ? (WindowParent) renderer.getAllChildren().stream().filter(o -> o.getClass().equals(guiIn)).findFirst().get() : null;
 	}
 	
-	public static void displayEGui(IWindowParent guiIn) { displayEGui(guiIn, null, false, false, CenterType.screen); }
-	public static void displayEGui(IWindowParent guiIn, CenterType loc) { displayEGui(guiIn, null, false, false, loc); }
-	public static void displayEGui(IWindowParent guiIn, Object oldObject) { displayEGui(guiIn, oldObject, true, true, CenterType.object); }
-	public static void displayEGui(IWindowParent guiIn, Object oldObject, CenterType loc) { displayEGui(guiIn, oldObject, true, true, loc); }
-	public static void displayEGui(IWindowParent guiIn, Object oldObject, boolean closeOld, CenterType loc) { displayEGui(guiIn, oldObject, closeOld, true, loc); }
-	public static void displayEGui(IWindowParent guiIn, Object oldObject, boolean closeOld) { displayEGui(guiIn, oldObject, closeOld, true, CenterType.object); }
-	public static void displayEGui(IWindowParent guiIn, Object oldObject, boolean closeOld, boolean transferHistory) { displayEGui(guiIn, oldObject, closeOld, transferHistory, CenterType.object); }
-	public static void displayEGui(IWindowParent guiIn, Object oldObject, boolean closeOld, boolean transferHistory, CenterType loc) {
+	public static void displayEGui(IWindowParent guiIn) { displayEGui(guiIn, null, true, false, false, CenterType.screen); }
+	public static void displayEGui(IWindowParent guiIn, CenterType loc) { displayEGui(guiIn, null, true, false, false, loc); }
+	public static void displayEGui(IWindowParent guiIn, boolean transferFocus) { displayEGui(guiIn, null, transferFocus, false, false, CenterType.screen); }
+	public static void displayEGui(IWindowParent guiIn, boolean transferFocus, CenterType loc) { displayEGui(guiIn, null, transferFocus, false, false, loc); }
+	public static void displayEGui(IWindowParent guiIn, Object oldObject) { displayEGui(guiIn, oldObject, true, true, true, CenterType.object); }
+	public static void displayEGui(IWindowParent guiIn, Object oldObject, CenterType loc) { displayEGui(guiIn, oldObject, true, true, true, loc); }
+	public static void displayEGui(IWindowParent guiIn, Object oldObject, boolean transferFocus) { displayEGui(guiIn, oldObject, transferFocus, true, true, CenterType.object); }
+	public static void displayEGui(IWindowParent guiIn, Object oldObject, boolean transferFocus, CenterType loc) { displayEGui(guiIn, oldObject, transferFocus, true, true, loc); }
+	public static void displayEGui(IWindowParent guiIn, Object oldObject, boolean transferFocus, boolean closeOld) { displayEGui(guiIn, oldObject, transferFocus, closeOld, true, CenterType.object); }
+	public static void displayEGui(IWindowParent guiIn, Object oldObject, boolean transferFocus, boolean closeOld, boolean transferHistory) { displayEGui(guiIn, oldObject, transferFocus, closeOld, transferHistory, CenterType.object); }
+	public static void displayEGui(IWindowParent guiIn, Object oldObject, boolean transferFocus, boolean closeOld, boolean transferHistory, CenterType loc) {
 		if (guiIn == null) { mc.displayGuiScreen(null); }
 		if (mc.currentScreen == null || !(mc.currentScreen instanceof RendererProxyGui)) { mc.displayGuiScreen(new RendererProxyGui()); }
 		if (guiIn != null) {
@@ -243,14 +249,14 @@ public final class EnhancedMC {
 				if (oldObject instanceof GuiScreen) { mc.displayGuiScreen(null); }
 				else if (oldObject instanceof IWindowParent && closeOld) { ((IWindowParent) oldObject).close(); }
 			}
-			if (transferHistory && oldObject instanceof IWindowParent) {
+			if (transferHistory && oldObject instanceof IWindowParent && !(guiIn instanceof EnhancedGui)) {
 				IWindowParent old = (IWindowParent) oldObject;
 				old.getGuiHistory().add(old);
 				guiIn.setGuiHistory(old.getGuiHistory());
 			}
 			setPos(guiIn, oldObject instanceof IEnhancedGuiObject ? (IEnhancedGuiObject) oldObject : null, loc);
 			guiIn.bringToFront();
-			guiIn.requestFocus();
+			if (transferFocus) { guiIn.requestFocus(); }
 		}
 	}
 	
@@ -349,7 +355,8 @@ public final class EnhancedMC {
 	public static EventListener getEventListener() { return eventListener; }
 	public static EFontRenderer getFontRenderer() { return fontRenderer; }
 	public static EnhancedMCRenderer getRenderer() { return renderer; }
-	public static TerminalCommandHandler getTerminal() { return terminal; }
+	public static EItemDrawer getItemDrawer() { return itemDrawer; }
+	public static TerminalCommandHandler getTerminalHandler() { return terminal; }
 	public static boolean isInitialized() { return isInitialized; }
 	public static void log(Level levelIn, String msg) { EMCLogger.log(levelIn, msg); }
 	public static void info(String msg) { EMCLogger.log(Level.INFO, msg); }

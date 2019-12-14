@@ -30,6 +30,7 @@ public enum SubModType {
 	PING("Ping Display", "pingdisplay"),
 	SCRIPTS("Scripts", "scripts"),
 	SLC("Skin Layer Control", "slc"),
+	WINDOWHUD("Window HUD", "windowhud"),
 	WORLDEDITOR("World Editor", "worldeditor"),
 	UNKNOWN("Unknown", "unknown");
 	

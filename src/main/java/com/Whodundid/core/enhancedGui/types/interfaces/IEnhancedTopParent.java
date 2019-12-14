@@ -34,8 +34,6 @@ public interface IEnhancedTopParent extends IEnhancedGuiObject {
 	
 	//focus
 	
-	public IEnhancedGuiObject getDefaultFocusObject();
-	public IEnhancedTopParent setDefaultFocusObject(IEnhancedGuiObject objIn);
 	public IEnhancedGuiObject getFocusedObject();
 	public IEnhancedTopParent setFocusedObject(IEnhancedGuiObject objIn);
 	public IEnhancedTopParent setObjectRequestingFocus(IEnhancedGuiObject objIn);

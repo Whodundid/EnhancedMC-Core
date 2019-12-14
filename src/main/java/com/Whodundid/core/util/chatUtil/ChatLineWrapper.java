@@ -1,7 +1,7 @@
 package com.Whodundid.core.util.chatUtil;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.util.miscUtil.EFontRenderer;
+import com.Whodundid.core.util.renderUtil.EFontRenderer;
 import com.google.common.collect.Lists;
 import java.util.List;
 import net.minecraft.client.Minecraft;

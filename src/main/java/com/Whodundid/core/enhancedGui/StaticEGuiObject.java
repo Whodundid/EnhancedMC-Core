@@ -32,7 +32,7 @@ public class StaticEGuiObject {
 	public static boolean hasHeader(IEnhancedGuiObject obj) { return getHeader(obj) != null; }
 	/** Returns this objects EGuiHeader, if there is one. */
 	public static EGuiHeader getHeader(IEnhancedGuiObject obj) {
-		for (IEnhancedGuiObject o : EArrayList.combineLists(obj.getImmediateChildren(), obj.getObjectsToBeAdded())) {
+		for (IEnhancedGuiObject o : EArrayList.combineLists(obj.getObjects(), obj.getAddingObjects())) {
 			if (o instanceof EGuiHeader) { return (EGuiHeader) o; }
 		}
 		return null;
@@ -57,8 +57,8 @@ public class StaticEGuiObject {
 			default: break;
 			}
 			//restrict the object to its allowed minimum width
-			if (w < obj.getMinimumWidth()) {
-				w = obj.getMinimumWidth();
+			if (w < obj.getMinWidth()) {
+				w = obj.getMinWidth();
 				switch (areaIn) {
 				case right: case topRight: case botRight: x = d.startX; break;
 				case left: case topLeft: case botLeft: x = d.endX - w; break;
@@ -66,8 +66,8 @@ public class StaticEGuiObject {
 				}
 			}
 			//restrict the object to its allowed maximum width
-			if (w > obj.getMaximumWidth()) {
-				w = obj.getMaximumWidth();
+			if (w > obj.getMaxWidth()) {
+				w = obj.getMaxWidth();
 				switch (areaIn) {
 				case right: case topRight: case botRight: x = d.startX; break;
 				case left: case topLeft: case botLeft: x = d.endX - w; break;
@@ -75,8 +75,8 @@ public class StaticEGuiObject {
 				}
 			}
 			//restrict the object to its allowed minimum height
-			if (h < obj.getMinimumHeight()) {
-				h = obj.getMinimumHeight();
+			if (h < obj.getMinHeight()) {
+				h = obj.getMinHeight();
 				switch (areaIn) {
 				case top: case topRight: case topLeft: y = d.endY - h; break;
 				case bot: case botRight: case botLeft: y = d.startY; break;
@@ -84,8 +84,8 @@ public class StaticEGuiObject {
 				}
 			}
 			//restrict the object to its allowed maximum height
-			if (h > obj.getMaximumHeight()) {
-				h = obj.getMaximumHeight();
+			if (h > obj.getMaxHeight()) {
+				h = obj.getMaxHeight();
 				switch (areaIn) {
 				case top: case topRight: case topLeft: y = d.endY - h; break;
 				case bot: case botRight: case botLeft: y = d.startY; break;
@@ -106,7 +106,7 @@ public class StaticEGuiObject {
 		obj.postEvent(new EventModify(obj, obj, ObjectModifyType.Move)); //post an event
 		if (!obj.isPositionLocked()) { //only allow the object to be moved if it's not locked in place
 			//get all of the children in the object
-			for (IEnhancedGuiObject o : EArrayList.combineLists(obj.getImmediateChildren(), obj.getObjectsToBeAdded())) {
+			for (IEnhancedGuiObject o : EArrayList.combineLists(obj.getObjects(), obj.getAddingObjects())) {
 				if (!o.isPositionLocked()) { //only move the child if it's not locked in place
 					if (o instanceof WindowParent) { //only move the window if it moves with the parent
 						if (((WindowParent) o).movesWithParent()) { o.move(newX, newY); }
@@ -126,7 +126,7 @@ public class StaticEGuiObject {
 		EDimension d = obj.getDimensions();
 		StorageBox<Integer, Integer> loc = new StorageBox(d.startX, d.startY); //the object's current position for shorter code
 		StorageBoxHolder<IEnhancedGuiObject, StorageBox<Integer, Integer>> previousLocations = new StorageBoxHolder();
-		EArrayList<IEnhancedGuiObject> objs = EArrayList.combineLists(obj.getImmediateChildren(), obj.getObjectsToBeAdded());
+		EArrayList<IEnhancedGuiObject> objs = EArrayList.combineLists(obj.getObjects(), obj.getAddingObjects());
 		for (IEnhancedGuiObject o : objs) { //get each of the object's children's relative positions
 			previousLocations.add(o, new StorageBox(o.getDimensions().startX - loc.getObject(), o.getDimensions().startY - loc.getValue()));
 		}
@@ -181,7 +181,7 @@ public class StaticEGuiObject {
 			try {
 				if (o != null) { //only add if the object isn't null
 					//don't let the object be added to itself, or if the object is already in the object
-					if (o != parent && parent.getImmediateChildren().notContains(o) && parent.getObjectsToBeAdded().notContains(o)) {
+					if (o != parent && parent.getObjects().notContains(o) && parent.getAddingObjects().notContains(o)) {
 						if (o instanceof EnhancedGui) { continue; } //don't add GuiScreens
 						if (o instanceof EGuiHeader && parent.hasHeader()) { 
 							throw new HeaderAlreadyExistsException(parent.getHeader()); //remove this exception -- it's pointless
@@ -194,7 +194,7 @@ public class StaticEGuiObject {
 							if (parent.isBoundaryEnforced()) { o.setBoundaryEnforcer(parent.getBoundaryEnforcer()); }
 							o.completeInit(); //tell the child that it has been fully initialized and that it is ready to be added on the next draw cycle
 						} catch (ObjectInitException e) { e.printStackTrace(); }
-						parent.getObjectsToBeAdded().add(o); //give the processed child to the parent so that it will be added
+						parent.getAddingObjects().add(o); //give the processed child to the parent so that it will be added
 					}
 				}
 			} catch (HeaderAlreadyExistsException e) { e.printStackTrace(); }
@@ -202,7 +202,7 @@ public class StaticEGuiObject {
 	}
 	/** Start the process of removing a child from this object. Children are fully removed on the next draw cycle. */
 	public static void removeObject(IEnhancedGuiObject parent, IEnhancedGuiObject... objsIn) {
-		parent.getObjectsToBeRemoved().addAll(objsIn);
+		parent.getRemovingObjects().addAll(objsIn);
 	}
 	/** Returns a list containing every single child from every object in the specified object. */
 	public static EArrayList<IEnhancedGuiObject> getAllChildren(IEnhancedGuiObject obj) {
@@ -211,12 +211,12 @@ public class StaticEGuiObject {
 		EArrayList<IEnhancedGuiObject> workList = new EArrayList();
 		
 		//grab all immediate children and add them to foundObjs, then check if any have children of their own
-		obj.getImmediateChildren().forEach(o -> { foundObjs.add(o); if (!o.getImmediateChildren().isEmpty()) { objsWithChildren.add(o); } });
+		obj.getObjects().forEach(o -> { foundObjs.add(o); if (!o.getObjects().isEmpty()) { objsWithChildren.add(o); } });
 		//same as above but now check from objects that are going to be added on the next draw cycle
-		obj.getObjectsToBeAdded().forEach(o -> { foundObjs.add(o); if (!o.getObjectsToBeAdded().isEmpty()) { objsWithChildren.add(o); } });
+		obj.getAddingObjects().forEach(o -> { foundObjs.add(o); if (!o.getAddingObjects().isEmpty()) { objsWithChildren.add(o); } });
 		//load the workList with every child found on each object
-		objsWithChildren.forEach(c -> workList.addAll(c.getImmediateChildren()));
-		objsWithChildren.forEach(c -> workList.addAll(c.getObjectsToBeAdded()));
+		objsWithChildren.forEach(c -> workList.addAll(c.getObjects()));
+		objsWithChildren.forEach(c -> workList.addAll(c.getAddingObjects()));
 		
 		//only work as long as there are still child layers to process
 		while (workList.isNotEmpty()) {
@@ -225,13 +225,13 @@ public class StaticEGuiObject {
 			
 			//for the current layer, find all objects that have children
 			objsWithChildren.clear();
-			workList.stream().filter(o -> !o.getImmediateChildren().isEmpty()).forEach(objsWithChildren::add);
-			workList.stream().filter(o -> !o.getObjectsToBeAdded().isEmpty()).forEach(objsWithChildren::add);
+			workList.stream().filter(o -> !o.getObjects().isEmpty()).forEach(objsWithChildren::add);
+			workList.stream().filter(o -> !o.getAddingObjects().isEmpty()).forEach(objsWithChildren::add);
 			
 			//put all children on the next layer into the work list
 			workList.clear();
-			objsWithChildren.forEach(c -> workList.addAll(c.getImmediateChildren()));
-			objsWithChildren.forEach(c -> workList.addAll(c.getObjectsToBeAdded()));
+			objsWithChildren.forEach(c -> workList.addAll(c.getObjects()));
+			objsWithChildren.forEach(c -> workList.addAll(c.getAddingObjects()));
 		}
 		return foundObjs;
 	}
@@ -292,7 +292,7 @@ public class StaticEGuiObject {
 	}
 	
 	//basic inputs
-	public static void parseMousePosition(IEnhancedGuiObject objIn, int mX, int mY) { objIn.getImmediateChildren().stream().filter(o -> o.isMouseInside(mX, mY)).forEach(o -> o.parseMousePosition(mX, mY)); }
+	public static void parseMousePosition(IEnhancedGuiObject objIn, int mX, int mY) { objIn.getObjects().stream().filter(o -> o.isMouseInside(mX, mY)).forEach(o -> o.parseMousePosition(mX, mY)); }
 	public static void mousePressed(IEnhancedGuiObject objIn, int mX, int mY, int button) {
 		objIn.postEvent(new EventMouse(objIn, mX, mY, button, MouseType.Pressed));
 		if (!objIn.hasFocus() && objIn.isMouseOver(mX, mY)) { objIn.requestFocus(); }
@@ -310,15 +310,15 @@ public class StaticEGuiObject {
 	public static void mouseDragged(IEnhancedGuiObject objIn, int mX, int mY, int button, long timeSinceLastClick) {}
 	public static void mouseScolled(IEnhancedGuiObject objIn, int mX, int mY, int change) {
 		objIn.postEvent(new EventMouse(objIn, mX, mY, -1, MouseType.Scrolled));
-		for (IEnhancedGuiObject o : objIn.getImmediateChildren()) {
+		for (IEnhancedGuiObject o : objIn.getObjects()) {
 			if (o.isMouseInside(mX, mY) && o.checkDraw()) { o.mouseScrolled(change); }
 		}
 	}
 	public static void keyPressed(IEnhancedGuiObject objIn, char typedChar, int keyCode) {
 		objIn.postEvent(new EventKeyboard(objIn, typedChar, keyCode, KeyboardType.Pressed));
 		if (objIn.getTopParent() != null && keyCode == 15) {
-			EArrayList<IEnhancedGuiObject> objs = objIn.getImmediateChildren();
-			EArrayList<IEnhancedGuiObject> pObjs = objIn.getTopParent().getImmediateChildren();
+			EArrayList<IEnhancedGuiObject> objs = objIn.getObjects();
+			EArrayList<IEnhancedGuiObject> pObjs = objIn.getTopParent().getObjects();
 			//I have no idea if this code even works
 			if (objs != null) {
 				if (objs.isEmpty()) {
@@ -329,7 +329,7 @@ public class StaticEGuiObject {
 					if (thisObjPos < pObjs.size() - 1) { pObjs.get(thisObjPos + 1).requestFocus(); }
 				} else {
 					EnhancedGuiObject selectedChild = null;
-					for (IEnhancedGuiObject o : objIn.getTopParent().getImmediateChildren()) {
+					for (IEnhancedGuiObject o : objIn.getTopParent().getObjects()) {
 						if (objs.contains(o) && o instanceof EnhancedGuiObject) { selectedChild = (EnhancedGuiObject) o; }
 					}
 					if (selectedChild != null) {
@@ -351,7 +351,7 @@ public class StaticEGuiObject {
 		for (IEnhancedGuiObject o : toBeAdded) {
 			if (o != null) {
 				if (o != objIn) {
-					objIn.getImmediateChildren().add(o);
+					objIn.getObjects().add(o);
 					o.onAdded();
 					objIn.postEvent(new EventObjects(objIn, o, ObjectEventType.ObjectAdded));
 				}
@@ -364,9 +364,9 @@ public class StaticEGuiObject {
 		for (IEnhancedGuiObject o : toBeRemoved) {
 			if (o != null) {
 				if (o != objIn) {
-					if (objIn.getImmediateChildren().contains(o)) {
+					if (objIn.getObjects().contains(o)) {
 						objIn.onClosed();
-						objIn.getImmediateChildren().remove(o);
+						objIn.getObjects().remove(o);
 						objIn.postEvent(new EventObjects(objIn, o, ObjectEventType.ObjectRemoved));
 					}
 				}

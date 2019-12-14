@@ -37,7 +37,7 @@ public class StaticTopParent extends EGui {
 		if (objIn.getFocusLockObject() != null) { //first check if there is a focusLock
 			if (underMouse != null) { //if there is, then check if there is actually anything under the cursor
 				//allow focus to be passed to the object under the cursor if it is the focusLockObject, a child of the focusLockObject or an EGuiHeader
-				if (underMouse.equals(objIn.getFocusLockObject()) || underMouse.isChildOfObject(objIn.getFocusLockObject()) || underMouse instanceof EGuiHeader) {
+				if (underMouse.equals(objIn.getFocusLockObject()) || underMouse.isChild(objIn.getFocusLockObject()) || underMouse instanceof EGuiHeader) {
 					focusQueue.add(new EventFocus(objIn, underMouse, FocusType.MousePress, button, mX, mY));
 				} else { objIn.getFocusLockObject().bringToFront(); objIn.getFocusLockObject().drawFocusLockBorder(); } //otherwise, annoy the user
 			} else { objIn.getFocusLockObject().bringToFront(); objIn.getFocusLockObject().drawFocusLockBorder(); } //otherwise, annoy the user
@@ -75,7 +75,7 @@ public class StaticTopParent extends EGui {
 	public static void mouseScrolled(IEnhancedTopParent objIn, int mX, int mY, int change) {
 		objIn.postEvent(new EventMouse(objIn, mX, mY, -1, MouseType.Scrolled));
 		if (objIn.getHighestZObjectUnderMouse() != null) { //if there are actually any objects under the mouse
-			for (IEnhancedGuiObject o : objIn.getImmediateChildren()) {
+			for (IEnhancedGuiObject o : objIn.getObjects()) {
 				if (o.isMouseInside(mX, mY) && o.checkDraw()) { o.mouseScrolled(change); } //only notify them if they are actually under the cursor and visible
 			}
 		} else { //if there were no objects under the mouse, scroll the chat
@@ -127,7 +127,7 @@ public class StaticTopParent extends EGui {
 		else { drawStringWithShadow("FocusLockObject: " + objIn.getFocusLockObject(), 3, 22, 0x70f3ff); }
 		
 		//draw the topParent's current immediate children
-		drawStringWithShadow("objs: " + objIn.getImmediateChildren(), 3, 32, 0x70f3ff);
+		drawStringWithShadow("objs: " + objIn.getObjects(), 3, 32, 0x70f3ff);
 		
 		//draw the topParent's current modifying object and type
 		drawStringWithShadow("ModifyingObject & type: (" + objIn.getModifyingObject() + " : " + objIn.getModifyType() + ")", 3, 42, 0x70f3ff);
@@ -143,11 +143,11 @@ public class StaticTopParent extends EGui {
 	//objects
 	/** Returns the object with the highest z level, this could even be the topParent itself. */
 	public static IEnhancedGuiObject getHighestZLevelObject(IEnhancedTopParent objIn) {
-		EArrayList<IEnhancedGuiObject> objs = objIn.getImmediateChildren();
+		EArrayList<IEnhancedGuiObject> objs = objIn.getObjects();
 		if (objs.isNotEmpty()) {
 			IEnhancedGuiObject highest = objs.get(0);
 			if (objIn.getZLevel() > highest.getZLevel()) { highest = objIn; }
-			for (IEnhancedGuiObject o : objIn.getImmediateChildren()) {
+			for (IEnhancedGuiObject o : objIn.getObjects()) {
 				if (o.getZLevel() > highest.getZLevel()) { highest = o; }
 			}
 			return highest;
@@ -157,7 +157,7 @@ public class StaticTopParent extends EGui {
 	/** Removes all windows from the topParent that are not pinned. */
 	public static IEnhancedTopParent removeUnpinnedWindows(IEnhancedTopParent objIn) {
 		//check in both the current objects and the objects that will be added
-		for (IEnhancedGuiObject o : EArrayList.combineLists(objIn.getImmediateChildren(), objIn.getObjectsToBeAdded())) {
+		for (IEnhancedGuiObject o : EArrayList.combineLists(objIn.getObjects(), objIn.getAddingObjects())) {
 			if (o instanceof IWindowParent) { //only windows can be pinned
 				if (!((IWindowParent) o).isPinned()) { objIn.removeObject(o); }
 			}
@@ -168,7 +168,7 @@ public class StaticTopParent extends EGui {
 	/** Returns true if there are any pinned windows within the specified topParent. */
 	public static boolean hasPinnedWindows(IEnhancedTopParent objIn) {
 		//check in both the current objects and the objects that will be added
-		for (IEnhancedGuiObject o : EArrayList.combineLists(objIn.getImmediateChildren(), objIn.getObjectsToBeAdded())) {
+		for (IEnhancedGuiObject o : EArrayList.combineLists(objIn.getObjects(), objIn.getAddingObjects())) {
 			if (o instanceof IWindowParent) { //only windows can be pinned
 				if (((IWindowParent) o).isPinned()) { return true; }
 			}
@@ -215,7 +215,7 @@ public class StaticTopParent extends EGui {
 				IEnhancedGuiObject obj = event.getFocusObject();
 				if (children.contains(obj)) { //only allow object which are a part of the parent to request focus from the parent
 					if (objIn.doesFocusLockExist()) { //check for a focus lock and, if it exists, only allow focus to transfer to headers or the focusLockObject
-						if (obj.equals(objIn.getFocusLockObject()) || obj.isChildOfObject(objIn.getFocusLockObject()) || obj instanceof EGuiHeader) {
+						if (obj.equals(objIn.getFocusLockObject()) || obj.isChild(objIn.getFocusLockObject()) || obj instanceof EGuiHeader) {
 							passFocus(objIn, objIn.getFocusedObject(), obj, event);
 						}
 						else if (objIn.getFocusedObject() != objIn.getFocusLockObject()) {
@@ -253,7 +253,7 @@ public class StaticTopParent extends EGui {
 	/** Returns the ScreenLocation type of any object the mouse is currently over. */
 	public static ScreenLocation getEdgeAreaMouseIsOn(IEnhancedTopParent objIn, int mX, int mY) {
 		//check in both the objects on screen and the objects being added
-		for (IEnhancedGuiObject o : EArrayList.combineLists(objIn.getImmediateChildren(), objIn.getObjectsToBeAdded())) {
+		for (IEnhancedGuiObject o : EArrayList.combineLists(objIn.getObjects(), objIn.getAddingObjects())) {
 			ScreenLocation loc = o.getEdgeAreaMouseIsOn();
 			if (loc != ScreenLocation.out) { return loc; }
 		}
@@ -271,8 +271,8 @@ public class StaticTopParent extends EGui {
 			StorageBoxHolder<IEnhancedGuiObject, EArrayList<IEnhancedGuiObject>> sortedByParent = new StorageBoxHolder();
 			
 			//first setup the sorted list
-			for (int i = objIn.getImmediateChildren().size() - 1; i >= 0; i--) {
-				sortedByParent.add(objIn.getImmediateChildren().get(i), new EArrayList());
+			for (int i = objIn.getObjects().size() - 1; i >= 0; i--) {
+				sortedByParent.add(objIn.getObjects().get(i), new EArrayList());
 			}
 			
 			//next iterate through each of the objects found under the mouse and add them to the corresponding parents

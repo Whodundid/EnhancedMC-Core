@@ -58,7 +58,7 @@ public class EGuiLinkConfirmationDialogueBox extends EGuiDialogueBox {
 	}
 	
 	@Override
-	public void actionPerformed(IEnhancedActionObject object) {
+	public void actionPerformed(IEnhancedActionObject object, Object... args) {
 		if (object.equals(yes)) { openWebLink(link); close(); }
 		if (object.equals(copy)) { ((GuiScreen) getTopParent()).setClipboardString(link); close(); }
 		if (object.equals(no)) { close(); }

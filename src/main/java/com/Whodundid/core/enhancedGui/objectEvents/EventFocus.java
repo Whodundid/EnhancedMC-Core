@@ -36,6 +36,6 @@ public class EventFocus extends ObjectEvent {
 	public IEnhancedGuiObject getFocusObject() { return eventObject; }
 	public FocusType getFocusType() { return type; }
 	public int getActionCode() { return actionCode; }
-	public int getMouseX() { return mX; }
-	public int getMouseY() { return mY; }
+	public int getMX() { return mX; }
+	public int getMY() { return mY; }
 }

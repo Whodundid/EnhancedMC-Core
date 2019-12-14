@@ -85,13 +85,14 @@ F   19. Change EGuiScrollBar to an actionObject.
 F?  20. When new data is being added to an EGuiTextArea, if the added data is going to end up going off the window vertically, the added text is shifted significantly below where it should be.
         --Bug magically stopped happening - not sure it is actually gone though
     
-    21. ETerminals require 2 edge clicks in order to activate window resizing.
+F   21. ETerminals require 2 edge clicks in order to activate window resizing.
     
 F   22. There is an annoying drawing that occurs for buttons when a window is being resized to the left.
         --Made it so that no objects will be found under the cursor if the topParent is being resized
     
-F   23. The cursor can randomly change back to the normal cursor even when around object edges, randomly even.
+    23. The cursor can randomly change back to the normal cursor even when around object edges, randomly even.
         --Changed it so the cursor can only change when the top parent isn't resizing an object
+        --It still happens and I am not sure why
     
 F   24. When scrolling over a window that has more than 1 scrollList, all lists scroll even if they are not under the mouse.
         --Restriced the objects to be scrolled in StaticEGuiObject & StaticTopParent to objects who are under the mouse and are drawn.
@@ -103,6 +104,10 @@ F   24. When scrolling over a window that has more than 1 scrollList, all lists 
     27. When resizing a scrollList, if the list is scrolled to the bottom and the size becomes smaller than the contents width, the vertical scroll pos is not changed to account for the h scrollbar's height.
     
     28. The KeyBindGui needs some help with it's minimum dimensions.
+    
+    29. When enabling or disabling submods that require or have mods with dependencies around said mod, nothing is shown in the terminal.
+    
+    30. When rrac-ing in the terminal, submod's terminal commands are removed and have no way of being put back.
 
 
 

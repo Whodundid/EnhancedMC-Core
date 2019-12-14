@@ -1,6 +1,7 @@
-package com.Whodundid.core.debug.terminal.commands;
+package com.Whodundid.core.debug.terminal.terminalCommand.commands;
 
 import com.Whodundid.core.debug.terminal.gui.ETerminal;
+import com.Whodundid.core.debug.terminal.terminalCommand.IConsoleCommand;
 import com.Whodundid.core.util.chatUtil.EChatUtil;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import net.minecraft.client.Minecraft;
@@ -9,8 +10,8 @@ public class Say implements IConsoleCommand {
 
 	@Override public String getName() { return "say"; }
 	@Override public EArrayList<String> getAliases() { return new EArrayList<String>("speak", "send", "msg"); }
-	@Override public String getCommandHelpInfo() { return "Sends a chat message."; }
-	@Override public String getCommandErrorInfo(String arg) { return "Message should not be empty!"; }
+	@Override public String getHelpInfo(boolean runVisually) { return "Sends a chat message."; }
+	@Override public String getUsage() { return "ex: say Hello World!"; }
 	@Override public EArrayList<String> getTabCompleteList() { return null; }
 	
 	@Override
@@ -23,6 +24,6 @@ public class Say implements IConsoleCommand {
 				}
 				EChatUtil.sendLongerChatMessage(msg);
 			} else { conIn.error("Unknown Error!"); }
-		} else { conIn.error(getCommandErrorInfo(null)); }
+		} else { conIn.error("Message should not be empty!"); }
 	}
 }
