@@ -206,6 +206,9 @@ public final class EnhancedMC {
 			log(Level.INFO, "Error trying to load global config!");
 		}
 		
+		//register all commands within the terminal
+		terminal.initCommands();
+		
 		isInitialized = true;
 	}
 	
@@ -229,17 +232,17 @@ public final class EnhancedMC {
 		return guiIn != null ? (WindowParent) renderer.getAllChildren().stream().filter(o -> o.getClass().equals(guiIn)).findFirst().get() : null;
 	}
 	
-	public static void displayEGui(IWindowParent guiIn) { displayEGui(guiIn, null, true, false, false, CenterType.screen); }
-	public static void displayEGui(IWindowParent guiIn, CenterType loc) { displayEGui(guiIn, null, true, false, false, loc); }
-	public static void displayEGui(IWindowParent guiIn, boolean transferFocus) { displayEGui(guiIn, null, transferFocus, false, false, CenterType.screen); }
-	public static void displayEGui(IWindowParent guiIn, boolean transferFocus, CenterType loc) { displayEGui(guiIn, null, transferFocus, false, false, loc); }
-	public static void displayEGui(IWindowParent guiIn, Object oldObject) { displayEGui(guiIn, oldObject, true, true, true, CenterType.object); }
-	public static void displayEGui(IWindowParent guiIn, Object oldObject, CenterType loc) { displayEGui(guiIn, oldObject, true, true, true, loc); }
-	public static void displayEGui(IWindowParent guiIn, Object oldObject, boolean transferFocus) { displayEGui(guiIn, oldObject, transferFocus, true, true, CenterType.object); }
-	public static void displayEGui(IWindowParent guiIn, Object oldObject, boolean transferFocus, CenterType loc) { displayEGui(guiIn, oldObject, transferFocus, true, true, loc); }
-	public static void displayEGui(IWindowParent guiIn, Object oldObject, boolean transferFocus, boolean closeOld) { displayEGui(guiIn, oldObject, transferFocus, closeOld, true, CenterType.object); }
-	public static void displayEGui(IWindowParent guiIn, Object oldObject, boolean transferFocus, boolean closeOld, boolean transferHistory) { displayEGui(guiIn, oldObject, transferFocus, closeOld, transferHistory, CenterType.object); }
-	public static void displayEGui(IWindowParent guiIn, Object oldObject, boolean transferFocus, boolean closeOld, boolean transferHistory, CenterType loc) {
+	public static IWindowParent displayEGui(IWindowParent guiIn) { return displayEGui(guiIn, null, true, false, false, CenterType.screen); }
+	public static IWindowParent displayEGui(IWindowParent guiIn, CenterType loc) { return displayEGui(guiIn, null, true, false, false, loc); }
+	public static IWindowParent displayEGui(IWindowParent guiIn, boolean transferFocus) { return displayEGui(guiIn, null, transferFocus, false, false, CenterType.screen); }
+	public static IWindowParent displayEGui(IWindowParent guiIn, boolean transferFocus, CenterType loc) { return displayEGui(guiIn, null, transferFocus, false, false, loc); }
+	public static IWindowParent displayEGui(IWindowParent guiIn, Object oldObject) { return displayEGui(guiIn, oldObject, true, true, true, CenterType.object); }
+	public static IWindowParent displayEGui(IWindowParent guiIn, Object oldObject, CenterType loc) { return displayEGui(guiIn, oldObject, true, true, true, loc); }
+	public static IWindowParent displayEGui(IWindowParent guiIn, Object oldObject, boolean transferFocus) { return displayEGui(guiIn, oldObject, transferFocus, true, true, CenterType.object); }
+	public static IWindowParent displayEGui(IWindowParent guiIn, Object oldObject, boolean transferFocus, CenterType loc) { return displayEGui(guiIn, oldObject, transferFocus, true, true, loc); }
+	public static IWindowParent displayEGui(IWindowParent guiIn, Object oldObject, boolean transferFocus, boolean closeOld) { return displayEGui(guiIn, oldObject, transferFocus, closeOld, true, CenterType.object); }
+	public static IWindowParent displayEGui(IWindowParent guiIn, Object oldObject, boolean transferFocus, boolean closeOld, boolean transferHistory) { return displayEGui(guiIn, oldObject, transferFocus, closeOld, transferHistory, CenterType.object); }
+	public static IWindowParent displayEGui(IWindowParent guiIn, Object oldObject, boolean transferFocus, boolean closeOld, boolean transferHistory, CenterType loc) {
 		if (guiIn == null) { mc.displayGuiScreen(null); }
 		if (mc.currentScreen == null || !(mc.currentScreen instanceof RendererProxyGui)) { mc.displayGuiScreen(new RendererProxyGui()); }
 		if (guiIn != null) {
@@ -258,6 +261,7 @@ public final class EnhancedMC {
 			guiIn.bringToFront();
 			if (transferFocus) { guiIn.requestFocus(); }
 		}
+		return guiIn;
 	}
 	
 	private static void setPos(IWindowParent guiIn, IEnhancedGuiObject objectIn, CenterType typeIn) {

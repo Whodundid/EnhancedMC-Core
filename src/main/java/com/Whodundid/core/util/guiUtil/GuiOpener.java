@@ -23,14 +23,14 @@ import net.minecraft.client.settings.GameSettings;
 /** A helper class used to display WindowParents and GuiScreens. */
 public class GuiOpener {
 	
-	public static void openGui(Class guiIn) throws Exception { openGui(guiIn, null, null, null, CenterType.screen); }
-	public static void openGui(Class guiIn, IWindowParent old) throws Exception { openGui(guiIn, null, null, old, CenterType.screen); }
-	public static void openGui(Class guiIn, CenterType typeIn) throws Exception { openGui(guiIn, null, null, null, typeIn); }
-	public static void openGui(Class guiIn, IWindowParent old, CenterType typeIn) throws Exception { openGui(guiIn, null, null, old, typeIn); }
-	public static void openGui(Class guiIn, Class[] paramTypes, Object[] paramValues) throws Exception { openGui(guiIn, null, null, null, CenterType.screen); }
-	public static void openGui(Class guiIn, Class[] paramTypes, Object[] paramValues, IWindowParent old) throws Exception { openGui(guiIn, null, null, old, CenterType.screen); }
-	public static void openGui(Class guiIn, Class[] paramTypes, Object[] paramValues, CenterType typeIn) throws Exception { openGui(guiIn, null, null, null, CenterType.screen); }
-		public static void openGui(Class guiIn, Class[] paramTypes, Object[] paramValues, IWindowParent old, CenterType typeIn) throws Exception {
+	public static Object openGui(Class guiIn) throws Exception { return openGui(guiIn, null, null, null, CenterType.screen); }
+	public static Object openGui(Class guiIn, IWindowParent old) throws Exception { return openGui(guiIn, null, null, old, CenterType.screen); }
+	public static Object openGui(Class guiIn, CenterType typeIn) throws Exception { return openGui(guiIn, null, null, null, typeIn); }
+	public static Object openGui(Class guiIn, IWindowParent old, CenterType typeIn) throws Exception { return openGui(guiIn, null, null, old, typeIn); }
+	public static Object openGui(Class guiIn, Class[] paramTypes, Object[] paramValues) throws Exception { return openGui(guiIn, null, null, null, CenterType.screen); }
+	public static Object openGui(Class guiIn, Class[] paramTypes, Object[] paramValues, IWindowParent old) throws Exception { return openGui(guiIn, null, null, old, CenterType.screen); }
+	public static Object openGui(Class guiIn, Class[] paramTypes, Object[] paramValues, CenterType typeIn) throws Exception { return openGui(guiIn, null, null, null, CenterType.screen); }
+	public static Object openGui(Class guiIn, Class[] paramTypes, Object[] paramValues, IWindowParent old, CenterType typeIn) throws Exception {
 		if (guiIn != null) {
 			if (!testForVanillaGui(guiIn)) {
 				
@@ -38,17 +38,19 @@ public class GuiOpener {
 				
 				if (obj != null) {
 					if (obj instanceof WindowParent) {
-						EnhancedMC.displayEGui((WindowParent) obj, old, typeIn);
+						return EnhancedMC.displayEGui((WindowParent) obj, old, typeIn);
 					}
 					else if (obj instanceof EnhancedGui) {
-						EnhancedMC.displayEGui((EnhancedGui) obj, old, typeIn);
+						return EnhancedMC.displayEGui((EnhancedGui) obj, old, typeIn);
 					}
 					else if (obj instanceof GuiScreen) {
 						Minecraft.getMinecraft().displayGuiScreen((GuiScreen) obj);
+						return Minecraft.getMinecraft().currentScreen;
 					}
 				}
 			}
 		}
+		return null;
 	}
 	
 	private static Object getObject(Class gui, Class[] paramTypes, Object[] paramValues) throws Exception {

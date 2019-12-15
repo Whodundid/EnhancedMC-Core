@@ -2,11 +2,16 @@ package com.Whodundid.core.debug;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.coreEvents.emcEvents.ChatLineCreatedEvent;
+import com.Whodundid.core.coreEvents.emcEvents.TabCompletionEvent;
 import com.Whodundid.core.enhancedGui.guiObjects.windows.EGuiColorPicker;
 import com.Whodundid.core.util.EUtil;
 import com.Whodundid.windowHUD.windowObjects.hotbar.HotBarRenderer;
 import java.io.File;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiChat;
+import net.minecraft.network.PacketThreadUtil;
+import net.minecraft.network.play.server.S3APacketTabComplete;
+import net.minecraftforge.common.MinecraftForge;
 
 //Last edited: 12-12-18
 //First Added: 9-14-18
@@ -40,6 +45,7 @@ public class DebugFunctions {
 	}
 	
 	private static void debug_1() throws Throwable {
+		String[] astring = new String[0];
 		
 	}
 	

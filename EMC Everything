@@ -107,7 +107,11 @@ F   24. When scrolling over a window that has more than 1 scrollList, all lists 
     
     29. When enabling or disabling submods that require or have mods with dependencies around said mod, nothing is shown in the terminal.
     
-    30. When rrac-ing in the terminal, submod's terminal commands are removed and have no way of being put back.
+F   30. When rrac-ing in the terminal, submod's terminal commands are removed and have no way of being put back.
+        --added terminal reload event in submods which gets fired from the terminal handler itself to notfiy submods to replace their commands.
+
+F   31. The resize cursor appears on objects whose edges are under another object.
+        --added a check that makes sure only the highestZLevel object can change the cursor image.
 
 
 

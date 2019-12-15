@@ -3,6 +3,8 @@ package com.Whodundid.core.debug.terminal;
 import com.Whodundid.core.debug.terminal.gui.ETerminal;
 import com.Whodundid.core.debug.terminal.terminalCommand.IConsoleCommand;
 import com.Whodundid.core.debug.terminal.terminalCommand.commands.*;
+import com.Whodundid.core.subMod.RegisteredSubMods;
+import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
@@ -25,32 +27,42 @@ public class TerminalCommandHandler {
 		commands = new StorageBoxHolder();
 		commandList = new EArrayList();
 		customCommandList = new EArrayList();
-		registerBaseCommands(false);
 	}
 	
+	public void initCommands() {
+		registerBaseCommands(false);
+		registerSubModCommands(false);
+	}
 	
 	private void registerBaseCommands(boolean runVisually) { registerBaseCommands(null, runVisually); }
 	private void registerBaseCommands(ETerminal conIn, boolean runVisually) {
-		registerCommand(conIn, new Help(), runVisually);
-		registerCommand(conIn, new ReregisterCommands(), runVisually);
-		registerCommand(conIn, new ClearTerminal(), runVisually);
-		registerCommand(conIn, new ClearTerminalHistory(), runVisually);
-		registerCommand(conIn, new ClearObjects(), runVisually);
-		registerCommand(conIn, new DebugControl(), runVisually);
-		registerCommand(conIn, new ListCMD(), runVisually);
-		registerCommand(conIn, new Say(), runVisually);
-		registerCommand(conIn, new Exit(), runVisually);
-		registerCommand(conIn, new ModInfo(), runVisually);
-		registerCommand(conIn, new Config(), runVisually);
-		registerCommand(conIn, new Version(), runVisually);
-		registerCommand(conIn, new EnableMod(), runVisually);
-		registerCommand(conIn, new DisableMod(), runVisually);
-		registerCommand(conIn, new ToggleSafeRM(), runVisually);
-		registerCommand(conIn, new Server(), runVisually);
+		registerCommand(new ClearObjects(), conIn, runVisually);
+		registerCommand(new ClearTerminal(), conIn, runVisually);
+		registerCommand(new ClearTerminalHistory(), conIn, runVisually);
+		registerCommand(new Config(), conIn, runVisually);
+		registerCommand(new DebugControl(), conIn, runVisually);
+		registerCommand(new DisableMod(), conIn, runVisually);
+		registerCommand(new EnableMod(), conIn, runVisually);
+		registerCommand(new Exit(), conIn, runVisually);
+		registerCommand(new Help(), conIn, runVisually);
+		registerCommand(new ListCMD(), conIn, runVisually);
+		registerCommand(new ModInfo(), conIn, runVisually);
+		registerCommand(new OpenGui(), conIn, runVisually);
+		registerCommand(new ReregisterCommands(), conIn, runVisually);
+		//registerCommand(conIn, new ResetMod(), runVisually);
+		registerCommand(new Say(), conIn, runVisually);
+		registerCommand(new Server(), conIn, runVisually);
+		registerCommand(new ToggleSafeRM(), conIn, runVisually);
+		registerCommand(new Version(), conIn, runVisually);
 	}
 	
-	public void registerCommand(IConsoleCommand command, boolean runVisually) { registerCommand(null, command, runVisually); }
-	public void registerCommand(ETerminal conIn, IConsoleCommand command, boolean runVisually) {
+	private void registerSubModCommands(boolean runVisually) { registerSubModCommands(null, runVisually); }
+	private void registerSubModCommands(ETerminal conIn, boolean runVisually) {
+		for (SubMod m : RegisteredSubMods.getModsList()) { m.eventTerminalRegister(conIn, runVisually); }
+	}
+	
+	public void registerCommand(IConsoleCommand command, boolean runVisually) { registerCommand(command, null, runVisually); }
+	public void registerCommand(IConsoleCommand command, ETerminal conIn, boolean runVisually) {
 		commandList.add(command);
 		commands.put(command.getName(), command);
 		if (conIn != null & runVisually) { conIn.writeln("Registering command call: " + command.getName(), 0xffff00); }
@@ -110,15 +122,18 @@ public class TerminalCommandHandler {
 			if (conIn != null & runVisually) { conIn.writeln("Unregistering command: " + commandName, 0xb2b2b2); }
 			a.remove();
 		}
+		
 		Iterator<StorageBox<String, IConsoleCommand>> b = commands.iterator();
 		while (b.hasNext()) {
 			String commandName = b.next().getObject();
 			if (conIn != null & runVisually) { conIn.writeln("Unregistering command alias: " + commandName, 0xb2b2b2); }
 		}
-		registerBaseCommands(conIn, runVisually);
-		customCommandList.forEach(c -> registerCommand(conIn, c, runVisually));
 		
-		//add way for sub mods to reregister their commands as well
+		registerBaseCommands(conIn, runVisually);
+		
+		customCommandList.forEach(c -> registerCommand(c, conIn, runVisually));
+		
+		registerSubModCommands(conIn, runVisually);
 	}
 	
 	public IConsoleCommand getCommand(String commandName) {
@@ -126,7 +141,6 @@ public class TerminalCommandHandler {
 		if (box != null) {
 			return commands.getBoxWithObj(commandName).getValue();
 		}
-		//print doesn't exist in console
 		return null;
 	}
 	

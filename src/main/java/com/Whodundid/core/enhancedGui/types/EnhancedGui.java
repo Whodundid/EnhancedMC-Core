@@ -124,6 +124,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	protected EArrayList<IEnhancedGuiObject> guiObjects = new EArrayList();
 	protected EArrayList<IEnhancedGuiObject> objsToBeRemoved = new EArrayList();
 	protected EArrayList<IEnhancedGuiObject> objsToBeAdded = new EArrayList();
+	protected EArrayList<String> aliases = new EArrayList();
 	protected ObjectEventHandler eventHandler = new ObjectEventHandler(this);
 	protected StorageBox<Integer, Integer> mousePos = new StorageBox(0, 0);
 	protected ScreenLocation oldArea = ScreenLocation.out, resizingDir;
@@ -658,6 +659,8 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 		if (header != null) { header.updateButtonVisibility(); }
 		return this;
 	}
+	
+	@Override public EArrayList<String> getAliases() { return aliases; }
 	
 	//-------------------------
 	//IEnhancedTopGui Overrides

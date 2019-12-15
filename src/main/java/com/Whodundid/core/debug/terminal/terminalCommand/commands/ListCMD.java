@@ -97,6 +97,7 @@ public class ListCMD implements IConsoleCommand {
 					s += EnumChatFormatting.LIGHT_PURPLE + " (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")";
 				}
 				if (p.isUser()) { s += EnumChatFormatting.GREEN + " (you)"; c = 0x66ff66; }
+				if (p.isInvisible()) { s += " is invisible"; c = EColors.magenta.c(); }
 				conIn.writeln(s, c);
 			}
 			conIn.writeln("Total players: " + list.size(), 0xffff00);
@@ -172,8 +173,9 @@ public class ListCMD implements IConsoleCommand {
 		EArrayList<SubMod> mods = RegisteredSubMods.getModsList();
 		if (mods != null) {
 			conIn.writeln("Listing all EMC Guis...", EColors.cyan);
-			conIn.writeln("-" + ExperimentGui.class.getSimpleName(), EColors.green);
-			conIn.writeln("-" + conIn.getClass().getSimpleName(), EColors.green);
+			conIn.writeln("-Debug", EColors.green);
+			conIn.writeln("    " + ExperimentGui.class.getSimpleName(), EColors.lgray);
+			conIn.writeln("    " + conIn.getClass().getSimpleName(), EColors.lgray);
 			for (SubMod m : RegisteredSubMods.getModsList()) {
 				if (m.getGuis().isNotEmpty()) {
 					conIn.writeln("-" + m.getName(), EColors.green);
