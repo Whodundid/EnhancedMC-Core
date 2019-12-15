@@ -256,10 +256,23 @@ public final class RegisteredSubMods {
 	//returns a list of all gui classes across all registered submods
 	public static EArrayList<Class> getAllGuiClasses() {
 		EArrayList<Class> guis = new EArrayList();
-		for (SubMod m : RegisteredSubMods.getRegisteredModsList()) {
+		for (SubMod m : getRegisteredModsList()) {
 			for (IWindowParent g : m.getGuis()) { if (g != null) { guis.add(g.getClass()); } }
 		}
 		return guis;
+	}
+	
+	public static Class getGuiClassByAlias(String aliasIn) {
+		if (aliasIn != null && !aliasIn.isEmpty()) {
+			for (SubMod m : getRegisteredModsList()) {
+				for (IWindowParent g : m.getGuis()) {
+					for (String a : g.getAliases()) {
+						if (a.equals(aliasIn)) { return g.getClass(); }
+					}
+				}
+			}
+		}
+		return null;
 	}
 	
 	public static StorageBoxHolder<SubMod, String> getModImcompatibility(SubMod modIn) {
