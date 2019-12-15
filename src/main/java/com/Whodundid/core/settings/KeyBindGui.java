@@ -27,6 +27,11 @@ public class KeyBindGui extends WindowParent {
 	EGuiButton changeKey, resetKey;
 	boolean changing = false;
 	
+	public KeyBindGui() {
+		super();
+		aliases.add("keybinds", "keybind", "controls");
+	}
+	
 	@Override
 	public void initGui() {
 		setObjectName("Minecraft Controls");

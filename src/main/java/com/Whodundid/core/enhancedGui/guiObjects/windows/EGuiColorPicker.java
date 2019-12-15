@@ -24,6 +24,7 @@ public class EGuiColorPicker extends WindowParent {
 	
 	public EGuiColorPicker(IEnhancedGuiObject parentIn, int xIn, int yIn) {
 		init(parentIn, xIn, yIn, 200, 200);
+		aliases.add("colorpicker");
 	}
 	
 	@Override
@@ -164,6 +165,4 @@ public class EGuiColorPicker extends WindowParent {
 	}
 	
 	public int getColor() { return color; }
-	
-	
 }

@@ -76,6 +76,10 @@ public class ExperimentGui extends WindowParent {
 	EGuiRightClickMenu rcm;
 	EGuiColorPicker colorPicker;
 	
+	public ExperimentGui() {
+		aliases.add("experimentgui", "experiment", "testgui");
+	}
+	
 	@Override
 	public void initGui() {
 		//EDimension d = this.getDimensions();

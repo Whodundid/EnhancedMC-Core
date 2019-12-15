@@ -1,5 +1,6 @@
 package com.Whodundid.core.enhancedGui.types.interfaces;
 
+import com.Whodundid.core.util.storageUtil.EArrayList;
 import java.util.Stack;
 
 public interface IWindowParent extends IEnhancedGuiObject {
@@ -15,4 +16,6 @@ public interface IWindowParent extends IEnhancedGuiObject {
 	
 	public Stack<Object> getGuiHistory();
 	public IWindowParent setGuiHistory(Stack<Object> historyIn);
+	
+	public EArrayList<String> getAliases();
 }

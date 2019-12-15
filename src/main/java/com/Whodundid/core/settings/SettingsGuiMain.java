@@ -49,10 +49,15 @@ public class SettingsGuiMain extends WindowParent {
 	SettingsRCM rcm;
 	int leftPress = 0, rightPress = 0;
 	
+	public SettingsGuiMain() {
+		super();
+		aliases.add("settings", "modsettings", "modlist");
+	}
+	
 	@Override
 	public void initGui() {
 		setObjectName("EMC Settings");
-		centerObjectWithSize(defaultWidth, defaultHeight);
+		setDimensions(startX, startY, defaultWidth, defaultHeight);
 		super.initGui();
 	}
 	

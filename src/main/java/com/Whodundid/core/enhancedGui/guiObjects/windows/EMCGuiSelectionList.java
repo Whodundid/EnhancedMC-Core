@@ -26,6 +26,7 @@ public class EMCGuiSelectionList extends EGuiSelectionList {
 		defaultSelectionObject = null;
 		actionReciever = this;
 		setZLevel(10000);
+		aliases.add("guiselection", "guiselect", "guilist", "glist");
 	}
 	
 	private StorageBoxHolder<String, Object> buildList() {

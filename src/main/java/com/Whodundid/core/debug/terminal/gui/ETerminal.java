@@ -26,6 +26,11 @@ public class ETerminal extends WindowParent {
 	String preservedInput = "";
 	EArrayList<String> cmdHistory = new EArrayList();
 	
+	public ETerminal() {
+		super();
+		aliases.add("terminal", "console", "term");
+	}
+	
 	@Override
 	public void initGui() {
 		setObjectName("EMC Terminal");

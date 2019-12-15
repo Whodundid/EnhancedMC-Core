@@ -6,6 +6,7 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.renderer.EnhancedMCRenderer;
 import com.Whodundid.core.util.renderUtil.CenterType;
+import com.Whodundid.core.util.storageUtil.EArrayList;
 import java.util.Stack;
 import net.minecraft.client.gui.GuiScreen;
 
@@ -23,6 +24,7 @@ public abstract class WindowParent extends EnhancedGuiObject implements IWindowP
 	protected Stack<Object> guiHistory = new Stack();
 	protected Object oldObject = null;
 	public static int defaultWidth = 220, defaultHeight = 255;
+	protected EArrayList<String> aliases = new EArrayList();
 	
 	public WindowParent() { this(EnhancedMCRenderer.getInstance(), null); }
 	public WindowParent(Object oldGuiIn) { this(EnhancedMCRenderer.getInstance(), oldGuiIn); }
@@ -61,6 +63,7 @@ public abstract class WindowParent extends EnhancedGuiObject implements IWindowP
 	public void initGui() {}
 	
 	protected void defaultPos() { centerObjectWithSize(defaultWidth, defaultHeight); }
+	protected void defaultDims() { setDimensions(startX, startY, defaultWidth, defaultHeight); }
 	protected void defaultHeader(IEnhancedGuiObject in) { setHeader(new EGuiHeader(in)); }
 	
 	@Override
@@ -97,6 +100,8 @@ public abstract class WindowParent extends EnhancedGuiObject implements IWindowP
 		if (header != null) { header.updateButtonVisibility(); }
 		return this;
 	}
+	
+	@Override public EArrayList<String> getAliases() { return aliases; }
 	
 	public void fileUpAndClose() {
 		if (!guiHistory.isEmpty() && guiHistory.peek() != null) {
