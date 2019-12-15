@@ -2,12 +2,15 @@ package com.Whodundid.core.subMod;
 
 import com.Whodundid.core.coreEvents.emcEvents.ChatLineCreatedEvent;
 import com.Whodundid.core.coreEvents.emcEvents.ModCalloutEvent;
+import com.Whodundid.core.coreEvents.emcEvents.TabCompletionEvent;
+import com.Whodundid.core.debug.terminal.gui.ETerminal;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.subMod.config.SubModConfigManager;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 import java.util.Iterator;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -130,4 +133,7 @@ public abstract class SubMod {
 	public void eventServerJoin(EntityJoinWorldEvent e) {}
 	public void eventModCallout(ModCalloutEvent e) {}
 	public void eventCommand(CommandEvent e) {}
+	public void eventResize(ScaledResolution newRes) {}
+	public void eventTerminalRegister(ETerminal termIn, boolean runVisually) {}
+	public void eventTabCompletion(TabCompletionEvent e) {}
 }

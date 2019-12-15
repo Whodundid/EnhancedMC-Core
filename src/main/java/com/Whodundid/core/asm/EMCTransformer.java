@@ -13,8 +13,8 @@ public class EMCTransformer implements IClassTransformer {
 		transformers.add(
 			new ChatCommandFixer(),
 			new ChatGrabber(),
-			new ScoreboardListener(),
-			new GIGFItemHighlight()
+			new GIGFItemHighlight(),
+			new TabCompleteHijacker()
 		);
 	}
 	

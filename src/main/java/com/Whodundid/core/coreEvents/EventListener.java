@@ -4,6 +4,7 @@ import org.lwjgl.opengl.GL11;
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.coreEvents.emcEvents.ChatLineCreatedEvent;
 import com.Whodundid.core.coreEvents.emcEvents.ModCalloutEvent;
+import com.Whodundid.core.coreEvents.emcEvents.TabCompletionEvent;
 import com.Whodundid.core.coreSubMod.EMCInGameMenu;
 import com.Whodundid.core.coreSubMod.EnhancedMCMod;
 import com.Whodundid.core.renderer.RendererProxyGui;
@@ -185,6 +186,13 @@ public class EventListener {
 	public void onChatLineCreated(ChatLineCreatedEvent e) {
 		if (EnhancedMC.isInitialized()) {
 			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventChatLineCreated(e));
+		}
+	}
+	
+	@SubscribeEvent
+	public void onTabCompletion(TabCompletionEvent e) {
+		if (EnhancedMC.isInitialized()) {
+			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventTabCompletion(e));
 		}
 	}
 	
