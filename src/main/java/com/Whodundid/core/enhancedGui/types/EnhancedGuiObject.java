@@ -202,28 +202,30 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	@Override
 	public void updateCursorImage() {
 		if (isResizeable() && !EnhancedMC.safeRemoteDesktopMode && getTopParent().getModifyType() != ObjectModifyType.Resize) {
-			int rStartY = hasHeader() ? getHeader().startY : startY;
-			ScreenLocation newArea = getEdgeAreaMouseIsOn();
-			if (newArea != oldArea) {
-				if (!Mouse.isButtonDown(0)) {
-					oldArea = newArea;
-					switch (newArea) {
-					case top:
-					case bot: CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeNS));
-					break;
-					case left:
-					case right: CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeEW));
-					break;
-					case topRight:
-					case botLeft: CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeDL));
-					break;
-					case topLeft:
-					case botRight: CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeDR));
-					break;
-					default: CursorHelper.setCursor(null); break;
+			if (getTopParent().getHighestZObjectUnderMouse() == this) {
+				int rStartY = hasHeader() ? getHeader().startY : startY;
+				ScreenLocation newArea = getEdgeAreaMouseIsOn();
+				if (newArea != oldArea) {
+					if (!Mouse.isButtonDown(0)) {
+						oldArea = newArea;
+						switch (newArea) {
+						case top:
+						case bot: CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeNS));
+						break;
+						case left:
+						case right: CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeEW));
+						break;
+						case topRight:
+						case botLeft: CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeDL));
+						break;
+						case topLeft:
+						case botRight: CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeDR));
+						break;
+						default: CursorHelper.setCursor(null); break;
+						}
+					} else {
+						CursorHelper.setCursor(null);
 					}
-				} else {
-					CursorHelper.setCursor(null);
 				}
 			}
 		}
