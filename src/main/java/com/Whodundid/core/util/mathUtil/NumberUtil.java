@@ -1,6 +1,8 @@
 package com.Whodundid.core.util.mathUtil;
 
+import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.storageUtil.StorageBox;
+import java.util.List;
 
 //Last edited: 9-16-18
 //First Added: 9-14-18
@@ -46,5 +48,49 @@ public class NumberUtil {
 		if (c == Float.class || c == float.class) { return NumType.f; }
 		if (c == Double.class || c == double.class) { return NumType.d; }
 		return NumType.n;
+	}
+	
+	public static double sumValues(List<Number> valsIn) {
+		if (valsIn != null) {
+			double total = 0;
+			for (Number n : valsIn) { total += n.doubleValue(); }
+			return total;
+		}
+		return Double.NaN;
+	}
+	
+	public static double squareAndPowValues(List<Number> valsIn, int expIn) {
+		if (valsIn != null) {
+			double total = 0;
+			for (Number n : valsIn) { total += Math.pow(n.doubleValue(), expIn); }
+			return total;
+		}
+		return Double.NaN;
+	}
+	
+	public static double sumOfProducts(List<Number> vals1, List<Number> vals2) {
+		if (EUtil.nullCheck(vals1, vals2)) {
+			if (vals1.size() == vals2.size()) {
+				double total = 0;
+				for (int i = 0; i < vals1.size(); i++) {
+					total += (vals1.get(i).doubleValue() * vals2.get(i).doubleValue());
+				}
+				return total;
+			}
+		}
+		return Double.NaN;
+	}
+	
+	public static double sumSquareFirstProdSecond(List<Number> vals1, int expIn, List<Number> vals2) {
+		if (EUtil.nullCheck(vals1, vals2)) {
+			if (vals1.size() == vals2.size()) {
+				double total = 0;
+				for (int i = 0; i < vals1.size(); i++) {
+					total += (Math.pow(vals1.get(i).doubleValue(), expIn) * vals2.get(i).doubleValue());
+				}
+				return total;
+			}
+		}
+		return Double.NaN;
 	}
 }

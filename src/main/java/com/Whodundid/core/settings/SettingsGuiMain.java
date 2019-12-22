@@ -4,7 +4,6 @@ import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.coreSubMod.EnhancedMCMod;
 import com.Whodundid.core.debug.ExperimentGui;
 import com.Whodundid.core.debug.ImportantGui;
-import com.Whodundid.core.debug.terminal.gui.ETerminal;
 import com.Whodundid.core.enhancedGui.StaticEGuiObject;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
@@ -26,6 +25,7 @@ import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.subMod.SubModType;
 import com.Whodundid.core.subMod.gui.IncompatibleWindowList;
+import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
@@ -57,7 +57,7 @@ public class SettingsGuiMain extends WindowParent {
 	@Override
 	public void initGui() {
 		setObjectName("EMC Settings");
-		setDimensions(startX, startY, defaultWidth, defaultHeight);
+		setDimensions(defaultWidth, defaultHeight);
 		super.initGui();
 	}
 	
@@ -72,7 +72,7 @@ public class SettingsGuiMain extends WindowParent {
 			@Override
 			public void mousePressed(int mXIn, int mYIn, int button) {
 				if (button == 1) {
-					guiInstance.addObject(new SettingsRCM(mm, mXIn, mYIn, new KeyBindGui(), "Keybinds"));
+					guiInstance.addObject(new SettingsRCM(mm, new KeyBindGui(), "Keybinds"));
 				}
 				super.mousePressed(mXIn, mYIn, button);
 			}
@@ -83,7 +83,7 @@ public class SettingsGuiMain extends WindowParent {
 			@Override
 			public void mousePressed(int mXIn, int mYIn, int button) {
 				if (button == 1) {
-					guiInstance.addObject(new SettingsRCM(mm, mXIn, mYIn, new ETerminal(), "EMC Terminal"));
+					guiInstance.addObject(new SettingsRCM(mm, new ETerminal(), "EMC Terminal"));
 				}
 				super.mousePressed(mXIn, mYIn, button);
 			}
@@ -100,9 +100,9 @@ public class SettingsGuiMain extends WindowParent {
 		problem.setActionReciever(this);
 		
 		experimentGui.setVisible(EnhancedMC.isDebugMode());
-		experimentGui.setPositionLocked(true);
+		experimentGui.setMoveable(true);
 		disableDebugMode.setVisible(EnhancedMC.isDebugMode());
-		disableDebugMode.setPositionLocked(true);
+		disableDebugMode.setMoveable(true);
 		StaticEGuiObject.setPersistent(true, keyBindGui, reloadConfigs);
 		
 		hiddenButton1 = new EGuiButton(this, startX + 1, startY + 1, 10, 10) {
@@ -201,7 +201,12 @@ public class SettingsGuiMain extends WindowParent {
 		scrollList.setListHeight(0); //reset height to 0
 		
 		//not important
-		if (searchField.getText().toLowerCase().equals("whodundid")) { searchField.clear(); mc.displayGuiScreen(new ImportantGui()); assembleList(); return; }
+		if (searchField.getText().toLowerCase().equals("whodundid")) {
+			searchField.clear();
+			EnhancedMC.displayEGui(new ImportantGui(), CenterType.screen);
+			assembleList();
+			return;
+		}
 		
 		//gather and filter all present EMC submods
 		EArrayList<SubMod> filteredMods = new EArrayList();
@@ -305,7 +310,7 @@ public class SettingsGuiMain extends WindowParent {
 				leftPress = 0;
 				rightPress = 0;
 			}
-			if (object == consoleBtn) { EnhancedMC.displayEGui(new ETerminal(), this, true, false, true, CenterType.objectIndent); }
+			if (object == consoleBtn) { EnhancedMC.displayEGui(new ETerminal(), this, true, false, false, CenterType.objectIndent); }
 			if (object == problem) { EnhancedMC.displayEGui(new IncompatibleWindowList()); }
 		}
 	}
@@ -328,8 +333,8 @@ public class SettingsGuiMain extends WindowParent {
 		if (searchField != null && keyCode != 1) { searchField.requestFocus(); searchField.writeText("" + typedChar); }
 	}
 	
-	public void openRCM(int mXIn, int mYIn) { addObject(rcm = new SettingsRCM(this, mXIn, mYIn)); }
-	public void openRCM(int mXIn, int mYIn, SubMod modIn) { addObject(rcm = new SettingsRCM(this, mXIn, mYIn, modIn)); }
+	public void openRCM(int mXIn, int mYIn) { addObject(rcm = new SettingsRCM(this)); }
+	public void openRCM(int mXIn, int mYIn, SubMod modIn) { addObject(rcm = new SettingsRCM(this, modIn)); }
 	
 	public void updateList() {
 		if (scrollList != null) {

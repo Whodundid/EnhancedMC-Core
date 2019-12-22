@@ -3,8 +3,13 @@ package com.Whodundid.core.debug;
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.coreEvents.emcEvents.ChatLineCreatedEvent;
 import com.Whodundid.core.coreEvents.emcEvents.TabCompletionEvent;
-import com.Whodundid.core.enhancedGui.guiObjects.windows.EGuiColorPicker;
+import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.colorPicker.EGuiColorPicker;
+import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.colorPicker.EGuiColorPickerSimple;
+import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.EGuiPlayerViewer;
+import com.Whodundid.core.enhancedGui.types.WindowParent;
+import com.Whodundid.core.notifications.baseObjects.ChatNotification;
 import com.Whodundid.core.util.EUtil;
+import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.windowHUD.windowObjects.hotbar.HotBarRenderer;
 import java.io.File;
 import net.minecraft.client.Minecraft;
@@ -45,15 +50,14 @@ public class DebugFunctions {
 	}
 	
 	private static void debug_1() throws Throwable {
-		String[] astring = new String[0];
-		
+		EnhancedMC.getRenderer().addObject(new ChatNotification("EMC", "Welcome to EnhancedMC!"));
 	}
 	
 	private static void debug_2() throws Throwable {
-		
+		EnhancedMC.displayEGui(new EGuiColorPickerSimple(EnhancedMC.getRenderer()));
 	}
 	
 	private static void debug_3() throws Throwable {
-		
+		EnhancedMC.displayEGui(new TestWindow(), CenterType.screen);
 	}
 }

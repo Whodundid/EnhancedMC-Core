@@ -23,6 +23,7 @@ public abstract class EnhancedActionObject extends EnhancedGuiObject implements 
 	@Override
 	public void init(IEnhancedGuiObject objIn, int xIn, int yIn, int widthIn, int heightIn) {
 		init(objIn, xIn, yIn, widthIn, heightIn, -1);
+		actionReciever = objIn;
 	}
 	
 	@Override
@@ -33,12 +34,12 @@ public abstract class EnhancedActionObject extends EnhancedGuiObject implements 
 	
 	//actions
 	@Override public boolean runActionOnPress() { return runActionOnPress; }
-	@Override public EnhancedActionObject setRunActionOnPress(boolean value) { runActionOnPress = value; return this; }
+	@Override public IEnhancedActionObject setRunActionOnPress(boolean value) { runActionOnPress = value; return this; }
 	@Override public void performAction() {}
-	@Override public EnhancedActionObject setActionReciever(IEnhancedGuiObject objIn) { actionReciever = objIn; return this; }
+	@Override public IEnhancedActionObject setActionReciever(IEnhancedGuiObject objIn) { actionReciever = objIn; return this; }
 	@Override public IEnhancedGuiObject getActionReciever() { return actionReciever; }
 		
 	//objects
-	@Override public EnhancedActionObject setSelectedObject(Object objIn) { storedObject = objIn; return this; }
+	@Override public IEnhancedActionObject setSelectedObject(Object objIn) { storedObject = objIn; return this; }
 	@Override public Object getSelectedObject() { return storedObject; }
 }

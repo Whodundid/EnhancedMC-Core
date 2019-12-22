@@ -48,13 +48,13 @@ public class EGuiContainerList extends EGuiContainer {
 	@Override
 	public void move(int newX, int newY) {
 		if (eventHandler != null) { eventHandler.processEvent(new EventModify(this, this, ObjectModifyType.Move)); }
-		if (!positionLocked) {
+		if (!moveable) {
 			EArrayList<IEnhancedGuiObject> objs = new EArrayList(guiObjects);
 			objs.addAll(objsToBeAdded);
 			Iterator<IEnhancedGuiObject> it = objs.iterator();
 			while (it.hasNext()) {
 				IEnhancedGuiObject o = it.next();
-				if (!o.isPositionLocked()) {
+				if (!o.isMoveable()) {
 					if (o instanceof WindowParent) {
 						if (((WindowParent) o).movesWithParent()) { o.move(newX, newY); }
 					} else {
@@ -81,7 +81,7 @@ public class EGuiContainerList extends EGuiContainer {
 		}
 		setDimensions(newX, newY, d.width, d.height);
 		for (IEnhancedGuiObject o : objs) {
-			if (!o.isPositionLocked()) {
+			if (!o.isMoveable()) {
 				StorageBox<Integer, Integer> oldLoc = previousLocations.getBoxWithObj(o).getValue();
 				o.setInitialPosition(newX + oldLoc.getObject(), newY + oldLoc.getValue());
 				o.setPosition(newX + oldLoc.getObject(), newY + oldLoc.getValue());

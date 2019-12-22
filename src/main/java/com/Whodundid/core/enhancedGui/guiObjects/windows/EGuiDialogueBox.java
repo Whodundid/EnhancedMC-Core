@@ -21,13 +21,10 @@ public class EGuiDialogueBox extends WindowParent {
 	
 	public enum DialogueBoxTypes { yesNo, ok, custom; }
 	
-	protected EGuiDialogueBox() {}
-	public EGuiDialogueBox(IEnhancedGuiObject parentIn, int xPos, int yPos, int width, int height) {
-		this(parentIn, xPos, yPos, width, height, DialogueBoxTypes.yesNo);
-	}
-	
-	public EGuiDialogueBox(IEnhancedGuiObject parentIn, int xPos, int yPos, int width, int height, DialogueBoxTypes typeIn) {
-		init(parentIn, xPos, yPos, width, height);
+	protected EGuiDialogueBox() { super(); }
+	public EGuiDialogueBox(DialogueBoxTypes typeIn) {
+		super();
+		setDimensions(250, 75);
 		type = typeIn;
 		requestFocus();
 		getTopParent().setFocusLockObject(this);
@@ -40,24 +37,26 @@ public class EGuiDialogueBox extends WindowParent {
 		defaultHeader(this);
 		getHeader().setTitle(title).setTitleColor(titleColor);
 		
-		switch (type) {
-		case yesNo:
-			yes = new EGuiButton(this, midX - 100, midY + 10, 65, 20, "Yes");
-			no = new EGuiButton(this, midX + 25, midY + 10, 65, 20, "No");
-			addObject(yes.setZLevel(1), no.setZLevel(1));
-			break;
-		case ok:
-			okButton = new EGuiButton(this, midX - 25, midY + 10, 50, 20, "Ok") {
-				{ setRunActionOnPress(true); }
-				@Override
-				public void performAction() {
-					playPressSound();
-					parent.close();
-				}
-			};
-			addObject(okButton.setZLevel(1));
-			break;
-		default: break;
+		if (type != null) {
+			switch (type) {
+			case yesNo:
+				yes = new EGuiButton(this, midX - 100, midY + 10, 65, 20, "Yes");
+				no = new EGuiButton(this, midX + 25, midY + 10, 65, 20, "No");
+				addObject(yes.setZLevel(1), no.setZLevel(1));
+				break;
+			case ok:
+				okButton = new EGuiButton(this, midX - 25, midY + 10, 50, 20, "Ok") {
+					{ setRunActionOnPress(true); }
+					@Override
+					public void performAction() {
+						playPressSound();
+						parent.close();
+					}
+				};
+				addObject(okButton.setZLevel(1));
+				break;
+			default: break;
+			}
 		}
 	}
 	

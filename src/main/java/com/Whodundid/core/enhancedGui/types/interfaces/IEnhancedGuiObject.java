@@ -6,13 +6,14 @@ import com.Whodundid.core.enhancedGui.objectEvents.EventFocus;
 import com.Whodundid.core.enhancedGui.objectEvents.ObjectEvent;
 import com.Whodundid.core.enhancedGui.objectEvents.ObjectEventHandler;
 import com.Whodundid.core.enhancedGui.objectExceptions.ObjectInitException;
+import com.Whodundid.core.util.chatUtil.ITabCompleteListener;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 
 /** An interface outlining behavior for Enhanced Gui Objects. */
-public interface IEnhancedGuiObject {
+public interface IEnhancedGuiObject extends ITabCompleteListener {
 	
 	//init
 	
@@ -21,7 +22,7 @@ public interface IEnhancedGuiObject {
 	/** Returns true if initObjects has been fully completed. */
 	public boolean isObjectInit();
 	/** Internal method used to denote that this object and all of its children have been fully initialized. */
-	public IEnhancedGuiObject completeInit();
+	public void completeInit();
 	/** Event fired from the top parent upon being fully added to the parent so that this object can safely initialize all of it's own children. */
 	public void initObjects() throws ObjectInitException;
 	/** Removes all children and re-runs the initObjects method. */
@@ -122,16 +123,18 @@ public interface IEnhancedGuiObject {
 	/** Moves the object by the specified x and y values. Does not move the object to specified coordinates however. Use setPosition() instead. */
 	public void move(int newX, int newY);
 	/** Returns true if this object's position cannot be modified. */
-	public boolean isPositionLocked();
+	public boolean isMoveable();
 	/** Moves this object back to it's initial position that it had upon its creation. */
 	public IEnhancedGuiObject resetPosition();
 	/** Move this object and all of its children to the specified x and y coordinates. The specified position represents the top left corner of this object.
 	    All children will remain in their original positions relative to the parent object. */
 	public IEnhancedGuiObject setPosition(int newX, int newY);
 	/** Sets this object's position as unmodifiable. */
-	public IEnhancedGuiObject setPositionLocked(boolean val);
+	public IEnhancedGuiObject setMoveable(boolean val);
 	/** Specifies this objects position, width, and height using an EDimension object. */
 	public IEnhancedGuiObject setDimensions(EDimension dimIn);
+	/** Specifies this object's width and height based on the current starting position. */
+	public IEnhancedGuiObject setDimensions(int widthIn, int heightIn);
 	/** Specifies this objects position, width, and height. (x, y, width, height) */
 	public IEnhancedGuiObject setDimensions(int startXIn, int startYIn, int widthIn, int heightIn);
 	/** Specifies the position this object will relocate to when its' position is reset. */

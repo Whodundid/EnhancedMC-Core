@@ -24,9 +24,6 @@ public class TabCompleteHijacker extends IETransformer {
 		final String METHOD = isObfuscated ? "a" : "handleTabComplete";
 		final String METHOD_DESC = isObfuscated ? "(Lfx;)V" : "(Lnet/minecraft/network/play/server/S3APacketTabComplete;)V";
 		
-		System.out.println("the classes name: " + classIn.name);
-		System.out.println("source file: " + classIn.sourceFile);
-		
 		for (MethodNode method : classIn.methods) {
 			if (method.name.equals(METHOD) && method.desc.equals(METHOD_DESC)) {
 				AbstractInsnNode targetNode = null;

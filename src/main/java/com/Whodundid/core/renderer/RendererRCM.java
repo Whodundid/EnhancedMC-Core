@@ -1,7 +1,6 @@
 package com.Whodundid.core.renderer;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.debug.terminal.gui.ETerminal;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiRightClickMenu;
 import com.Whodundid.core.enhancedGui.guiObjects.windows.EMCGuiSelectionList;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
@@ -9,15 +8,15 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.settings.SettingsGuiMain;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubModType;
+import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
 public class RendererRCM extends EGuiRightClickMenu {
 	
-	public RendererRCM(IEnhancedGuiObject parentIn, int x, int y) {
-		super(parentIn, x, y);
-		
+	@Override
+	public void initGui() {
 		if (RegisteredSubMods.isModRegEn(SubModType.ENHANCEDCHAT)) { addOption("New Chat Window"); }
 		if (EnhancedMC.getEMCMod().enableTerminal.get()) { addOption("New Terminal"); }
 		addOption("New Window");

@@ -192,6 +192,7 @@ public class EventListener {
 	@SubscribeEvent
 	public void onTabCompletion(TabCompletionEvent e) {
 		if (EnhancedMC.isInitialized()) {
+			EChatUtil.onTabComplete(e.getCompletion());
 			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventTabCompletion(e));
 		}
 	}

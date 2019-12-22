@@ -104,10 +104,10 @@ public class StaticEGuiObject {
 	/** Translates the specified object by a given x and y amount. */
 	public static void move(IEnhancedGuiObject obj, int newX, int newY) {
 		obj.postEvent(new EventModify(obj, obj, ObjectModifyType.Move)); //post an event
-		if (!obj.isPositionLocked()) { //only allow the object to be moved if it's not locked in place
+		if (!obj.isMoveable()) { //only allow the object to be moved if it's not locked in place
 			//get all of the children in the object
 			for (IEnhancedGuiObject o : EArrayList.combineLists(obj.getObjects(), obj.getAddingObjects())) {
-				if (!o.isPositionLocked()) { //only move the child if it's not locked in place
+				if (!o.isMoveable()) { //only move the child if it's not locked in place
 					if (o instanceof WindowParent) { //only move the window if it moves with the parent
 						if (((WindowParent) o).movesWithParent()) { o.move(newX, newY); }
 					} else { o.move(newX, newY); }
@@ -132,7 +132,7 @@ public class StaticEGuiObject {
 		}
 		obj.setDimensions(newX, newY, d.width, d.height); //move the object to the new position
 		for (IEnhancedGuiObject o : objs) {
-			if (!o.isPositionLocked()) { //don't move the child if its position is locked
+			if (!o.isMoveable()) { //don't move the child if its position is locked
 				StorageBox<Integer, Integer> oldLoc = previousLocations.getBoxWithObj(o).getValue();
 				o.setPosition(newX + oldLoc.getObject(), newY + oldLoc.getValue()); //move the child to the new location with the parent's offest
 			}

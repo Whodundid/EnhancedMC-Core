@@ -1,7 +1,6 @@
 package com.Whodundid.core.enhancedGui.guiObjects.windows;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiLabel;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
@@ -45,10 +44,10 @@ public class EGuiLinkConfirmationDialogueBox extends EGuiDialogueBox {
 		int h = 100 + linkLabel.getTextHeight() < 110 ? 110 : 100 + linkLabel.getTextHeight();
 		
 		init(parentIn, x, y, w, h);
-		setHeader(new EGuiHeader(this));
 		requestFocus();
 		getTopParent().setFocusLockObject(this);
 		setTitle("Opening Link");
+		setPinnable(false);
 		
 		yes = new EGuiButton(this, midX - copyLength - 35, endY - 35, 75, 20, I18n.format("gui.yes", new Object[0])).setDisplayStringColor(0x55ff55);
 		copy = new EGuiButton(this, midX - (copyLength  + 8) / 2, endY - 35, copyLength + 8, 20, I18n.format("chat.copy", new Object[0])).setDisplayStringColor(0xffffff);

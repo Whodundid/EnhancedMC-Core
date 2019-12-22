@@ -7,6 +7,7 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.client.gui.GuiOptions;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiShareToLan;
 import net.minecraft.client.gui.achievement.GuiAchievements;
 import net.minecraft.client.gui.achievement.GuiStats;
@@ -26,7 +27,7 @@ public class EMCInGameMenu extends EnhancedGui {
 	public void initGui() {
 		super.initGui();
 		backwardsTraverseable = false;
-		enableHeader(false);		
+		enableHeader(false);
 	}
 	
 	@Override
@@ -49,9 +50,6 @@ public class EMCInGameMenu extends EnhancedGui {
 	}
 	
 	@Override
-	public boolean doesGuiPauseGame() { return true; }
-	
-	@Override
 	public void drawObject(int mXIn, int mYIn, float ticks) {
 		updateBeforeNextDraw(mXIn, mYIn);
 		if (EnhancedMC.isDebugMode() && !mc.gameSettings.showDebugInfo) { drawDebugInfo(); }
@@ -71,12 +69,13 @@ public class EMCInGameMenu extends EnhancedGui {
 	
 	@Override
 	public void actionPerformed(IEnhancedActionObject object, Object... args) {
+		GuiScreen proxy = EnhancedMC.getRenderer().getProxyGuiScreen();
 		if (object.equals(backToGame)) { closeGui(true); }
-		if (object.equals(achievements)) { if (mc.thePlayer != null) { mc.displayGuiScreen(new GuiAchievements(this, mc.thePlayer.getStatFileWriter())); } }
-		if (object.equals(stats)) { if (mc.thePlayer != null) { mc.displayGuiScreen(new GuiStats(this, mc.thePlayer.getStatFileWriter())); } }
-		if (object.equals(openToLan)) { mc.displayGuiScreen(new GuiShareToLan(guiInstance)); }
-		if (object.equals(options)) { mc.displayGuiScreen(new GuiOptions(guiInstance, mc.gameSettings)); }
-		if (object.equals(modOptions)) { mc.displayGuiScreen(new GuiModList(guiInstance)); }
+		if (object.equals(achievements)) { if (mc.thePlayer != null) { mc.displayGuiScreen(new GuiAchievements(proxy, mc.thePlayer.getStatFileWriter())); } }
+		if (object.equals(stats)) { if (mc.thePlayer != null) { mc.displayGuiScreen(new GuiStats(proxy, mc.thePlayer.getStatFileWriter())); } }
+		if (object.equals(openToLan)) { mc.displayGuiScreen(new GuiShareToLan(proxy)); }
+		if (object.equals(options)) { mc.displayGuiScreen(new GuiOptions(proxy, mc.gameSettings)); }
+		if (object.equals(modOptions)) { mc.displayGuiScreen(new GuiModList(proxy)); }
 		if (object.equals(eSettings)) { EnhancedMC.openSettingsGui(); }
 		
 		if (object.equals(quitToMenu)) {

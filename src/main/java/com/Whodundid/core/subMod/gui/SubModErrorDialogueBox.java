@@ -104,7 +104,7 @@ public class SubModErrorDialogueBox extends EGuiDialogueBox {
 	}
 	
 	public SubModErrorDialogueBox createErrorMessage(Exception e, EArrayList<SubMod> modsIn) {
-		if (e != null) { setMessage(e.getMessage()); }
+		if (e != null) { setMessage(e.toString() + (e.getStackTrace().length > 0 ? " at " + e.getStackTrace()[0] : "")); }
 		else if (modsIn != null && !modsIn.isEmpty()) {
 			mods.addAll(modsIn);
 			message += "Mods: (";

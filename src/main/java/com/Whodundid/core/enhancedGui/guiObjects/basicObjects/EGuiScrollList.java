@@ -97,19 +97,20 @@ public class EGuiScrollList extends EnhancedGuiObject {
 						(Display.getHeight() - startY * scale) - (height - (isHScrollDrawn() ? horizontalScroll.height + 1 : 0) - 1) * scale,
 						(width - (isVScrollDrawn() ? verticalScroll.width + 1 : 0) - 2) * scale,
 						(height - (isHScrollDrawn() ? 6 : 2)) * scale);
-				
-				//draw background
-				drawRect(startX + 1, startY + 1, endX - 1, endY - 1, backgroundColor);
-				
-				//only draw the objects that are actually in the viewable area
-				for (IEnhancedGuiObject o : this.drawnListObjects) {
-					if (o.checkDraw()) {
-						if (!o.hasFirstDraw()) { o.onFirstDraw(); o.onFirstDraw(); }
-	    				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-	    				EDimension d = o.getDimensions();
-	    				//drawRect(d.startX, d.startY, d.endX, d.endY, 0xffff0000);
-	    				o.drawObject(mXIn, mYIn, ticks);
-	    			}
+				{ //scissor start
+					//draw background
+					drawRect(startX + 1, startY + 1, endX - 1, endY - 1, backgroundColor);
+					
+					//only draw the objects that are actually in the viewable area
+					for (IEnhancedGuiObject o : this.drawnListObjects) {
+						if (o.checkDraw()) {
+							if (!o.hasFirstDraw()) { o.onFirstDraw(); o.onFirstDraw(); }
+							GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+							EDimension d = o.getDimensions();
+							//drawRect(d.startX, d.startY, d.endX, d.endY, 0xffff0000);
+							o.drawObject(mXIn, mYIn, ticks);
+						}
+					}
 				}
 				GL11.glDisable(GL11.GL_SCISSOR_TEST);
 				
@@ -136,13 +137,13 @@ public class EGuiScrollList extends EnhancedGuiObject {
 	@Override
 	public void move(int newX, int newY) {
 		if (eventHandler != null) { eventHandler.processEvent(new EventModify(this, this, ObjectModifyType.Move)); }
-		if (!positionLocked) {
+		if (!moveable) {
 			EArrayList<IEnhancedGuiObject> objs = new EArrayList(guiObjects);
 			objs.addAll(objsToBeAdded);
 			Iterator<IEnhancedGuiObject> it = objs.iterator();
 			while (it.hasNext()) {
 				IEnhancedGuiObject o = it.next();
-				if (!o.isPositionLocked()) {
+				if (!o.isMoveable()) {
 					if (o instanceof WindowParent) {
 						if (((WindowParent) o).movesWithParent()) { o.move(newX, newY); }
 					} else {
@@ -171,7 +172,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 		}
 		setDimensions(newX, newY, d.width, d.height);
 		for (IEnhancedGuiObject o : objs) {
-			if (!o.isPositionLocked()) {
+			if (!o.isMoveable()) {
 				StorageBox<Integer, Integer> oldLoc = previousLocations.getBoxWithObj(o).getValue();
 				o.setInitialPosition(newX + oldLoc.getObject(), newY + oldLoc.getValue());
 				

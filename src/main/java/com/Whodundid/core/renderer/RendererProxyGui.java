@@ -6,16 +6,16 @@ import com.google.common.collect.Lists;
 import java.io.IOException;
 import java.util.List;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiChat;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 /** A type of GuiScreen which sends it's inputs to the EnhancedMCRenderer.
- *  Extends GuiChat to intercept autocomplete events.
+ *  Extends GuiChat to allow autocomplete events to be processed fully.
  */
-public class RendererProxyGui extends GuiScreen implements IRendererProxy {
+public class RendererProxyGui extends GuiChat implements IRendererProxy {
 
 	EnhancedMCRenderer renderer = EnhancedMCRenderer.getInstance();
 	public List<String> foundPlayerNames = Lists.<String>newArrayList();
@@ -33,6 +33,7 @@ public class RendererProxyGui extends GuiScreen implements IRendererProxy {
     public int autocompleteIndex;
     public int sentHistoryCursor = -1;
     public String historyBuffer = "";
+    public static boolean pauseGame = false;
 
 	public RendererProxyGui() {}
 	public RendererProxyGui(WindowParent guiIn) {
@@ -98,12 +99,17 @@ public class RendererProxyGui extends GuiScreen implements IRendererProxy {
 	@Override
 	public void handleKeyboardInput() throws IOException {
 		if (Keyboard.getEventKeyState()) {
-			keyTyped(Keyboard.getEventCharacter(), Keyboard.getEventKey());
+			//keyTyped(Keyboard.getEventCharacter(), Keyboard.getEventKey());
 			renderer.keyPressed(Keyboard.getEventCharacter(), Keyboard.getEventKey());
 		} else {
 			renderer.keyReleased(Keyboard.getEventCharacter(), Keyboard.getEventKey());
 		}
 		mc.dispatchKeypresses();
+	}
+	
+	@Override
+	protected void keyTyped(char typedChar, int keyCode) throws IOException {
+		
 	}
 
 	@Override
@@ -127,7 +133,7 @@ public class RendererProxyGui extends GuiScreen implements IRendererProxy {
 		setWorldAndResolution(Minecraft.getMinecraft(), width, height);
 	}
 	
-	@Override public boolean doesGuiPauseGame() { return false; }
+	@Override public boolean doesGuiPauseGame() { return pauseGame; }
 
 	// ------------------------
 	// IRendererProxy Overrides

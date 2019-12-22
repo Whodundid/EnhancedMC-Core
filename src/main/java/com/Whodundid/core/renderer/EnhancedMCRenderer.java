@@ -4,7 +4,6 @@ import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.StaticEGuiObject;
 import com.Whodundid.core.enhancedGui.StaticTopParent;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
-import com.Whodundid.core.enhancedGui.guiUtil.EGui;
 import com.Whodundid.core.enhancedGui.guiUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.objectEvents.EventAction;
 import com.Whodundid.core.enhancedGui.objectEvents.EventFocus;
@@ -17,9 +16,11 @@ import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.FocusType;
 import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.MouseType;
 import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.ObjectModifyType;
 import com.Whodundid.core.enhancedGui.types.EnhancedGui;
+import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
+import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.util.renderUtil.CursorHelper;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
@@ -28,15 +29,17 @@ import com.Whodundid.core.util.storageUtil.StorageBox;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import org.lwjgl.opengl.GL11;
 
 //Last edited: Apr 10, 2019
 //First Added: Apr 10, 2019
 //Author: Hunter Bragg
 
-public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
+public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTopParent {
 	
 	protected static Minecraft mc = Minecraft.getMinecraft();
 	public static EnhancedMCRenderer instance;
@@ -94,7 +97,7 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	@Override public boolean isInit() { return true; }
 	@Override public boolean isObjectInit() { return objectInit; }
 	/** Effectively does nothing in the renderer. */
-	@Override public EnhancedMCRenderer completeInit() { return this; }
+	@Override public void completeInit() {}
 	@Override
 	public void initObjects() {
 		//addObject(hotBarRenderer = HotBarRenderer.getInstance(this));
@@ -120,6 +123,8 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 		if (visible) {
 			guiObjects.stream().filter(o -> o.checkDraw()).forEach(o -> {
 				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+				GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
+				GL11.glDisable(GL11.GL_SCISSOR_TEST);
 				if (!o.hasFirstDraw()) { o.onFirstDraw(); o.onFirstDraw(); }
 				o.drawObject(mX, mY, ticks);
 				if (focusLockObject != null && !o.equals(focusLockObject)) {
@@ -180,11 +185,12 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	
 	//position
 	@Override public void move(int newX, int newY) { postEvent(new EventModify(this, this, ObjectModifyType.Move)); }
-	@Override public boolean isPositionLocked() { return true; }
+	@Override public boolean isMoveable() { return true; }
 	@Override public EnhancedMCRenderer resetPosition() { return this; }
 	@Override public EnhancedMCRenderer setPosition(int xIn, int yIn) { return this; }
-	@Override public EnhancedMCRenderer setPositionLocked(boolean val) { return this; }
+	@Override public EnhancedMCRenderer setMoveable(boolean val) { return this; }
 	@Override public EnhancedMCRenderer setDimensions(EDimension dimIn) { return this; }
+	@Override public EnhancedMCRenderer setDimensions(int widthIn, int heightIn) { return setDimensions(startX, startY, widthIn, heightIn); }
 	@Override public EnhancedMCRenderer setDimensions(int startXIn, int startYIn, int widthIn, int heightIn) { return this; }
 	@Override public StorageBox<Integer, Integer> getInitialPosition() { return new StorageBox<Integer, Integer>(0, 0); }
 	@Override public EnhancedMCRenderer setInitialPosition(int startXIn, int startYIn) { return this; }
@@ -208,7 +214,7 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 	@Override public IEnhancedGuiObject getParent() { return this; }
 	@Override public EnhancedMCRenderer setParent(IEnhancedGuiObject parentIn) { return this; }
 	@Override public IEnhancedTopParent getTopParent() { return this; }
-	@Override public IEnhancedGuiObject getWindowParent() { return this; }
+	@Override public IWindowParent getWindowParent() { return null; }
 	
 	//zLevel
 	@Override public int getZLevel() { return 0; }
@@ -365,6 +371,9 @@ public class EnhancedMCRenderer extends EGui implements IEnhancedTopParent {
 			}
 		}
 	}
+	
+	public GuiScreen getProxyGuiScreen() { return proxy instanceof GuiScreen ? (GuiScreen) proxy : null; }
+	public IRendererProxy getProxy() { return proxy; }
 	
 	public void checkMouseHover() {
 		if (getHighestZObjectUnderMouse() != null) {

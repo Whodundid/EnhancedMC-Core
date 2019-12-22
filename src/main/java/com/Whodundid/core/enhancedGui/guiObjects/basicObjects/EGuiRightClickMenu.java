@@ -6,6 +6,7 @@ import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.MouseType;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.util.miscUtil.EMouseHelper;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 import java.util.List;
@@ -32,12 +33,12 @@ public class EGuiRightClickMenu extends WindowParent implements IEnhancedActionO
 	protected IEnhancedGuiObject actionReciever;
 	protected boolean runActionOnPress = false;
 	
-	public EGuiRightClickMenu(IEnhancedGuiObject parentIn, int x, int y) {
-		init(parentIn, x, y, 125, 15);
+	public EGuiRightClickMenu() {
+		setDimensions(EMouseHelper.getMx(), EMouseHelper.getMy(), 125, 15);
 		setZLevel(1000);
 		instance = this;
 		getTopParent().registerListener(this);
-		actionReciever = parentIn;
+		actionReciever = parent;
 		
 		title = new EGuiLabel(this, 0, 0, "");
 		title.setVisible(useTitle);

@@ -4,6 +4,7 @@ import com.Whodundid.core.enhancedGui.types.EnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.subMod.SubMod;
+import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.ModSetting;
@@ -87,7 +88,9 @@ public class EGuiButton extends EnhancedActionObject implements IEnhancedActionO
 					}
 				}
 			}
-	    	else { drawModalRectWithCustomSizedTexture(startX, startY, 0, 0, width, height, width, height); }
+	    	else if (btnTexture != null || btnSelTexture != null) {
+	    		drawModalRectWithCustomSizedTexture(startX, startY, 0, 0, width, height, width, height);
+	    	}
 		}
 		if (!isEnabled()) { drawRect(startX, startY, endX, endY, 0x77000000); }
 		super.drawObject(mX, mY, ticks);
@@ -174,14 +177,18 @@ public class EGuiButton extends EnhancedActionObject implements IEnhancedActionO
 		
 	public static void playPressSound() { mc.getSoundHandler().playSound(PositionedSoundRecord.create(Resources.buttonSound, 1.0F)); }
 	
+	public EGuiButton setTextures(ResourceLocation base, ResourceLocation sel) { setButtonTexture(base); setButtonSelTexture(sel); return this; }
+	public EGuiButton setButtonTexture(ResourceLocation loc) { btnTexture = loc; usingBaseTexture = Resources.guiButtonBase.equals(loc); return this; }
+	public EGuiButton setButtonSelTexture(ResourceLocation loc) { btnSelTexture = loc; usingBaseSelTexture = Resources.guiButtonSel.equals(loc); return this; }
+	
 	public EGuiButton setDisplayString(String stringIn) { displayLabel.setDisplayString(stringIn); return this; }
 	public EGuiButton setDisplayStringColor(int colorIn) { color = colorIn; return this; }
+	public EGuiButton setDisplayStringColor(EColors colorIn) { if (colorIn != null) { color = colorIn.c(); } return this; }
 	public EGuiButton setDisplayStringHoverColor(int colorIn) { textHoverColor = colorIn; return this; }
-	public EGuiButton setTextures(ResourceLocation base, ResourceLocation sel) { setButtonTexture(base); setButtonSelTexture(sel); return this; }
-	public EGuiButton setButtonTexture(ResourceLocation loc) { btnTexture = loc; if (loc != null) { usingBaseTexture = loc.equals(Resources.guiButtonBase); } return this; }
-	public EGuiButton setButtonSelTexture(ResourceLocation loc) { btnSelTexture = loc; if (loc != null) { usingBaseSelTexture = loc.equals(Resources.guiButtonSel); } return this; }
+	public EGuiButton setDisplayStringHoverColor(EColors colorIn) { if (colorIn != null) { textHoverColor = colorIn.c(); } return this; }
 	public EGuiButton setDrawBackground(boolean val) { drawBackground = val; return this; }
 	public EGuiButton setBackgroundColor(int colorIn) { backgroundColor = colorIn; return this; }
+	public EGuiButton setBackgroundColor(EColors colorIn) { if (colorIn != null) { backgroundColor = colorIn.c(); } return this; }
 	public EGuiButton setDrawDefault(boolean val) { drawDefault = val; return this; }
 	public EGuiButton setTrueFalseButton(boolean val) { return setTrueFalseButton(val, false); }
 	public EGuiButton setTrueFalseButton(boolean val, ModSetting settingIn) { return setTrueFalseButton(val, settingIn != null ? settingIn.get() : false); }
@@ -189,6 +196,9 @@ public class EGuiButton extends EnhancedActionObject implements IEnhancedActionO
 	public EGuiButton setDrawString(boolean val) { drawString = val; return this; }
 	
 	public int getPressedButton() { return pressedButton; }
+	public int getBackgroundColor() { return backgroundColor; }
+	public int getDisplayStringColor() { return color; }
+	public int getDisplayStringHoverColor() { return textHoverColor; }
 	public String getDisplayString() { return displayLabel.getDisplayString(); }
 	public EGuiLabel getDisplayLabel() { return displayLabel; }
 }

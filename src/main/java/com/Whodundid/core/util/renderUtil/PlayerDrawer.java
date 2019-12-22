@@ -9,8 +9,8 @@ import net.minecraft.entity.EntityLivingBase;
 
 public class PlayerDrawer {
 
-	public static void drawPlayer(EntityLivingBase entityIn, int posX, int posY, float horizontalRotIn, float verticalRotIn, int scaleIn) {
-		int scale = scaleIn;
+	public static void drawPlayer(EntityLivingBase entityIn, int posX, int posY, float horizontalRotIn, float verticalRotIn, float scaleIn) {
+		float scale = scaleIn;
 		float hRot = -horizontalRotIn;
 		float vRot = verticalRotIn;
 		EntityLivingBase ent = entityIn;

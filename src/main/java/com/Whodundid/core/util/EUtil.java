@@ -21,10 +21,18 @@ public class EUtil {
 	public static Minecraft mc = Minecraft.getMinecraft();
 	private static FontRenderer fr = mc.fontRendererObj;
 	
+	/** Returns false if any of the provided objects are null. */
+	public static boolean nullCheck(Object... objsIn) {
+		boolean val = true;
+		for (Object o : objsIn) { if (o == null) { val = false; } }
+		return val;
+	}
+	
+	/** Breaks a String into a list of smaller strings based on a set maximum line width. */
 	public static EArrayList<String> createWordWrapString(String stringIn, int widthMax) {
 		EArrayList<String> lines = new EArrayList();
 		try {
-			if (!stringIn.isEmpty() && fr.getStringWidth(stringIn) > widthMax) {
+			if (stringIn != null && !stringIn.isEmpty() && fr.getStringWidth(stringIn) > widthMax) {
 				String restOfString = stringIn;
 				while (fr.getStringWidth(restOfString) > widthMax) {
 					int i = 0;
@@ -53,12 +61,14 @@ public class EUtil {
 		return lines;
 	}
 	
+	/** Converts a series of keyboard integer keys to their String equivalent(s). */
 	public static String keysToString(int[] keysIn) {
 		EArrayList<Integer> list = new EArrayList();
 		for (int i : keysIn) { list.add(i); }
 		return keysToString(list);
 	}
 	
+	/** Converts a series of keyboard integer keys to their String equivalent(s). */
 	public static String keysToString(EArrayList<Integer> keysIn) {
 		String newText = "";
 		for (int i = 0; i < keysIn.size(); i++) {
@@ -84,18 +94,37 @@ public class EUtil {
 		return newText;
 	}
 	
+	/** Utility function to check if the values in one array match the values from another. */
 	public static boolean validateArrayContents(List list1, List list2) {
-		if (list1.size() != list2.size()) { return false; }
+		if (list1.size() != list2.size()) { return false; } //if the sizes differ, they're not the same.
 		for (int i = 0; i < list1.size(); i++) {
-			if (list1.get(i) != null && list2.get(i) != null) {
+			Object a = list1.get(i);
+			Object b = list2.get(i);
+			if (a != null && b != null) {
 				Class c1 = list1.get(i).getClass();
 				Class c2 = list2.get(i).getClass();
 				if (!c1.equals(c2)) { return false; }
-			} else { return false; }
+			}
+			else if (a == null && b != null) { return false; }
+			else if (a != null && b == null) { return false; }
+			else { return false; }
 		}
 		return true;
 	}
 	
+	/** Creates a substring from a given string ending at the first space found from the given starting position. */
+	public static String subStringToSpace(String in, int startPos) {
+		if (in != null && !in.isEmpty()) {
+			int pos = startPos;
+			while (pos < in.length() && in.charAt(pos) != ' ') {
+				pos++;
+			}
+			return in.substring(startPos, pos);
+		}
+		return in;
+	}
+	
+	/** Returns the index for the position in a string where another string is located within it. */
 	public static int findStartingIndex(String toSearch, String toFind) {
 		if (toSearch != null && !toSearch.isEmpty() && toFind.length() <= toSearch.length()) {
 			String cur = "";
@@ -138,6 +167,7 @@ public class EUtil {
 		return p;
 	}
 	
+	/** Returns the actual width in pixels for the given RescoureLocation. */
 	public static int getImageWidth(ResourceLocation locIn) {
 		try {
 			IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(locIn);
@@ -148,6 +178,7 @@ public class EUtil {
 		return -1;
 	}
 	
+	/** Returns the actual height in pixels for the given RescoureLocation. */
 	public static int getImageHeight(ResourceLocation locIn) {
 		try {
 			IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(locIn);

@@ -50,7 +50,7 @@ public class StaticTopParent extends EGui {
 		else { //there was no lock and there was nothing under the cursor
 			objIn.clearFocusedObject();
 			if (button == 1) { //open a right click menu if the right mouse button was pressed
-				objIn.addObject(new RendererRCM(objIn, mX, mY));
+				objIn.addObject(new RendererRCM());
 			}
 		}
 	}
@@ -75,6 +75,7 @@ public class StaticTopParent extends EGui {
 	public static void mouseScrolled(IEnhancedTopParent objIn, int mX, int mY, int change) {
 		objIn.postEvent(new EventMouse(objIn, mX, mY, -1, MouseType.Scrolled));
 		if (objIn.getHighestZObjectUnderMouse() != null) { //if there are actually any objects under the mouse
+			
 			for (IEnhancedGuiObject o : objIn.getObjects()) {
 				if (o.isMouseInside(mX, mY) && o.checkDraw()) { o.mouseScrolled(change); } //only notify them if they are actually under the cursor and visible
 			}

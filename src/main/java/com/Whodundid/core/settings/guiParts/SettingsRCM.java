@@ -17,16 +17,20 @@ public class SettingsRCM extends EGuiRightClickMenu {
 	private SettingsGuiMain window;
 	private SubMod mod;
 	private IWindowParent gui;
+	private String title;
 	
-	public SettingsRCM(SettingsGuiMain parentIn, int mXIn, int mYIn) { this(parentIn, mXIn, mYIn, null); }
-	public SettingsRCM(SettingsGuiMain parentIn, int mXIn, int mYIn, IWindowParent guiIn, String titleIn) { this (parentIn, mXIn, mYIn, null, guiIn, titleIn); }
-	public SettingsRCM(SettingsGuiMain parentIn, int mXIn, int mYIn, SubMod modIn) { this(parentIn, mXIn, mYIn, modIn, null, ""); }
-	protected SettingsRCM(SettingsGuiMain parentIn, int mXIn, int mYIn, SubMod modIn, IWindowParent guiIn, String titleIn) {
-		super(parentIn, mXIn, mYIn);
+	public SettingsRCM(SettingsGuiMain parentIn) { this(parentIn, null); }
+	public SettingsRCM(SettingsGuiMain parentIn, IWindowParent guiIn, String titleIn) { this (parentIn, null, guiIn, titleIn); }
+	public SettingsRCM(SettingsGuiMain parentIn, SubMod modIn) { this(parentIn, modIn, null, ""); }
+	protected SettingsRCM(SettingsGuiMain parentIn, SubMod modIn, IWindowParent guiIn, String titleIn) {
 		window = parentIn;
 		mod = modIn;
 		gui = guiIn;
-		
+		title = titleIn;
+	}
+	
+	@Override
+	public void initGui() {
 		addOption("Open", Resources.guiFileUpButton);
 		addOption("Open in new Window", Resources.guiFileUpButtonSel);
 		
@@ -35,7 +39,7 @@ public class SettingsRCM extends EGuiRightClickMenu {
 			setTitle(mod.getName()).setTitleBackgroundColor(0xff303030).setTitleHeight(14);
 		}
 		else {
-			setTitle(titleIn);
+			setTitle(title);
 		}
 		
 		setRunActionOnPress(true);

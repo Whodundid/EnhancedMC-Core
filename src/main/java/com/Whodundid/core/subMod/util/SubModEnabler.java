@@ -1,11 +1,11 @@
 package com.Whodundid.core.subMod.util;
 
-import com.Whodundid.core.debug.terminal.gui.ETerminal;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.subMod.SubModSettings;
 import com.Whodundid.core.subMod.SubModType;
 import com.Whodundid.core.subMod.gui.SubModErrorType;
+import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
 public class SubModEnabler {

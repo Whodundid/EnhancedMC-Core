@@ -35,7 +35,7 @@ public class KeyBindGui extends WindowParent {
 	@Override
 	public void initGui() {
 		setObjectName("Minecraft Controls");
-		centerObjectWithSize(380, 254);
+		setDimensions(380, 254);
 		super.initGui();
 		setResizeable(true);
 		setMinDims(150, 150);

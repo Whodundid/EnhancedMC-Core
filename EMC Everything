@@ -67,7 +67,7 @@ F?  14. When a new gui is opened, it does not get focus.
         --Mostly fixed. There are some visual annoyances with headers due to the way that focus is passed around multiple draw cycles
             -Removed the super.mousePressed call in EGuiButtons and it appears to have visually fixed this (possible unintended consequences)
     
-    15. Objects are drawn below rendered items in the player's hotbar.
+F   15. Objects are drawn below rendered items in the player's hotbar.
     
 F   16. Cannot click on scrollbars for some reason.
             -onFocusLost was never being called when the topParent's focused object was cleared
@@ -92,7 +92,7 @@ F   22. There is an annoying drawing that occurs for buttons when a window is be
     
     23. The cursor can randomly change back to the normal cursor even when around object edges, randomly even.
         --Changed it so the cursor can only change when the top parent isn't resizing an object
-        --It still happens and I am not sure why
+        --It still happens and I am not sure why and it's even worse now.....
     
 F   24. When scrolling over a window that has more than 1 scrollList, all lists scroll even if they are not under the mouse.
         --Restriced the objects to be scrolled in StaticEGuiObject & StaticTopParent to objects who are under the mouse and are drawn.
@@ -113,6 +113,8 @@ F   30. When rrac-ing in the terminal, submod's terminal commands are removed an
 F   31. The resize cursor appears on objects whose edges are under another object.
         --added a check that makes sure only the highestZLevel object can change the cursor image.
 
+    32. When action objects are fired the parent window is not brought to the front.
+    
 
 
 EnhancedChat: (MAIN PRIORITY AFTER CORE)
@@ -120,9 +122,9 @@ EnhancedChat: (MAIN PRIORITY AFTER CORE)
 
     2. MainRCM is no longer opening.
     
-    3. NameFinder is not properly isolating names from chat messages.
+F?  3. NameFinder is not properly isolating names from chat messages.
     
-    4. Hovering Events are still drawn even if the chat window is not the highest Z Object under mouse.
+F   4. Hovering Events are still drawn even if the chat window is not the highest Z Object under mouse.
     
     5. Config loading issues.
     

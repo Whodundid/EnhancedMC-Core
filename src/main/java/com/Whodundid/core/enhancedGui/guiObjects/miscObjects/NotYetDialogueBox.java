@@ -10,7 +10,7 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 public class NotYetDialogueBox extends EGuiDialogueBox {
 	
 	public NotYetDialogueBox(IEnhancedGuiObject parentIn) {
-		super(parentIn, parentIn.getDimensions().getMidX() - 125, parentIn.getDimensions().getMidY() - 48, 250, 75, DialogueBoxTypes.ok);
+		super(DialogueBoxTypes.ok);
 		setResizeable(false);
 	}
 	

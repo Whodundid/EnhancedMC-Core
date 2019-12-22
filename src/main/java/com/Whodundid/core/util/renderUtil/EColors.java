@@ -2,22 +2,93 @@ package com.Whodundid.core.util.renderUtil;
 
 public enum EColors {
 	
-	white(0xffffffff),
-	green(0xff55ff55),
-	red(0xffff5555),
-	yellow(0xffffff00),
-	orange(0xffaa00),
-	cyan(0xff00ffff),
-	magenta(0xffff00dd),
-	lgray(0xffb2b2b2),
-	gray(0xff2d2d2d),
-	dgray(0xff1f1f1f);
+	red(0xffff0000, "Red"),
+	lightRed(0xffff5555, "Light Red"),
+	orange(0xffffaa00, "Orange"),
+	yellow(0xffffff00, "Yellow"),
+	lime(0xffaaff00, "Lime"),
+	green(0xff55ff55, "Light Green"),
+	darkGreen(0xff00af00, "Green"),
+	seafoam(0xff00ff8c, "Seafoam"),
+	cyan(0xff00ffff, "Cyan"),
+	blue(0xff0065ff, "Blue"),
+	navy(0xff0000ff, "Navy"),
+	purple(0xff6a0dad, "Purple"),
+	magenta(0xffff00ff, "Magenta"),
+	pink(0xfff872e9, "Pink"),
+	white(0xffffffff, "White"),
+	lgray(0xffb2b2b2, "Light Gray"),
+	gray(0xff8d8d8d, "Gray"),
+	dgray(0xff474747, "Dark Gray"),
+	steel(0xff1f1f1f, "Steel"),
+	black(0xff000000, "Black");
 	
-	private int color = 0xffffff;
+	private int color;
+	private String colorName;
 	
-	EColors(int colorIn) {
+	EColors(int colorIn, String nameIn) {
 		color = colorIn;
+		colorName = nameIn;
 	}
 
+	/** Returns the color integer. */
 	public int c() { return color; }
+	/** Returns the color name. */
+	public String cn() { return colorName; }
+	
+	/** Returns an EColors with the corresponding integer color (if any). */
+	public static EColors getEColor(int colorIn) {
+		switch (colorIn) {
+		case 0xffff0000: return red;
+		case 0xffff5555: return lightRed;
+		case 0xffffaa00: return orange;
+		case 0xffffff00: return yellow;
+		case 0xffaaff00: return lime;
+		case 0xff55ff55: return green;
+		case 0xff00af00: return darkGreen;
+		case 0xff00ff8c: return seafoam;
+		case 0xff00ffff: return cyan;
+		case 0xff0065ff: return blue;
+		case 0xff0000ff: return navy;
+		case 0xff6a0dad: return purple;
+		case 0xffff00ff: return magenta;
+		case 0xfff872e9: return pink;
+		case 0xffffffff: return white;
+		case 0xffb2b2b2: return lgray;
+		case 0xff8d8d8d: return gray;
+		case 0xff474747: return dgray;
+		case 0xff1f1f1f: return steel;
+		case 0xff000000: return black;
+		default: return null;
+		}
+	}
+	
+	/** Returns an EColors with the corresponding String name (if any). */
+	public static EColors getEColor(String colorNameIn) {
+		if (colorNameIn != null) {
+			switch (colorNameIn.toLowerCase()) {
+			case "red": return red;
+			case "lred": case "lightred": case "light red": return lightRed;
+			case "orange": return orange;
+			case "yellow": return yellow;
+			case "lime": return lime;
+			case "lgreen": case "lightgreen": case "light green": return green;
+			case "dgreen": case "darkgreen": case "dark green": return darkGreen;
+			case "seafoam": return seafoam;
+			case "cyan": return cyan;
+			case "blue": return blue;
+			case "navy": return navy;
+			case "purple": return purple;
+			case "magenta": return magenta;
+			case "pink": return pink;
+			case "white": return white;
+			case "lgray": case "lightgray": case "light gray": return lgray;
+			case "gray": return gray;
+			case "dgray": case "darkgray": case "dark gray": return dgray;
+			case "steel": return steel;
+			case "black": return lightRed;
+			}
+		}
+		return null;
+	}
 }

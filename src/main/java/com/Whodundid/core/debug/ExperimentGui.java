@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.colorPicker.EGuiColorPicker;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.textArea.EGuiTextArea;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
@@ -18,7 +19,6 @@ import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiScrollList;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiSlider;
 import com.Whodundid.core.enhancedGui.guiObjects.miscObjects.KeyOverlay;
 import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.EGuiPlayerViewer;
-import com.Whodundid.core.enhancedGui.guiObjects.windows.EGuiColorPicker;
 import com.Whodundid.core.enhancedGui.guiObjects.windows.EGuiDialogueBox;
 import com.Whodundid.core.enhancedGui.types.EnhancedGui;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
@@ -91,9 +91,13 @@ public class ExperimentGui extends WindowParent {
 	
 	@Override
 	public void initObjects() {
-		setHeader(new EGuiHeader(this));
+		defaultHeader(this);
 		header.setTitleColor(0x000000);
 		header.setParentFocusDrawn(false);
+		
+		test1 = new EGuiButton(this, 30, 100, 80, 20, "go");
+		test1.setMoveable(true);
+		addObject(test1);
 		
 		/*
 		EGuiContainer con = new EGuiContainer(this, startX + 5, startY + 5, width - 10, height - 10);
@@ -164,10 +168,12 @@ public class ExperimentGui extends WindowParent {
 		window2.setHeader(new EGuiHeader(window2));
 		*/
 		
-		textArea = new EGuiTextArea(this, startX + 5, startY + 5, width - 10, height - 10, true, false).setDrawLineNumbers(true);
+		//textArea = new EGuiTextArea(this, startX + 5, startY + 5, width - 10, height - 10, true, false).setDrawLineNumbers(true);
+		//addObject(textArea);
+		
 		//textArea.addTextLine("this is an intentionally very long line of text to test horizontal scrolling!");
 		
-		
+		/*
 		File gFile = null;
 		
 		String path = System.getProperty("user.dir");
@@ -190,7 +196,10 @@ public class ExperimentGui extends WindowParent {
 		
 		
 		//for (int i = 1; i <= 60; i++) { textArea.addTextLine(i + " cow"); }
-		addObject(textArea);
+		*/
+		
+		
+		
 		//textArea.addTextLine("this is an intentionally very long line of text to test horizontal scrolling!");
 		
 		
@@ -409,8 +418,7 @@ public class ExperimentGui extends WindowParent {
 	@Override
 	public void actionPerformed(IEnhancedActionObject object, Object... args) {
 		if (object.equals(test1)) {
-			//ChatWindowFrame f = c.getChatWindow(ChatType.LOBBY);
-			//if (f != null) { f.setVisible(true); }
+			
 		}
 	}
 	

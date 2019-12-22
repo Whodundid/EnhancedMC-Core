@@ -95,7 +95,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	public boolean mouseEntered = false;
 	protected boolean resizeable = false;
 	protected boolean clickable = true;
-	protected boolean positionLocked = false;
+	protected boolean moveable = false;
 	protected boolean persistent = false;
 	protected boolean pinned = false;
 	protected boolean pinnable = true;
@@ -110,7 +110,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	public int objectId = -1;
 	protected String objectName = "noname";
 	protected String hoverText = "";
-	protected int hoverTextColor = 0xb2b2b2;
+	protected int hoverTextColor = 0xff00d1ff;
 	public long mouseHoverTime = 0l;
 	public long hoverRefTime = 0l;
 	public StorageBox<Integer, Integer> oldMousePos = new StorageBox(0, 0);
@@ -166,6 +166,13 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	//----------------
 	
 	@Override public String toString() { return getClass().getSimpleName() + "@" + Integer.toHexString(hashCode()); }
+	
+	//------------------------------
+	//ITabCompleteListener Overrides
+	//------------------------------
+		
+	@Override public void onTabCompletion(String[] result) {}
+	@Override public void requestTabComplete(String in1, String in2) { EChatUtil.registerTabListener(this, in1, in2); }
 	
 	//-------------------
 	//GuiScreen Overrides
@@ -369,7 +376,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	//init
 	@Override public boolean isInit() { return hasBeenInitialized; }
 	@Override public boolean isObjectInit() { return objectInit; }
-	@Override public EnhancedGui completeInit() { hasBeenInitialized = true; return this; }
+	@Override public void completeInit() { hasBeenInitialized = true; }
 	@Override public void initObjects() throws ObjectInitException {}
 	@Override
 	public void reInitObjects() throws ObjectInitException {
@@ -441,14 +448,14 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 		}
 	}
 	@Override public void onMouseHover(int mX, int mY) {}
-	@Override public EnhancedGui setHoverText(String textIn) { hoverText = textIn; return this; }
-	@Override public EnhancedGui setHoverTextColor(int colorIn) { hoverTextColor = colorIn; return this; }
+	@Override public IEnhancedGuiObject setHoverText(String textIn) { hoverText = textIn; return this; }
+	@Override public IEnhancedGuiObject setHoverTextColor(int colorIn) { hoverTextColor = colorIn; return this; }
 	
 	//obj ids
 	@Override public int getObjectID() { return objectId; }
-	@Override public EnhancedGui setObjectID(int idIn) { objectId = idIn; return this; }
+	@Override public IEnhancedGuiObject setObjectID(int idIn) { objectId = idIn; return this; }
 	@Override public String getObjectName() { return objectName; }
-	@Override public EnhancedGui setObjectName(String nameIn) { objectName = nameIn; return this; }
+	@Override public IEnhancedGuiObject setObjectName(String nameIn) { objectName = nameIn; return this; }
 	
 	//drawing checks
 	@Override public boolean checkDraw() { return persistent || visible; }
@@ -458,10 +465,10 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override public boolean isBoundaryEnforced() { return false; }
 	@Override public boolean isResizing() { return getTopParent().getModifyingObject() == this && getTopParent().getModifyType() == ObjectModifyType.Resize; }
 	@Override public boolean isMoving() { return getTopParent().getModifyingObject() == this && getTopParent().getModifyType() == ObjectModifyType.Move; }
-	@Override public EnhancedGui setEnabled(boolean val) { enabled = val; return this; }
-	@Override public EnhancedGui setVisible(boolean val) { visible = val; return this; }
-	@Override public EnhancedGui setPersistent(boolean val) { return this; }
-	@Override public EnhancedGui setBoundaryEnforcer(EDimension dimIn) { return this; }
+	@Override public IEnhancedGuiObject setEnabled(boolean val) { enabled = val; return this; }
+	@Override public IEnhancedGuiObject setVisible(boolean val) { visible = val; return this; }
+	@Override public IEnhancedGuiObject setPersistent(boolean val) { return this; }
+	@Override public IEnhancedGuiObject setBoundaryEnforcer(EDimension dimIn) { return this; }
 	@Override public EDimension getBoundaryEnforcer() { return getDimensions(); }
 	
 	//size
@@ -472,29 +479,30 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override public int getMinHeight() { return minHeight; }
 	@Override public int getMaxWidth() { return maxWidth; }
 	@Override public int getMaxHeight() { return maxHeight; }
-	@Override public EnhancedGui setMinDims(int widthIn, int heightIn) { setMinWidth(widthIn).setMinHeight(heightIn); return this; }
-	@Override public EnhancedGui setMaxDims(int widthIn, int heightIn) { setMaxWidth(widthIn).setMaxHeight(heightIn); return this; }
-	@Override public EnhancedGui setMinWidth(int widthIn) { minWidth = widthIn; return this; }
-	@Override public EnhancedGui setMinHeight(int heightIn) { minHeight = heightIn; return this; }
-	@Override public EnhancedGui setMaxWidth(int widthIn) { maxWidth = widthIn; return this; }
-	@Override public EnhancedGui setMaxHeight(int heightIn) { maxHeight = heightIn; return this; }
-	@Override public EnhancedGui setResizeable(boolean val) { resizeable = val; return this; }
-	@Override public EnhancedGui resize(int xIn, int yIn, ScreenLocation areaIn) { StaticEGuiObject.resize(this, xIn, yIn, areaIn); return this; }
+	@Override public IEnhancedGuiObject setMinDims(int widthIn, int heightIn) { setMinWidth(widthIn).setMinHeight(heightIn); return this; }
+	@Override public IEnhancedGuiObject setMaxDims(int widthIn, int heightIn) { setMaxWidth(widthIn).setMaxHeight(heightIn); return this; }
+	@Override public IEnhancedGuiObject setMinWidth(int widthIn) { minWidth = widthIn; return this; }
+	@Override public IEnhancedGuiObject setMinHeight(int heightIn) { minHeight = heightIn; return this; }
+	@Override public IEnhancedGuiObject setMaxWidth(int widthIn) { maxWidth = widthIn; return this; }
+	@Override public IEnhancedGuiObject setMaxHeight(int heightIn) { maxHeight = heightIn; return this; }
+	@Override public IEnhancedGuiObject setResizeable(boolean val) { resizeable = val; return this; }
+	@Override public IEnhancedGuiObject resize(int xIn, int yIn, ScreenLocation areaIn) { StaticEGuiObject.resize(this, xIn, yIn, areaIn); return this; }
 	
 	//position
 	@Override public void move(int newX, int newY) { StaticEGuiObject.move(this, newX, newY); }
-	@Override public boolean isPositionLocked() { return positionLocked; }
-	@Override public EnhancedGui resetPosition() { setPosition(startXPos, startYPos); return this; }
+	@Override public boolean isMoveable() { return moveable; }
+	@Override public IEnhancedGuiObject resetPosition() { setPosition(startXPos, startYPos); return this; }
 	@Override
-	public EnhancedGui setPosition(int xIn, int yIn) {
+	public IEnhancedGuiObject setPosition(int xIn, int yIn) {
 		startX = xIn;
 		startY = yIn;
 		setWorldAndResolution(Minecraft.getMinecraft(), sWidth, sHeight);
 		return this;
 	}
-	@Override public EnhancedGui setPositionLocked(boolean val) { positionLocked = val; return this; }
-	@Override public EnhancedGui setDimensions(EDimension dimIn) { return setDimensions(dimIn.startX, dimIn.startY, dimIn.width, dimIn.height); }
-	@Override public EnhancedGui setDimensions(int startXIn, int startYIn, int widthIn, int heightIn) {
+	@Override public IEnhancedGuiObject setMoveable(boolean val) { moveable = val; return this; }
+	@Override public IEnhancedGuiObject setDimensions(EDimension dimIn) { return setDimensions(dimIn.startX, dimIn.startY, dimIn.width, dimIn.height); }
+	@Override public IEnhancedGuiObject setDimensions(int widthIn, int heightIn) { return setDimensions(startX, startY, widthIn, heightIn); }
+	@Override public IEnhancedGuiObject setDimensions(int startXIn, int startYIn, int widthIn, int heightIn) {
 		startX = startXIn;
 		startY = startYIn;
 		width = widthIn;
@@ -506,9 +514,9 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 		return this;
 	}
 	@Override public StorageBox<Integer, Integer> getInitialPosition() { return new StorageBox<Integer, Integer>(startXPos, startYPos); }
-	@Override public EnhancedGui setInitialPosition(int startXIn, int startYIn) { startXPos = startXIn; startYPos = startYIn; return this; }
+	@Override public IEnhancedGuiObject setInitialPosition(int startXIn, int startYIn) { startXPos = startXIn; startYPos = startYIn; return this; }
 	@Override
-	public EnhancedGui centerObjectWithSize(int widthIn, int heightIn) {
+	public IEnhancedGuiObject centerObjectWithSize(int widthIn, int heightIn) {
 		ScaledResolution res = new ScaledResolution(mc);
 		int sWidth = res.getScaledWidth();
 		int sHeight = res.getScaledHeight();
@@ -534,10 +542,10 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	
 	//objects
 	@Override public boolean isChild(IEnhancedGuiObject objIn) { return StaticEGuiObject.isChildOfObject(this, objIn); }
-	@Override public EnhancedGui addObject(IEnhancedGuiObject... objsIn) { StaticEGuiObject.addObject(this, objsIn); return this; }
-	@Override public EnhancedGui removeObject(IEnhancedGuiObject... objsIn) { objsToBeRemoved.addAll(objsIn); return this; }
+	@Override public IEnhancedGuiObject addObject(IEnhancedGuiObject... objsIn) { StaticEGuiObject.addObject(this, objsIn); return this; }
+	@Override public IEnhancedGuiObject removeObject(IEnhancedGuiObject... objsIn) { objsToBeRemoved.addAll(objsIn); return this; }
 	@Override public EObjectGroup getObjectGroup() { return objectGroup; }
-	@Override public EnhancedGui setObjectGroup(EObjectGroup groupIn) { objectGroup = groupIn; return this; }
+	@Override public IEnhancedGuiObject setObjectGroup(EObjectGroup groupIn) { objectGroup = groupIn; return this; }
 	@Override public void onGroupNotification(ObjectEvent e) {}
 	@Override public EArrayList<IEnhancedGuiObject> getObjects() { return guiObjects; }
 	@Override public EArrayList<IEnhancedGuiObject> getAddingObjects() { return objsToBeAdded; }
@@ -547,15 +555,15 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	
 	//parents
 	@Override public IEnhancedGuiObject getParent() { return parent; }
-	@Override public EnhancedGui setParent(IEnhancedGuiObject parentIn) { parent = parentIn; return this; }
+	@Override public IEnhancedGuiObject setParent(IEnhancedGuiObject parentIn) { parent = parentIn; return this; }
 	@Override public IEnhancedTopParent getTopParent() { return StaticEGuiObject.getTopParent(this); }
 	@Override public IEnhancedGuiObject getWindowParent() { return StaticEGuiObject.getWindowParent(this); }
 	
 	//zLevel
 	@Override public int getZLevel() { return objZLevel; }
-	@Override public EnhancedGui setZLevel(int zLevelIn) { objZLevel = zLevelIn; return this; }
-	@Override public EnhancedGui bringToFront() { getTopParent().bringObjectToFront(this); return this; }
-	@Override public EnhancedGui sendToBack() { getTopParent().sendObjectToBack(this); return this; }
+	@Override public IEnhancedGuiObject setZLevel(int zLevelIn) { objZLevel = zLevelIn; return this; }
+	@Override public IEnhancedGuiObject bringToFront() { getTopParent().bringObjectToFront(this); return this; }
+	@Override public IEnhancedGuiObject sendToBack() { getTopParent().sendObjectToBack(this); return this; }
 	
 	//focus
 	@Override public boolean hasFocus() { return this.equals(this.getFocusedObject()); }
@@ -590,7 +598,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 		}
 	}
 	@Override
-	public EnhancedGui requestFocus() {
+	public IEnhancedGuiObject requestFocus() {
 		if (!hasFocus()) {
 			if (doesFocusLockExist()) {
 				//getTopParent().setObjectRequestingFocus(this);
@@ -627,9 +635,9 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	
 	//events
 	@Override public ObjectEventHandler getEventHandler() { return eventHandler; }
-	@Override public EnhancedGui registerListener(IEnhancedGuiObject objIn) { if (eventHandler != null) { eventHandler.registerObject(objIn); } return this; }
-	@Override public EnhancedGui unregisterListener(IEnhancedGuiObject objIn) { if (eventHandler != null) { eventHandler.unregisterObject(objIn); } return this; }
-	@Override public EnhancedGui postEvent(ObjectEvent e) { if (eventHandler != null) { eventHandler.processEvent(e); } return this; }
+	@Override public IEnhancedGuiObject registerListener(IEnhancedGuiObject objIn) { if (eventHandler != null) { eventHandler.registerObject(objIn); } return this; }
+	@Override public IEnhancedGuiObject unregisterListener(IEnhancedGuiObject objIn) { if (eventHandler != null) { eventHandler.unregisterObject(objIn); } return this; }
+	@Override public IEnhancedGuiObject postEvent(ObjectEvent e) { if (eventHandler != null) { eventHandler.processEvent(e); } return this; }
 	@Override public void onListen(ObjectEvent e) {}
 	
 	//action object
@@ -640,7 +648,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override public IEnhancedGuiObject setCloseable(boolean val) { closeable = val; return this; }
 	@Override public void close() { if (closeable) { postEvent(new EventObjects(this, this, ObjectEventType.Close)); closeGui(true); } }
 	@Override public void onClosed() {}
-	@Override public EnhancedGui setFocusedObjectOnClose(IEnhancedGuiObject objIn) { focusObjectOnClose = objIn; return this; }
+	@Override public IEnhancedGuiObject setFocusedObjectOnClose(IEnhancedGuiObject objIn) { focusObjectOnClose = objIn; return this; }
 	
 	//-------------------------
 	//IWindowParent Overrides
@@ -648,13 +656,13 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	
 	@Override public boolean isPinned() { return pinned; }
 	@Override public boolean isPinnable() { return pinnable; }
-	@Override public EnhancedGui setPinned(boolean val) { pinned = val; return this; }
-	@Override public EnhancedGui setPinnable(boolean val) { pinnable = val; return this; }
+	@Override public IEnhancedGuiObject setPinned(boolean val) { pinned = val; return this; }
+	@Override public IEnhancedGuiObject setPinnable(boolean val) { pinnable = val; return this; }
 	
 	@Override
 	public Stack<Object> getGuiHistory() { return guiHistory; }
 	@Override
-	public EnhancedGui setGuiHistory(Stack<Object> historyIn) {
+	public IWindowParent setGuiHistory(Stack<Object> historyIn) {
 		guiHistory = historyIn;
 		if (header != null) { header.updateButtonVisibility(); }
 		return this;
@@ -681,8 +689,8 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	}
 	
 	//draw order
-	@Override public EnhancedGui bringObjectToFront(IEnhancedGuiObject objIn) { toFront = objIn; return this; }
-	@Override public EnhancedGui sendObjectToBack(IEnhancedGuiObject objIn) { toBack = objIn; return this; }
+	@Override public IEnhancedTopParent bringObjectToFront(IEnhancedGuiObject objIn) { toFront = objIn; return this; }
+	@Override public IEnhancedTopParent sendObjectToBack(IEnhancedGuiObject objIn) { toBack = objIn; return this; }
 	
 	//hovering text
 	@Override public IEnhancedTopParent setObjectWithHoveringText(IEnhancedGuiObject objIn) { hoveringTextObject = objIn; return this; }
@@ -696,14 +704,14 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	//focus
 	@Override public IEnhancedGuiObject getFocusedObject() { return focusedObject; }
 	@Override public IEnhancedTopParent setFocusedObject(IEnhancedGuiObject objIn) { focusedObject = objIn; return this; }
-	@Override public EnhancedGui setObjectRequestingFocus(IEnhancedGuiObject objIn) { focusQueue.add(new EventFocus(this, objIn, FocusType.Transfer)); return this; }
+	@Override public IEnhancedTopParent setObjectRequestingFocus(IEnhancedGuiObject objIn) { focusQueue.add(new EventFocus(this, objIn, FocusType.Transfer)); return this; }
 	@Override public IEnhancedGuiObject getFocusLockObject() { return focusLockObject; }
-	@Override public EnhancedGui setFocusLockObject(IEnhancedGuiObject objIn) {
+	@Override public IEnhancedTopParent setFocusLockObject(IEnhancedGuiObject objIn) {
 		focusLockObject = objIn;
 		transferFocus(focusLockObject);
 		return this;
 	}
-	@Override public EnhancedGui clearFocusLockObject() { focusLockObject = null; return this; }
+	@Override public IEnhancedTopParent clearFocusLockObject() { focusLockObject = null; return this; }
 	@Override public boolean doesFocusLockExist() { return focusLockObject != null; }
 	@Override
 	public void clearFocusedObject() {
@@ -766,11 +774,11 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	
 	//object modification
 	@Override public ObjectModifyType getModifyType() { return modifyType; }
-	@Override public EnhancedGui setModifyingObject(IEnhancedGuiObject objIn, ObjectModifyType typeIn) { modifyingObject = objIn; modifyType = typeIn; return this; }
-	@Override public EnhancedGui setResizingDir(ScreenLocation areaIn) { resizingDir = areaIn; return this; }
-	@Override public EnhancedGui setModifyMousePos(int mX, int mY) { mousePos.setValues(mX, mY); return this; }
+	@Override public IEnhancedTopParent setModifyingObject(IEnhancedGuiObject objIn, ObjectModifyType typeIn) { modifyingObject = objIn; modifyType = typeIn; return this; }
+	@Override public IEnhancedTopParent setResizingDir(ScreenLocation areaIn) { resizingDir = areaIn; return this; }
+	@Override public IEnhancedTopParent setModifyMousePos(int mX, int mY) { mousePos.setValues(mX, mY); return this; }
 	@Override public IEnhancedGuiObject getModifyingObject() { return modifyingObject; }
-	@Override public EnhancedGui clearModifyingObject() { modifyingObject = null; modifyType = ObjectModifyType.None; return this; }
+	@Override public IEnhancedTopParent clearModifyingObject() { modifyingObject = null; modifyType = ObjectModifyType.None; return this; }
 	
 	//mouse checks
 	@Override public boolean isMouseOnObjEdge(int mX, int mY) { return checkDraw() && !getEdgeAreaMouseIsOn().equals(ScreenLocation.out); }

@@ -68,7 +68,7 @@ public class EGuiTextField extends EnhancedActionObject {
 			EObjectGroup g = getObjectGroup();
 			if (g != null) { drawCursorFlag = g.doAnyHaveFocus() && cursorCounterFlag; }
 		}
-		else { drawCursorFlag = hasFocus() && cursorCounterFlag; }
+		else { drawCursorFlag = hasFocus() && cursorCounterFlag && isEnabled(); }
 		
 		int l = enableBackgroundDrawing ? startX + 4 : startX + 2;
 		int i1 = enableBackgroundDrawing ? startY + (height - 6) / 2 : startY + height / 2 - 3;
@@ -263,10 +263,10 @@ public class EGuiTextField extends EnhancedActionObject {
 	 * backwards. params: N, position
 	 */
 	public int getNthWordFromPos(int posIn, int cursorPos) {
-		return func_146197_a(posIn, cursorPos, true);
+		return getNthWordFromPos(posIn, cursorPos, true);
 	}
 
-	public int func_146197_a(int posIn, int cursorPos, boolean p_146197_3_) {
+	public int getNthWordFromPos(int posIn, int cursorPos, boolean p_146197_3_) {
 		int i = cursorPos;
 		boolean flag = posIn < 0;
 		int j = Math.abs(posIn);

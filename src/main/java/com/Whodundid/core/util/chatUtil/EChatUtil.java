@@ -1,7 +1,11 @@
 package com.Whodundid.core.util.chatUtil;
 
+import com.Whodundid.core.util.EUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.play.client.C14PacketTabComplete;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.IChatComponent;
+import net.minecraft.util.MovingObjectPosition;
 
 //Last edited: 10-20-18
 //First Added: 3-22-18
@@ -13,7 +17,9 @@ public class EChatUtil {
 	private static boolean chatOpen = false;
 	private static IChatComponent lastChat = null;
 	private static String lastTypedMessage = "";
+	private static ITabCompleteListener tabListener = null;
 	
+	/** Removes all lingering minecraft FontRenderer chat formatting codes from EnumChatFormatting. */
 	public static String removeFormattingCodes(String chatIn) {
 		String s = "";
 		for (int i = 0; i < chatIn.length(); i++) {
@@ -21,26 +27,42 @@ public class EChatUtil {
 			if (c != '\u00A7') { // this symbol: §
 				s += c;
 			} else {
-				i += 1;
+				i += 1; //remove the following code
 			}
 		}
 		return s;
 	}
 	
-	public static String subStringFromPosToSpace(String in, int startPos) {
-		if (in != null && !in.isEmpty()) {
-			int pos = startPos;
-			while (pos < in.length() && in.charAt(pos) != ' ') {
-				pos++;
-			}
-			return in.substring(startPos, pos);
+	public static void registerTabListener(ITabCompleteListener objectIn, String checkWord, String upToCursor) {
+		if (EUtil.nullCheck(objectIn, checkWord, upToCursor)) {
+			tabListener = objectIn;
+			beginTabRequest(checkWord, upToCursor);
 		}
-		return in;
+	}
+	
+	public static void onTabComplete(String[] result) {
+		if (tabListener != null) {
+			tabListener.onTabCompletion(result);
+			tabListener = null;
+		}
+	}
+	
+	private static void beginTabRequest(String in1, String in2) {
+		if (in1.length() >= 1) {
+			net.minecraftforge.client.ClientCommandHandler.instance.autoComplete(in1, in2);
+			BlockPos blockpos = null;
+
+			if (mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
+				blockpos = mc.objectMouseOver.getBlockPos();
+			}
+
+			mc.thePlayer.sendQueue.addToSendQueue(new C14PacketTabComplete(in1, blockpos));
+		}
 	}
 	
 	public static void readChat(IChatComponent chatMsg) { lastChat = chatMsg; }
 	
-	public void checkIfChatWindowOpen() { chatOpen = mc.ingameGUI.getChatGUI().getChatOpen(); }
+	public static void checkIfChatWindowOpen() { chatOpen = mc.ingameGUI.getChatGUI().getChatOpen(); }
 	public static boolean isChatOpen() { return chatOpen; }
 	public static String getLMsgFor() { return lastChat != null ? lastChat.getFormattedText() : ""; }
 	public static String getLMsgUnf() { return lastChat != null ? removeFormattingCodes(lastChat.getUnformattedText()) : ""; }

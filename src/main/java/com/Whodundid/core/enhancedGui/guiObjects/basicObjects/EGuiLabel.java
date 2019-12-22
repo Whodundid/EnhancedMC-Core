@@ -3,6 +3,7 @@ package com.Whodundid.core.enhancedGui.guiObjects.basicObjects;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.EUtil;
+import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
 //Last edited: Jan 2, 2019
@@ -20,6 +21,7 @@ public class EGuiLabel extends EnhancedGuiObject {
 	protected boolean shadow = true;
 	protected int gapSize = 0;
 	
+	public EGuiLabel(IEnhancedGuiObject parentIn, int xPos, int yPos) { this(parentIn, xPos, yPos, "", 0xffffff); }
 	public EGuiLabel(IEnhancedGuiObject parentIn, int xPos, int yPos, String stringIn) { this(parentIn, xPos, yPos, stringIn, 0xffffff); }
 	public EGuiLabel(IEnhancedGuiObject parentIn, int xPos, int yPos, String stringIn, int colorIn) {
 		init(parentIn, xPos, yPos, fontRenderer.getStringWidth(stringIn), fontRenderer.FONT_HEIGHT);
@@ -69,6 +71,7 @@ public class EGuiLabel extends EnhancedGuiObject {
 	
 	public EGuiLabel setLineGapHeight(int heightIn) { gapSize = heightIn; return this; }
 	public EGuiLabel setDisplayStringColor(int colorIn) { displayStringColor = colorIn; return this; }
+	public EGuiLabel setDisplayStringColor(EColors colorIn) { if (colorIn != null) { displayStringColor = colorIn.c(); } return this; }
 	public EGuiLabel enableShadow(boolean val) { shadow = val; return this; }
 	public EGuiLabel setDrawCentered(boolean val) { centered = val; return this; }
 	

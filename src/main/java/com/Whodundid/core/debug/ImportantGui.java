@@ -2,12 +2,12 @@ package com.Whodundid.core.debug;
 
 import java.awt.Color;
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.enhancedGui.types.EnhancedGui;
+import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.util.renderUtil.Resources;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 
-public class ImportantGui extends EnhancedGui {
+public class ImportantGui extends WindowParent {
 	
 	importantHolder holder;
 	int importantColor = 0xff000000;
@@ -26,7 +26,7 @@ public class ImportantGui extends EnhancedGui {
 		drawRect(midX - 257, 0, midX + 257, res.getScaledHeight(), 0xff4f4f40);
 		GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
 		holder.draw();
-		importantColor = Color.HSBtoRGB(System.currentTimeMillis() % 1000L / 1000.0f, 0.8f, 1f);
+		importantColor = Color.HSBtoRGB(System.currentTimeMillis() % 10000L / 5000.0f, 0.8f, 1f);
 		GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
 		GlStateManager.scale(2.0f, 2.0f, 2.0f);
 		drawCenteredStringWithShadow("W H Y  H E L L O  T H E R E,  F R I E N D !", midX / 2, midY / 2 + 50, -importantColor);
