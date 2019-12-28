@@ -28,6 +28,25 @@ public class EUtil {
 		return val;
 	}
 	
+	public static <e> boolean findMatch(e objIn, List<e> list) { return findMatch(new EArrayList<e>(objIn), list); }
+	public static <e> boolean findMatch(List<e> objsIn, List<e> list) {
+		if (list != null && objsIn.size() > 0) {
+			for (e element : list) {
+				if (element == null) {
+					for (e check : objsIn) {
+						if (check == null) { return true; }
+					}
+				}
+				else {
+					for (e check : objsIn) {
+						if (check.equals(element)) { return true; }
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
 	/** Breaks a String into a list of smaller strings based on a set maximum line width. */
 	public static EArrayList<String> createWordWrapString(String stringIn, int widthMax) {
 		EArrayList<String> lines = new EArrayList();
