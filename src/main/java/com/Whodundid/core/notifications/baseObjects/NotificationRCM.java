@@ -1,14 +1,14 @@
 package com.Whodundid.core.notifications.baseObjects;
 
+import com.Whodundid.core.coreSubMod.EMCResources;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiRightClickMenu;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
-import com.Whodundid.core.util.renderUtil.Resources;
 
 public class NotificationRCM extends EGuiRightClickMenu {
 	
 	@Override
 	public void initGui() {
-		addOption("Open Notification Settings", Resources.guiSettingsButton);
+		addOption("Open Notification Settings", EMCResources.guiSettingsButton);
 		
 		setRunActionOnPress(true);
 		setActionReciever(this);
