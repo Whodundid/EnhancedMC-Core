@@ -7,6 +7,8 @@ import com.Whodundid.core.enhancedGui.types.EnhancedGui;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
+import com.Whodundid.core.notifications.NotificationHandler;
+import com.Whodundid.core.notifications.NotificationObject;
 import com.Whodundid.core.renderer.EnhancedMCRenderer;
 import com.Whodundid.core.renderer.RendererProxyGui;
 import com.Whodundid.core.settings.SettingsGuiMain;
@@ -20,7 +22,6 @@ import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.renderUtil.CursorHelper;
 import com.Whodundid.core.util.renderUtil.EFontRenderer;
 import com.Whodundid.core.util.renderUtil.EItemDrawer;
-import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.StorageBox;
@@ -63,13 +64,14 @@ public final class EnhancedMC {
 	public static EFontRenderer fontRenderer;
 	private static final EnhancedMCRenderer renderer = EnhancedMCRenderer.getInstance();
 	private static final TerminalCommandHandler terminal = TerminalCommandHandler.getInstance();
+	private static final NotificationHandler notifications = NotificationHandler.getHandler();
 	private static EventListener eventListener;
 	private static EItemDrawer itemDrawer;
 	private static boolean isInitialized = false;
 	public static int updateCounter = 0;
 	public static boolean enableDebugFunctions = false;
 	public static final EnhancedMCMod modInstance = new EnhancedMCMod();
-	public final Resources resources = new Resources();
+	//public final Resources resources = new Resources();
 	public static boolean safeRemoteDesktopMode = false;
 	
 	@EventHandler
@@ -225,11 +227,11 @@ public final class EnhancedMC {
 	}
 	
 	public static <T extends WindowParent> boolean isEGuiOpen(Class<T> guiIn) {
-		return guiIn != null ? renderer.getAllChildren().stream().anyMatch(o -> o.getClass().equals(guiIn)) : false;
+		return guiIn != null ? renderer.getAllChildren().stream().anyMatch(o -> guiIn.isInstance(o)) : false;
 	}
 	
 	public static <T extends WindowParent> WindowParent getWindowInstance(Class<T> guiIn) {
-		return guiIn != null ? (WindowParent) renderer.getAllChildren().stream().filter(o -> o.getClass().equals(guiIn)).findFirst().get() : null;
+		return guiIn != null ? (WindowParent) renderer.getAllChildren().stream().filter(o -> guiIn.isInstance(o)).findFirst().get() : null;
 	}
 	
 	public static IWindowParent displayEGui(IWindowParent guiIn) { return displayEGui(guiIn, null, true, false, false, CenterType.screen); }
@@ -256,6 +258,7 @@ public final class EnhancedMC {
 				IWindowParent old = (IWindowParent) oldObject;
 				old.getGuiHistory().add(old);
 				guiIn.setGuiHistory(old.getGuiHistory());
+				guiIn.setPinned(old.isPinned());
 			}
 			setPos(guiIn, oldObject instanceof IEnhancedGuiObject ? (IEnhancedGuiObject) oldObject : null, loc);
 			guiIn.bringToFront();
@@ -355,12 +358,17 @@ public final class EnhancedMC {
 		}
 	}
 	
+	public static void postNotification(String messageIn) { postNotification(messageIn, null); }
+	public static void postNotification(String messageIn, WindowParent guiIn) { notifications.post(messageIn, guiIn); }
+	public static void postNotification(NotificationObject obj) { notifications.post(obj); }
+	
 	public static EnhancedMCMod getEMCMod() { return modInstance; }
 	public static EventListener getEventListener() { return eventListener; }
 	public static EFontRenderer getFontRenderer() { return fontRenderer; }
 	public static EnhancedMCRenderer getRenderer() { return renderer; }
 	public static EItemDrawer getItemDrawer() { return itemDrawer; }
 	public static TerminalCommandHandler getTerminalHandler() { return terminal; }
+	public static NotificationHandler getNotificationHandler() { return notifications; }
 	public static boolean isInitialized() { return isInitialized; }
 	public static void log(Level levelIn, String msg) { EMCLogger.log(levelIn, msg); }
 	public static void info(String msg) { EMCLogger.log(Level.INFO, msg); }
