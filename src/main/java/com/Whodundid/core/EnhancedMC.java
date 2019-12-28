@@ -71,7 +71,6 @@ public final class EnhancedMC {
 	public static int updateCounter = 0;
 	public static boolean enableDebugFunctions = false;
 	public static final EnhancedMCMod modInstance = new EnhancedMCMod();
-	//public final Resources resources = new Resources();
 	public static boolean safeRemoteDesktopMode = false;
 	
 	@EventHandler
