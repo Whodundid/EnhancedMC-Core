@@ -1,5 +1,6 @@
 package com.Whodundid.core.util.renderUtil;
 
+import com.Whodundid.core.coreSubMod.EMCResources;
 import com.Whodundid.core.enhancedGui.guiUtil.EGui;
 import com.ibm.icu.text.ArabicShaping;
 import com.ibm.icu.text.ArabicShapingException;
@@ -143,7 +144,7 @@ public class EFontRenderer extends EGui implements IResourceManagerReloadListene
 	protected float renderDefaultChar(int ch, boolean italic) {
 		GlStateManager.pushMatrix();
 		GlStateManager.scale(0.5f, 0.5f, 0.5f);
-		bindTexture(italic ? Resources.asciiItallic : Resources.ascii);
+		bindTexture(italic ? EMCResources.asciiItallic : EMCResources.ascii);
 		int i = ch % 16 * 8;
 		int j = ch / 16 * 8;
 		int k = italic ? 2 : 0;

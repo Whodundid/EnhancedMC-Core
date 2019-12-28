@@ -39,7 +39,8 @@ F   4. When shift-scrolling EGuiTextAreas, the thumb appears to go beyond the sc
 F   5. When reloading mod configs from the SettingsGuiMain, the results are not displayed in chat.
         --Added a window instead.
     
-    6. When resizing an EGuiTextArea, the scrollable dimensions don't seem to properly fit certain objects.
+F?  6. When resizing an EGuiTextArea, the scrollable dimensions don't seem to properly fit certain objects.
+        --From what I can tell, this has since been resolved.
     
 F   7. When resizing, an EGuiTextArea will lose all additions to it's document.
         -Objects need to handle this individually.
@@ -90,9 +91,10 @@ F   21. ETerminals require 2 edge clicks in order to activate window resizing.
 F   22. There is an annoying drawing that occurs for buttons when a window is being resized to the left.
         --Made it so that no objects will be found under the cursor if the topParent is being resized
     
-    23. The cursor can randomly change back to the normal cursor even when around object edges, randomly even.
+F   23. The cursor can randomly change back to the normal cursor even when around object edges, randomly even.
         --Changed it so the cursor can only change when the top parent isn't resizing an object
         --It still happens and I am not sure why and it's even worse now.....
+        --Rewrote the CursorHelper and moved cursor update calls to the topParent
     
 F   24. When scrolling over a window that has more than 1 scrollList, all lists scroll even if they are not under the mouse.
         --Restriced the objects to be scrolled in StaticEGuiObject & StaticTopParent to objects who are under the mouse and are drawn.
@@ -105,7 +107,7 @@ F   24. When scrolling over a window that has more than 1 scrollList, all lists 
     
     28. The KeyBindGui needs some help with it's minimum dimensions.
     
-    29. When enabling or disabling submods that require or have mods with dependencies around said mod, nothing is shown in the terminal.
+F   29. When enabling or disabling submods that require or have mods with dependencies around said mod, nothing is shown in the terminal.
     
 F   30. When rrac-ing in the terminal, submod's terminal commands are removed and have no way of being put back.
         --added terminal reload event in submods which gets fired from the terminal handler itself to notfiy submods to replace their commands.
@@ -113,16 +115,23 @@ F   30. When rrac-ing in the terminal, submod's terminal commands are removed an
 F   31. The resize cursor appears on objects whose edges are under another object.
         --added a check that makes sure only the highestZLevel object can change the cursor image.
 
-    32. When action objects are fired the parent window is not brought to the front.
+F   32. When action objects are fired the parent window is not brought to the front.
+    
+    33. Chat history is always fully drawn while the proxy gui is open.
+    
+    34. TextAreaLines are not highlighted when clicking the white space of the line they are on.
+    
+    35. When using the arrow keys to traverse through an EGuiTextField's text, the letters appear to shift horizontally.
     
 
 
 EnhancedChat: (MAIN PRIORITY AFTER CORE)
-    1. Text/Mouse miss alignment when hovering/clicking on chat (the clickable area appears to be about 3 pixels lower than the text).
+F?  1. Text/Mouse miss alignment when hovering/clicking on chat (the clickable area appears to be about 3 pixels lower than the text).
 
     2. MainRCM is no longer opening.
     
 F?  3. NameFinder is not properly isolating names from chat messages.
+        --appears to be fixed now
     
 F   4. Hovering Events are still drawn even if the chat window is not the highest Z Object under mouse.
     
@@ -135,6 +144,9 @@ F   6. Pinned Chat Windows don't stay pinned when renderer proxy is closed.
     8. When pressing enter while a chatWindow is open, the chatWindow is closed (even if it's not in focus) and all other windows remain open (even if they aren't pinned).
     
 F   9. InGameChatWindow doesn't open at mouse position from RendererRCM.
+
+    10. New tabs are being created at full size when dragged off a header.
+    
     
     
 Clear Visuals:
@@ -174,7 +186,8 @@ F 2. When a vanilla gui is opened, the renderer proxy is effectively closed - br
      fit well in the larger scales. (ie. InGameChatWindow, MiniMapGui, etc.)
    
      On the largest scaling mode, nothing actually fits well..
-
+     
+  5. When switching worlds, if a proxy gui was open prior to switching, it is closed when exiting.
 
 --------------------------------
 Unfinished/Planned Core Features
@@ -196,3 +209,4 @@ D 4. EMC Console
  14. Select sounds for each notification from the EMC Core SubMod gui
  15. Finish EGuiColorPicker
  16. Redo EGuiDropDownList
+ 17. Achievement Notifications

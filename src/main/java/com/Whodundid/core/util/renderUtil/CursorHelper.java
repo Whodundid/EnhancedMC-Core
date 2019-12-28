@@ -1,5 +1,6 @@
 package com.Whodundid.core.util.renderUtil;
 
+import com.Whodundid.core.coreSubMod.EMCResources;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
@@ -23,59 +24,32 @@ import org.lwjgl.input.Mouse;
 public class CursorHelper {
 	
 	private static Cursor cursor;
-	public static Cursor iBeamCursor, invisibleCursor;
+	public static Cursor invisibleCursor;
 	public static boolean isVisible = true;
 	
 	public static void init() {
 		cursor = Mouse.getNativeCursor();
-		iBeamCursor = createCursorFromResourceLocation(Resources.mouseIBeam);
-		invisibleCursor = createCursorFromResourceLocation(Resources.emptyPixel);
+		invisibleCursor = createCursorFromResourceLocation(EMCResources.emptyPixel);
 	}
 	
-	public static void setCursorVisibility(boolean visible) {
-		if (isVisible != visible) {
-			try {
-				Mouse.setNativeCursor(visible ? cursor : invisibleCursor);
-			} catch (LWJGLException e) { e.printStackTrace(); }
-			isVisible = visible;
+	/** Will only change the cursor if the current one is different than the one to be set. */
+	public static void updateCursor(Cursor cursorIn) {
+		if (getCursor() == null) {
+			if (cursorIn != null) { setCursor(cursorIn); }
+		}
+		else if (!getCursor().equals(cursorIn)) {
+			setCursor(cursorIn);
 		}
 	}
 	
-	public static void setCursorInvisible() {
-		if (isVisible) {
-			try {
-				Mouse.setNativeCursor(invisibleCursor);
-			} catch (LWJGLException e) { e.printStackTrace(); }
-			isVisible = false;
-		}
-	}
-	
-	public static void setCursorVisible() {
-		if (!isVisible) {
-			try {
-				Mouse.setNativeCursor(cursor);
-			} catch (LWJGLException e) { e.printStackTrace(); }
-			isVisible = true;
-		}
-	}
-	
-	public static Point getExactMouseScreenLocation() {
-		if (MouseInfo.getPointerInfo() != null) {
-			return MouseInfo.getPointerInfo().getLocation();
-		}
-		return new Point(0, 0);
-	}
-	
-	public static Point getExactMouseLocationMC() {
-		return Mouse.isCreated() ? new Point(Mouse.getX(), Mouse.getY()) : new Point(0, 0);
-	}
-	
+	/** Attempts to set the cursor to the one specified. */
 	public static void setCursor(Cursor cursorIn) {
 		try {
 			Mouse.setNativeCursor(cursorIn);
 		} catch (LWJGLException e) { e.printStackTrace(); }
 	}
 	
+	/** Returns a new Cursor Object created from a Minecraft ResourceLocation. */
 	public static Cursor createCursorFromResourceLocation(ResourceLocation locIn) {
 		try {
 			IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(locIn);
@@ -86,6 +60,7 @@ public class CursorHelper {
 		return null;
 	}
 	
+	/** Returns a new Cursor Object created from an image file. */
 	public static Cursor createCursorFromFile(File fileIn) {
 		try {
 			InputStream stream = new FileInputStream(fileIn);
@@ -95,6 +70,7 @@ public class CursorHelper {
 		return null;
 	}
 	
+	/** Internal function used to map stitched image resources together to create a cursor of the same image. */
 	private static Cursor createCursor(BufferedImage imageIn) {
 		try {
 			int width = imageIn.getWidth();
@@ -109,10 +85,10 @@ public class CursorHelper {
 				for (int x = 0; x < width; x++) {
 					int pixel = pixels[y * width + x];
 					
-					buffer.put((byte) ((pixel >> 16) & 0xFF));
-		            buffer.put((byte) ((pixel >> 8) & 0xFF));
-		            buffer.put((byte) (pixel & 0xFF));
-		            buffer.put((byte) ((pixel >> 24) & 0xFF));
+					buffer.put((byte) ((pixel >> 16) & 0xff));
+		            buffer.put((byte) ((pixel >> 8) & 0xff));
+		            buffer.put((byte) (pixel & 0xff));
+		            buffer.put((byte) ((pixel >> 24) & 0xff));
 				}
 			}
 			buffer.flip();
@@ -123,6 +99,32 @@ public class CursorHelper {
 		return null;
 	}
 	
-	public static void reset() { setCursor(cursor); }
+	
+	/** Sets the cursor to be invisible. */
+	public static void setInvisible() { setCursorVisibility(false); }
+	/** Sets the cursor to be visible. */
+	public static void setVisible() { setCursorVisibility(true); }
+	/** Sets the cursor to be either visible or invisible. */
+	public static void setCursorVisibility(boolean visible) {
+		if (isVisible != visible) {
+			setCursor(visible ? cursor : invisibleCursor);
+			isVisible = visible;
+		}
+	}
+	
+	
+	/** Returns the mouse location in terms of OpenGL. */
+	public static Point getPosGL() { return MouseInfo.getPointerInfo() != null ? MouseInfo.getPointerInfo().getLocation() : new Point(0, 0); }
+	/** Returns the mouse location in terms of Minecraft. */
+	public static Point getPosMC() { return Mouse.isCreated() ? new Point(Mouse.getX(), Mouse.getY()) : new Point(0, 0); }
+	
+	
+	/** Resets the cursor image back to default. */
+	public static void reset() { setCursor(null); }
+	/** Returns true if the cursor is currently the default cursor. */
 	public static boolean isNormalCursor() { return Mouse.isCreated() && Mouse.getNativeCursor() == null; }
+	/** Returns the current cursor. */
+	public static Cursor getCursor() { return Mouse.getNativeCursor(); }
+	/** Returns true if the cursor is visible. */
+	public static boolean isCursorVisible() { return isVisible; }
 }

@@ -64,7 +64,7 @@ public abstract class WindowParent extends EnhancedGuiObject implements IWindowP
 	
 	protected void defaultPos() { centerObjectWithSize(defaultWidth, defaultHeight); }
 	protected void defaultDims() { setDimensions(startX, startY, defaultWidth, defaultHeight); }
-	protected void defaultHeader(IEnhancedGuiObject in) { setHeader(new EGuiHeader(in)); }
+	protected void defaultHeader(IWindowParent in) { setHeader(new EGuiHeader(in)); }
 	
 	@Override
 	public void mousePressed(int mXIn, int mYIn, int button) {
@@ -110,7 +110,8 @@ public abstract class WindowParent extends EnhancedGuiObject implements IWindowP
 				try {
 					WindowParent newGui = ((WindowParent) Class.forName(oldGuiPass.getClass().getName()).getConstructor().newInstance());
 					newGui.setGuiHistory(((WindowParent) oldGuiPass).getGuiHistory());
-					EnhancedMC.displayEGui(newGui, this, true, true, false, CenterType.object);
+					IWindowParent p = EnhancedMC.displayEGui(newGui, this, true, true, false, CenterType.object);
+					p.setPinned(this.isPinned());
 				} catch (Exception e) { e.printStackTrace(); }
 			}
 			else if (oldGuiPass instanceof GuiScreen) {

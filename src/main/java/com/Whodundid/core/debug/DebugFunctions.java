@@ -44,9 +44,10 @@ public class DebugFunctions {
 	}
 
 	private static void debug_0() throws Throwable {
+		EnhancedMC.getNotificationHandler().clearNotifications();
 		//EnhancedMC.getRenderer().addObject(new HotBarRenderer());
 		//System.out.println(EUtil.getFullEMCSourceFilePath(EnhancedMC.class));
-		EnhancedMC.getRenderer().addObject(new EGuiColorPicker(EnhancedMC.getRenderer(), 150, 150));
+		//EnhancedMC.getRenderer().addObject(new EGuiColorPicker(EnhancedMC.getRenderer(), 150, 150));
 	}
 	
 	private static void debug_1() throws Throwable {
@@ -58,6 +59,7 @@ public class DebugFunctions {
 	}
 	
 	private static void debug_3() throws Throwable {
-		EnhancedMC.displayEGui(new TestWindow(), CenterType.screen);
+		EnhancedMC.postNotification("HELLO");
+		//EnhancedMC.displayEGui(new TestWindow(), CenterType.screen);
 	}
 }

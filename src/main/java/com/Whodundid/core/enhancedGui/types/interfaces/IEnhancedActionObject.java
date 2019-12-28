@@ -10,9 +10,10 @@ public interface IEnhancedActionObject {
 	
 	//actions
 	
+	public void performAction(Object... args);
+	public void onPress();
 	public boolean runActionOnPress();
 	public IEnhancedActionObject setRunActionOnPress(boolean val);
-	public void performAction();
 	public IEnhancedActionObject setActionReciever(IEnhancedGuiObject objIn);
 	public IEnhancedGuiObject getActionReciever();
 	

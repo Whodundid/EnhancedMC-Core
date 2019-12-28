@@ -59,7 +59,7 @@ public class SubModErrorDialogueBox extends EGuiDialogueBox {
 	private void addEnable() {
 		EGuiButton enableAll = new EGuiButton(this, midX - 90, midY + 7, 65, 20, "Enable All") {
 			{ setRunActionOnPress(true); }
-			@Override public void performAction() {
+			@Override public void onPress() {
 				playPressSound();
 				reloadSettings(true);
 				parent.close();
@@ -71,7 +71,7 @@ public class SubModErrorDialogueBox extends EGuiDialogueBox {
 	private void addDisable() {
 		EGuiButton disableAll = new EGuiButton(this, midX - 90, midY + 7, 65, 20, "Disable All") {
 			{ setRunActionOnPress(true); }
-			@Override public void performAction() {
+			@Override public void onPress() {
 				playPressSound();
 				reloadSettings(false);
 				parent.close();
@@ -83,7 +83,7 @@ public class SubModErrorDialogueBox extends EGuiDialogueBox {
 	private void addCancel() {
 		EGuiButton cancel = new EGuiButton(this, midX + 30, midY + 7, 65, 20, "Cancel") {
 			{ setRunActionOnPress(true); }
-			@Override public void performAction() {
+			@Override public void onPress() {
 				playPressSound();
 				parent.close();
 			}
@@ -95,7 +95,7 @@ public class SubModErrorDialogueBox extends EGuiDialogueBox {
 		EGuiButton okButton = new EGuiButton(this, midX - 25, midY + 7, 50, 20, "Ok") {
 			{ setRunActionOnPress(true); }
 			@Override
-			public void performAction() {
+			public void onPress() {
 				playPressSound();
 				parent.close();
 			}

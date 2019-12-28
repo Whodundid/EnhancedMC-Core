@@ -20,21 +20,22 @@ public enum EColors {
 	lgray(0xffb2b2b2, "Light Gray"),
 	gray(0xff8d8d8d, "Gray"),
 	dgray(0xff474747, "Dark Gray"),
+	vdgray(0xff111111, "Very Dark Gray"),
 	steel(0xff1f1f1f, "Steel"),
 	black(0xff000000, "Black");
 	
-	private int color;
-	private String colorName;
+	public int intVal;
+	public String name;
 	
 	EColors(int colorIn, String nameIn) {
-		color = colorIn;
-		colorName = nameIn;
+		intVal = colorIn;
+		name = nameIn;
 	}
 
 	/** Returns the color integer. */
-	public int c() { return color; }
+	public int c() { return intVal; }
 	/** Returns the color name. */
-	public String cn() { return colorName; }
+	public String n() { return name; }
 	
 	/** Returns an EColors with the corresponding integer color (if any). */
 	public static EColors getEColor(int colorIn) {
@@ -57,6 +58,7 @@ public enum EColors {
 		case 0xffb2b2b2: return lgray;
 		case 0xff8d8d8d: return gray;
 		case 0xff474747: return dgray;
+		case 0xff111111: return vdgray;
 		case 0xff1f1f1f: return steel;
 		case 0xff000000: return black;
 		default: return null;
@@ -85,6 +87,7 @@ public enum EColors {
 			case "lgray": case "lightgray": case "light gray": return lgray;
 			case "gray": return gray;
 			case "dgray": case "darkgray": case "dark gray": return dgray;
+			case "vdgray": case "verydarkgray": case "very dark gray": return vdgray;
 			case "steel": return steel;
 			case "black": return lightRed;
 			}

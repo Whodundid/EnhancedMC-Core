@@ -15,7 +15,7 @@ public class DisableMod implements IConsoleCommand {
 	@Override public String getName() { return "disable"; }
 	@Override public EArrayList<String> getAliases() { return new EArrayList<String>("dis"); }
 	@Override public String getHelpInfo(boolean runVisually) { return "Attempts to disable a specified EMC submod"; }
-	@Override public String getUsage() { return "ex: dis chat"; }
+	@Override public String getUsage() { return "ex: dis core"; }
 	@Override public EArrayList<String> getTabCompleteList() { return null; }
 	
 	@Override

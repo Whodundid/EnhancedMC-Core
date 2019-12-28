@@ -14,9 +14,16 @@ public abstract class ActionWindowParent extends WindowParent implements IEnhanc
 	}
 	
 	//actions
+	@Override
+	public void performAction(Object... args) {
+		if (actionReciever != null) {
+			actionReciever.bringToFront();
+			actionReciever.actionPerformed(this, args);
+		}
+	}
+	@Override public void onPress() {}
 	@Override public boolean runActionOnPress() { return runActionOnPress; }
 	@Override public IEnhancedActionObject setRunActionOnPress(boolean value) { runActionOnPress = value; return this; }
-	@Override public void performAction() {}
 	@Override public IEnhancedActionObject setActionReciever(IEnhancedGuiObject objIn) { actionReciever = objIn; return this; }
 	@Override public IEnhancedGuiObject getActionReciever() { return actionReciever; }
 			

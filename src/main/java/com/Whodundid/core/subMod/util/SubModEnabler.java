@@ -31,6 +31,7 @@ public class SubModEnabler {
 				message = message.substring(0, message.length() - 2);
 				message += ")";
 				message += " are required to enable " + modIn.getName() + ".";
+				conIn.error(message);
 			}
 			else { SubModErrorDisplay.displayError(e.getErrorType(), modIn, e.getModList()); }
 		}
@@ -52,8 +53,9 @@ public class SubModEnabler {
 				if (modIn.isEnabled()) {
 					if (!modIn.isDisableable()) {
 						if (conIn != null) { conIn.error(modIn.getName() + " cannot be disabled!"); }
+						return false;
 					}
-					else { tryDisable(modIn); }
+					tryDisable(modIn);
 				}
 				
 				SubModSettings.updateModState(modIn, false);
@@ -67,6 +69,7 @@ public class SubModEnabler {
 				message = message.substring(0, message.length() - 2);
 				message += ")";
 				message += " require " + modIn.getName() + " to properly function.";
+				conIn.error(message);
 			}
 			else { SubModErrorDisplay.displayError(e.getErrorType(), modIn, e.getModList()); }
 		}

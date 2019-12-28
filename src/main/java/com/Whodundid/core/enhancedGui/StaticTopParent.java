@@ -75,10 +75,11 @@ public class StaticTopParent extends EGui {
 	public static void mouseScrolled(IEnhancedTopParent objIn, int mX, int mY, int change) {
 		objIn.postEvent(new EventMouse(objIn, mX, mY, -1, MouseType.Scrolled));
 		if (objIn.getHighestZObjectUnderMouse() != null) { //if there are actually any objects under the mouse
-			
-			for (IEnhancedGuiObject o : objIn.getObjects()) {
-				if (o.isMouseInside(mX, mY) && o.checkDraw()) { o.mouseScrolled(change); } //only notify them if they are actually under the cursor and visible
-			}
+			IEnhancedGuiObject obj = objIn.getHighestZObjectUnderMouse();
+			IWindowParent p = obj.getWindowParent();
+			//only scroll the top most window under the mouse
+			if (p != null) { p.mouseScrolled(change); }
+			else { obj.mouseScrolled(change); }
 		} else { //if there were no objects under the mouse, scroll the chat
 			if (RegisteredSubMods.isModRegistered(SubModType.ENHANCEDCHAT)) {
 				ModCalloutEvent callout = new ModCalloutEvent(objIn, "has chat window"); // I AM NOT SURE IF THIS ACTUALLY ACCOMPLISHED ANYTHING!

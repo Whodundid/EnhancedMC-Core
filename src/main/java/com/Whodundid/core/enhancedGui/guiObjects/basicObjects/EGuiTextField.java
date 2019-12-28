@@ -35,6 +35,7 @@ public class EGuiTextField extends EnhancedActionObject {
 	protected boolean onlyAcceptNumbers = false;
 	protected boolean allowClipboardPastes = true;
 	protected boolean useObjectGroupForCursorDraw = false;
+	protected boolean drawShadowed = true;
 	protected int cursorCounter;
 	protected int lineScrollOffset;
 	protected int cursorPosition;
@@ -77,7 +78,8 @@ public class EGuiTextField extends EnhancedActionObject {
 		if (k > s.length()) { k = s.length(); }
 		if (s.length() > 0) {
 			String s1 = flag ? s.substring(0, j) : s;
-			j1 = drawStringWithShadow(s1, l, i1, drawColor);
+			if (drawShadowed) { j1 = drawStringWithShadow(s1, l, i1, drawColor); }
+			else { j1 = drawString(s1, l, i1, drawColor); }
 		}
 		
 		boolean flag2 = cursorPosition < text.length() || text.length() >= getMaxStringLength();
@@ -90,12 +92,16 @@ public class EGuiTextField extends EnhancedActionObject {
 		}
 		
 		if (s.length() > 0 && flag && j < s.length()) {
-			j1 = drawStringWithShadow(s.substring(j), j1, i1, drawColor);
+			if (drawShadowed) { j1 = drawStringWithShadow(s.substring(j), j1, i1, drawColor); }
+			else { j1 = drawString(s.substring(j), j1, i1, drawColor); }
 		}
 		
 		if (drawCursorFlag) {
 			if (flag2) { drawRect(k1, i1 - 1, k1 + 1, i1 + 1 + fontRenderer.FONT_HEIGHT, -3092272); }
-			else { drawStringWithShadow("_", k1, i1, drawColor); }
+			else {
+				if (drawShadowed) { drawStringWithShadow("_", k1, i1, drawColor); }
+				else { drawString("_", k1, i1, drawColor); }
+			}
 		}
 		
 		if (k != j) {
@@ -403,6 +409,7 @@ public class EGuiTextField extends EnhancedActionObject {
 	public EGuiTextField clear() { setText(""); return this; }
 	public EGuiTextField setBackgroundColor(int colorIn) { backgroundColor = colorIn; return this; }
 	public EGuiTextField setBorderColor(int colorIn) { borderColor = colorIn; return this; }
+	public EGuiTextField setDrawShadowed(boolean val) { drawShadowed = val; return this; }
 	
 	public void updateCursorCounter() { cursorCounter++; }
 	public int getMaxStringLength() { return maxStringLength; }
@@ -410,6 +417,7 @@ public class EGuiTextField extends EnhancedActionObject {
 	public boolean getEnableBackgroundDrawing() { return enableBackgroundDrawing; }
 	public boolean onlyAcceptsletters() { return onlyAcceptLetters; }
 	public boolean onlyAcceptsNumbers() { return onlyAcceptNumbers; }
+	public boolean drawsShadowed() { return drawShadowed; }
 	public boolean allowsClipboardPastes() { return allowClipboardPastes; }
 	public int getSelectionEnd() { return selectionEnd; }
 	public int getWidth() { return getEnableBackgroundDrawing() ? width - 8 : width; }

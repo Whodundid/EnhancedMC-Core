@@ -2,7 +2,7 @@ package com.Whodundid.core.settings;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.coreSubMod.EnhancedMCMod;
-import com.Whodundid.core.debug.ExperimentGui;
+import com.Whodundid.core.coreSubMod.EMCResources;
 import com.Whodundid.core.debug.ImportantGui;
 import com.Whodundid.core.enhancedGui.StaticEGuiObject;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
@@ -27,7 +27,6 @@ import com.Whodundid.core.subMod.SubModType;
 import com.Whodundid.core.subMod.gui.IncompatibleWindowList;
 import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.util.renderUtil.CenterType;
-import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
@@ -42,7 +41,7 @@ import com.Whodundid.core.util.storageUtil.EDimension;
 public class SettingsGuiMain extends WindowParent {
 	
 	EGuiButton keyBindGui, reloadConfigs, problem;
-	EGuiButton experimentGui, disableDebugMode, consoleBtn;
+	EGuiButton consoleBtn;
 	EGuiButton hiddenButton1, hiddenButton2;
 	EGuiScrollList scrollList;
 	EGuiTextField searchField;
@@ -77,8 +76,6 @@ public class SettingsGuiMain extends WindowParent {
 				super.mousePressed(mXIn, mYIn, button);
 			}
 		};
-		experimentGui = new EGuiButton(this, 1, res.getScaledHeight() - 21, 85, 20, "ExperimentGui");
-		disableDebugMode = new EGuiButton(this, experimentGui.endX + 1, res.getScaledHeight() - 21, 85, 20, "Disable Debug");
 		consoleBtn = new EGuiButton(this, reloadConfigs.endX + 3, endY - 25, keyBindGui.startX - reloadConfigs.endX - 6, 20) {
 			@Override
 			public void mousePressed(int mXIn, int mYIn, int button) {
@@ -88,31 +85,23 @@ public class SettingsGuiMain extends WindowParent {
 				super.mousePressed(mXIn, mYIn, button);
 			}
 		};
-		problem = new EGuiButton(this, endX - 17, startY + 2, 15, 15).setTextures(Resources.guiProblemOpen, Resources.guiProblemOpenSel);
+		problem = new EGuiButton(this, endX - 17, startY + 2, 15, 15).setTextures(EMCResources.guiProblemOpen, EMCResources.guiProblemOpenSel);
 		
 		problem.setVisible(RegisteredSubMods.getIncompatibleModsList().isNotEmpty());
 		problem.setDrawBackground(true).setBackgroundColor(0xffbb0000);
 		
 		reloadConfigs.setActionReciever(this);
 		keyBindGui.setActionReciever(this);
-		experimentGui.setActionReciever(this);
-		disableDebugMode.setActionReciever(this);
 		problem.setActionReciever(this);
 		
-		experimentGui.setVisible(EnhancedMC.isDebugMode());
-		experimentGui.setMoveable(true);
-		disableDebugMode.setVisible(EnhancedMC.isDebugMode());
-		disableDebugMode.setMoveable(true);
 		StaticEGuiObject.setPersistent(true, keyBindGui, reloadConfigs);
 		
 		hiddenButton1 = new EGuiButton(this, startX + 1, startY + 1, 10, 10) {
-			@Override public void performAction() {
+			@Override public void onPress() {
 				if (getPressedButton() == 0) {
 					if (!EnhancedMC.isDebugMode()) {
 						leftPress++;
 						if (leftPress == 3 && rightPress == 1) {
-							experimentGui.setVisible(true);
-							disableDebugMode.setVisible(true);
 							EnhancedMC.setDebugMode(true);
 							playPressSound();
 						}
@@ -125,7 +114,7 @@ public class SettingsGuiMain extends WindowParent {
 		};
 		
 		hiddenButton2 = new EGuiButton(this, endX - (RegisteredSubMods.getIncompatibleModsList().isEmpty() ? 11 : 28), startY + 1, 10, 10) {
-			@Override public void performAction() {
+			@Override public void onPress() {
 				if (getPressedButton() == 0) {
 					if (!EnhancedMC.isDebugMode()) {
 						if (leftPress == 2) { rightPress++; }
@@ -137,8 +126,8 @@ public class SettingsGuiMain extends WindowParent {
 			}
 		};
 		
-		hiddenButton1.setTextures(Resources.emptyPixel, Resources.emptyPixel).setRunActionOnPress(true);
-		hiddenButton2.setTextures(Resources.emptyPixel, Resources.emptyPixel).setRunActionOnPress(true);
+		hiddenButton1.setTextures(EMCResources.emptyPixel, EMCResources.emptyPixel).setRunActionOnPress(true);
+		hiddenButton2.setTextures(EMCResources.emptyPixel, EMCResources.emptyPixel).setRunActionOnPress(true);
 		
 		scrollList = new EGuiScrollList(this, startX + 5, startY + 23, endX - startX - 10, endY - startY - 75).setBackgroundColor(0xff252525);
 		
@@ -154,7 +143,6 @@ public class SettingsGuiMain extends WindowParent {
 		//add all objects first
 		addObject(scrollList, problem, searchField, keyBindGui, reloadConfigs);
 		addObject(hiddenButton1, hiddenButton2);
-		addObject(experimentGui, disableDebugMode);
 		
 		EnhancedMCMod em = (EnhancedMCMod) RegisteredSubMods.getMod(SubModType.CORE);
 		if (em.enableTerminal.get()) { addObject(consoleBtn); }
@@ -301,14 +289,6 @@ public class SettingsGuiMain extends WindowParent {
 			if (object == reloadConfigs) {
 				EnhancedMC.displayEGui(new ReloaderDialogueBox(RegisteredSubMods.getRegisteredModsList()), CenterType.screen);
 				assembleList();
-			}
-			if (object == experimentGui) { EnhancedMC.displayEGui(new ExperimentGui(), this); }
-			if (object == disableDebugMode) {
-				EnhancedMC.setDebugMode(false);
-				experimentGui.setVisible(false);
-				disableDebugMode.setVisible(false);
-				leftPress = 0;
-				rightPress = 0;
 			}
 			if (object == consoleBtn) { EnhancedMC.displayEGui(new ETerminal(), this, true, false, false, CenterType.objectIndent); }
 			if (object == problem) { EnhancedMC.displayEGui(new IncompatibleWindowList()); }

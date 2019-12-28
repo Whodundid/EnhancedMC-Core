@@ -38,10 +38,10 @@ public class GuiOpener {
 				
 				if (obj != null) {
 					if (obj instanceof WindowParent) {
-						return EnhancedMC.displayEGui((WindowParent) obj, old, typeIn);
+						return EnhancedMC.displayEGui((WindowParent) obj, old, true, false, false, typeIn);
 					}
 					else if (obj instanceof EnhancedGui) {
-						return EnhancedMC.displayEGui((EnhancedGui) obj, old, typeIn);
+						return EnhancedMC.displayEGui((EnhancedGui) obj, old, true, false, false, typeIn);
 					}
 					else if (obj instanceof GuiScreen) {
 						Minecraft.getMinecraft().displayGuiScreen((GuiScreen) obj);

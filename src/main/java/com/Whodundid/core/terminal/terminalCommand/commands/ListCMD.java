@@ -63,7 +63,6 @@ public class ListCMD implements IConsoleCommand {
 				EColors c = m.isIncompatible() ? EColors.lightRed : EColors.lgray;
 				String s = "-" + m.getName() + ": " + (m.isEnabled() ? EnumChatFormatting.GREEN + "Enabled" : EnumChatFormatting.RED + "Disabled");
 				
-				
 				if (runVisually) {
 					String aliasList = EnumChatFormatting.GRAY + " ; " + EnumChatFormatting.AQUA;
 					for (int i = 0; i < m.getNameAliases().size(); i++) {
@@ -173,14 +172,30 @@ public class ListCMD implements IConsoleCommand {
 		EArrayList<SubMod> mods = RegisteredSubMods.getModsList();
 		if (mods != null) {
 			conIn.writeln("Listing all EMC Guis...", EColors.cyan);
+			
 			conIn.writeln("-Debug", EColors.green);
-			conIn.writeln("    " + ExperimentGui.class.getSimpleName(), EColors.lgray);
-			conIn.writeln("    " + conIn.getClass().getSimpleName(), EColors.lgray);
+			String experiment = "    " + ExperimentGui.class.getSimpleName();
+			String terminal = "    " + conIn.getClass().getSimpleName();
+			if (runVisually) {
+				experiment += " " + EnumChatFormatting.AQUA + "experimentgui, experiment, testgui";
+				terminal += " " + EnumChatFormatting.AQUA;
+				for (String s : conIn.getAliases()) { terminal += s + ", "; }
+				if (conIn.getAliases().size() > 0) { terminal = terminal.substring(0, terminal.length() - 2); }
+			}
+			conIn.writeln(experiment, EColors.lgray);
+			conIn.writeln(terminal, EColors.lgray);
+			
 			for (SubMod m : RegisteredSubMods.getModsList()) {
 				if (m.getGuis().isNotEmpty()) {
 					conIn.writeln("-" + m.getName(), EColors.green);
 					for (IWindowParent g : m.getGuis()) {
-						conIn.writeln("    " + g.getClass().getSimpleName(), EColors.lgray);
+						String gui = "    " + g.getClass().getSimpleName();
+						if (runVisually) {
+							gui += " " + EnumChatFormatting.AQUA;
+							for (String s : g.getAliases()) { gui += s + ", "; }
+							if (g.getAliases().size() > 0) { gui = gui.substring(0, gui.length() - 2); }
+						}
+						conIn.writeln(gui, EColors.lgray);
 					}
 				}
 			}

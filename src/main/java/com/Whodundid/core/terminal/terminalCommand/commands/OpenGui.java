@@ -1,9 +1,11 @@
 package com.Whodundid.core.terminal.terminalCommand.commands;
 
+import com.Whodundid.core.debug.ExperimentGui;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.IConsoleCommand;
+import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.guiUtil.GuiOpener;
 import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.renderUtil.EColors;
@@ -23,7 +25,11 @@ public class OpenGui implements IConsoleCommand {
 			if (args.isEmpty()) { conIn.info(getUsage()); }
 			else if (args.size() >= 1) {
 				EArrayList<Class> guis = new EArrayList();
-				for (String s : args) { guis.add(RegisteredSubMods.getGuiClassByAlias(s)); }
+				for (String s : args) {
+					if (EUtil.findMatch(s, conIn.getAliases())) { guis.addIfNotNull(conIn.getClass()); }
+					else if (EUtil.findMatch(s, ExperimentGui.aliases)) { guis.addIfNotNull(ExperimentGui.class); }
+					else { guis.addIfNotNull(RegisteredSubMods.getGuiClassByAlias(s)); }
+				}
 				
 				Object lastGui = null;
 				for (int i = 0; i < guis.size(); i++) {

@@ -1,6 +1,7 @@
 package com.Whodundid.core.settings.guiParts;
 
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.coreSubMod.EMCResources;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiScrollList;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
@@ -14,7 +15,6 @@ import com.Whodundid.core.subMod.gui.SubModInfoDialogueBox;
 import com.Whodundid.core.subMod.util.SubModEnabler;
 import com.Whodundid.core.subMod.util.SubModErrorDisplay;
 import com.Whodundid.core.util.renderUtil.CenterType;
-import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import org.lwjgl.input.Keyboard;
 
@@ -52,7 +52,7 @@ public class SettingsMenuContainer extends EnhancedGuiObject {
 		enable = new EGuiButton(this, settings.endX + 11, d.startY + 3 + (pos * dist) + offset, 50, 20, mod != null ? mod.isDisableable() ? (mod.isEnabled() ? "Enabled" : "Disabled") : "Enabled" : "ERROR");
 		info = new EGuiButton(this, enable.endX + 4, d.startY + 3 + (pos * dist) + offset, 20, 20);
 		
-		info.setTextures(Resources.guiInfo, Resources.guiInfoSel);
+		info.setTextures(EMCResources.guiInfo, EMCResources.guiInfoSel);
 		
 		settings.setEnabled(mod.isIncompatible() ? false : true);
 		enable.setEnabled(mod != null ? (mod.isIncompatible() ? false : mod.isDisableable()) : false);

@@ -79,21 +79,8 @@ public class EGuiScreenLocationSelector extends EnhancedActionObject {
 			//mc.displayGuiScreen(newGui);
 			EnhancedMC.displayEGui(newGui, this);
 		}
-		if (actionReciever != null) { actionReciever.actionPerformed(this); }
+		performAction(null);
 	}
 	
 	public EGuiScreenLocationSelector setDisplayName(String nameIn) { drawName = nameIn; return this; }
-
-	//-------------------------------
-	//IEnhancedActionObject overrides
-	//-------------------------------
-			
-	//actions
-	@Override public boolean runActionOnPress() { return runActionOnPress; }
-	@Override public EGuiScreenLocationSelector setRunActionOnPress(boolean value) { runActionOnPress = value; return this; }
-	@Override public void performAction() {}
-			
-	//objects
-	@Override public EGuiScreenLocationSelector setSelectedObject(Object objIn) { storedObject = objIn; return this; }
-	@Override public Object getSelectedObject() { return storedObject; }
 }

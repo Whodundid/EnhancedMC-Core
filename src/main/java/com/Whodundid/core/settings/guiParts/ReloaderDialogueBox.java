@@ -65,13 +65,13 @@ public class ReloaderDialogueBox extends EGuiDialogueBox {
 		}
 		
 		okButton = new EGuiButton(this, midX - 25, endY - 25, 50, 20, "Ok") {
-			{ setRunActionOnPress(true); }
 			@Override
-			public void performAction() {
+			public void onPress() {
 				playPressSound();
 				parent.close();
 			}
 		};
+		okButton.setRunActionOnPress(true);
 		addObject(okButton.setZLevel(1));
 		
 		addObject(display);

@@ -42,7 +42,7 @@ public class EGuiColorPickerSimple extends ActionWindowParent {
 	
 	@Override
 	public void initGui() {
-		setDimensions(211, 210);
+		setDimensions(211, 118);
 		setPinnable(false);
 		setObjectName("Color Picker");
 		setResizeable(true);
@@ -62,17 +62,18 @@ public class EGuiColorPickerSimple extends ActionWindowParent {
 		updateValues();
 		
 		//create color buttons
-		EGuiContainer colorContainer = new EGuiContainer(this, startX + 5, colorDisplay.endY + 8, width - 10, 56);
+		EGuiContainer colorContainer = new EGuiContainer(this, startX + 5, startY + 5, width - 10, 41);
 		colorContainer.setTitle("Color Palette");
 		colorContainer.setTitleColor(EColors.lgray.c());
 		colorContainer.setBackgroundColor(0xff555555);
+		colorContainer.setDrawTitle(false);
 		
-		red = new ColorButton(this, colorContainer.startX + 5, colorContainer.startY + 21, 15, 15, "Red", EColors.red);
+		red = new ColorButton(this, colorContainer.startX + 5, colorContainer.startY + 5, 15, 15, "Red", EColors.red);
 		orange = new ColorButton(this, red.endX + 1, red.startY, 15, 15, "Orange", EColors.orange);
 		yellow = new ColorButton(this, orange.endX + 1, red.startY, 15, 15, "Yellow", EColors.yellow);
 		lime = new ColorButton(this, yellow.endX + 1, red.startY, 15, 15, "Lime", EColors.lime);
 		green = new ColorButton(this, lime.endX + 1, red.startY, 15, 15, "Green", EColors.darkGreen);
-		seafoam = new ColorButton(this, green.endX + 1, red.startY, 15, 15, "Turquoise", EColors.seafoam);
+		seafoam = new ColorButton(this, green.endX + 1, red.startY, 15, 15, "Seafoam", EColors.seafoam);
 		cyan = new ColorButton(this, seafoam.endX + 1, red.startY, 15, 15, "Cyan", EColors.cyan);
 		blue = new ColorButton(this, cyan.endX + 1, red.startY, 15, 15, "Blue", EColors.blue);
 		navy = new ColorButton(this, blue.endX + 1, red.startY, 15, 15, "Navy", EColors.navy);
@@ -80,7 +81,7 @@ public class EGuiColorPickerSimple extends ActionWindowParent {
 		magenta = new ColorButton(this, purple.endX + 1, red.startY, 15, 15, "Magenta", EColors.magenta);
 		pink = new ColorButton(this, magenta.endX + 1, red.startY, 15, 15, "Pink", EColors.pink);
 		
-		white = new ColorButton(this, lime.startX, purple.endY + 1, 15, 15, "White", EColors.white);
+		white = new ColorButton(this, red.startX, purple.endY + 1, 15, 15, "White", EColors.white);
 		lgray = new ColorButton(this, white.endX + 1, purple.endY + 1, 15, 15, "Light Gray", EColors.lgray);
 		gray = new ColorButton(this, lgray.endX + 1, purple.endY + 1, 15, 15, "Gray", EColors.gray);
 		dgray = new ColorButton(this, gray.endX + 1, purple.endY + 1, 15, 15, "Dark Gray", EColors.dgray);
@@ -117,7 +118,7 @@ public class EGuiColorPickerSimple extends ActionWindowParent {
 		inputContainer.setBackgroundColor(0xff555555);
 		inputContainer.setHoverText("The current color value in (RGB) hexadecimal format");
 		
-		inputField = new EGuiTextField(this, inputContainer.midX - 33, inputContainer.startY + 22, 66, 14);
+		inputField = new EGuiTextField(this, inputContainer.startX + 6, inputContainer.startY + 22, 66, 14);
 		//inputLabel = new EGuiLabel(this, inputContainer.startX + 10, inputField.startY + 3, "Hexadecimal color value");
 		
 		inputField.setMaxStringLength(8);
@@ -126,7 +127,7 @@ public class EGuiColorPickerSimple extends ActionWindowParent {
 		
 		//create select and back buttons
 		back = new EGuiButton(this, startX + 5, endY - 25, 62, 20, "Back");
-		select = new EGuiButton(this, endX - 67, endY - 25, 62, 20, "Select");
+		select = new EGuiButton(this, endX - 67, endY - 25, 62, 20, "Confirm");
 		
 		//add containers
 		addObject(colorContainer, inputContainer);
@@ -140,7 +141,7 @@ public class EGuiColorPickerSimple extends ActionWindowParent {
 		inputContainer.addObject(inputField);
 		
 		addObject(select, back);
-		addObject(colorDisplay, colorLabel);
+		//addObject(colorDisplay, colorLabel);
 		
 		updateValues();
 	}
@@ -151,7 +152,7 @@ public class EGuiColorPickerSimple extends ActionWindowParent {
 		
 		if (colorDisplay != null) {
 			EDimension cDim = colorDisplay.getDimensions();
-			drawRect(cDim.startX - 1, cDim.startY - 1, cDim.endX + 1, cDim.endY + 1, 0xff000000);
+			//drawRect(cDim.startX - 1, cDim.startY - 1, cDim.endX + 1, cDim.endY + 1, 0xff000000);
 		}
 		
 		super.drawObject(mXIn, mYIn, ticks);
@@ -197,8 +198,8 @@ public class EGuiColorPickerSimple extends ActionWindowParent {
 	private void updateValues() {
 		colorDisplay.setColor(currentColor);
 		EColors c = EColors.getEColor(currentColor);
-		colorDisplay.setHoverText(c != null ? c.cn() : "" + currentColor).setHoverTextColor(EColors.white.c());
-		String cs = "Current Color: " + (c != null ? c.cn() : "" + Integer.toHexString(currentColor).substring(2));
+		colorDisplay.setHoverText(c != null ? c.n() : "" + currentColor).setHoverTextColor(EColors.white.c());
+		String cs = "Current Color: " + (c != null ? c.n() : "" + Integer.toHexString(currentColor).substring(2));
 		colorLabel.setDisplayString(cs);
 		try {
 			String val = "";

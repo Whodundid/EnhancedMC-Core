@@ -1,6 +1,7 @@
 package com.Whodundid.core.enhancedGui.types;
 
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.coreSubMod.EMCResources;
 import com.Whodundid.core.enhancedGui.StaticEGuiObject;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
 import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.EGuiFocusLockBorder;
@@ -26,7 +27,6 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.util.chatUtil.EChatUtil;
 import com.Whodundid.core.util.renderUtil.CursorHelper;
-import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
@@ -99,6 +99,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	protected boolean clickable = true;
 	protected boolean firstDraw = false;
 	protected boolean closeable = true;
+	protected boolean closed = false;
 	protected int minWidth = 0;
 	protected int minHeight = 0;
 	protected int maxWidth = Integer.MAX_VALUE;
@@ -209,34 +210,20 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	@Override public boolean hasFirstDraw() { return firstDraw; }
 	@Override
 	public void updateCursorImage() {
-		if (isResizeable() && !EnhancedMC.safeRemoteDesktopMode && getTopParent().getModifyType() != ObjectModifyType.Resize) {
-			if (getTopParent().getHighestZObjectUnderMouse() == this) {
-				int rStartY = hasHeader() ? getHeader().startY : startY;
-				ScreenLocation newArea = getEdgeAreaMouseIsOn();
-				if (newArea != oldArea) {
-					if (!Mouse.isButtonDown(0)) {
-						oldArea = newArea;
-						switch (newArea) {
-						case top:
-						case bot: CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeNS));
-						break;
-						case left:
-						case right: CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeEW));
-						break;
-						case topRight:
-						case botLeft: CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeDL));
-						break;
-						case topLeft:
-						case botRight: CursorHelper.setCursor(CursorHelper.createCursorFromResourceLocation(Resources.mouseResizeDR));
-						break;
-						default: CursorHelper.setCursor(null); break;
-						}
-					} else {
-						CursorHelper.setCursor(null);
-					}
+		//System.out.println(this);
+		if (isResizeable() && getTopParent().getModifyType() != ObjectModifyType.Resize) {
+			int rStartY = hasHeader() ? getHeader().startY : startY;
+			if (!Mouse.isButtonDown(0)) {
+				switch (getEdgeAreaMouseIsOn()) {
+				case top: case bot: CursorHelper.updateCursor(EMCResources.resizeNS); break;
+				case left: case right: CursorHelper.updateCursor(EMCResources.resizeEW); break;
+				case topRight: case botLeft: CursorHelper.updateCursor(EMCResources.resizeDL); break;
+				case topLeft: case botRight: CursorHelper.updateCursor(EMCResources.resizeDR); break;
+				default: CursorHelper.setCursor(null); break;
 				}
 			}
 		}
+		else { CursorHelper.updateCursor(null); }
 	}
 	@Override public void onMouseHover(int mX, int mY) {
 		if (hoverText != null && !hoverText.isEmpty()) {
@@ -418,10 +405,8 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	@Override public void mouseExited(int mX, int mY) { postEvent(new EventMouse(this, mX, mY, -1, MouseType.Exited)); }
 	@Override
 	public boolean isMouseInside(int mX, int mY) {
-		
 		if (isBoundaryEnforced()) {
 			EDimension b = boundaryDimension;
-			//System.out.print(this + " " + getDimensions() + "[" + mX + "," + mY + "][" + (mX >= startX && mX >= b.startX && mX <= endX && mX <= b.endX && mY >= startY && mY >= b.startY && mY <= endY && mY <= b.endY) + "]\n");
 			return mX >= startX && mX >= b.startX && mX <= endX && mX <= b.endX && mY >= startY && mY >= b.startY && mY <= endY && mY <= b.endY;
 		}
 		return mX >= startX && mX <= endX && mY >= startY && mY <= endY;
@@ -444,7 +429,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	@Override public IEnhancedGuiObject registerListener(IEnhancedGuiObject objIn) { if (eventHandler != null) { eventHandler.registerObject(objIn); } return this; }
 	@Override public IEnhancedGuiObject unregisterListener(IEnhancedGuiObject objIn) { if (eventHandler != null) { eventHandler.unregisterObject(objIn); } return this; }
 	@Override public IEnhancedGuiObject postEvent(ObjectEvent e) { if (eventHandler != null) { eventHandler.processEvent(e); } return this; }
-	@Override public void onListen(ObjectEvent e) {}
+	@Override public void onEvent(ObjectEvent e) {}
 	
 	//action object
 	@Override public void actionPerformed(IEnhancedActionObject object, Object... args) { postEvent(new EventAction(this, object, args)); }
@@ -457,9 +442,11 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 			if (getTopParent().getFocusedObject().equals(this)) { relinquishFocus(); }
 			if (focusObjectOnClose != null) { focusObjectOnClose.requestFocus(); }
 			parent.removeObject(this);
+			closed = true;
 		}
 	}
 	@Override public boolean isCloseable() { return closeable; }
+	@Override public boolean isClosed() { return closed; }
 	@Override public IEnhancedGuiObject setCloseable(boolean val) { closeable = val; return this; }
 	@Override public void onClosed() {}
 	@Override public IEnhancedGuiObject setFocusedObjectOnClose(IEnhancedGuiObject objIn) { focusObjectOnClose = objIn; return this; }
@@ -476,7 +463,6 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 		if (mouseEntered && !isMouseOver(mX, mY)) { mouseEntered = false; mouseExited(mX, mY); }
 		if (!objsToBeRemoved.isEmpty()) { StaticEGuiObject.removeObjects(this, objsToBeRemoved); }
 		if (!objsToBeAdded.isEmpty()) { StaticEGuiObject.addObjects(this, objsToBeAdded); }
-		updateCursorImage();
 	}
 	
 	public void setText(String textIn, boolean overwrite) {}

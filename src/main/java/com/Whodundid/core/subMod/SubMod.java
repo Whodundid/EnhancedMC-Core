@@ -37,13 +37,13 @@ public abstract class SubMod {
 	protected EArrayList<IWindowParent> guis = new EArrayList();
 	protected StorageBoxHolder<String, String> dependencies = new StorageBoxHolder().noDuplicates();
 	protected StorageBoxHolder<String, String> softDependencies = new StorageBoxHolder().noDuplicates();
-	protected String modName = "noname";
+	protected String modName = "no name";
 	protected EArrayList<String> nameAliases = new EArrayList();
 	protected SubModConfigManager configManager;
 	protected boolean enabled = false;
-	protected String version = "unspecified";
-	protected String author = "unspecified";
-	protected String versionDate = "unspecified";
+	protected String version = "no version";
+	protected String author = "no author";
+	protected String versionDate = "no date";
 	protected boolean isDisableable = true;
 	protected boolean incompatible = false; //a flag stating that this submod is incompatible with at least one other loaded emc submod
 	

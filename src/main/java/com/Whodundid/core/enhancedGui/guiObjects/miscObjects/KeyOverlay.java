@@ -1,14 +1,14 @@
 package com.Whodundid.core.enhancedGui.guiObjects.miscObjects;
 
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
-import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 
 //Last edited: Apr 1, 2019
 //First Added: Apr 1, 2019
 //Author: Hunter Bragg
 
-public class KeyOverlay extends EnhancedGuiObject {
+public class KeyOverlay extends WindowParent {
 	
 	EGuiHeader movementHeader = null;
 	boolean lmb = false;

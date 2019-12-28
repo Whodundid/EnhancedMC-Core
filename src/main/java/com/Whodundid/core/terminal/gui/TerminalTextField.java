@@ -11,6 +11,8 @@ public class TerminalTextField extends EGuiTextField {
 	public TerminalTextField(ETerminal termIn, int xIn, int yIn, int widthIn, int heightIn) {
 		super(termIn, xIn, yIn, widthIn, heightIn);
 		term = termIn;
+		setUseObjectGroupForCursorDraws(true);
+		setDrawShadowed(false);
 	}
 	
 	@Override

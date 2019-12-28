@@ -180,7 +180,7 @@ public interface IEnhancedGuiObject extends ITabCompleteListener {
 	/** Returns the top most parent object in the parent chain. */
 	public IEnhancedTopParent getTopParent();
 	/** Returns the first instance of an InnerEnhancedGui in the parent chain. */
-	public IEnhancedGuiObject getWindowParent();
+	public IWindowParent getWindowParent();
 	
 	//zLevel
 	
@@ -262,7 +262,7 @@ public interface IEnhancedGuiObject extends ITabCompleteListener {
 	/** Broadcasts an ObjectEvent on this object. */
 	public IEnhancedGuiObject postEvent(ObjectEvent e);
 	/** Called on ObjectEvents. */
-	public void onListen(ObjectEvent e);
+	public void onEvent(ObjectEvent e);
 	
 	//action
 	
@@ -273,6 +273,8 @@ public interface IEnhancedGuiObject extends ITabCompleteListener {
 	
 	/** Returns whether this object can be closed or not. */
 	public boolean isCloseable();
+	/** Returns true is this object has been closed. */
+	public boolean isClosed();
 	/** Sets whether this object can be closed or not. */
 	public IEnhancedGuiObject setCloseable(boolean val);
 	/** Removes this object and all of it's children from the immeadiate a parent. Removes any present focus locks on this object and returns focus back to the top parent. */

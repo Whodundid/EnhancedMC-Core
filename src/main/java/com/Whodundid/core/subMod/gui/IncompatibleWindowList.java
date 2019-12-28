@@ -47,13 +47,13 @@ public class IncompatibleWindowList extends EGuiDialogueBox {
 		setHeader(new EGuiHeader(this));
 		
 		okButton = new EGuiButton(this, midX - 25, endY - 27, 50, 20, "Ok") {
-			{ setRunActionOnPress(true); }
 			@Override
-			public void performAction() {
+			public void onPress() {
 				playPressSound();
 				parent.close();
 			}
 		};
+		okButton.setRunActionOnPress(true);
 		addObject(okButton.setZLevel(1));
 		
 		problem = new EGuiLabel(this, midX, startY + 6, "The following EMC SubMods are incompatible.");

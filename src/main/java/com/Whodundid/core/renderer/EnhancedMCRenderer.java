@@ -28,7 +28,6 @@ import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
@@ -41,17 +40,14 @@ import org.lwjgl.opengl.GL11;
 
 public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTopParent {
 	
-	protected static Minecraft mc = Minecraft.getMinecraft();
 	public static EnhancedMCRenderer instance;
-	protected ScaledResolution res;
 	protected IEnhancedGuiObject modifyingObject;
 	protected IEnhancedGuiObject objectRequestingFocus, focusedObject, focusLockObject;
 	protected IEnhancedGuiObject defaultFocusObject;
 	protected IEnhancedGuiObject toFront, toBack;
 	protected IEnhancedGuiObject hoveringTextObject;
-	public long mouseHoverTime = 0l;
-	public long hoverRefTime = 0l;
-	public StorageBox<Integer, Integer> oldMousePos = new StorageBox();
+	protected IRendererProxy proxy;
+	protected StorageBox<Integer, Integer> oldMousePos = new StorageBox();
 	protected EArrayList<IEnhancedGuiObject> guiObjects = new EArrayList();
 	protected EArrayList<IEnhancedGuiObject> objsToBeAdded = new EArrayList();
 	protected EArrayList<IEnhancedGuiObject> objsToBeRemoved = new EArrayList();
@@ -60,15 +56,11 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	protected Deque<EventFocus> focusQueue = new ArrayDeque();
 	protected ObjectModifyType modifyType = ObjectModifyType.None;
 	protected ScreenLocation resizingDir = ScreenLocation.out;
-	protected EObjectGroup objectGroup;
-	protected boolean enabled = true;
-	protected boolean visible = true;
 	protected boolean objectInit = false;
-	protected boolean firstDraw = false;
-	public int mX = 0, mY = 0;
 	protected boolean hasProxy = false;
-	protected IRendererProxy proxy;
-	public static float hotbarTicks = 0;
+	protected int mX = 0, mY = 0;
+	protected long mouseHoverTime = 0l;
+	protected long hoverRefTime = 0l;
 	
 	public static EnhancedMCRenderer getInstance() {
 		return instance == null ? instance = new EnhancedMCRenderer() : instance;
@@ -125,7 +117,7 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 				GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
 				GL11.glDisable(GL11.GL_SCISSOR_TEST);
-				if (!o.hasFirstDraw()) { o.onFirstDraw(); o.onFirstDraw(); }
+				if (!o.hasFirstDraw()) { o.onFirstDraw(); }
 				o.drawObject(mX, mY, ticks);
 				if (focusLockObject != null && !o.equals(focusLockObject)) {
 					if (o.isVisible()) {
@@ -279,13 +271,14 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	@Override public EnhancedMCRenderer registerListener(IEnhancedGuiObject objIn) { if (eventHandler != null) { eventHandler.registerObject(objIn); } return this; }
 	@Override public EnhancedMCRenderer unregisterListener(IEnhancedGuiObject objIn) { if (eventHandler != null) { eventHandler.unregisterObject(objIn); } return this; }
 	@Override public EnhancedMCRenderer postEvent(ObjectEvent e) { if (eventHandler != null) { eventHandler.processEvent(e); } return this; }
-	@Override public void onListen(ObjectEvent e) {}
+	@Override public void onEvent(ObjectEvent e) {}
 	
 	//action object
 	@Override public void actionPerformed(IEnhancedActionObject object, Object... args) { postEvent(new EventAction(this, object, args)); }
 	
 	//close object
 	@Override public boolean isCloseable() { return false; }
+	@Override public boolean isClosed() { return closed; }
 	@Override public IEnhancedGuiObject setCloseable(boolean val) { return this; }
 	@Override public void close() {}
 	@Override public void onClosed() {}
@@ -349,17 +342,31 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	protected void updateBeforeNextDraw(int mXIn, int mYIn) {
 		postEvent(new EventRedraw(this));
 		res = new ScaledResolution(mc);
+		
+		//update mouse stuff based on proxy
 		if (proxy != null) { mX = proxy.getMX(); mY = proxy.getMY(); }
 		else if (mc.currentScreen instanceof EnhancedGui) { 
 			EnhancedGui gui = (EnhancedGui) mc.currentScreen;
 			mX = gui.mX; mY = gui.mY;
 		}
 		else { mX = -1; mY = -1; }
+		
+		//handle cursor stuff for highest obj
+		if (!EnhancedMC.safeRemoteDesktopMode) {
+			if (getHighestZObjectUnderMouse() != null) { getHighestZObjectUnderMouse().updateCursorImage(); }
+			else { this.updateCursorImage(); }
+		}
 		if (!CursorHelper.isNormalCursor() && getHighestZObjectUnderMouse() == null && modifyType != ObjectModifyType.Resize) { CursorHelper.reset(); }
+		
+		//handle mouse hover stuff
 		checkMouseHover();
 		oldMousePos.setValues(mX, mY);
+		
+		//update objects
 		if (!objsToBeRemoved.isEmpty()) { StaticEGuiObject.removeObjects(this, objsToBeRemoved); }
 		if (!objsToBeAdded.isEmpty()) { StaticEGuiObject.addObjects(this, objsToBeAdded); }
+		
+		//update object states
 		updateZLayers();
 		updateFocus();
 		if (modifyingObject != null) {

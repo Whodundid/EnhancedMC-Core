@@ -1,11 +1,11 @@
 package com.Whodundid.core.enhancedGui.guiObjects.basicObjects;
 
+import com.Whodundid.core.coreSubMod.EMCResources;
 import com.Whodundid.core.enhancedGui.types.EnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.util.renderUtil.EColors;
-import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.ModSetting;
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -33,8 +33,8 @@ public class EGuiButton extends EnhancedActionObject implements IEnhancedActionO
 	protected boolean trueFalseButton = false;
 	protected boolean drawString = true;
 	protected boolean drawCentered = true;
-	protected ResourceLocation btnTexture = Resources.guiButtonBase;
-	protected ResourceLocation btnSelTexture = Resources.guiButtonSel;
+	protected ResourceLocation btnTexture = EMCResources.guiButtonBase;
+	protected ResourceLocation btnSelTexture = EMCResources.guiButtonSel;
 	
 	protected EGuiButton(IEnhancedGuiObject parentIn) { super(parentIn); }
 	public EGuiButton(IEnhancedGuiObject parentIn, int posX, int posY, int width, int height) { this(parentIn, posX, posY, width, height, ""); }
@@ -72,7 +72,7 @@ public class EGuiButton extends EnhancedActionObject implements IEnhancedActionO
 	    		if (stretchBaseTextures) {
 					drawModalRectWithCustomSizedTexture(startX, startY, 0, 0, width, height, width, height);
 				} else {
-					mc.renderEngine.bindTexture(Resources.guiButtons);
+					mc.renderEngine.bindTexture(EMCResources.guiButtons);
 					int i = height > 20 ? 20 : height;
 					int offset = mouseHover ? 20 : 0;
 					if (!isEnabled()) { offset = 0; }
@@ -113,14 +113,14 @@ public class EGuiButton extends EnhancedActionObject implements IEnhancedActionO
 	
 	@Override
 	public void mousePressed(int mX, int mY, int button) {
-		//super.mousePressed(mX, mY, button);
-		if (hasFocus()) { pressButton(button); }
+		if (this.getActionReciever() != null) { this.getActionReciever().bringToFront(); }
+		pressButton(button);
     }
 	
 	@Override
 	public void keyPressed(char typedChar, int keyCode) {
 		if (keyCode == 28) {
-			if (getParent() != null) { getParent().actionPerformed(this); }
+			if (getParent() != null) { performAction(null); }
 		}
 		super.keyPressed(typedChar, keyCode);
 	}
@@ -132,10 +132,10 @@ public class EGuiButton extends EnhancedActionObject implements IEnhancedActionO
 	protected void pressButton(int button) {
 		if (enabled && checkDraw()) {
 			pressedButton = button;
-			if (runActionOnPress) { performAction(); }
+			if (runActionOnPress) { onPress(); }
 			else if (button == 0) {
 				playPressSound();
-				if (actionReciever != null) { actionReciever.actionPerformed(this); }
+				performAction(null);
 			}
 		}
 	}
@@ -175,11 +175,11 @@ public class EGuiButton extends EnhancedActionObject implements IEnhancedActionO
 		return this;
 	}
 		
-	public static void playPressSound() { mc.getSoundHandler().playSound(PositionedSoundRecord.create(Resources.buttonSound, 1.0F)); }
+	public static void playPressSound() { mc.getSoundHandler().playSound(PositionedSoundRecord.create(EMCResources.buttonSound, 1.0F)); }
 	
 	public EGuiButton setTextures(ResourceLocation base, ResourceLocation sel) { setButtonTexture(base); setButtonSelTexture(sel); return this; }
-	public EGuiButton setButtonTexture(ResourceLocation loc) { btnTexture = loc; usingBaseTexture = Resources.guiButtonBase.equals(loc); return this; }
-	public EGuiButton setButtonSelTexture(ResourceLocation loc) { btnSelTexture = loc; usingBaseSelTexture = Resources.guiButtonSel.equals(loc); return this; }
+	public EGuiButton setButtonTexture(ResourceLocation loc) { btnTexture = loc; usingBaseTexture = EMCResources.guiButtonBase.equals(loc); return this; }
+	public EGuiButton setButtonSelTexture(ResourceLocation loc) { btnSelTexture = loc; usingBaseSelTexture = EMCResources.guiButtonSel.equals(loc); return this; }
 	
 	public EGuiButton setDisplayString(String stringIn) { displayLabel.setDisplayString(stringIn); return this; }
 	public EGuiButton setDisplayStringColor(int colorIn) { color = colorIn; return this; }

@@ -47,10 +47,13 @@ public class EGuiContainer extends EnhancedGuiObject {
 			drawRect(startX + 1, startY + 1, startX + drawWidth, startY + titleAreaHeight - 1, titleBackgroundColor);
 			drawStringWithShadow(title, startX + 4, startY + 5, titleColor);
 		}
-		super.drawObject(mXIn, mYIn, ticks);
+		
+		scissor(startX + 1, startY + titleAreaHeight + 1, endX - 1, endY - 1);
+		{
+			super.drawObject(mXIn, mYIn, ticks);
+		}
+		endScissor();
 	}
-	
-	
 	
 	public EGuiContainer setTitle(String stringIn) { title = stringIn; titleWidth = fontRenderer.getStringWidth(stringIn); return this; }
 	public EGuiContainer setTitleColor(int colorIn) { titleColor = colorIn; return this; }

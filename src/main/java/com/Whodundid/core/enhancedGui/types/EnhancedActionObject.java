@@ -2,6 +2,7 @@ package com.Whodundid.core.enhancedGui.types;
 
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 
 public abstract class EnhancedActionObject extends EnhancedGuiObject implements IEnhancedActionObject {
 
@@ -33,9 +34,17 @@ public abstract class EnhancedActionObject extends EnhancedGuiObject implements 
 	}
 	
 	//actions
+	@Override
+	public void performAction(Object... args) {
+		if (actionReciever != null) {
+			IWindowParent p = actionReciever.getWindowParent();
+			if (p != null) { p.bringToFront(); }
+			actionReciever.actionPerformed(this, args);
+		}
+	}
+	@Override public void onPress() {}
 	@Override public boolean runActionOnPress() { return runActionOnPress; }
 	@Override public IEnhancedActionObject setRunActionOnPress(boolean value) { runActionOnPress = value; return this; }
-	@Override public void performAction() {}
 	@Override public IEnhancedActionObject setActionReciever(IEnhancedGuiObject objIn) { actionReciever = objIn; return this; }
 	@Override public IEnhancedGuiObject getActionReciever() { return actionReciever; }
 		

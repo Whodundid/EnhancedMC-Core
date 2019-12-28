@@ -5,7 +5,6 @@ import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.IConsoleCommand;
 import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.mathUtil.NumberUtil;
-import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
 public class ForLoop implements IConsoleCommand {
@@ -13,7 +12,7 @@ public class ForLoop implements IConsoleCommand {
 	@Override public String getName() { return "for"; }
 	@Override public EArrayList<String> getAliases() { return null; }
 	@Override public String getHelpInfo(boolean runVisually) { return "Runs a command n number of times in given range replacing any 'x' arguments with current value."; }
-	@Override public String getUsage() { return "ex: for 0-9 server ping 192.168.0.*"; }
+	@Override public String getUsage() { return "ex: for 0-9 server ping 192.168.0.#"; }
 	@Override public EArrayList<String> getTabCompleteList() { return null; }
 	
 	@Override
@@ -29,7 +28,7 @@ public class ForLoop implements IConsoleCommand {
 			//if (otherArgs.size() >= 1) { cmd = cmd.substring(0, cmd.length() - 1); }
 			
 			if (vals.length() < 3) { conIn.error("Not enough arguments for loop!"); }
-			else if (vals.length() >= 3) {
+			else if (vals.length() >= 3 && vals.contains("-")) {
 				int pos = EUtil.findStartingIndex(vals, "-");
 				String firstArg = vals.substring(0, pos);
 				String secondArg = vals.substring(pos + 1);
@@ -41,7 +40,7 @@ public class ForLoop implements IConsoleCommand {
 				Class type = checkClasses(conIn, firstArg, secondArg);
 				
 				if (type == null) { conIn.error("Could not parse range value types!"); return; }
-				if (type == Exception.class) { conIn.error("Inconsistent range value datatypes!"); return; }
+				if (type == Exception.class) { conIn.error("Inconsistent range datatype values!"); return; }
 				
 				if (type == Integer.class) {
 					firstI = Integer.parseInt(firstArg);
@@ -72,6 +71,9 @@ public class ForLoop implements IConsoleCommand {
 				else if (type == String.class) {
 					
 				}
+			}
+			else {
+				conIn.error("Invalid for loop range argument!");
 			}
 			
 			/*
@@ -115,7 +117,7 @@ public class ForLoop implements IConsoleCommand {
 	private String replaceValsInArgs(EArrayList<String> argsIn, Object curVal) {
 		String cmd = "";
 		for (String s : argsIn) {
-			s = s.replaceAll("\\*", "" + curVal);
+			s = s.replaceAll("\\#", "" + curVal);
 			cmd += s + " ";
 		}
 		if (argsIn.size() > 0 && cmd.length() > 0) { cmd = cmd.substring(0, cmd.length() - 1); }

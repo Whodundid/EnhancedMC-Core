@@ -1,6 +1,7 @@
 package com.Whodundid.core.renderer;
 
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.coreSubMod.EMCResources;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiRightClickMenu;
 import com.Whodundid.core.enhancedGui.guiObjects.windows.EMCGuiSelectionList;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
@@ -10,7 +11,6 @@ import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubModType;
 import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.util.renderUtil.CenterType;
-import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
 public class RendererRCM extends EGuiRightClickMenu {
@@ -20,7 +20,7 @@ public class RendererRCM extends EGuiRightClickMenu {
 		if (RegisteredSubMods.isModRegEn(SubModType.ENHANCEDCHAT)) { addOption("New Chat Window"); }
 		if (EnhancedMC.getEMCMod().enableTerminal.get()) { addOption("New Terminal"); }
 		addOption("New Window");
-		addOption("Open EMC Settings", Resources.guiSettingsButton);
+		addOption("Open EMC Settings", EMCResources.guiSettingsButton);
 		addOption("Close All Objects");
 		
 		setRunActionOnPress(true);

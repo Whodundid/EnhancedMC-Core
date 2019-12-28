@@ -295,6 +295,8 @@ public class StaticEGuiObject {
 	public static void parseMousePosition(IEnhancedGuiObject objIn, int mX, int mY) { objIn.getObjects().stream().filter(o -> o.isMouseInside(mX, mY)).forEach(o -> o.parseMousePosition(mX, mY)); }
 	public static void mousePressed(IEnhancedGuiObject objIn, int mX, int mY, int button) {
 		objIn.postEvent(new EventMouse(objIn, mX, mY, button, MouseType.Pressed));
+		IWindowParent p = objIn.getWindowParent();
+		if (p != null) { p.bringToFront(); }
 		if (!objIn.hasFocus() && objIn.isMouseOver(mX, mY)) { objIn.requestFocus(); }
 		if (button == 0 && objIn.isResizeable() && !objIn.getEdgeAreaMouseIsOn().equals(ScreenLocation.out)) {
 			objIn.getTopParent().setResizingDir(objIn.getEdgeAreaMouseIsOn());
@@ -310,6 +312,7 @@ public class StaticEGuiObject {
 	public static void mouseDragged(IEnhancedGuiObject objIn, int mX, int mY, int button, long timeSinceLastClick) {}
 	public static void mouseScolled(IEnhancedGuiObject objIn, int mX, int mY, int change) {
 		objIn.postEvent(new EventMouse(objIn, mX, mY, -1, MouseType.Scrolled));
+		//objIn.mouseScrolled(change);
 		for (IEnhancedGuiObject o : objIn.getObjects()) {
 			if (o.isMouseInside(mX, mY) && o.checkDraw()) { o.mouseScrolled(change); }
 		}

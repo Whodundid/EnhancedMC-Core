@@ -281,6 +281,12 @@ public class EArrayList<E> extends AbstractList<E> {
 		size++;
 	}
 	
+	public void addIfNotNull(E... e) {
+		for (E entry : e) {
+			if (entry != null) { add(entry); }
+		}
+	}
+	
 	public void addIfNotContains(E... e) {
 		for (E entry : e) {
 			if (!contains(entry)) { add(entry); }

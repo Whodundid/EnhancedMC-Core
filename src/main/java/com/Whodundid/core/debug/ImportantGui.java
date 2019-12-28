@@ -2,8 +2,8 @@ package com.Whodundid.core.debug;
 
 import java.awt.Color;
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.coreSubMod.EMCResources;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
-import com.Whodundid.core.util.renderUtil.Resources;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 
@@ -36,25 +36,25 @@ public class ImportantGui extends WindowParent {
 	private class importantHolder {
 		
 		public void draw() {
-			mc.renderEngine.bindTexture(Resources.important1);
+			mc.renderEngine.bindTexture(EMCResources.important1);
 			guiInstance.drawModalRectWithCustomSizedTexture(midX - 256, midY - 256, 0, 0, 256, 256, 256, 256);
-			mc.renderEngine.bindTexture(Resources.important2);
+			mc.renderEngine.bindTexture(EMCResources.important2);
 			guiInstance.drawModalRectWithCustomSizedTexture(midX, midY - 256, 0, 0, 256, 256, 256, 256);
-			mc.renderEngine.bindTexture(Resources.important3);
+			mc.renderEngine.bindTexture(EMCResources.important3);
 			guiInstance.drawModalRectWithCustomSizedTexture(midX, midY, 0, 0, 256, 256, 256, 256);
-			mc.renderEngine.bindTexture(Resources.important4);
+			mc.renderEngine.bindTexture(EMCResources.important4);
 			guiInstance.drawModalRectWithCustomSizedTexture(midX - 256, midY, 0, 0, 256, 256, 256, 256);
 			
 			if (EnhancedMC.updateCounter / 20 % 2 == 0) {
-				mc.renderEngine.bindTexture(Resources.important5);
+				mc.renderEngine.bindTexture(EMCResources.important5);
 				guiInstance.drawModalRectWithCustomSizedTexture(midX - 450, midY - 200, 0, 0, 256, 166, 256, 166);
-				mc.renderEngine.bindTexture(Resources.important6);
+				mc.renderEngine.bindTexture(EMCResources.important6);
 				guiInstance.drawModalRectWithCustomSizedTexture(midX - 450, midY - 35, 0, 0, 256, 165, 256, 165);
 			}
 			else {
-				mc.renderEngine.bindTexture(Resources.important7);
+				mc.renderEngine.bindTexture(EMCResources.important7);
 				guiInstance.drawModalRectWithCustomSizedTexture(midX + 200, midY - 200, 0, 0, 256, 166, 256, 166);
-				mc.renderEngine.bindTexture(Resources.important8);
+				mc.renderEngine.bindTexture(EMCResources.important8);
 				guiInstance.drawModalRectWithCustomSizedTexture(midX + 200, midY - 35, 0, 0, 256, 165, 256, 165);
 			}
 		}

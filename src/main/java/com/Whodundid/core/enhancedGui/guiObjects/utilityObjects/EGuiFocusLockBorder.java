@@ -1,8 +1,8 @@
 package com.Whodundid.core.enhancedGui.guiObjects.utilityObjects;
 
+import com.Whodundid.core.coreSubMod.EMCResources;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
-import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.storageUtil.EDimension;
 
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -25,7 +25,7 @@ public class EGuiFocusLockBorder extends EnhancedGuiObject {
 			EDimension dim = parentIn.getDimensions();
 			init(parentIn, dim.startX, dim.startY, dim.width, dim.height);
 			startTime = System.currentTimeMillis();
-			mc.getSoundHandler().playSound(PositionedSoundRecord.create(Resources.buttonSound, 1.0F));
+			mc.getSoundHandler().playSound(PositionedSoundRecord.create(EMCResources.buttonSound, 1.0F));
 		}
 	}
 	
@@ -33,14 +33,14 @@ public class EGuiFocusLockBorder extends EnhancedGuiObject {
 		if (parentIn != null) {
 			init(parentIn, startXIn, startYIn, widthIn, heightIn);
 			startTime = System.currentTimeMillis();
-			mc.getSoundHandler().playSound(PositionedSoundRecord.create(Resources.buttonSound, 1.0F));
+			mc.getSoundHandler().playSound(PositionedSoundRecord.create(EMCResources.buttonSound, 1.0F));
 		}
 	}
 	
 	@Override
 	public void drawObject(int mXIn, int mYIn, float ticks) {
 		if (System.currentTimeMillis() - startTime >= 200) {
-			mc.getSoundHandler().playSound(PositionedSoundRecord.create(Resources.buttonSound, 1.0F));
+			mc.getSoundHandler().playSound(PositionedSoundRecord.create(EMCResources.buttonSound, 1.0F));
 			if (second) { parent.removeObject(this); drawingBorder = false; }
 			if (first) { second = true; drawingBorder = true; }
 			if (!first) { first = true; drawingBorder = false; }

@@ -28,6 +28,7 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.util.chatUtil.EChatUtil;
 import com.Whodundid.core.util.renderUtil.CenterType;
+import com.Whodundid.core.util.renderUtil.CursorHelper;
 import com.Whodundid.core.util.renderUtil.EFontRenderer;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
@@ -102,6 +103,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	protected boolean closeAndRecenter = false;
 	protected boolean firstDraw = false;
 	protected boolean closeable = true;
+	protected boolean closed = false;
 	protected int minWidth = 0;
 	protected int minHeight = 0;
 	protected int maxWidth = 0;
@@ -557,7 +559,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override public IEnhancedGuiObject getParent() { return parent; }
 	@Override public IEnhancedGuiObject setParent(IEnhancedGuiObject parentIn) { parent = parentIn; return this; }
 	@Override public IEnhancedTopParent getTopParent() { return StaticEGuiObject.getTopParent(this); }
-	@Override public IEnhancedGuiObject getWindowParent() { return StaticEGuiObject.getWindowParent(this); }
+	@Override public IWindowParent getWindowParent() { return StaticEGuiObject.getWindowParent(this); }
 	
 	//zLevel
 	@Override public int getZLevel() { return objZLevel; }
@@ -638,15 +640,16 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override public IEnhancedGuiObject registerListener(IEnhancedGuiObject objIn) { if (eventHandler != null) { eventHandler.registerObject(objIn); } return this; }
 	@Override public IEnhancedGuiObject unregisterListener(IEnhancedGuiObject objIn) { if (eventHandler != null) { eventHandler.unregisterObject(objIn); } return this; }
 	@Override public IEnhancedGuiObject postEvent(ObjectEvent e) { if (eventHandler != null) { eventHandler.processEvent(e); } return this; }
-	@Override public void onListen(ObjectEvent e) {}
+	@Override public void onEvent(ObjectEvent e) {}
 	
 	//action object
 	@Override public void actionPerformed(IEnhancedActionObject object, Object... args) { postEvent(new EventAction(this, object, args)); }
 	
 	//close object
 	@Override public boolean isCloseable() { return closeable; }
+	@Override public boolean isClosed() { return closed; }
 	@Override public IEnhancedGuiObject setCloseable(boolean val) { closeable = val; return this; }
-	@Override public void close() { if (closeable) { postEvent(new EventObjects(this, this, ObjectEventType.Close)); closeGui(true); } }
+	@Override public void close() { if (closeable) { postEvent(new EventObjects(this, this, ObjectEventType.Close)); closeGui(true); closed = true; } }
 	@Override public void onClosed() {}
 	@Override public IEnhancedGuiObject setFocusedObjectOnClose(IEnhancedGuiObject objIn) { focusObjectOnClose = objIn; return this; }
 	
@@ -876,6 +879,14 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 		if (eventHandler != null) { eventHandler.processEvent(new EventRedraw(this)); }
 		res = new ScaledResolution(mc);
 		mX = mXIn; mY = mYIn;
+		
+		//handle cursor stuff for highest obj
+		if (!EnhancedMC.safeRemoteDesktopMode) {
+			if (getHighestZObjectUnderMouse() != null) { getHighestZObjectUnderMouse().updateCursorImage(); }
+			else { this.updateCursorImage(); }
+		}
+		if (!CursorHelper.isNormalCursor() && getHighestZObjectUnderMouse() == null && modifyType != ObjectModifyType.Resize) { CursorHelper.reset(); }
+		
 		checkMouseHover();
 		oldMousePos.setValues(mXIn, mYIn);
 		if (!mouseEntered && isMouseOver(mX, mY)) { mouseEntered = true; mouseEntered(mX, mY); }
@@ -892,7 +903,6 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 			default: break;
 			}
 		}
-		updateCursorImage();
 	}
 	
 	public void checkMouseHover() {

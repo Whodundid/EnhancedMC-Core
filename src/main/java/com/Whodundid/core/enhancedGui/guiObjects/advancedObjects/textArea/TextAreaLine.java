@@ -49,6 +49,7 @@ public class TextAreaLine<obj> extends EGuiTextField {
 		setText(textIn);
 		mainDrawColor = colorIn;
 		setStoredObj(objectIn);
+		setDrawShadowed(false);
 	}
 	
 	@Override
@@ -254,7 +255,8 @@ public class TextAreaLine<obj> extends EGuiTextField {
 			}
 			//drawStringWithShadow(text, startX, startY + 2, enabledColor);
 		}
-		drawStringWithShadow(text, startX, startY + 2, mainDrawColor);
+		if (drawShadowed) { drawStringWithShadow(text, startX, startY + 2, mainDrawColor); }
+		else { drawString(text, startX, startY + 2, mainDrawColor); }
 	}
 	
 	public TextAreaLine incrementLineNumber() { setLineNumber(lineNumber + 1); return this; }

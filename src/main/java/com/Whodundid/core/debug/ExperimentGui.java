@@ -7,12 +7,16 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.coreSubMod.EMCResources;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.colorPicker.EGuiColorPicker;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.textArea.EGuiTextArea;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
+import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiCheckBox;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiContainer;
+import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiImageBox;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiLabel;
+import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiRadioButton;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiRightClickMenu;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiScrollBar;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiScrollList;
@@ -35,7 +39,6 @@ import com.Whodundid.core.subMod.gui.SubModErrorDialogueBox;
 import com.Whodundid.core.subMod.gui.SubModErrorType;
 import com.Whodundid.core.subMod.gui.SubModInfoDialogueBox;
 import com.Whodundid.core.util.renderUtil.PlayerDrawer;
-import com.Whodundid.core.util.renderUtil.Resources;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
@@ -50,8 +53,11 @@ import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.ThreadDownloadImageData;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
@@ -64,6 +70,7 @@ import net.minecraft.util.ResourceLocation;
 public class ExperimentGui extends WindowParent {
 	
 	static Minecraft mc = Minecraft.getMinecraft();
+	public static EArrayList<String> aliases = new EArrayList("experimentgui", "experiment", "expGui", "tgui", "testgui");
 	ArrayList<Integer> values = new ArrayList();
 	EGuiButton test1, test2, test3, test4;
 	public boolean bool1, bool2, bool3, bool4;
@@ -75,10 +82,6 @@ public class ExperimentGui extends WindowParent {
 	EGuiSlider slider, slider2;
 	EGuiRightClickMenu rcm;
 	EGuiColorPicker colorPicker;
-	
-	public ExperimentGui() {
-		aliases.add("experimentgui", "experiment", "testgui");
-	}
 	
 	@Override
 	public void initGui() {
@@ -95,9 +98,14 @@ public class ExperimentGui extends WindowParent {
 		header.setTitleColor(0x000000);
 		header.setParentFocusDrawn(false);
 		
-		test1 = new EGuiButton(this, 30, 100, 80, 20, "go");
-		test1.setMoveable(true);
-		addObject(test1);
+		EGuiCheckBox cbox = new EGuiCheckBox(this, startX + 10, startY + 10, 20, 20);
+		addObject(cbox);
+		
+		EGuiRadioButton rbtn = new EGuiRadioButton(this, startX + 10, cbox.endY + 10, 20, 20);
+		addObject(rbtn);
+		
+		EGuiImageBox ibox = new EGuiImageBox(this, cbox.endX + 10, cbox.startY, width - cbox.width - 30, height - 20, EMCResources.logo);
+		addObject(ibox);
 		
 		/*
 		EGuiContainer con = new EGuiContainer(this, startX + 5, startY + 5, width - 10, height - 10);
@@ -270,98 +278,38 @@ public class ExperimentGui extends WindowParent {
 	
 	@Override
 	public void drawObject(int mXIn, int mYIn, float ticks) {
+		updateBeforeNextDraw(mXIn, mYIn);
 		drawDefaultBackground();
-		//drawRect(startX + 69, startY + 89, endX - 69, endY - 59, 0xff000000);
-		//drawRect(startX + 70, startY + 90, endX - 70, endY - 60, 0xff1b1b1b);
-		GlStateManager.color(2.0f, 2.0f, 2.0f, 2.0f);
-		//GuiInventory.drawEntityOnScreen(midX, midY, 90, 0, 0, mc.thePlayer);
 		
-		//Map<Type, MinecraftProfileTexture> map = mc.getSkinManager().loadSkinFromCache(new GameProfile(null, "Whodundid"));
-		//System.out.println(map);
-		//if (map.containsKey(Type.SKIN)) {
-		//	ResourceLocation s = mc.getSkinManager().loadSkin(map.get(Type.SKIN), Type.SKIN);
-		//	mc.renderEngine.bindTexture(s);
-		//	this.drawTexturedModalRect(startX, startY, 0, 0, width, height);
-		//}
-		
-		
-		
-		//int posX = midX;
-		//int posY = midY + 60;
-		//int scale = 90;
-		//float mouseX = -slider.getSliderValue();
-		//float mouseY = slider2.getSliderValue();
-		//EntityLivingBase ent = mc.thePlayer;
-		
-		//PlayerDrawer.drawPlayer(mc.thePlayer, posX, posY, -slider.getSliderValue(), slider2.getSliderValue(), 45);
-		
-		/*
-		GlStateManager.enableColorMaterial();
-        GlStateManager.pushMatrix();
-        GlStateManager.translate((float)posX, (float)posY, 50.0F);
-        GlStateManager.scale((float)(-scale), (float)scale, (float)scale);
-        GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
-        float f = ent.renderYawOffset;
-        float f1 = ent.rotationYaw;
-        float f2 = ent.rotationPitch;
-        float f3 = ent.prevRotationYawHead;
-        float f4 = ent.rotationYawHead;
-        GlStateManager.rotate(135.0F, 0.0F, 1.0F, 0.0F);
-        RenderHelper.enableStandardItemLighting();
-        GlStateManager.rotate(-135.0F, 0.0F, 1.0F, 0.0F);
-        GlStateManager.rotate(-((float) Math.atan((double) (mouseY / 250.0F))) * 20.0F, 1.0F, 0.0F, 0.0F);
-        ent.renderYawOffset = -slider.getSliderValue() / 2;
-        //ent.renderYawOffset = (float) Math.atan((double) (mouseX / 40.0F)) * 20.0F;
-        ent.rotationYaw = -slider.getSliderValue() / 2;
-        //ent.rotationYaw = (float) Math.atan((double) (mouseX / 40.0F)) * 40.0F;
-        ent.rotationPitch = -((float) Math.atan((double) (mouseY / 250.0F))) * 20.0F;
-        //System.out.println(-mX / 2);
-        ent.rotationYawHead = ent.rotationYaw;
-        ent.prevRotationYawHead = ent.rotationYaw;
-        GlStateManager.translate(0.0F, 0.0F, 0.0F);
-        RenderManager rendermanager = Minecraft.getMinecraft().getRenderManager();
-        rendermanager.setPlayerViewY(180.0F);
-        rendermanager.setRenderShadow(false);
-        rendermanager.renderEntityWithPosYaw(ent, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F);
-        rendermanager.setRenderShadow(true);
-        //ent.swingProgress = 0.4f;
-        ent.renderYawOffset = f;
-        ent.rotationYaw = f1;
-        ent.rotationPitch = f2;
-        ent.prevRotationYawHead = f3;
-        ent.rotationYawHead = f4;
-        GlStateManager.popMatrix();
-        RenderHelper.disableStandardItemLighting();
-        GlStateManager.disableRescaleNormal();
-        GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-        GlStateManager.disableTexture2D();
-        GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
-		
-		//System.out.println(this.getObjectUnderMouse());
-		/*
-		GlStateManager.pushMatrix();
-		GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 0, 1);
-        GlStateManager.disableAlpha();
-        GlStateManager.shadeModel(7425);
-        //GlStateManager.disableTexture2D();
-		Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-        worldrenderer.pos(wPos + 150, hPos - 150, -1.0D).tex(1.0D, 0.0D).color(255, 255, 255, 255).endVertex();
-        worldrenderer.pos(wPos - 250, hPos - 150, 0.0D).tex(0.0D, 0.0D).color(255, 255, 255, 255).endVertex();
-        worldrenderer.pos(wPos - 150, hPos + 150, 0.0D).tex(0.0D, 1.0D).color(255, 255, 255, 255).endVertex();
-        //worldrenderer.pos(wPos + 150, hPos + 150, 0.0D).tex(1.0D, 1.0D).color(255, 255, 255, 255).endVertex();
-        worldrenderer.pos(wPos + 250, hPos + 150, 0.0D).tex(1.0D, 1.0D).color(255, 255, 255, 255).endVertex();
-        tessellator.draw();
-        //GlStateManager.enableTexture2D();
-        //GlStateManager.shadeModel(7424);
-        //GlStateManager.enableAlpha();
-        //GlStateManager.disableBlend();
-        GlStateManager.popMatrix();
-        */
 		updateColor();
-		super.drawObject(mXIn, mYIn, ticks);
+		
+		try {
+			if (checkDraw()) {
+				GlStateManager.pushMatrix();
+				GlStateManager.enableBlend();
+				guiObjects.stream().filter(o -> o.checkDraw()).forEach(o -> {
+					
+					if (!o.hasFirstDraw()) { o.onFirstDraw(); o.onFirstDraw(); }
+					if (o instanceof EGuiHeader) { 
+						o.drawObject(mX, mY, ticks);
+					}
+					else {
+						//scissor(startX + 1, startY + 1, endX - 1, endY - 1);
+						o.drawObject(mX, mY, ticks);
+						//endScissor();
+					}
+					
+					IEnhancedGuiObject f = getTopParent().getFocusLockObject();
+					if (f != null && o instanceof EGuiHeader && (!o.equals(f) && !f.getAllChildren().contains(o))) {
+						if (o.isVisible()) {
+							EDimension d = o.getDimensions();
+							this.drawRect(d.startX, d.startY, d.endX, d.endY, 0x88000000);
+						}
+					}
+				});
+				GlStateManager.popMatrix();
+			}
+		} catch (Exception e) { e.printStackTrace(); }
 	}
 	
 	@Override
@@ -436,7 +384,7 @@ public class ExperimentGui extends WindowParent {
 			
 			EGuiButton modSettings = new EGuiButton(scrollList, l.startX + 5, l.startY + 2 + (i * dist), 110, 20, "name");
 			EGuiButton enabled = new EGuiButton(scrollList, l.endX - 79, l.startY + 2 + (i * dist), 50, 20, "enable");
-			EGuiButton info = new EGuiButton(scrollList, l.endX - 25, l.startY + 2 + (i * dist), 20, 20).setTextures(Resources.guiInfo, Resources.guiInfoSel);
+			EGuiButton info = new EGuiButton(scrollList, l.endX - 25, l.startY + 2 + (i * dist), 20, 20).setTextures(EMCResources.guiInfo, EMCResources.guiInfoSel);
 			
 			if (i >= 8) {
 				scrollList.setListHeight(scrollList.getListHeight() + 2 + modSettings.height);

@@ -46,13 +46,13 @@ public class EGuiDialogueBox extends WindowParent {
 				break;
 			case ok:
 				okButton = new EGuiButton(this, midX - 25, midY + 10, 50, 20, "Ok") {
-					{ setRunActionOnPress(true); }
 					@Override
-					public void performAction() {
+					public void onPress() {
 						playPressSound();
 						parent.close();
 					}
 				};
+				okButton.setRunActionOnPress(true);
 				addObject(okButton.setZLevel(1));
 				break;
 			default: break;

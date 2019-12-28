@@ -39,7 +39,7 @@ public class HeaderTab extends EGuiButton {
 				super.drawObject(mXIn, mYIn, ticks);
 			}
 			@Override
-			public void performAction() {
+			public void onPress() {
 				playPressSound();
 			}
 		};

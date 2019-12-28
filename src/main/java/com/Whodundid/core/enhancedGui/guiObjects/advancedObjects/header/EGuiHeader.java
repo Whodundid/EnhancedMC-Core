@@ -1,5 +1,6 @@
 package com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header;
 
+import com.Whodundid.core.coreSubMod.EMCResources;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.ObjectModifyType;
@@ -9,7 +10,7 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
-import com.Whodundid.core.util.renderUtil.Resources;
+import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
@@ -35,6 +36,7 @@ public class EGuiHeader extends EnhancedGuiObject {
 	protected boolean drawParentFocus = true;
 	protected boolean moving = false;
 	protected EArrayList<HeaderTab> tabs = new EArrayList();
+	protected IWindowParent window;
 	
 	protected EGuiHeader() {}
 	public EGuiHeader(IEnhancedGuiObject parentIn) { this(parentIn, true, 19, ""); }
@@ -43,6 +45,7 @@ public class EGuiHeader extends EnhancedGuiObject {
 		if (parentIn != null) {
 			EDimension dim = parentIn.getDimensions();
 			init(parentIn, dim.startX, dim.startY - headerHeight, dim.width, headerHeight);
+			window = parentIn.getWindowParent();
 		}
 		drawDefault = drawDefaultIn;
 		
@@ -63,17 +66,23 @@ public class EGuiHeader extends EnhancedGuiObject {
 	
 	protected EGuiHeader addFileUpButton() {
 		fileUpButton = new EGuiButton(this, endX - 52, startY + 2, 16, 16, "");
-		fileUpButton.setTextures(Resources.guiFileUpButton, Resources.guiFileUpButtonSel).setVisible(false);
+		fileUpButton.setTextures(EMCResources.guiFileUpButton, EMCResources.guiFileUpButtonSel).setVisible(false);
 		addObject(fileUpButton);
 		return this;
 	}
 	
 	protected EGuiHeader addPinButton() {
-		pinButton = new EGuiButton(this, endX - 35, startY + 2, 16, 16, "");
-		IWindowParent p = getWindowParent();
-		if (p != null && p.isPinnable()) {
-			pinButton.setButtonTexture(p.isPinned() ? Resources.guiPinButtonOpen : Resources.guiPinButton);
-			pinButton.setButtonSelTexture(p.isPinned() ? Resources.guiPinButtonOpenSel : Resources.guiPinButtonSel);
+		pinButton = new EGuiButton(this, endX - 35, startY + 2, 16, 16, "") {
+			@Override
+			public void drawObject(int mXIn, int mYIn, float ticks) {
+				if (window != null && window.isPinnable()) {
+					setBackgroundColor(window.isPinned() ? 0xffbb0000 : EColors.dgray.c());
+				}
+				super.drawObject(mXIn, mYIn, ticks);
+			}
+		};
+		if (window != null && window.isPinnable()) {
+			pinButton.setTextures(EMCResources.guiPinButtonOpen, EMCResources.guiPinButtonOpenSel);
 			pinButton.setDrawBackground(true).setBackgroundColor(0xffbb0000).setPersistent(true);
 			addObject(pinButton);
 		}
@@ -82,7 +91,7 @@ public class EGuiHeader extends EnhancedGuiObject {
 	
 	protected EGuiHeader addCloseButton() {
 		closeButton = new EGuiButton(this, endX - 18, startY + 2, 16, 16, "");
-		closeButton.setTextures(Resources.guiCloseButton, Resources.guiCloseButtonSel).setPersistent(true);
+		closeButton.setTextures(EMCResources.guiCloseButton, EMCResources.guiCloseButtonSel).setPersistent(true);
 		addObject(closeButton);
 		return this;
 	}
@@ -107,18 +116,20 @@ public class EGuiHeader extends EnhancedGuiObject {
 					}
 				}
 			}
-			
 			if (drawBackground) {
 				drawRect(startX, startY, startX + 1, startY + height, borderColor); //left
 				drawRect(startX + 1, startY, endX - 1, startY + 1, borderColor); //top
 				drawRect(endX - 1, startY, endX, startY + height, borderColor); //right
 				drawRect(startX + 1, startY + 1, endX - 1, startY + height, anyFocus ? mainColor - 0x1f1f1f : mainColor); //mid
 			}
-			if (drawTitle) {
-				drawString(title, startX + 4, startY + height / 2 - 3, titleColor);
+			
+			scissor(startX + 1, startY + 1, endX - 1, endY - 1);
+			{
+				if (drawTitle) { drawString(title, startX + 4, startY + height / 2 - 3, titleColor); }
+				super.drawObject(mX, mY, ticks);
 			}
+			endScissor();
 		}
-		super.drawObject(mX, mY, ticks);
 	}
 	
 	@Override
@@ -202,8 +213,8 @@ public class EGuiHeader extends EnhancedGuiObject {
 		IWindowParent p = getWindowParent();
 		if (p != null) {
 			if (pinButton.getPressedButton() == 0) { p.setPinned(!p.isPinned()); }
-			pinButton.setButtonTexture(p.isPinned() ? Resources.guiPinButtonOpen : Resources.guiPinButton);
-			pinButton.setButtonSelTexture(p.isPinned() ? Resources.guiPinButtonOpenSel : Resources.guiPinButtonSel);
+			//pinButton.setButtonTexture(p.isPinned() ? EMCResources.guiPinButtonOpen : EMCResources.guiPinButton);
+			//pinButton.setButtonSelTexture(p.isPinned() ? EMCResources.guiPinButtonOpenSel : EMCResources.guiPinButtonSel);
 		}
 	}
 	

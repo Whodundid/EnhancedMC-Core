@@ -7,6 +7,7 @@ import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
@@ -97,7 +98,7 @@ public class EGuiSelectionList extends WindowParent implements IEnhancedActionOb
 	protected void selectCurrentOptionAndClose() {
 		if (selectionList.getCurrentLine() != null && selectionList.getCurrentLine().getStoredObj() != null) {
 			selectedObject = selectionList.getCurrentLine().getStoredObj();
-			actionReciever.actionPerformed(this);
+			performAction(null);
 			close();
 		}
 	}
@@ -142,9 +143,17 @@ public class EGuiSelectionList extends WindowParent implements IEnhancedActionOb
 	public Object getStoredObject() { return storedObject; }
 	public EArrayList<Object> getAdditionalValues() { return additionalValues; }
 	
+	@Override
+	public void performAction(Object... args) {
+		if (actionReciever != null) {
+			IWindowParent p = actionReciever.getWindowParent();
+			if (p != null) { p.bringToFront(); }
+			actionReciever.actionPerformed(this, args);
+		}
+	}
+	@Override public void onPress() {}
 	@Override public boolean runActionOnPress() { return false; }
 	@Override public EGuiSelectionList setRunActionOnPress(boolean val) { return null; }
-	@Override public void performAction() {}
 	@Override public EGuiSelectionList setActionReciever(IEnhancedGuiObject objIn) { actionReciever = objIn; return this; }
 	@Override public IEnhancedGuiObject getActionReciever() { return actionReciever; }
 	@Override public EGuiSelectionList setSelectedObject(Object objIn) { selectedObject = objIn; return this; }

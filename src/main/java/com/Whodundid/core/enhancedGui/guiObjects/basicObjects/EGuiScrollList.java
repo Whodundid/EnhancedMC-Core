@@ -336,7 +336,6 @@ public class EGuiScrollList extends EnhancedGuiObject {
 		if (!objsToBeAdded.isEmpty()) { StaticEGuiObject.addObjects(this, objsToBeAdded); }
 		if (!listObjsToBeRemoved.isEmpty()) { removeListObjects(); }
 		if (!listObjsToBeAdded.isEmpty()) { addListObjects(); }
-		updateCursorImage();
 	}
 	
 	protected void removeListObjects() {

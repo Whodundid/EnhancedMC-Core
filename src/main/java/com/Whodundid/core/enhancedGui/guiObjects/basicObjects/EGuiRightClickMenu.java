@@ -66,16 +66,16 @@ public class EGuiRightClickMenu extends WindowParent implements IEnhancedActionO
 						GlStateManager.enableBlend();
 						if (isMouseInside(mX, mY)) { GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F); }
 						else { GlStateManager.color(0.75F, 0.75F, 0.75F, 0.75F); }
-						drawCustomSizedTexture(startX + 1, startY + 1, 16, 16, 16, 16, 16, 16);
+						drawTexture(startX + 1, startY + 1, 16, 16, 16, 16, 16, 16);
 					}
 					super.drawObject(mX, mY, ticks);
 				}
 				@Override
-				public void performAction() {
+				public void onPress() {
 					if (getPressedButton() == 0) {
 						playPressSound();
 						instance.setSelectedObject(getDisplayString());
-						instance.actionReciever.actionPerformed(instance);
+						instance.performAction(null);
 						getTopParent().unregisterListener(instance);
 						instance.close();
 					}
@@ -159,7 +159,7 @@ public class EGuiRightClickMenu extends WindowParent implements IEnhancedActionO
 	
 	@Override
 	public void mousePressed(int mXIn, int mYIn, int button) {
-		if (runActionOnPress) { runActionOnPress(); }
+		if (runActionOnPress) { onPress(); }
 		super.mousePressed(mXIn, mYIn, button);
 	}
 	
@@ -169,7 +169,7 @@ public class EGuiRightClickMenu extends WindowParent implements IEnhancedActionO
 	}
 	
 	@Override
-	public void onListen(ObjectEvent e) {
+	public void onEvent(ObjectEvent e) {
 		if (e instanceof EventMouse) {
 			if (((EventMouse) e).getMouseType() == MouseType.Pressed) {
 				if (!isMouseInside(((EventMouse) e).getMouseX(), ((EventMouse) e).getMouseY())) {
@@ -196,9 +196,16 @@ public class EGuiRightClickMenu extends WindowParent implements IEnhancedActionO
 	public EGuiLabel getTitle() { return title; }
 	public boolean hasTitle() { return useTitle; }
 	
+	@Override
+	public void performAction(Object... args) {
+		if (actionReciever != null) {
+			actionReciever.bringToFront();
+			actionReciever.actionPerformed(this, args);
+		}
+	}
+	@Override public void onPress() {}
 	@Override public boolean runActionOnPress() { return false; }
 	@Override public EGuiRightClickMenu setRunActionOnPress(boolean val) { return null; }
-	@Override public void performAction() {}
 	@Override public EGuiRightClickMenu setActionReciever(IEnhancedGuiObject objIn) { actionReciever = objIn; return this; }
 	@Override public IEnhancedGuiObject getActionReciever() { return actionReciever; }
 	@Override public EGuiRightClickMenu setSelectedObject(Object objIn) { selectedObject = objIn; return this; }

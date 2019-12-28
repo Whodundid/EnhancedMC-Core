@@ -6,19 +6,16 @@ import com.Whodundid.core.notifications.NotificationType;
 import com.Whodundid.core.util.renderUtil.EColors;
 import net.minecraft.client.renderer.GlStateManager;
 
-public class ChatNotification extends NotificationObject {
+public class EMCNotification extends NotificationObject {
 	
-	public String sender;
-	
-	public ChatNotification(String senderIn, String messageIn) {
-		sender = senderIn;
+	public EMCNotification(String messageIn) {
 		message = messageIn;
-		type = NotificationType.chat;
+		type = NotificationType.emc;
 	}
 	
 	@Override
 	public void initGui() {
-		setDimensions(startX, res.getScaledHeight() - 52, 44 + fontRenderer.getStringWidth(sender) + fontRenderer.getStringWidth(message), 30);
+		setDimensions(startX, res.getScaledHeight() - 52, 44 + fontRenderer.getStringWidth(message), 30);
 		setPinned(true);
 	}
 	
@@ -28,8 +25,7 @@ public class ChatNotification extends NotificationObject {
 		GlStateManager.color(1f, 1f, 1f, 0.75f);
 		mc.renderEngine.bindTexture(EMCResources.guiInfo);
 		this.drawTexture(startX + 5, midY - 10, 0, 0, 20, 20, 20, 20);
-		int dist = drawStringWithShadow(sender + ":", startX + 30, midY - 3, EColors.cyan.c());
-		this.drawStringWithShadow(message, dist + 5, midY - 3, EColors.lgray.c());
+		drawStringWithShadow(message, startX + 30, midY - 3, EColors.cyan.c());
 	}
 	
 	@Override

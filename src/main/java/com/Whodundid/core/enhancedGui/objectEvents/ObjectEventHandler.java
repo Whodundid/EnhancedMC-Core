@@ -22,7 +22,7 @@ public class ObjectEventHandler {
 	
 	private void sendListenEvent(ObjectEvent e) {
 		iterating = true;
-		listeners.forEach(o -> o.onListen(e));
+		listeners.forEach(o -> o.onEvent(e));
 		iterating = false;
 		updateList();
 	}

@@ -21,7 +21,7 @@ public class Version implements IConsoleCommand {
 	@Override
 	public void runCommand(ETerminal conIn, EArrayList<String> args, boolean runVisually) {
 		if (args.isEmpty()) {
-			if (runVisually) { conIn.writeln("terminal, minecraft, minecraftforge, submod", EColors.green); }
+			if (runVisually) { conIn.writeln("terminal, minecraft, minecraftforge, 'submod'", EColors.green); }
 			else { conIn.writeln("EMC Terminal Version: " + TerminalCommandHandler.version, EColors.cyan); }
 		}
 		else if (args.size() == 1) {

@@ -1,6 +1,7 @@
 package com.Whodundid.core.settings.guiParts;
 
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.coreSubMod.EMCResources;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiRightClickMenu;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
@@ -10,7 +11,6 @@ import com.Whodundid.core.subMod.gui.SubModErrorType;
 import com.Whodundid.core.subMod.util.SubModEnabler;
 import com.Whodundid.core.subMod.util.SubModErrorDisplay;
 import com.Whodundid.core.util.renderUtil.CenterType;
-import com.Whodundid.core.util.renderUtil.Resources;
 
 public class SettingsRCM extends EGuiRightClickMenu {
 
@@ -31,11 +31,11 @@ public class SettingsRCM extends EGuiRightClickMenu {
 	
 	@Override
 	public void initGui() {
-		addOption("Open", Resources.guiFileUpButton);
-		addOption("Open in new Window", Resources.guiFileUpButtonSel);
+		addOption("Open", EMCResources.guiFileUpButton);
+		addOption("Open in new Window", EMCResources.guiFileUpButtonSel);
 		
 		if (mod != null) {
-			if (mod.isDisableable()) { addOption(mod.isEnabled() ? "Disable" : "Enable", Resources.guiCloseButton); }
+			if (mod.isDisableable()) { addOption(mod.isEnabled() ? "Disable" : "Enable", EMCResources.guiCloseButton); }
 			setTitle(mod.getName()).setTitleBackgroundColor(0xff303030).setTitleHeight(14);
 		}
 		else {

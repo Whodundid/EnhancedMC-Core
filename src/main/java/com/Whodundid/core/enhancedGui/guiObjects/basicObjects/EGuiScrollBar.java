@@ -107,11 +107,11 @@ public class EGuiScrollBar extends EnhancedActionObject {
 			else if (mX - mousePos.getObject() != 0) { moveThumb(mX - mousePos.getObject(), 0); }
 			mousePos.setValues(mX, mY);
 		}
-		drawRect(startX, startY, startX + width, startY + height, 0xff666666);
+		drawRect(startX, startY, startX + width, startY + height, 0xff444444);
 		if (renderThumb) {
 			int color = 0xffbbbbbb;
 			if (isMouseInThumb(mX, mY) || isScrolling) {
-				color = isScrolling ? 0xfff872e9 : 0xffffffff;
+				color = isScrolling ? 0xff888888 : 0xff888888;
 			}
 			drawRect(thumbStartX, thumbStartY, thumbEndX, thumbEndY, color);
 		}

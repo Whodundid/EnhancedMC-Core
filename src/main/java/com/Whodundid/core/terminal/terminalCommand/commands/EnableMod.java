@@ -15,7 +15,7 @@ public class EnableMod implements IConsoleCommand {
 	@Override public String getName() { return "enable"; }
 	@Override public EArrayList<String> getAliases() { return new EArrayList<String>("en"); }
 	@Override public String getHelpInfo(boolean runVisually) { return "Attempts to enable a specified EMC submod"; }
-	@Override public String getUsage() { return "ex: en chat"; }
+	@Override public String getUsage() { return "ex: en core"; }
 	@Override public EArrayList<String> getTabCompleteList() { return null; }
 	
 	@Override
