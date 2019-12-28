@@ -59,7 +59,6 @@ public class EventListener {
 	@SubscribeEvent
     public void onTick(TickEvent e) {
 		if (EnhancedMC.isInitialized()) {
-			EnhancedMC.getNotificationHandler().update();
 			EMouseHelper.updateMousePos();
 			RegisteredSubMods.getRegisteredModsList().forEach(m -> m.eventTick(e));
 		}

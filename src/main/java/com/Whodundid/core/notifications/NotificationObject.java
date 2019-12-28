@@ -2,14 +2,13 @@ package com.Whodundid.core.notifications;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.notifications.baseObjects.NotificationRCM;
 import com.Whodundid.core.util.renderUtil.CenterType;
 
 public abstract class NotificationObject extends WindowParent {
 	
-	protected String message = "";
-	protected NotificationType type = NotificationType.emc;
-	protected WindowParent attentionObject = null;
+	protected Notification note;
 	boolean moveOut = false;
 	boolean moving = false;
 	boolean movingOut = false;
@@ -20,6 +19,15 @@ public abstract class NotificationObject extends WindowParent {
 	double a = -1;
 	double dist = -1;
 	double time = -1;
+	
+	protected NotificationObject() {
+		super();
+		birthTime = System.currentTimeMillis();
+	}
+	
+	@Override
+	public void initGui() {
+	}
 	
 	@Override
 	public void drawObject(int mXIn, int mYIn, float ticks) {
@@ -60,11 +68,9 @@ public abstract class NotificationObject extends WindowParent {
 	
 	@Override
 	public void onFirstDraw() {
-		super.onFirstDraw();
-		System.out.println(NotificationObject.class.isInstance(this));
-		birthTime = System.currentTimeMillis();
 		setPosition(res.getScaledWidth(), startY);
 		moveOverTime(-(width + 3), 0.45);
+		super.onFirstDraw();
 	}
 	
 	private void moveOverTime(int amount, double time) {
@@ -78,6 +84,11 @@ public abstract class NotificationObject extends WindowParent {
 	}
 	
 	@Override
+	public void actionPerformed(IEnhancedActionObject object, Object... args) {
+		
+	}
+	
+	@Override
 	public void mousePressed(int mXIn, int mYIn, int button) {
 		if (button == 1) {
 			EnhancedMC.displayEGui(new NotificationRCM(), CenterType.cursorCorner);
@@ -85,21 +96,11 @@ public abstract class NotificationObject extends WindowParent {
 		super.mousePressed(mXIn, mYIn, button);
 	}
 	
-	@Override
-	public void close() {
-		super.close();
-		EnhancedMC.getNotificationHandler().removeCurrentNotification();
-	}
-	
 	public void moveOut() {
 		moveOverTime(width + 3, 0.75);
 		moveOut = true;
 	}
 	
-	public String getMessage() { return message; }
-	public NotificationType getNotificationType() { return type; }
-	public WindowParent getAttentionObject() { return attentionObject; }
-	
-	public NotificationObject setAttentionObject(WindowParent objIn) { attentionObject = objIn; return this; }
+	public Notification getNotification() { return note; }
 	
 }
