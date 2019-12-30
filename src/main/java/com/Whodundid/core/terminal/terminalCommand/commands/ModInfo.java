@@ -13,6 +13,7 @@ import net.minecraft.util.EnumChatFormatting;
 public class ModInfo implements IConsoleCommand {
 
 	@Override public String getName() { return "modinfo"; }
+	@Override public boolean showInHelp() { return true; }
 	@Override public EArrayList<String> getAliases() { return new EArrayList<String>("info", "i"); }
 	@Override public String getHelpInfo(boolean runVisually) { return "Displays information on a specific EMC submod"; }
 	@Override public String getUsage() { return "ex: info core"; }

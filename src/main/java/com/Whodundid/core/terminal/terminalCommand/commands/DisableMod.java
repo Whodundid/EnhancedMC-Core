@@ -13,6 +13,7 @@ public class DisableMod implements IConsoleCommand {
 	//mult dep don't work
 	
 	@Override public String getName() { return "disable"; }
+	@Override public boolean showInHelp() { return true; }
 	@Override public EArrayList<String> getAliases() { return new EArrayList<String>("dis"); }
 	@Override public String getHelpInfo(boolean runVisually) { return "Attempts to disable a specified EMC submod"; }
 	@Override public String getUsage() { return "ex: dis core"; }

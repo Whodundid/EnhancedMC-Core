@@ -27,10 +27,7 @@ public class DebugFunctions {
 
 	static Minecraft mc = Minecraft.getMinecraft();
 
-	public static void runDebugFunction(IDebugCommand function) {
-		runDebugFunction(function.getDebugCommandID());
-	}
-
+	public static void runDebugFunction(IDebugCommand function) { runDebugFunction(function.getDebugCommandID()); }
 	public static boolean runDebugFunction(int functionID) {
 		try {
 			switch (functionID) {
@@ -38,16 +35,16 @@ public class DebugFunctions {
 			case 1: debug_1(); return true;
 			case 2: debug_2(); return true;
 			case 3: debug_3(); return true;
+			case 4: debug_4(); return true;
 			}
 		} catch (Throwable e) { e.printStackTrace(); }
 		return false;
 	}
+	
+	public static int getNum() { return IDebugCommand.values().length; }
 
 	private static void debug_0() throws Throwable {
-		EnhancedMC.getNotificationHandler().clearNotifications();
-		//EnhancedMC.getRenderer().addObject(new HotBarRenderer());
-		//System.out.println(EUtil.getFullEMCSourceFilePath(EnhancedMC.class));
-		//EnhancedMC.getRenderer().addObject(new EGuiColorPicker(EnhancedMC.getRenderer(), 150, 150));
+		EnhancedMC.getRenderer().addObject(new EGuiColorPicker(EnhancedMC.getRenderer(), 150, 150));
 	}
 	
 	private static void debug_1() throws Throwable {
@@ -61,5 +58,9 @@ public class DebugFunctions {
 	private static void debug_3() throws Throwable {
 		EnhancedMC.postNotification("HELLO");
 		//EnhancedMC.displayEGui(new TestWindow(), CenterType.screen);
+	}
+	
+	private static void debug_4() throws Throwable {
+		EnhancedMC.getNotificationHandler().clearNotifications();
 	}
 }

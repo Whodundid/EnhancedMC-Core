@@ -26,6 +26,7 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 public class Server implements IConsoleCommand {
 
 	@Override public String getName() { return "server"; }
+	@Override public boolean showInHelp() { return true; }
 	@Override public EArrayList<String> getAliases() { return null; }
 	@Override public String getHelpInfo(boolean runVisually) { return "Used to interface with Minecraft servers." + (runVisually ? " connect, disconnect" : ""); }
 	@Override public String getUsage() { return "ex: server connect localhost"; }

@@ -1,5 +1,6 @@
 package com.Whodundid.core.terminal;
 
+import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.terminal.gui.ETerminal;
@@ -19,6 +20,7 @@ public class TerminalCommandHandler {
 	protected EArrayList<IConsoleCommand> commandList;
 	protected EArrayList<IConsoleCommand> customCommandList;
 	public static boolean drawSpace = true;
+	public static EArrayList<String> cmdHistory = new EArrayList();
 	
 	public static TerminalCommandHandler getInstance() {
 		return instance == null ? instance = new TerminalCommandHandler() : instance;
@@ -37,6 +39,7 @@ public class TerminalCommandHandler {
 	
 	private void registerBaseCommands(boolean runVisually) { registerBaseCommands(null, runVisually); }
 	private void registerBaseCommands(ETerminal conIn, boolean runVisually) {
+		
 		registerCommand(new ClearObjects(), conIn, runVisually);
 		registerCommand(new ClearTerminal(), conIn, runVisually);
 		registerCommand(new ClearTerminalHistory(), conIn, runVisually);
@@ -45,7 +48,7 @@ public class TerminalCommandHandler {
 		registerCommand(new DisableMod(), conIn, runVisually);
 		registerCommand(new EnableMod(), conIn, runVisually);
 		registerCommand(new Exit(), conIn, runVisually);
-		registerCommand(new ForLoop(), conIn, runVisually);
+		if (EnhancedMC.isOpMode()) { registerCommand(new ForLoop(), conIn, runVisually); }
 		registerCommand(new Help(), conIn, runVisually);
 		registerCommand(new ListCMD(), conIn, runVisually);
 		registerCommand(new ModInfo(), conIn, runVisually);
@@ -53,9 +56,11 @@ public class TerminalCommandHandler {
 		registerCommand(new ReregisterCommands(), conIn, runVisually);
 		//registerCommand(conIn, new ResetMod(), runVisually);
 		registerCommand(new Say(), conIn, runVisually);
-		registerCommand(new Server(), conIn, runVisually);
-		registerCommand(new ToggleSafeRM(), conIn, runVisually);
+		if (EnhancedMC.isOpMode()) { registerCommand(new Server(), conIn, runVisually); }
+		if (EnhancedMC.isOpMode()) { registerCommand(new ToggleSafeRM(), conIn, runVisually); }
 		registerCommand(new Version(), conIn, runVisually);
+		
+		registerCommand(new OpControl(), conIn, false);
 	}
 	
 	private void registerSubModCommands(boolean runVisually) { registerSubModCommands(null, runVisually); }
@@ -91,7 +96,8 @@ public class TerminalCommandHandler {
 				IConsoleCommand command = commands.getBoxWithObj(baseCommand).getValue();
 				
 				if (command == null) {
-					conIn.writeln("Unrecognized command.", 0xff5555);
+					conIn.error("Unrecognized command.");
+					conIn.writeln();
 					return;
 				}
 				
@@ -131,6 +137,7 @@ public class TerminalCommandHandler {
 		while (b.hasNext()) {
 			String commandName = b.next().getObject();
 			if (conIn != null & runVisually) { conIn.writeln("Unregistering command alias: " + commandName, 0xb2b2b2); }
+			b.remove();
 		}
 		
 		registerBaseCommands(conIn, runVisually);
@@ -150,4 +157,6 @@ public class TerminalCommandHandler {
 	
 	public EArrayList<IConsoleCommand> getCommandList() { return commandList; }
 	public List<String> getCommandNames() { return commands.getObjects(); }
+	public EArrayList<String> getHistory() { return cmdHistory; }
+	public TerminalCommandHandler clearHistory() { cmdHistory.clear(); return this; }
 }

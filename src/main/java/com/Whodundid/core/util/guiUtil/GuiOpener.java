@@ -53,6 +53,37 @@ public class GuiOpener {
 		return null;
 	}
 	
+	public static GuiScreen createGuiScreenInstance(Class gui) {
+		try {
+			if (gui != null) {
+				EArrayList<Class> types = null;
+				EArrayList values = null;
+				Minecraft mc = Minecraft.getMinecraft();
+				
+				if (gui.isAssignableFrom(GuiMultiplayer.class)) { types = new EArrayList(GuiScreen.class); values = new EArrayList(mc.currentScreen); }
+				if (gui.isAssignableFrom(GuiCustomizeSkin.class)) { types = new EArrayList(GuiScreen.class); values = new EArrayList(mc.currentScreen); }
+				if (gui.isAssignableFrom(GuiScreenResourcePacks.class)) { types = new EArrayList(GuiScreen.class); values = new EArrayList(mc.currentScreen); }
+				
+				if (gui.isAssignableFrom(GuiOptions.class)) { types = new EArrayList(GuiScreen.class, GameSettings.class); values = new EArrayList().add(mc.currentScreen, mc.gameSettings); }
+				if (gui.isAssignableFrom(GuiVideoSettings.class)) { types = new EArrayList(GuiScreen.class, GameSettings.class); values = new EArrayList().add(mc.currentScreen, mc.gameSettings); }
+				if (gui.isAssignableFrom(ScreenChatOptions.class)) { types = new EArrayList(GuiScreen.class, GameSettings.class); values = new EArrayList().add(mc.currentScreen, mc.gameSettings); }
+				if (gui.isAssignableFrom(GuiScreenOptionsSounds.class)) { types = new EArrayList(GuiScreen.class, GameSettings.class); values = new EArrayList().add(mc.currentScreen, mc.gameSettings); }
+				if (gui.isAssignableFrom(GuiSnooper.class)) { types = new EArrayList(GuiScreen.class, GameSettings.class); values = new EArrayList().add(mc.currentScreen, mc.gameSettings); }
+				
+				if (gui.isAssignableFrom(GuiLanguage.class)) { types = new EArrayList(GuiScreen.class, GameSettings.class, LanguageManager.class); values = new EArrayList().add(mc.currentScreen, mc.gameSettings, mc.getLanguageManager()); }
+				
+				if (types != null && values != null) {
+					Class[] typesC = new Class[types.size()];
+					for (int i = 0; i < types.size(); i++) { typesC[i] = types.get(i); }
+					return (GuiScreen) Class.forName(gui.getName()).getConstructor(typesC).newInstance(values.toArray());
+				}
+				Object o = Class.forName(gui.getName()).getConstructor().newInstance();
+				if (o instanceof GuiScreen) { return (GuiScreen) o; }
+			}
+		} catch (Exception e) { e.printStackTrace(); }
+		return null;
+	}
+	
 	private static Object getObject(Class gui, Class[] paramTypes, Object[] paramValues) throws Exception {
 		if (paramTypes != null) {
 			if (paramValues != null) {
@@ -64,29 +95,14 @@ public class GuiOpener {
 	}
 	
 	private static boolean testForVanillaGui(Class gui) throws Exception {
-		EArrayList<Class> types = null;
-		EArrayList values = null;
 		Minecraft mc = Minecraft.getMinecraft();
+		GuiScreen screen = createGuiScreenInstance(gui);
 		
-		if (gui.isAssignableFrom(GuiMultiplayer.class)) { types = new EArrayList(GuiScreen.class); values = new EArrayList().add(null); }
-		if (gui.isAssignableFrom(GuiCustomizeSkin.class)) { types = new EArrayList(GuiScreen.class); values = new EArrayList().add(null); }
-		if (gui.isAssignableFrom(GuiScreenResourcePacks.class)) { types = new EArrayList(GuiScreen.class); values = new EArrayList().add(null); }
-		
-		if (gui.isAssignableFrom(GuiOptions.class)) { types = new EArrayList(GuiScreen.class, GameSettings.class); values = new EArrayList().add(null, mc.gameSettings); }
-		if (gui.isAssignableFrom(GuiVideoSettings.class)) { types = new EArrayList(GuiScreen.class, GameSettings.class); values = new EArrayList().add(null, mc.gameSettings); }
-		if (gui.isAssignableFrom(ScreenChatOptions.class)) { types = new EArrayList(GuiScreen.class, GameSettings.class); values = new EArrayList().add(null, mc.gameSettings); }
-		if (gui.isAssignableFrom(GuiScreenOptionsSounds.class)) { types = new EArrayList(GuiScreen.class, GameSettings.class); values = new EArrayList().add(null, mc.gameSettings); }
-		if (gui.isAssignableFrom(GuiSnooper.class)) { types = new EArrayList(GuiScreen.class, GameSettings.class); values = new EArrayList().add(null, mc.gameSettings); }
-		
-		if (gui.isAssignableFrom(GuiLanguage.class)) { types = new EArrayList(GuiScreen.class, GameSettings.class, LanguageManager.class); values = new EArrayList().add(null, mc.gameSettings, mc.getLanguageManager()); }
-		
-		if (types != null && values != null) {
-			Class[] typesC = new Class[types.size()];
-			for (int i = 0; i < types.size(); i++) { typesC[i] = types.get(i); }
-			
-			mc.displayGuiScreen((GuiScreen) Class.forName(gui.getName()).getConstructor(typesC).newInstance(values.toArray()));
+		if (screen != null) {
+			mc.displayGuiScreen(screen);
 			return true;
 		}
+		
 		return false;
 	}
 }

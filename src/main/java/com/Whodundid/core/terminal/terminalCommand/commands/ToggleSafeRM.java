@@ -8,6 +8,7 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 public class ToggleSafeRM implements IConsoleCommand {
 
 	@Override public String getName() { return "saferemotedesktop"; }
+	@Override public boolean showInHelp() { return true; }
 	@Override public EArrayList<String> getAliases() { return new EArrayList<String>("srm"); }
 	
 	@Override public String getHelpInfo(boolean runVisually) {

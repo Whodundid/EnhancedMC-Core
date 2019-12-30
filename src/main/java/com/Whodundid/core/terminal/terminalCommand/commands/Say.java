@@ -9,6 +9,7 @@ import net.minecraft.client.Minecraft;
 public class Say implements IConsoleCommand {
 
 	@Override public String getName() { return "say"; }
+	@Override public boolean showInHelp() { return true; }
 	@Override public EArrayList<String> getAliases() { return new EArrayList<String>("speak", "send", "msg"); }
 	@Override public String getHelpInfo(boolean runVisually) { return "Sends a chat message."; }
 	@Override public String getUsage() { return "ex: say Hello World!"; }

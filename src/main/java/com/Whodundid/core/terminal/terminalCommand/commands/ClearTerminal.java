@@ -7,6 +7,7 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 public class ClearTerminal implements IConsoleCommand {
 
 	@Override public String getName() { return "clear"; }
+	@Override public boolean showInHelp() { return true; }
 	@Override public EArrayList<String> getAliases() { return new EArrayList<String>("clr", "cls"); }
 	@Override public String getHelpInfo(boolean runVisually) { return "Clears the console"; }
 	@Override public String getUsage() { return "ex: clr"; }

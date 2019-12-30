@@ -8,7 +8,8 @@ public enum IDebugCommand {
 	DEBUG_0(0),
 	DEBUG_1(1),
 	DEBUG_2(2),
-	DEBUG_3(3);
+	DEBUG_3(3),
+	DEBUG_4(4);
 	
 	private int id = -1;
 	
@@ -24,6 +25,7 @@ public enum IDebugCommand {
 		case DEBUG_1: return "Debug 1";
 		case DEBUG_2: return "Debug 2";
 		case DEBUG_3: return "Debug 3";
+		case DEBUG_4: return "Debug 4";
 		default: return "Unknown Debug Command";
 		}
 	}

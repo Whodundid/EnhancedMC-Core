@@ -13,6 +13,7 @@ import net.minecraft.util.EnumChatFormatting;
 public class Version implements IConsoleCommand {
 	
 	@Override public String getName() { return "version"; }
+	@Override public boolean showInHelp() { return true; }
 	@Override public EArrayList<String> getAliases() { return new EArrayList<String>("ver", "v"); }
 	@Override public String getHelpInfo(boolean runVisually) { return "displays the version of the provided argument."; }
 	@Override public String getUsage() { return "ex: v core"; }

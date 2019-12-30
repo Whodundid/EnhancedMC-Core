@@ -8,6 +8,7 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 public class ReregisterCommands implements IConsoleCommand {
 	
 	@Override public String getName() { return "reregisterallcommands"; }
+	@Override public boolean showInHelp() { return true; }
 	@Override public EArrayList<String> getAliases() { return new EArrayList("rrac", "reloadcommands", "reloadcmds"); }
 	@Override public String getHelpInfo(boolean runVisually) { return "Rebuilds the commands in the terminal's command handler."; }
 	@Override public String getUsage() { return "ex: rrac -i"; }

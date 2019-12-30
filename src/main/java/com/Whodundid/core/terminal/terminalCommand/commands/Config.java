@@ -10,6 +10,7 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 public class Config implements IConsoleCommand {
 
 	@Override public String getName() { return "config"; }
+	@Override public boolean showInHelp() { return true; }
 	@Override public EArrayList<String> getAliases() { return new EArrayList<String>("cfig", "con"); }
 	@Override public String getHelpInfo(boolean runVisually) { return "Used to interface with EMC submod config files. (reload, save)"; }
 	@Override public String getUsage() { return "ex: config core reload"; }

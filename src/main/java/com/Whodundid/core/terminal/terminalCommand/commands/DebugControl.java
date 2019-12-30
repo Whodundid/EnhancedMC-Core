@@ -9,6 +9,7 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 public class DebugControl implements IConsoleCommand {
 
 	@Override public String getName() { return "debug"; }
+	@Override public boolean showInHelp() { return false; }
 	@Override public EArrayList<String> getAliases() { return new EArrayList<String>("deb", "dev"); }
 	@Override public String getHelpInfo(boolean runVisually) { return "Toggles debug mode for EMC."; }
 	@Override public String getUsage() { return "ex: deb | deb 0"; }
@@ -20,7 +21,7 @@ public class DebugControl implements IConsoleCommand {
 		if (args.size() == 1) {
 			try {
 				int v = Integer.parseInt(args.get(0));
-				if (v < 0 || v > 3) { conIn.error("Command number " + args.get(0) + " out of range!"); }
+				if (v < 0 || v >= DebugFunctions.getNum()) { conIn.error("Command number " + args.get(0) + " out of range!"); }
 				else {
 					conIn.writeln("Running debug " + v, 0x55ff55);
 					DebugFunctions.runDebugFunction(v);

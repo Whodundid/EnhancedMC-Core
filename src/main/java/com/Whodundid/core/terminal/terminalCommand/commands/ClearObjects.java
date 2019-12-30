@@ -9,6 +9,7 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 public class ClearObjects implements IConsoleCommand {
 
 	@Override public String getName() { return "clearobj"; }
+	@Override public boolean showInHelp() { return true; }
 	@Override public EArrayList<String> getAliases() { return new EArrayList<String>("clro"); }
 	@Override public String getHelpInfo(boolean runVisually) { return "Clears the objects from the renderer"; }
 	@Override public String getUsage() { return "ex: clro"; }
@@ -31,4 +32,3 @@ public class ClearObjects implements IConsoleCommand {
 		}
 	}
 }
-

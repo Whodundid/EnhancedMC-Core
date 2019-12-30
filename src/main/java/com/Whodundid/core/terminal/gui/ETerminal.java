@@ -24,7 +24,6 @@ public class ETerminal extends WindowParent {
 	int historyLine = 0;
 	int lastUsed = 2;
 	String preservedInput = "";
-	EArrayList<String> cmdHistory = new EArrayList();
 	
 	public ETerminal() {
 		super();
@@ -33,7 +32,7 @@ public class ETerminal extends WindowParent {
 	
 	@Override
 	public void initGui() {
-		setObjectName("EMC Terminal");
+		setObjectName("EMC Terminal" + (EnhancedMC.isOpMode() ? " +" : ""));
 		setDimensions(300, 153);
 		setMinDims(70, 25);
 		setResizeable(true);
@@ -114,12 +113,15 @@ public class ETerminal extends WindowParent {
 				String text = inputField.getText();
 				int vPos = history.getVScrollBar().getScrollPos();
 				int hPos = history.getHScrollBar().getScrollPos();
+				
 				EArrayList<TextAreaLine> lines = new EArrayList(history.getTextDocument());
+				
 				history.clear();
 				super.resize(xIn, yIn, areaIn);
+				
 				lines.forEach(l -> history.addTextLine(l));
 				history.getVScrollBar().setScrollBarPos(vPos);
-				history.getHScrollBar().setScrollBarPos(hPos);
+				history.getHScrollBar().onResizeUpdate(hPos, xIn, yIn, areaIn);
 				inputField.setText(text);
 			}
 		} catch (Exception e) { e.printStackTrace(); }
@@ -135,7 +137,7 @@ public class ETerminal extends WindowParent {
 					if (!(cmd.equals("clear") || cmd.equals("clr") || cmd.equals("cls"))) {
 						history.addTextLine("> " + cmd, 0xffffff);
 					}
-					cmdHistory.add(cmd);
+					EnhancedMC.getTerminalHandler().cmdHistory.add(cmd);
 					EnhancedMC.getTerminalHandler().executeCommand(this, cmd);
 					inputField.setText("");
 					history.getVScrollBar().setScrollBarPos(history.getVScrollBar().getHighVal());
@@ -169,12 +171,11 @@ public class ETerminal extends WindowParent {
 	
 	public int getLastUsed() { return lastUsed; }
 	public int getHisLine() { return historyLine; }
-	public EArrayList<String> getHistory() { return cmdHistory; }
+	
 	public EGuiTextArea getTextArea() { return history; }
 	
 	public synchronized ETerminal setInputEnabled(boolean val) { inputField.setEnabled(val); return this; }
 	public ETerminal setLastUsed(int in) { lastUsed = in; return this; }
 	public ETerminal setHistoryLine(int in) { historyLine = in; return this; }
 	public ETerminal clear() { history.clear(); return this; }
-	public ETerminal clearHistory() { cmdHistory.clear(); return this; }
 }

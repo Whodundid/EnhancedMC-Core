@@ -14,6 +14,7 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 public class OpenGui implements IConsoleCommand {
 	
 	@Override public String getName() { return "gui"; }
+	@Override public boolean showInHelp() { return true; }
 	@Override public EArrayList<String> getAliases() { return new EArrayList("og"); }
 	@Override public String getHelpInfo(boolean runVisually) { return "Command used for opening guis."; }
 	@Override public String getUsage() { return "ex: gui settings"; }

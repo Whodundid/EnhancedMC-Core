@@ -72,6 +72,7 @@ public final class EnhancedMC {
 	public static boolean enableDebugFunctions = false;
 	public static final EnhancedMCMod modInstance = new EnhancedMCMod();
 	public static boolean safeRemoteDesktopMode = false;
+	public static boolean enableOpFunctions = false;
 	
 	@EventHandler
     private void init(FMLInitializationEvent event) {
@@ -110,6 +111,7 @@ public final class EnhancedMC {
 		if (mc.getSession() != null && mc.getSession().getUsername() != null && mc.getSession().getUsername().equals("Jenarie")) {
 			Display.setTitle("Alt Acc");
 		}
+		enableOpFunctions = mc.getSession().getUsername().equals("Whodundid") || mc.getSession().getUsername().equals("Jenarie");
 		
 		EArrayList<SubMod> foundMods = new EArrayList();
 		EArrayList<SubMod> coreCheck = new EArrayList();
@@ -344,7 +346,9 @@ public final class EnhancedMC {
 	public boolean isModRegistered(String modName) { return RegisteredSubMods.isModRegEn(modName); }
 	
 	public static boolean isDebugMode() { return enableDebugFunctions; }
+	public static boolean isOpMode() { return enableOpFunctions; }
 	public static void setDebugMode(boolean val) { enableDebugFunctions = val; }
+	public static void setOpMode(boolean val) { enableOpFunctions = val; }
 	
 	public static void openSettingsGui() {
 		mc.displayGuiScreen(new RendererProxyGui());

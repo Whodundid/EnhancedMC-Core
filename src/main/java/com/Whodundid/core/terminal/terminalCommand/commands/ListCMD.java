@@ -24,6 +24,7 @@ import net.minecraft.util.EnumChatFormatting;
 public class ListCMD implements IConsoleCommand {
 
 	@Override public String getName() { return "list"; }
+	@Override public boolean showInHelp() { return true; }
 	@Override public EArrayList<String> getAliases() { return new EArrayList<String>("l"); }
 	@Override public String getHelpInfo(boolean runVisually) { return "Used to list various things. (mods, players, etc.)"; }
 	@Override public String getUsage() { return "ex: list players"; }
@@ -91,7 +92,7 @@ public class ListCMD implements IConsoleCommand {
 			for (EntityPlayer p : list) {
 				int c = 0xb2b2b2;
 				String s = "-" + p.getName();
-				if (runVisually) {
+				if (runVisually && EnhancedMC.isOpMode()) {
 					BlockPos pos = p.getPosition();
 					s += EnumChatFormatting.LIGHT_PURPLE + " (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")";
 				}

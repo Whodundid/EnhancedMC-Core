@@ -13,6 +13,7 @@ public class EnableMod implements IConsoleCommand {
 	//mult dep don't work
 	
 	@Override public String getName() { return "enable"; }
+	@Override public boolean showInHelp() { return true; }
 	@Override public EArrayList<String> getAliases() { return new EArrayList<String>("en"); }
 	@Override public String getHelpInfo(boolean runVisually) { return "Attempts to enable a specified EMC submod"; }
 	@Override public String getUsage() { return "ex: en core"; }
