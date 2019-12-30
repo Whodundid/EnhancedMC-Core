@@ -75,7 +75,7 @@ public final class EnhancedMC {
 	public static boolean enableOpFunctions = false;
 	
 	@EventHandler
-    private void init(FMLInitializationEvent event) {
+	private void init(FMLInitializationEvent event) {
 		//register EventListener
 		MinecraftForge.EVENT_BUS.register(eventListener = new EventListener());
 		
@@ -88,22 +88,22 @@ public final class EnhancedMC {
 			finally { if (reader != null) { reader.close(); } checkRM.delete(); }
 		}
 		
-    	//register keybinds
-    	ClientRegistry.registerKeyBinding(openSettingsGui);
-    	ClientRegistry.registerKeyBinding(debugCommand);
-    	
-    	//initialize client resources
-    	CursorHelper.init();
-    	fontRenderer = new EFontRenderer(mc.gameSettings, new ResourceLocation("textures/font/ascii.png"), mc.renderEngine, false);
-		if (mc.gameSettings.language != null) {
-            fontRenderer.setUnicodeFlag(mc.isUnicode());
-            fontRenderer.setBidiFlag(mc.getLanguageManager().isCurrentLanguageBidirectional());
-        }
-		((IReloadableResourceManager) mc.getResourceManager()).registerReloadListener(fontRenderer);
-    	itemDrawer = new EItemDrawer();
+		//register keybinds
+		ClientRegistry.registerKeyBinding(openSettingsGui);
+		ClientRegistry.registerKeyBinding(debugCommand);
 		
-    	//register commands
-    	ClientCommandHandler h = ClientCommandHandler.instance;
+		//initialize client resources
+		CursorHelper.init();
+		fontRenderer = new EFontRenderer(mc.gameSettings, new ResourceLocation("textures/font/ascii.png"), mc.renderEngine, false);
+		if (mc.gameSettings.language != null) {
+			fontRenderer.setUnicodeFlag(mc.isUnicode());
+			fontRenderer.setBidiFlag(mc.getLanguageManager().isCurrentLanguageBidirectional());
+		}
+		((IReloadableResourceManager) mc.getResourceManager()).registerReloadListener(fontRenderer);
+		itemDrawer = new EItemDrawer();
+		
+		//register commands
+		ClientCommandHandler h = ClientCommandHandler.instance;
 	}
 	
 	@EventHandler
