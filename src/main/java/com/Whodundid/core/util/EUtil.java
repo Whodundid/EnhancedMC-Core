@@ -1,5 +1,6 @@
 package com.Whodundid.core.util;
 
+import com.Whodundid.core.util.guiUtil.GuiOpener;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
@@ -7,6 +8,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
@@ -20,6 +22,35 @@ public class EUtil {
 	
 	public static Minecraft mc = Minecraft.getMinecraft();
 	private static FontRenderer fr = mc.fontRendererObj;
+	private static GuiScreen screenToLoad = null;
+	private static Class screenClass = null;
+	private static boolean closeWorld = false;
+	
+	public static void update() {
+		if (closeWorld) {
+			mc.theWorld.sendQuittingDisconnectingPacket();
+			mc.loadWorld(null);
+			closeWorld = false;
+		}
+		if (screenClass != null) {
+			if (screenClass != null) {
+				screenToLoad = GuiOpener.createGuiScreenInstance(screenClass);
+				System.out.println("the screen: " + screenToLoad);
+				screenClass = null;
+			}
+		}
+		if (screenToLoad != null) {
+			mc.displayGuiScreen(screenToLoad);
+			screenToLoad = null;
+		}
+	}
+	
+	public static void closeWorld() { closeWorld = true; }
+	public static void closeWorld(GuiScreen in) { closeWorld = true; screenToLoad = in; }
+	public static void closeWorld(Class in) { closeWorld = true; screenClass = in; }
+	public static void setScreenToLoad(GuiScreen in) { screenToLoad = in; }
+	public static void setScreenToLoad(Class in) { screenClass = in; }
+	
 	
 	/** Returns false if any of the provided objects are null. */
 	public static boolean nullCheck(Object... objsIn) {
