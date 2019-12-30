@@ -40,7 +40,7 @@ public class NumberUtil {
 		return 0;
 	}
 	
-	public static NumType getType(Class<? extends Number> c) {
+	public static NumType getNumType(Class<? extends Number> c) {
 		if (c == Byte.class || c == byte.class) { return NumType.b; }
 		if (c == Short.class || c == short.class) { return NumType.s; }
 		if (c == Integer.class || c == int.class) { return NumType.i; }
