@@ -129,6 +129,7 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 			if (getObjectWithHoveringText() != null) { getObjectWithHoveringText().onMouseHover(mX, mY); }
 			if (EnhancedMC.isDebugMode() && !mc.gameSettings.showDebugInfo) { drawDebugInfo(); }
 		}
+		
 		GlStateManager.popMatrix();
 	}
 	@Override public void onFirstDraw() {}

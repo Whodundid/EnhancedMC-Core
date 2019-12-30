@@ -26,6 +26,7 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
+import com.Whodundid.core.renderer.IRendererProxy;
 import com.Whodundid.core.util.chatUtil.EChatUtil;
 import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.renderUtil.CursorHelper;
@@ -68,7 +69,7 @@ import org.lwjgl.input.Mouse;
 //First Added: Sep 7, 2018
 //Author: Hunter Bragg
 
-public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParent, IWindowParent {
+public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParent, IWindowParent, IRendererProxy {
 	
 	public static final Set<String> PROTOCOLS = Sets.newHashSet(new String[] {"http", "https"});
 	public static final Splitter NEWLINE_SPLITTER = Splitter.on('\n');
@@ -870,6 +871,13 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 		}
 	}
 	@Override public EnhancedGui setCloseAndRecenter(boolean val) { closeAndRecenter = val; return this; }
+	
+	//------------------------
+	//IRendererProxy Overrides
+	//------------------------
+	
+	@Override public int getMX() { return mX; }
+	@Override public int getMY() { return mY; }
 	
 	//-------------------
 	//EnhancedGui methods

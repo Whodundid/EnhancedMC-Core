@@ -125,48 +125,48 @@ public class EGuiTextField extends EnhancedActionObject {
 	@Override
 	public void keyPressed(char typedChar, int keyCode) {
 		if (editable) {
-			if (GuiScreen.isKeyComboCtrlA(keyCode)) {
+			if (isKeyComboCtrlA(keyCode)) {
 				setCursorPositionEnd();
 				setSelectionPos(0);
-			} else if (GuiScreen.isKeyComboCtrlC(keyCode)) { GuiScreen.setClipboardString(getSelectedText()); }
-			else if (GuiScreen.isKeyComboCtrlV(keyCode) && isEnabled() && allowClipboardPastes) { writeText(GuiScreen.getClipboardString()); }
-			else if (GuiScreen.isKeyComboCtrlX(keyCode)) {
+			} else if (isKeyComboCtrlC(keyCode)) { GuiScreen.setClipboardString(getSelectedText()); }
+			else if (isKeyComboCtrlV(keyCode) && isEnabled() && allowClipboardPastes) { writeText(GuiScreen.getClipboardString()); }
+			else if (isKeyComboCtrlX(keyCode)) {
 				GuiScreen.setClipboardString(getSelectedText());
 				if (isEnabled()) { writeText(""); }
 			} else {
 				switch (keyCode) {
 				case 14: //backspace
-					if (GuiScreen.isCtrlKeyDown()) {
+					if (isCtrlKeyDown()) {
 						if (isEnabled()) { deleteWords(-1); }
 					} else if (isEnabled()) { deleteFromCursor(-1); }
 					break;
 				case 28: //enter
-					if (getActionReciever() != null) { getActionReciever().actionPerformed(this); }
+					performAction();
 					break;
 				case 199: //home
-					if (GuiScreen.isShiftKeyDown()) { setSelectionPos(0); } 
+					if (isShiftKeyDown()) { setSelectionPos(0); } 
 					else { setCursorPositionZero(); }
 					break;
 				case 203: //left
-					if (GuiScreen.isShiftKeyDown()) {
-						if (GuiScreen.isCtrlKeyDown()) { setSelectionPos(getNthWordFromPos(-1, getSelectionEnd())); } 
+					if (isShiftKeyDown()) {
+						if (isCtrlKeyDown()) { setSelectionPos(getNthWordFromPos(-1, getSelectionEnd())); } 
 						else { setSelectionPos(getSelectionEnd() - 1); }
-					} else if (GuiScreen.isCtrlKeyDown()) { setCursorPosition(getNthWordFromCursor(-1)); } 
+					} else if (isCtrlKeyDown()) { setCursorPosition(getNthWordFromCursor(-1)); } 
 					else { moveCursorBy(-1); }
 					break;
 				case 205: //right
-					if (GuiScreen.isShiftKeyDown()) {
-						if (GuiScreen.isCtrlKeyDown()) { setSelectionPos(getNthWordFromPos(1, getSelectionEnd())); }
+					if (isShiftKeyDown()) {
+						if (isCtrlKeyDown()) { setSelectionPos(getNthWordFromPos(1, getSelectionEnd())); }
 						else { setSelectionPos(getSelectionEnd() + 1); }
-					} else if (GuiScreen.isCtrlKeyDown()) { setCursorPosition(getNthWordFromCursor(1)); } 
+					} else if (isCtrlKeyDown()) { setCursorPosition(getNthWordFromCursor(1)); } 
 					else { moveCursorBy(1); }
 					break;
 				case 207: //end
-					if (GuiScreen.isShiftKeyDown()) { setSelectionPos(text.length()); } 
+					if (isShiftKeyDown()) { setSelectionPos(text.length()); } 
 					else { setCursorPositionEnd(); }
 					break;
 				case 211: //delete
-					if (GuiScreen.isCtrlKeyDown()) {
+					if (isCtrlKeyDown()) {
 						if (isEnabled()) { deleteWords(1); }
 					} else if (isEnabled()) { deleteFromCursor(1); }
 					break;
@@ -220,24 +220,15 @@ public class EGuiTextField extends EnhancedActionObject {
 		moveCursorBy(i - selectionEnd + l);
 	}
 
-	/**
-	 * Deletes the specified number of words starting at the cursor position.
-	 * Negative numbers will delete words left of the cursor.
-	 */
+	/** Deletes the specified number of words starting at the cursor position. Negative numbers will delete words left of the cursor. */
 	public void deleteWords(int numberOfWords) {
 		if (text.length() != 0) {
-			if (selectionEnd != cursorPosition) {
-				writeText("");
-			} else {
-				deleteFromCursor(getNthWordFromCursor(numberOfWords) - cursorPosition);
-			}
+			if (selectionEnd != cursorPosition) { writeText(""); }
+			else { deleteFromCursor(getNthWordFromCursor(numberOfWords) - cursorPosition); }
 		}
 	}
 
-	/**
-	 * delete the selected text, otherwsie deletes characters from either side of
-	 * the cursor. params: delete num
-	 */
+	/** delete the selected text, otherwsie deletes characters from either side of the cursor. params: delete num */
 	public void deleteFromCursor(int p_146175_1_) {
 		if (text.length() != 0) {
 			if (selectionEnd != cursorPosition) {
@@ -259,19 +250,11 @@ public class EGuiTextField extends EnhancedActionObject {
 		}
 	}
 
-	/**
-	 * see @getNthNextWordFromPos() params: N, position
-	 */
-	public int getNthWordFromCursor(int pos) { return getNthWordFromPos(pos, getCursorPosition());}
-
-	/**
-	 * gets the position of the nth word. N may be negative, then it looks
-	 * backwards. params: N, position
-	 */
-	public int getNthWordFromPos(int posIn, int cursorPos) {
-		return getNthWordFromPos(posIn, cursorPos, true);
-	}
-
+	/** see @getNthWordFromPos() params: N, position */
+	public int getNthWordFromCursor(int pos) { return getNthWordFromPos(pos, getCursorPosition()); }
+	
+	/** gets the position of the nth word. N may be negative, then it looks backwards. params: N, position */
+	public int getNthWordFromPos(int posIn, int cursorPos) { return getNthWordFromPos(posIn, cursorPos, true); }
 	public int getNthWordFromPos(int posIn, int cursorPos, boolean p_146197_3_) {
 		int i = cursorPos;
 		boolean flag = posIn < 0;
@@ -299,22 +282,20 @@ public class EGuiTextField extends EnhancedActionObject {
 		return i;
 	}
 
-	/**
-	 * draws the vertical line cursor in the textbox
-	 */
-	protected void drawCursorVertical(int p_146188_1_, int p_146188_2_, int p_146188_3_, int p_146188_4_) {
-		if (p_146188_1_ < p_146188_3_) {
-			int i = p_146188_1_;
-			p_146188_1_ = p_146188_3_;
-			p_146188_3_ = i;
+	/** draws the vertical line cursor in the textbox */
+	protected void drawCursorVertical(int x, int y, int w, int h) {
+		if (x < w) {
+			int i = x;
+			x = w;
+			w = i;
 		}
-		if (p_146188_2_ < p_146188_4_) {
-			int j = p_146188_2_;
-			p_146188_2_ = p_146188_4_;
-			p_146188_4_ = j;
+		if (y < h) {
+			int j = y;
+			y = h;
+			h = j;
 		}
-		if (p_146188_3_ > startX + width) { p_146188_3_ = startX + width; }
-		if (p_146188_1_ > startX + width) { p_146188_1_ = startX + width; }
+		if (w > startX + width) { w = startX + width; }
+		if (x > startX + width) { x = startX + width; }
 		
 		Tessellator tessellator = Tessellator.getInstance();
 		WorldRenderer worldrenderer = tessellator.getWorldRenderer();
@@ -323,10 +304,10 @@ public class EGuiTextField extends EnhancedActionObject {
 		GlStateManager.enableColorLogic();
 		GlStateManager.colorLogicOp(5387);
 		worldrenderer.begin(7, DefaultVertexFormats.POSITION);
-		worldrenderer.pos(p_146188_1_, p_146188_4_, 0.0D).endVertex();
-		worldrenderer.pos(p_146188_3_, p_146188_4_, 0.0D).endVertex();
-		worldrenderer.pos(p_146188_3_, p_146188_2_, 0.0D).endVertex();
-		worldrenderer.pos(p_146188_1_, p_146188_2_, 0.0D).endVertex();
+		worldrenderer.pos(x, h, 0.0D).endVertex();
+		worldrenderer.pos(w, h, 0.0D).endVertex();
+		worldrenderer.pos(w, y, 0.0D).endVertex();
+		worldrenderer.pos(x, y, 0.0D).endVertex();
 		tessellator.draw();
 		GlStateManager.disableColorLogic();
 		GlStateManager.enableTexture2D();

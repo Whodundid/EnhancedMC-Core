@@ -77,6 +77,25 @@ public class EGuiScrollBar extends EnhancedActionObject {
 		}
 	}
 	
+	public void onResizeUpdate(int val, int xIn, int yIn, ScreenLocation areaIn) {
+		int hResizeVal = 0;
+		int vResizeVal = 0;
+		
+		switch (areaIn) {
+		case top: vResizeVal = -yIn; hResizeVal = 0; break;
+		case bot: vResizeVal = yIn; hResizeVal = 0; break;
+		case left: vResizeVal = 0; hResizeVal = -xIn; break;
+		case right: vResizeVal = 0; hResizeVal = xIn; break;
+		case botLeft: vResizeVal = yIn; hResizeVal = -xIn; break;
+		case botRight: vResizeVal = yIn; hResizeVal = xIn; break;
+		case topLeft: vResizeVal = -yIn; hResizeVal = -xIn; break;
+		case topRight: vResizeVal = -yIn; hResizeVal = xIn; break;
+		default: break;
+		}
+		
+		setScrollBarPos(val + (vertical ? vResizeVal : hResizeVal));
+	}
+	
 	@Override
 	public EGuiScrollBar resetPosition() {
 		super.resetPosition();
@@ -111,7 +130,7 @@ public class EGuiScrollBar extends EnhancedActionObject {
 		if (renderThumb) {
 			int color = 0xffbbbbbb;
 			if (isMouseInThumb(mX, mY) || isScrolling) {
-				color = isScrolling ? 0xff888888 : 0xff888888;
+				color = isScrolling ? 0xffdddddd : 0xffdddddd;
 			}
 			drawRect(thumbStartX, thumbStartY, thumbEndX, thumbEndY, color);
 		}

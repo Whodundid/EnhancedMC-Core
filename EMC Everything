@@ -11,7 +11,7 @@ Images:
         2. Open in new window
         3. For toggling enabled state
     SubMods (general)
-D       1. Logo/Image for each
+        1. Logo/Image for each
     
 Sounds:
     Notifications:
@@ -101,7 +101,7 @@ F   24. When scrolling over a window that has more than 1 scrollList, all lists 
         
 ??  25. There was an incredibly strange bug that breifly appeard where old list objects remained in the drawn list layer but were duplicates and not actually part of the list..
 
-    26. When resizing a scrollList, the horizontal scroll position is based off of the end of the screen, not the start, so it incorrectly moves the list contents.
+F   26. When resizing a scrollList, the horizontal scroll position is based off of the end of the screen, not the start, so it incorrectly moves the list contents.
     
     27. When resizing a scrollList, if the list is scrolled to the bottom and the size becomes smaller than the contents width, the vertical scroll pos is not changed to account for the h scrollbar's height.
     
@@ -123,10 +123,12 @@ F   32. When action objects are fired the parent window is not brought to the fr
     
     35. When using the arrow keys to traverse through an EGuiTextField's text, the letters appear to shift horizontally.
     
+    36. The KeyBindGui does not show same key assignment conflicts.
 
 
 EnhancedChat: (MAIN PRIORITY AFTER CORE)
-F?  1. Text/Mouse miss alignment when hovering/clicking on chat (the clickable area appears to be about 3 pixels lower than the text).
+    1. Text/Mouse miss alignment when hovering/clicking on chat (the clickable area appears to be about 3 pixels lower than the text).
+        --Not fixed the glitch is somewhat random from what I can tell..
 
     2. MainRCM is no longer opening.
     
@@ -175,19 +177,19 @@ Parkour AI:
 Missing/Broken Quality of Life Issues
 -------------------------------------
 
-  1. When using the FileUpButton to return to the main settings gui, the scroll position is not remembered.
+    1. When using the FileUpButton to return to the main settings gui, the scroll position is not remembered.
 
-F 2. When a vanilla gui is opened, the renderer proxy is effectively closed - breaking the control bridge.
+F   2. When a vanilla gui is opened, the renderer proxy is effectively closed - breaking the control bridge.
      This would be fine if it weren't for the fact that the EGuiObjects remain on screen.
    
-  3. RCM does not appear for 'MC KeyBinds' button in SettingsGuiMain.
+    3. RCM does not appear for 'MC KeyBinds' button in SettingsGuiMain.
 
-  4. While the scale of everything does change with Minecraft's gui scaling, some objects really do not
+    4. While the scale of everything does change with Minecraft's gui scaling, some objects really do not
      fit well in the larger scales. (ie. InGameChatWindow, MiniMapGui, etc.)
    
      On the largest scaling mode, nothing actually fits well..
      
-  5. When switching worlds, if a proxy gui was open prior to switching, it is closed when exiting.
+F   5. When switching worlds, if a proxy gui was open prior to switching, it is closed when exiting.
 
 --------------------------------
 Unfinished/Planned Core Features
@@ -210,3 +212,6 @@ D 4. EMC Console
  15. Finish EGuiColorPicker
  16. Redo EGuiDropDownList
  17. Achievement Notifications
+ 
+ hyp ip: 172.65.209.87
+         172.65.230.98

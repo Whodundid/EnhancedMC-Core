@@ -270,10 +270,10 @@ public class StaticEGuiObject {
 		boolean left = false, right = false, top = false, bottom = false;
 		EDimension d = objIn.getDimensions();
 		int rStartY = objIn.hasHeader() ? objIn.getHeader().startY : d.startY;
-		if (mX >= d.startX - 2 && mX <= d.endX + 1 && mY >= rStartY - 1 && mY <= d.endY + 1) {
+		if (mX >= d.startX - 2 && mX <= d.endX + 2 && mY >= rStartY - 2 && mY <= d.endY + 1) {
 			if (mX >= d.startX - 2 && mX <= d.startX) { left = true; }
-			if (mX >= d.endX - 1 && mX <= d.endX + 1) { right = true; }
-			if (mY >= rStartY - 1 && mY <= rStartY) { top = true; }
+			if (mX >= d.endX - 1 && mX <= d.endX + 2) { right = true; }
+			if (mY >= rStartY - 3 && mY <= rStartY) { top = true; }
 			if (mY >= d.endY - 1 && mY <= d.endY + 1) { bottom = true; }
 			if (left) {
 				if (top) { return ScreenLocation.topLeft; }

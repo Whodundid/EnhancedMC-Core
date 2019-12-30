@@ -1,7 +1,6 @@
 package com.Whodundid.core.util.renderUtil;
 
 import com.Whodundid.core.coreSubMod.EMCResources;
-import com.Whodundid.core.enhancedGui.guiUtil.EGui;
 import com.ibm.icu.text.ArabicShaping;
 import com.ibm.icu.text.ArabicShapingException;
 import com.ibm.icu.text.Bidi;
@@ -30,7 +29,7 @@ import org.lwjgl.opengl.GL11;
 //First Added: Jan 3, 2019
 //Author: Hunter Bragg
 
-public class EFontRenderer extends EGui implements IResourceManagerReloadListener {
+public class EFontRenderer extends GLObject implements IResourceManagerReloadListener {
 	
 	private static final ResourceLocation[] unicodePageLocations = new ResourceLocation[256];
 	protected int[] charWidth = new int[256];

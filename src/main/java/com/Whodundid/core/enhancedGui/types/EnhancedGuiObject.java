@@ -31,36 +31,13 @@ import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.StorageBox;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.gui.stream.GuiTwitchUserMode;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.EntityList;
 import net.minecraft.event.ClickEvent;
-import net.minecraft.event.HoverEvent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTException;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.stats.Achievement;
-import net.minecraft.stats.StatBase;
-import net.minecraft.stats.StatList;
-import net.minecraft.util.ChatComponentTranslation;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.client.ClientCommandHandler;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import tv.twitch.chat.ChatUserInfo;
 
 //Jan 3, 2019
 //Jan 24, 2019 : added objsToBeAdded
@@ -73,11 +50,7 @@ import tv.twitch.chat.ChatUserInfo;
 
 public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObject {
 	
-	public static final Set<String> PROTOCOLS = Sets.newHashSet(new String[] {"http", "https"});
-	public static final Splitter NEWLINE_SPLITTER = Splitter.on('\n');
-	public URI clickedLinkURI;
 	public EnhancedGuiObject objectInstance;
-	protected ScaledResolution res;
 	protected IEnhancedGuiObject parent, focusObjectOnClose, defaultFocusObject;
 	protected EDimension boundaryDimension;
 	protected EArrayList<IEnhancedGuiObject> guiObjects = new EArrayList();
@@ -86,11 +59,13 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	protected ObjectEventHandler eventHandler = new ObjectEventHandler(this);
 	protected ScreenLocation oldArea = ScreenLocation.out;
 	protected EObjectGroup objectGroup;
-	private boolean hasBeenInitialized = false;
-	private boolean objectInit = false;
+	protected String objectName = "noname";
+	protected String hoverText = "";
+	protected int objZLevel = 0;
+	protected int objectId = -1;
 	protected boolean enabled = true;
 	protected boolean visible = true;
-	public boolean mouseEntered = false;
+	protected boolean mouseEntered = false;
 	protected boolean moveable = false;
 	protected boolean hasFocus = false;
 	protected boolean focusLock = false;
@@ -100,20 +75,9 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	protected boolean firstDraw = false;
 	protected boolean closeable = true;
 	protected boolean closed = false;
-	protected int minWidth = 0;
-	protected int minHeight = 0;
-	protected int maxWidth = Integer.MAX_VALUE;
-	protected int maxHeight = Integer.MAX_VALUE;
-	public int objZLevel = 0;
-	public int objectId = -1;
-	protected String objectName = "noname";
-	protected String hoverText = "";
 	protected int hoverTextColor = 0xff00d1ff;
-	public int startXPos, startYPos, startWidth, startHeight;
-	public int startX, startY, endX, endY;
-	public int width, height;
-	public int midX, midY;
-	public int mX, mY;
+	private boolean hasBeenInitialized = false;
+	private boolean objectInit = false;
 	
 	public void init(IEnhancedGuiObject objIn) {
 		parent = objIn;
@@ -156,6 +120,26 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	
 	@Override public void onTabCompletion(String[] result) {}
 	@Override public void requestTabComplete(String checkWord, String upToCursor) { EChatUtil.registerTabListener(this, checkWord, upToCursor); }
+
+	//--------------
+	//EGui Overrides
+	//--------------
+	
+	@Override
+	public void componentURLClick(IChatComponent componentIn, ClickEvent event) {
+		if (!mc.gameSettings.chatLinks) { return; }
+		try {
+			URI uri = new URI(event.getValue());
+			String s = uri.getScheme();
+			
+			if (s == null) { throw new URISyntaxException(event.getValue(), "Missing protocol"); }
+			if (!PROTOCOLS.contains(s.toLowerCase())) { throw new URISyntaxException(event.getValue(), "Unsupported protocol: " + s.toLowerCase()); }
+			
+			if (mc.gameSettings.chatLinksPrompt) { addObject(new EGuiLinkConfirmationDialogueBox(this, event.getValue())); }
+			else { openWebLink(event.getValue()); }
+		}
+		catch (URISyntaxException urisyntaxexception) { EnhancedMC.error("Can\'t open url for " + event, urisyntaxexception); }
+	}
 	
 	//----------------------------
 	//IEnhancedGuiObject Overrides
@@ -464,211 +448,4 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 		if (!objsToBeRemoved.isEmpty()) { StaticEGuiObject.removeObjects(this, objsToBeRemoved); }
 		if (!objsToBeAdded.isEmpty()) { StaticEGuiObject.addObjects(this, objsToBeAdded); }
 	}
-	
-	public void setText(String textIn, boolean overwrite) {}
-	
-	public void sendChatMessage(String msg) { sendChatMessage(msg, true); }
-	public void sendChatMessage(String msg, boolean addToChat) {
-		if (addToChat) { mc.ingameGUI.getChatGUI().addToSentMessages(msg); }
-		if (msg.startsWith("/") && ClientCommandHandler.instance.executeCommand(mc.thePlayer, msg) != 0) { return; }
-		mc.thePlayer.sendChatMessage(msg);
-    }
-	
-	public void drawMenuGradient() { drawGradientRect(0, 0, res.getScaledWidth(), res.getScaledHeight(), -1072689136, -804253680); }
-	
-	protected void renderToolTip(ItemStack stack, int x, int y) {
-        List<String> list = stack.getTooltip(mc.thePlayer, mc.gameSettings.advancedItemTooltips);
-
-        for (int i = 0; i < list.size(); i++) {
-            if (i == 0) { list.set(i, stack.getRarity().rarityColor + list.get(i)); }
-            else { list.set(i, EnumChatFormatting.GRAY + list.get(i)); }
-        }
-        drawHoveringText(list, x, y);
-    }
-	
-    protected void drawCreativeTabHoveringText(String tabName, int mX, int mY) {
-        drawHoveringText(Arrays.<String>asList(new String[] {tabName}), mX, mY);
-    }
-
-    protected void drawHoveringText(List<String> textLines, int mX, int mY) {
-    	if (!textLines.isEmpty()) {
-            GlStateManager.disableDepth();
-            int i = 0;
-
-            for (String s : textLines) {
-                int j = fontRenderer.getStringWidth(s);
-                if (j > i) { i = j; } //find longest string
-            }
-
-            int l1 = mX + 12; //x offset
-            int i2 = mY - 12; //y offset
-            int k = 8; //initial height offset
-
-            if (textLines.size() > 1) { k += 2 + (textLines.size() - 1) * 10; } //calculate height
-            ScaledResolution res = new ScaledResolution(mc);
-            if (l1 + i + 4 > res.getScaledWidth()) { l1 = res.getScaledWidth() - i - 4; } //clamp width to screen
-            if (mY + k - 7 > res.getScaledHeight()) { i2 = res.getScaledHeight() - k - 5; } //clamp height to screen
-
-            glZLevel = 300.0F;
-            renderItem.zLevel = 300.0F;
-            int l = -267386864;
-            drawGradientRect(l1 - 3, i2 - 4, l1 + i + 3, i2 - 3, l, l); //top
-            drawGradientRect(l1 - 3, i2 + k + 3, l1 + i + 3, i2 + k + 4, l, l); //bottom
-            drawGradientRect(l1 - 3, i2 - 3, l1 + i + 3, i2 + k + 3, l, l); //background
-            drawGradientRect(l1 - 4, i2 - 3, l1 - 3, i2 + k + 3, l, l); //left
-            drawGradientRect(l1 + i + 3, i2 - 3, l1 + i + 4, i2 + k + 3, l, l); //right
-            int i1 = 1347420415;
-            int j1 = (i1 & 16711422) >> 1 | i1 & -16777216;
-            drawGradientRect(l1 - 3, i2 - 3 + 1, l1 - 3 + 1, i2 + k + 3 - 1, i1, j1); //inner left
-            drawGradientRect(l1 + i + 2, i2 - 3 + 1, l1 + i + 3, i2 + k + 3 - 1, i1, j1); //inner right
-            drawGradientRect(l1 - 3, i2 - 3, l1 + i + 3, i2 - 3 + 1, i1, i1); //inner top
-            drawGradientRect(l1 - 3, i2 + k + 2, l1 + i + 3, i2 + k + 3, j1, j1); //inner bottom
-
-            for (int k1 = 0; k1 < textLines.size(); k1++) {
-                String s1 = textLines.get(k1);
-                drawStringWithShadow(s1, l1, i2, -1);
-                if (k1 == 0) { i2 += 2; }
-                i2 += 10;
-            }
-
-            glZLevel = 0.0F;
-            renderItem.zLevel = 0.0F;
-            GlStateManager.enableDepth();
-        }
-    }
-	
-	protected void handleComponentHover(IChatComponent componentIn, int mX, int mY)  {
-		if (componentIn != null) {
-			if (componentIn.getChatStyle().getChatHoverEvent() != null) {
-	            HoverEvent hoverevent = componentIn.getChatStyle().getChatHoverEvent();
-	            
-	            if (hoverevent.getAction() == HoverEvent.Action.SHOW_ITEM) {
-	                ItemStack itemstack = null;
-	                
-	                try {
-	                    NBTBase nbtbase = JsonToNBT.getTagFromJson(hoverevent.getValue().getUnformattedText());
-	                    if (nbtbase instanceof NBTTagCompound) { itemstack = ItemStack.loadItemStackFromNBT((NBTTagCompound)nbtbase); }
-	                } catch (NBTException var11) { var11.printStackTrace(); }
-
-	                if (itemstack != null) { renderToolTip(itemstack, mX, mY); }
-	                else {
-	                	drawCreativeTabHoveringText(EnumChatFormatting.RED + "Invalid Item!", mX, mY);
-	                }
-	            }
-	            else if (hoverevent.getAction() == HoverEvent.Action.SHOW_ENTITY) {
-	                if (this.mc.gameSettings.advancedItemTooltips) {
-	                    try {
-	                        NBTBase nbtbase1 = JsonToNBT.getTagFromJson(hoverevent.getValue().getUnformattedText());
-
-	                        if (nbtbase1 instanceof NBTTagCompound) {
-	                            List<String> list1 = Lists.<String>newArrayList();
-	                            NBTTagCompound nbttagcompound = (NBTTagCompound)nbtbase1;
-	                            list1.add(nbttagcompound.getString("name"));
-
-	                            if (nbttagcompound.hasKey("type", 8)) {
-	                                String s = nbttagcompound.getString("type");
-	                                list1.add("Type: " + s + " (" + EntityList.getIDFromString(s) + ")");
-	                            }
-
-	                            list1.add(nbttagcompound.getString("id"));
-	                            drawHoveringText(list1, mX, mY);
-	                        }
-	                        else {
-	                            drawCreativeTabHoveringText(EnumChatFormatting.RED + "Invalid Entity!", mX, mY);
-	                        }
-	                    }
-	                    catch (NBTException var10) {
-	                        drawCreativeTabHoveringText(EnumChatFormatting.RED + "Invalid Entity!", mX, mY);
-	                    }
-	                }
-	            }
-	            else if (hoverevent.getAction() == HoverEvent.Action.SHOW_TEXT) {
-	            	String text = hoverevent.getValue().getFormattedText();
-	            	drawHoveringText(NEWLINE_SPLITTER.splitToList(text), mX, mY);
-	            }
-	            else if (hoverevent.getAction() == HoverEvent.Action.SHOW_ACHIEVEMENT) {
-	                StatBase statbase = StatList.getOneShotStat(hoverevent.getValue().getUnformattedText());
-
-	                if (statbase != null) {
-	                    IChatComponent ichatcomponent = statbase.getStatName();
-	                    IChatComponent ichatcomponent1 = new ChatComponentTranslation("stats.tooltip.type." + (statbase.isAchievement() ? "achievement" : "statistic"), new Object[0]);
-	                    ichatcomponent1.getChatStyle().setItalic(Boolean.valueOf(true));
-	                    String s1 = statbase instanceof Achievement ? ((Achievement)statbase).getDescription() : null;
-	                    List<String> list = Lists.newArrayList(new String[] {ichatcomponent.getFormattedText(), ichatcomponent1.getFormattedText()});
-
-	                    if (s1 != null) { list.addAll(fontRenderer.listFormattedStringToWidth(s1, 150)); }
-
-	                    drawHoveringText(list, mX, mY);
-	                }
-	                else { drawCreativeTabHoveringText(EnumChatFormatting.RED + "Invalid statistic/achievement!", mX, mY); }
-	            }
-
-	            GlStateManager.disableLighting();
-	        }
-		}
-    }
-	
-	protected boolean handleComponentClick(IChatComponent componentIn) {
-        if (componentIn == null) { return false; }
-		ClickEvent clickevent = componentIn.getChatStyle().getChatClickEvent();
-		if (clickevent != null && clickevent.getAction() != null) {
-			if (clickevent.getAction() == ClickEvent.Action.OPEN_URL) {
-			    if (!mc.gameSettings.chatLinks) { return false; }
-			    try {
-			        URI uri = new URI(clickevent.getValue());
-			        String s = uri.getScheme();
-			        
-			        if (s == null) { throw new URISyntaxException(clickevent.getValue(), "Missing protocol"); }
-			        
-			        if (!PROTOCOLS.contains(s.toLowerCase())) {
-			            throw new URISyntaxException(clickevent.getValue(), "Unsupported protocol: " + s.toLowerCase());
-			        }
-			        
-			        if (mc.gameSettings.chatLinksPrompt) { addObject(new EGuiLinkConfirmationDialogueBox(this, clickevent.getValue())); }
-			        else { openWebLink(clickevent.getValue()); }
-			    }
-			    catch (URISyntaxException urisyntaxexception) {
-			        EnhancedMC.error("Can\'t open url for " + clickevent, urisyntaxexception);
-			    }
-			}
-			else if (clickevent.getAction() == ClickEvent.Action.OPEN_FILE) {
-			    openWebLink(clickevent.getValue());
-			}
-			else if (clickevent.getAction() == ClickEvent.Action.SUGGEST_COMMAND) {
-				System.out.println("suggesting command: " + clickevent.getValue());
-			    setText(clickevent.getValue(), true);
-			}
-			else if (clickevent.getAction() == ClickEvent.Action.RUN_COMMAND) {
-				System.out.println("running command: " + clickevent.getValue());
-			    sendChatMessage(clickevent.getValue(), false);
-			}
-			else if (clickevent.getAction() == ClickEvent.Action.TWITCH_USER_INFO) {
-			    ChatUserInfo chatuserinfo = this.mc.getTwitchStream().func_152926_a(clickevent.getValue());
-			    if (chatuserinfo != null) {
-			        mc.displayGuiScreen(new GuiTwitchUserMode(mc.getTwitchStream(), chatuserinfo));
-			    }
-			    else { EnhancedMC.error("Tried to handle twitch user but couldn\'t find them!"); }
-			}
-			else { EnhancedMC.error("Don\'t know how to handle " + clickevent); }
-
-			return true;
-		}
-		return false;
-    }
-	
-	protected void openWebLink(String linkIn) {
-		if (linkIn != null && !linkIn.isEmpty()) {
-			try {
-				URI uri = new URI(linkIn);
-	            Class<?> oclass = Class.forName("java.awt.Desktop");
-	            Object object = oclass.getMethod("getDesktop", new Class[0]).invoke((Object)null, new Object[0]);
-	            oclass.getMethod("browse", new Class[] {URI.class}).invoke(object, new Object[] {uri});
-	        }
-	        catch (Throwable throwable) { EnhancedMC.error("Couldn\'t open link", throwable); }
-		}
-    }
-	
-	public static boolean isCtrlKeyDown() { return Minecraft.isRunningOnMac ? Keyboard.isKeyDown(219) || Keyboard.isKeyDown(220) : Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157); }
-    public static boolean isShiftKeyDown() { return Keyboard.isKeyDown(42) || Keyboard.isKeyDown(54); }
-    public static boolean isAltKeyDown() { return Keyboard.isKeyDown(56) || Keyboard.isKeyDown(184); }
 }
