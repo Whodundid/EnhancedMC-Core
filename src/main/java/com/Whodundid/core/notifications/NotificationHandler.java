@@ -40,7 +40,6 @@ public class NotificationHandler {
 	}
 	
 	public void clearNotifications() {
-		System.out.println(EnhancedMC.isEGuiOpen(NotificationObject.class));
 		if (EnhancedMC.isEGuiOpen(NotificationObject.class)) {
 			Object o = EnhancedMC.getWindowInstance(NotificationObject.class);
 			if (o instanceof NotificationObject) {

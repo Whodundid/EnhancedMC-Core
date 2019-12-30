@@ -78,10 +78,10 @@ public abstract class NotificationObject extends WindowParent {
 
 	@Override
 	public void mousePressed(int mXIn, int mYIn, int button) {
+		super.mousePressed(mXIn, mYIn, button);
 		if (button == 1) {
 			EnhancedMC.displayEGui(new NotificationRCM(), CenterType.cursorCorner);
 		}
-		super.mousePressed(mXIn, mYIn, button);
 	}
 
 	@Override
