@@ -7,6 +7,7 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 public class Exit implements IConsoleCommand {
 
 	@Override public String getName() { return "exit"; }
+	@Override public boolean showInHelp() { return true; }
 	@Override public EArrayList<String> getAliases() { return new EArrayList<String>("close"); }
 	@Override public String getHelpInfo(boolean runVisually) { return "Closes the terminal"; }
 	@Override public String getUsage() { return "ex: exit"; }
