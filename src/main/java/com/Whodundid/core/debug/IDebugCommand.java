@@ -1,7 +1,5 @@
 package com.Whodundid.core.debug;
 
-//Last edited: 9-15-18
-//First Added: 9-14-18
 //Author: Hunter Bragg
 
 public enum IDebugCommand {

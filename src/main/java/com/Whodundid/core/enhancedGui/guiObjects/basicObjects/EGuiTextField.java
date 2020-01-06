@@ -14,8 +14,6 @@ import net.minecraft.util.ChatAllowedCharacters;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.input.Keyboard;
 
-//Last edited: Jan 2, 2019
-//First Added: Oct 2, 2018
 //Author: Hunter Bragg
 
 public class EGuiTextField extends EnhancedActionObject {

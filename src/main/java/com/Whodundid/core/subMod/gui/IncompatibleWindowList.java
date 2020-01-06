@@ -14,6 +14,8 @@ import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 import net.minecraft.util.EnumChatFormatting;
 
+//Author: Hunter Bragg
+
 public class IncompatibleWindowList extends EGuiDialogueBox {
 	
 	EGuiButton okButton;

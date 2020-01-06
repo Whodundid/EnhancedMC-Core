@@ -5,9 +5,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Random;
 import java.util.Scanner;
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.coreSubMod.EMCResources;
+import com.Whodundid.core.enhancedGui.StaticEGuiObject;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.colorPicker.EGuiColorPicker;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.textArea.EGuiTextArea;
@@ -38,6 +40,7 @@ import com.Whodundid.core.subMod.SubModType;
 import com.Whodundid.core.subMod.gui.SubModErrorDialogueBox;
 import com.Whodundid.core.subMod.gui.SubModErrorType;
 import com.Whodundid.core.subMod.gui.SubModInfoDialogueBox;
+import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.renderUtil.PlayerDrawer;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
@@ -62,8 +65,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 
-//Last edited: 10-14-18
-//First Added: 9-5-18
 //Author: Hunter Bragg
 
 @SuppressWarnings("unused")
@@ -98,90 +99,28 @@ public class ExperimentGui extends WindowParent {
 		header.setTitleColor(0x000000);
 		header.setParentFocusDrawn(false);
 		
-		EGuiCheckBox cbox = new EGuiCheckBox(this, startX + 10, startY + 10, 20, 20);
-		addObject(cbox);
+		//EGuiImageBox ibox = new EGuiImageBox(this, startX + 5, startY + 5, width - 10, height - 10, EMCResources.logo);
+		//addObject(ibox);
 		
-		EGuiRadioButton rbtn = new EGuiRadioButton(this, startX + 10, cbox.endY + 10, 20, 20);
-		addObject(rbtn);
+		textArea = new EGuiTextArea(this, startX + 5, startY + 5, width - 10, height - 10, true, false).setDrawLineNumbers(true);
+		addObject(textArea);
 		
-		EGuiImageBox ibox = new EGuiImageBox(this, cbox.endX + 10, cbox.startY, width - cbox.width - 30, height - 20, EMCResources.logo);
-		addObject(ibox);
-		
-		/*
-		EGuiContainer con = new EGuiContainer(this, startX + 5, startY + 5, width - 10, height - 10);
-		EGuiContainer a = new EGuiContainer(con, startX + 7, startY + 24, 100, 120);
-		EGuiContainer b = new EGuiContainer(con, startX + 113, startY + 24, 100, 120);
-		EGuiContainer i = new EGuiContainer(a, startX + 12, startY + 48, 80, 80);
-		EGuiContainer ii = new EGuiContainer(b, startX + 123, startY + 48, 80, 80);
-		
-		con.setTitle("Con");
-		a.setTitle("a");
-		b.setTitle("b");
-		i.setTitle("i");
-		ii.setTitle("ii");
-		
-		con.addObject(a, b);
-		a.addObject(i);
-		b.addObject(ii);
-		
-		EGuiButton btn1 = new EGuiButton(i, startX + 20, startY + 70, 60, 20, "button 1");
-		EGuiButton btn2 = new EGuiButton(ii, startX + 130, startY + 70, 60, 20, "button 2");
-		i.addObject(btn1);
-		ii.addObject(btn2);
-		
-		this.addObject(con);
-		*/
-		
-		/*
-		WindowParent inner = new WindowParent(this, endX + 15, midY - 5, 219, 190) {
-			@Override
-			public void drawObject(int mXIn, int mYIn, float ticks) {
-				drawDefaultBackground();
-				super.drawObject(mXIn, mYIn, ticks);
+		for (int i = 0; i < 50; i++) {
+			String s = i + "";
+			if (s.length() == 1) { s += " :"; }
+			s += ": ";
+			for (int j = 0; j < 50; j++) {
+				Random rand = new Random();
+				int val = rand.nextInt(35);
+				if (val >= 26) { s += " "; }
+				else { s += (char)(val + 'a'); }
 			}
-		};
-		
-		inner.setHeader(new EGuiHeader(inner));
-		if (inner.getHeader() != null) { inner.getHeader().setTitle("New Window"); }
-		
-		scrollList = new EGuiScrollList(inner, endX + 20, midY, 210, 180);
-		
-		testMethod1();
-		
-		//scrollList.addObjectToList(new EGuiButton(scrollList, 10, 5, 50, 20, "button 1"));
-		//scrollList.addObjectToList(new EGuiLabel(scrollList, 30, 50, "Scrolling Label Test!"));
-		//scrollList.addObjectToList(new EGuiButton(scrollList, 10, 80, 90, 20, "button 2") {
-		//	{ setRunActionOnPress(true); }
-		//	@Override public void performAction() {
-		//		mc.displayGuiScreen(new SettingsGuiMain());
-		//		playPressSound();
-		//	}
-		//});
-		//scrollList.addObjectToList(new EGuiLabel(scrollList, 30, 370, "At bottom!"));
-		//scrollList.addObjectToList(new EGuiButton(scrollList, 45, 152, 90, 20, "test button 3").setDisplayStringColor(0xf63233).setEnabled(false));
-		//scrollList.addObjectToList(new KeyOverlay(scrollList, 5, 220));
-		
-		//scrollList.setListHeight(scrollList.getDimensions().height + 200);
-		
-		inner.addObject(scrollList);
-		
-		WindowParent window2 = new WindowParent(this, endX + 15, 35, 219, 190) {
-			@Override
-			public void drawObject(int mXIn, int mYIn, float ticks) {
-				drawDefaultBackground();
-				super.drawObject(mXIn, mYIn, ticks);
-			}
-		};
-		
-		window2.setHeader(new EGuiHeader(window2));
-		*/
-		
-		//textArea = new EGuiTextArea(this, startX + 5, startY + 5, width - 10, height - 10, true, false).setDrawLineNumbers(true);
-		//addObject(textArea);
-		
+			textArea.addTextLine(s, EColors.white.c());
+		}
+		/*
 		//textArea.addTextLine("this is an intentionally very long line of text to test horizontal scrolling!");
 		
-		/*
+		
 		File gFile = null;
 		
 		String path = System.getProperty("user.dir");
@@ -201,79 +140,13 @@ public class ExperimentGui extends WindowParent {
 				if (reader != null) { reader.close(); }
 			}
 		} catch (Exception e) { e.printStackTrace(); }
-		
+		*/
 		
 		//for (int i = 1; i <= 60; i++) { textArea.addTextLine(i + " cow"); }
-		*/
 		
 		
 		
 		//textArea.addTextLine("this is an intentionally very long line of text to test horizontal scrolling!");
-		
-		
-		/*
-		EGuiContainer con = new EGuiContainer(this, startX + 5, startY + 5, width - 10, height - 10).setTitle("testy cat");
-		System.out.println("con Dims: " + con.getDimensions());
-		EGuiScrollList l = new EGuiScrollList(con, startX + 7, startY + 24, width - 14, height - 31);
-		System.out.println("list dims: " + l.getDimensions());
-		EGuiButton beUtton = new EGuiButton(l, 5, 5, 100, 20, "Beeeee utton");
-		System.out.println("button dims: " + beUtton.getDimensions() + " : " + beUtton);
-		l.addObjectToList(beUtton);
-		//System.out.println(beUtton.getDimensions());
-		con.addObject(l);
-		addObject(con);
-		*/
-		
-		//enableHeader(false);
-		//EScreenLocationSelector selector = new EScreenLocationSelector(this, wPos - 300, hPos - 200, 100);
-		//EGuiHeader header = new EGuiHeader(this);
-		//addObject(test1 = new EGuiButton(this, midX + 32, midY + 100, 60, 20, "Lobby"));
-		//addObject(selector);
-		//addObject(header);
-		//buttonList.add(new GuiButton(0, wPos + 70, hPos + 70, 200, 20, "no"));
-		
-		
-		//EGuiTextArea test = new EGuiTextArea(dialogueBox, dBoxDim.startX + 2, dBoxDim.startY + 2, 150, 150);
-		//dialogueBox.addObject(test.setZLevel(1));
-		
-		//label = new EGuiLabel(this, wPos, hPos + 60, "The quick brown fox jumped over the incredibly large boulder at an impressive 32.04 kph.");
-		//label.setDrawCentered(true).enableShadow(false).enableWordWrap(true, 190);
-		//addObject(label);
-		
-		//dialogueBox = new EGuiDialogueBox(this, 50, 50, 200, 100, DialogueBoxTypes.ok);
-		//dialogueBox.setDisplayString("Notice");
-		//dialogueBox.setMessage("Press ok!");
-		//addObject(dialogueBox);
-		
-		//textArea = new EGuiTextArea(this, startX + 3, startY + 3, width - 6, 150, false).setDrawLineNumbers(true);
-		//for (ChatFilterList l : ChatOrganizer.filters) {
-		//	textArea.addTextLine(l.getFilterName(), 0xff0000);
-		//	for (String s : l.getFilterList()) {
-		//		textArea.addTextLine(s);
-		//	}
-		//	textArea.addTextLine();
-		//}
-		
-		//addObject(textArea);
-		
-		//addObject(inner, window2);
-		//addObject(window2);
-		//https://hypixel.net/my2018/?5c2a973544f4e2a67393289c
-		
-		//addObject(new EGuiLinkConfirmationDialogueBox(this, "https://www.google.com"));
-		
-		//chatWindow = new InGameChatWindow(this);
-		//addObject(chatWindow);
-		
-		
-		//colorPicker = new EGuiColorPicker(this, 150, 150);
-		
-		//EGuiPlayerViewer viewer = new EGuiPlayerViewer(colorPicker, startX + 35, startY + 30, 150, 200);
-		//addObject(viewer);
-		//viewer.setHSliderOrientation(ScreenLocation.top);
-		//viewer.setVSliderOrientation(ScreenLocation.left);
-		
-		//addObject(colorPicker);
 	}
 	
 	@Override
@@ -335,7 +208,7 @@ public class ExperimentGui extends WindowParent {
 	@Override
 	public void mousePressed(int mX, int mY, int button) {
 		super.mousePressed(mX, mY, button);
-		testMethod2();
+		//testMethod2();
 		//if (textArea != null) {
 			//textArea.addTextLine("clicked " + mX + ", " + mY + " with button " + button, 0xffaa00);
 			//EGuiScrollBar b = textArea.getVScrollBar();

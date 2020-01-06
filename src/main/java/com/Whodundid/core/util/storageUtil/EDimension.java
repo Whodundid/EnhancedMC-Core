@@ -1,7 +1,5 @@
 package com.Whodundid.core.util.storageUtil;
 
-//Last edited: Nov 3, 2018
-//First Added: Nov 3, 2018
 //Author: Hunter Bragg
 
 public class EDimension {
@@ -10,6 +8,8 @@ public class EDimension {
 	public int startY = 0, endY = 0;
 	public int midX = 0, midY = 0;
 	public int width = 0, height = 0;
+	
+	public EDimension() { this(0, 0, 0, 0); }
 	
 	public EDimension(int startXIn, int startYIn, int endXIn, int endYIn) {
 		startX = startXIn;

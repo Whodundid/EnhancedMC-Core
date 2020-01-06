@@ -12,6 +12,8 @@ import com.Whodundid.core.subMod.util.SubModEnabler;
 import com.Whodundid.core.subMod.util.SubModErrorDisplay;
 import com.Whodundid.core.util.renderUtil.CenterType;
 
+//Author: Hunter Bragg
+
 public class SettingsRCM extends EGuiRightClickMenu {
 
 	private SettingsGuiMain window;

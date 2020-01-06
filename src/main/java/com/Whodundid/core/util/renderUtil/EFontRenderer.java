@@ -25,8 +25,6 @@ import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.IOUtils;
 import org.lwjgl.opengl.GL11;
 
-//Last edited: Jan 3, 2019
-//First Added: Jan 3, 2019
 //Author: Hunter Bragg
 
 public class EFontRenderer extends GLObject implements IResourceManagerReloadListener {

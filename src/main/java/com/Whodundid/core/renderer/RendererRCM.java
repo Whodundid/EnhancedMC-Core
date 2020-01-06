@@ -13,6 +13,8 @@ import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
+//Author: Hunter Bragg
+
 public class RendererRCM extends EGuiRightClickMenu {
 	
 	@Override

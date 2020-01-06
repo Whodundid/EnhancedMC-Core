@@ -3,8 +3,6 @@ package com.Whodundid.core.enhancedGui.guiObjects.basicObjects;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 
-//Last edited: Jan 2, 2019
-//First Added: Dec 30, 2018
 //Author: Hunter Bragg
 
 public class EGuiContainer extends EnhancedGuiObject {

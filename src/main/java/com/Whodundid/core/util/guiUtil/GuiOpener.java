@@ -20,6 +20,8 @@ import net.minecraft.client.gui.ScreenChatOptions;
 import net.minecraft.client.resources.LanguageManager;
 import net.minecraft.client.settings.GameSettings;
 
+//Author: Hunter Bragg
+
 /** A helper class used to display WindowParents and GuiScreens. */
 public class GuiOpener {
 	
@@ -38,7 +40,7 @@ public class GuiOpener {
 				
 				if (obj != null) {
 					if (obj instanceof WindowParent) {
-						return EnhancedMC.displayEGui((WindowParent) obj, old, true, false, false, typeIn);
+						return EnhancedMC.displayEGui((WindowParent) obj, old, true, true, true, typeIn);
 					}
 					else if (obj instanceof EnhancedGui) {
 						return EnhancedMC.displayEGui((EnhancedGui) obj, old, true, false, false, typeIn);

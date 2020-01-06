@@ -6,6 +6,8 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
 
+//Author: Hunter Bragg
+
 public class DynamicTextureHandler {
 
 	private final TextureManager textureManager;

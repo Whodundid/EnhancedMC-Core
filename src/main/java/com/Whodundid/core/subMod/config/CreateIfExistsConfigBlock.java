@@ -1,5 +1,7 @@
 package com.Whodundid.core.subMod.config;
 
+//Author: Hunter Bragg
+
 public class CreateIfExistsConfigBlock extends ConfigBlock {
 
 	public String stringToCheckFor = "";

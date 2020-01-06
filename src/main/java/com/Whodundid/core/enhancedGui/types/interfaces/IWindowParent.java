@@ -3,6 +3,8 @@ package com.Whodundid.core.enhancedGui.types.interfaces;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import java.util.Stack;
 
+//Author: Hunter Bragg
+
 public interface IWindowParent extends IEnhancedGuiObject {
 
 	/** Returns true if this object will remain on the hud when a RendererProxyGui is closed. */

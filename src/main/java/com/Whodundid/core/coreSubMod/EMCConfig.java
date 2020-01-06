@@ -7,11 +7,13 @@ import com.Whodundid.core.subMod.config.CreateIfExistsConfigBlock;
 import com.Whodundid.core.subMod.config.SubModConfigFile;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
-public class CoreConfig extends SubModConfigFile {
+//Author: Hunter Bragg
 
-	EnhancedMCMod mod;
+public class EMCConfig extends SubModConfigFile {
+
+	EMCMod mod;
 	
-	public CoreConfig(EnhancedMCMod modIn, String configNameIn) {
+	public EMCConfig(EMCMod modIn, String configNameIn) {
 		super(modIn, configNameIn);
 		mod = modIn;
 	}
@@ -36,7 +38,7 @@ public class CoreConfig extends SubModConfigFile {
 		try {
 			if (getConfigContents().size() > 0) {
 				mod.emcMenuOverride.set(getConfigVal("Menu Override:", Boolean.class, true));
-				mod.drawChatOnGui.set(getConfigVal("Draw Chat When Open:", Boolean.class, true));
+				mod.drawChatOnGui.set(getConfigVal("Draw Chat When Open:", String.class, true));
 				mod.showIncompats.set(getConfigVal("Show Incompats:", Boolean.class, true));
 				mod.enableTerminal.set(getConfigVal("Enable Terminal:", Boolean.class, true));
 				mod.useDebugKey.set(getConfigVal("Use Debug Key:", Boolean.class, false));

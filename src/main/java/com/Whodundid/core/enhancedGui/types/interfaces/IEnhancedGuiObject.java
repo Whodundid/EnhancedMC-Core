@@ -12,6 +12,8 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 
+//Author: Hunter Bragg
+
 /** An interface outlining behavior for Enhanced Gui Objects. */
 public interface IEnhancedGuiObject extends ITabCompleteListener {
 	
@@ -80,10 +82,6 @@ public interface IEnhancedGuiObject extends ITabCompleteListener {
 	public IEnhancedGuiObject setVisible(boolean val);
 	/** Sets this object to be drawn regardless of it being visible or enabled. */
 	public IEnhancedGuiObject setPersistent(boolean val);
-	/** Specifies a region that this object will adhere to for mouse checks. */
-	public IEnhancedGuiObject setBoundaryEnforcer(EDimension dimIn);
-	/** Returns an EDimension object containing the boundary this object is bounded by */
-	public EDimension getBoundaryEnforcer();
 	
 	//size
 	
@@ -229,6 +227,10 @@ public interface IEnhancedGuiObject extends ITabCompleteListener {
 	public boolean isMouseInside(int mX, int mY);
 	/** Returns true if the mouse is currently inside this object and that this is the top most object inside of the parent. */
 	public boolean isMouseOver(int mX, int mY);
+	/** Specifies a region that this object will adhere to for mouse checks. */
+	public IEnhancedGuiObject setBoundaryEnforcer(EDimension dimIn);
+	/** Returns an EDimension object containing the boundary this object is bounded by */
+	public EDimension getBoundaryEnforcer();
 	/** Returns true if this object can be clicked on. */
 	public boolean isClickable();
 	/** Specifies if this object can be clicked on. */

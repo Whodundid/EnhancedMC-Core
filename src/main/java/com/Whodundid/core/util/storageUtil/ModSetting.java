@@ -1,18 +1,22 @@
 package com.Whodundid.core.util.storageUtil;
 
-/**
- * Essentially, a boolean holder so that boolean values can be modified on a 'pass by reference' basis.
- * Defaults to true.
- * @author Hunter Bragg
- *
- */
-public class ModSetting {
+import java.util.Collection;
+
+//Author: Hunter Bragg
+
+public class ModSetting<Val> {
 	
-	private boolean val = true;
+	private Val val = null;
+	private EArrayList<Val> additionalArgs = new EArrayList();
 	
-	public ModSetting() { this(true); }
-	public ModSetting(boolean initialValue) { val = initialValue; }
+	public ModSetting(Val initialValue) {
+		val = initialValue;
+	}
 	
-	public ModSetting set(boolean valIn) { val = valIn; return this; }
-	public boolean get() { return val; }
+	public ModSetting set(Val valIn) { val = valIn; return this; }
+	public ModSetting setArgs(Val... argsIn) { additionalArgs.addA(argsIn); return this; }
+	public ModSetting setArgs(Collection<Val> argsIn) { additionalArgs.addAll(argsIn); return this; }
+	
+	public Val get() { return val; }
+	public EArrayList<Val> getArgs() { return additionalArgs; }
 }

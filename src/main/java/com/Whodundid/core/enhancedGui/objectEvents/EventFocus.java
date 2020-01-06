@@ -4,8 +4,6 @@ import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.EventType;
 import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.FocusType;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 
-//Last edited: Dec 31, 2018
-//First Added: Dec 31, 2018
 //Author: Hunter Bragg
 
 /** Event that is fired when a focus change occurs. */

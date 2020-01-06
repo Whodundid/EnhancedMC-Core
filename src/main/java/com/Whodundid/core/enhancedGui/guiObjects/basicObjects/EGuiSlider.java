@@ -10,8 +10,6 @@ import java.text.DecimalFormat;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.MathHelper;
 
-//Last edited: Jan 2, 2019
-//First Added: Oct 14, 2018
 //Author: Hunter Bragg
 
 public class EGuiSlider extends EnhancedActionObject implements IEnhancedActionObject {

@@ -28,6 +28,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 
+//Author: Hunter Bragg
+
 @SuppressWarnings("deprecation")
 public class EItemDrawer {
 

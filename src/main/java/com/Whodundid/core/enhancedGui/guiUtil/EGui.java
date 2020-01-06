@@ -27,6 +27,8 @@ import net.minecraftforge.client.ClientCommandHandler;
 import org.lwjgl.input.Keyboard;
 import tv.twitch.chat.ChatUserInfo;
 
+//Author: Hunter Bragg
+
 public class EGui extends GLObject {
 
 	public int startXPos, startYPos, startWidth, startHeight;

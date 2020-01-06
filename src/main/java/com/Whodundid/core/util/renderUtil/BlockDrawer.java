@@ -16,6 +16,8 @@ import net.minecraft.util.BlockPos;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import org.lwjgl.opengl.GL11;
 
+//Author: Hunter Bragg
+
 public class BlockDrawer {
 
 	static StorageBoxHolder<WorldRegion, Integer> blocks = new StorageBoxHolder();

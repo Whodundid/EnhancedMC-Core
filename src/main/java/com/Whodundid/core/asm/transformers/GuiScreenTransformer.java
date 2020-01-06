@@ -13,7 +13,9 @@ import static org.objectweb.asm.Opcodes.*;
 
 import com.Whodundid.core.asm.IETransformer;
 
-public class ChatCommandFixer extends IETransformer {
+//Author: Hunter Bragg
+
+public class GuiScreenTransformer extends IETransformer {
 	
 	@Override
 	public String getClassName() { return "net.minecraft.client.gui.GuiScreen"; }

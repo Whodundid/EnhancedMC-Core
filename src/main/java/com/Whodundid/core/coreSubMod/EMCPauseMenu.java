@@ -16,10 +16,9 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.realms.RealmsBridge;
 import net.minecraftforge.fml.client.GuiModList;
 
-//First Added: Dec 14, 2018
 //Author: Hunter Bragg
 
-public class EMCInGameMenu extends EnhancedGui {
+public class EMCPauseMenu extends EnhancedGui {
 
 	EGuiButton backToGame, eSettings, achievements, stats, openToLan, options, modOptions, quitToMenu;
 	

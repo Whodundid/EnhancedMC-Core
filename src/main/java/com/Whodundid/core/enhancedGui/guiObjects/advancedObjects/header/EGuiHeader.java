@@ -16,9 +16,6 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import org.lwjgl.input.Mouse;
 
-//Dec 31, 2018
-//Last edited: Jan 12, 2019
-//First Added: Dec 17, 2018
 //Author: Hunter Bragg
 
 public class EGuiHeader extends EnhancedGuiObject {

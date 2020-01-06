@@ -8,18 +8,17 @@ import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.colorPicker.EGu
 import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.EGuiPlayerViewer;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.notifications.baseObjects.ChatNotification;
+import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.renderUtil.CenterType;
-import com.Whodundid.windowHUD.windowObjects.hotbar.HotBarRenderer;
 import java.io.File;
+import java.lang.reflect.Method;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.network.PacketThreadUtil;
 import net.minecraft.network.play.server.S3APacketTabComplete;
 import net.minecraftforge.common.MinecraftForge;
 
-//Last edited: 12-12-18
-//First Added: 9-14-18
 //Author: Hunter Bragg
 
 @SuppressWarnings("unused")
@@ -56,7 +55,14 @@ public class DebugFunctions {
 	}
 	
 	private static void debug_3() throws Throwable {
-		EnhancedMC.postNotification("HELLO");
+		Class c = SubMod.class;
+		for (Method m : c.getMethods()) {
+			System.out.println(m.getName());
+		}
+		
+		
+		//EnhancedMC.setOpMode(true);
+		//EnhancedMC.postNotification("HELLO");
 		//EnhancedMC.displayEGui(new TestWindow(), CenterType.screen);
 	}
 	

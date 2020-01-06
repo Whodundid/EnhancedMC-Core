@@ -1,7 +1,5 @@
 package com.Whodundid.core.util.storageUtil;
 
-//Last edited: Nov 3, 2018
-//First Added: Nov 3, 2018
 //Author: Hunter Bragg
 
 public class WorldRegion {

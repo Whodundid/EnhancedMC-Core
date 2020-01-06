@@ -18,6 +18,8 @@ import net.minecraft.network.handshake.client.C00Handshake;
 import net.minecraft.network.login.client.C00PacketLoginStart;
 import net.minecraftforge.fml.client.FMLClientHandler;
 
+//Author: Hunter Bragg
+
 public class ServerConnector {
 
 	private static String ipToConnectTo = null;

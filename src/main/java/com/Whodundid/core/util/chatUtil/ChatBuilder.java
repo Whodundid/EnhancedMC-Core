@@ -8,6 +8,8 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ChatComponentText;
 
+//Author: Semx11
+
 public class ChatBuilder {
 
 	private IChatComponent parent;

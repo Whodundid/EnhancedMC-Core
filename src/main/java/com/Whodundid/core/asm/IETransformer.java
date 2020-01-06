@@ -4,6 +4,8 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
 
+//Author: Hunter Bragg
+
 public abstract class IETransformer {
 
 	public boolean isObfuscated = false;

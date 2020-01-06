@@ -3,8 +3,6 @@ package com.Whodundid.core.util.storageUtil;
 import net.minecraft.util.Vec3;
 import net.minecraft.util.Vec3i;
 
-//Last edited: 9-26-18
-//First Added: 9-10-18
 //Author: Hunter Bragg
 
 /**

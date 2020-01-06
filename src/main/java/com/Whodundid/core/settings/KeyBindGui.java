@@ -6,6 +6,7 @@ import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
+import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
@@ -15,6 +16,8 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
+
+//Author: Hunter Bragg
 
 public class KeyBindGui extends WindowParent {
 	
@@ -26,6 +29,10 @@ public class KeyBindGui extends WindowParent {
 	KeyBinding selectedKey = null;
 	EGuiButton changeKey, resetKey;
 	boolean changing = false;
+	StorageBoxHolder<String, KeyBinding> keys = new StorageBoxHolder();
+	StorageBoxHolder<Integer, Integer> used = new StorageBoxHolder();
+	EArrayList<String> categories = new EArrayList();
+	TextAreaLine l = null;
 	
 	public KeyBindGui() {
 		super();
@@ -35,17 +42,22 @@ public class KeyBindGui extends WindowParent {
 	@Override
 	public void initGui() {
 		setObjectName("Minecraft Controls");
-		setDimensions(380, 254);
+		setDimensions(400, 254);
 		super.initGui();
 		setResizeable(true);
-		setMinDims(150, 150);
+		setMinDims(361, 178);
+		buildLists();
+	}
+	
+	protected void buildLists() {
+
 	}
 	
 	@Override
 	public void initObjects() {
 		defaultHeader(this);
 		
-		keyList = new EGuiTextArea(this, startX + 10, startY + 20, width - 190, height - 30) {
+		keyList = new EGuiTextArea(this, startX + 10, startY + 20, width - (width / 2 + 10), height - 30) {
 			@Override
 			public void mousePressed(int mX, int mY, int button) {
 				if (getCurrentLine() != null && getCurrentLine().getStoredObj() != null) {
@@ -58,7 +70,6 @@ public class KeyBindGui extends WindowParent {
 			@Override
 			public void keyPressed(char typedChar, int keyCode) {
 				super.keyPressed(typedChar, keyCode);
-				TextAreaLine l = null;
 				if (keyCode == 200) { //up
 					int lineNum = MathHelper.clamp_int(getCurrentLine().getLineNumber() - 2, 0, getTextDocument().size() - 1);
 					l = (TextAreaLine) (getTextDocument().get(lineNum));
@@ -81,20 +92,21 @@ public class KeyBindGui extends WindowParent {
 			public void keyPressed(char typedChar, int keyCode) {
 				if (changing) {
 					if (keyCode == 1) { mc.gameSettings.setOptionKeyBinding(selectedKey, 0); }
-			        else if (keyCode != 0) { mc.gameSettings.setOptionKeyBinding(selectedKey, keyCode); }
-			        else if (typedChar > 0) { mc.gameSettings.setOptionKeyBinding(selectedKey, typedChar + 256); }
-			        KeyBinding.resetKeyBindingArrayAndHash();
-			        changing = false;
-			        changeKey.setDisplayString(GameSettings.getKeyDisplayString(selectedKey.getKeyCode()));
-			        changeKey.setDisplayStringColor(selectedKey.getKeyCodeDefault() != selectedKey.getKeyCode() ? 0x55ff55 : 0xffffff);
-			        resetKey.setEnabled(selectedKey.getKeyCodeDefault() != selectedKey.getKeyCode());
-			        int pos = keyList.getVScrollBar().getScrollPos();
-			        buildKeyList();
-			        TextAreaLine l = keyList.getLineWithText("   " + I18n.format(selectedKey.getKeyDescription(), new Object[0]));
-			        //System.out.println(l);
-			        keyList.setSelectedLine(l);
-			        keyList.getVScrollBar().setScrollBarPos(pos);
+					else if (keyCode != 0) { mc.gameSettings.setOptionKeyBinding(selectedKey, keyCode); }
+					else if (typedChar > 0) { mc.gameSettings.setOptionKeyBinding(selectedKey, typedChar + 256); }
+					KeyBinding.resetKeyBindingArrayAndHash();
+					updateListVisuals();
 				}
+			}
+			
+			@Override
+			public void mousePressed(int mXIn, int mYIn, int button) {
+				if (changing) {
+					mc.gameSettings.setOptionKeyBinding(selectedKey, -100 + button);
+					KeyBinding.resetKeyBindingArrayAndHash();
+					updateListVisuals();
+				}
+				else { super.mousePressed(mXIn, mYIn, button); }
 			}
 		};
 		
@@ -113,71 +125,109 @@ public class KeyBindGui extends WindowParent {
 		drawDefaultBackground();
 		
 		drawCenteredStringWithShadow("Minecraft Key Bindings", startX + 9 + keyList.width / 2, startY + 7, 0xb2b2b2);
-		drawCenteredStringWithShadow("Key Binding Values", keyList.endX + 90, startY + 7, 0xb2b2b2);
+		drawCenteredStringWithShadow("Key Binding Values", keyList.endX + (endX - (keyList.endX)) / 2, startY + 7, 0xb2b2b2);
 		
 		//draw hotkey value display container
 		drawRect(keyList.endX + 9, startY + 20, endX - 10, endY - 10, 0xff000000);
 		drawRect(keyList.endX + 10, startY + 21, endX - 11, endY - 11, 0xff2D2D2D);
 		
 		//draw separator lines
-		//System.out.println(keyList.getCurrentLine());
-		if (keyList.getCurrentLine() != null && keyList.getCurrentLine().getStoredObj() != null) {
+		if (selectedKey != null) {
 			drawRect(keyList.endX + 10, startY + 61, endX - 10, startY + 62, 0xff000000);
 			drawRect(keyList.endX + 10, startY + 103, endX - 10, startY + 104, 0xff000000);
 		}
 		
 		int scale = mc.gameSettings.guiScale;
 		
-		//GL11.glEnable(GL11.GL_SCISSOR_TEST);
-		//GL11.glScissor(
-		//		((keyList.endX + 10) * scale),
-		//		(Display.getHeight() - startY * scale) - (height - 1) * scale,
-		//		(endX - keyList.endX - 21) * scale,
-		//		(height - 1) * scale);
-		
-		drawKeyValues();
-		//GL11.glDisable(GL11.GL_SCISSOR_TEST);
+		scissor(startX, startY, endX - 11, endY);
+		{
+			drawKeyValues();
+		}
+		endScissor();
 		
 		super.drawObject(mXIn, mYIn, ticks);
 	}
 	
 	@Override
 	public EnhancedGuiObject resize(int xIn, int yIn, ScreenLocation areaIn) {
-		int pos = keyList.getVScrollBar().getScrollPos();
-		TextAreaLine l = keyList.getCurrentLine();
-		super.resize(xIn, yIn, areaIn);
-		keyList.getVScrollBar().setScrollBarPos(pos);
-		keyList.setSelectedLine(l);
+		if (xIn != 0 || yIn != 0) {
+			int posY = keyList.getVScrollBar().getScrollPos();
+			int posX = keyList.getHScrollBar().getScrollPos();
+			
+			TextAreaLine l = keyList.getCurrentLine();
+			super.resize(xIn, yIn, areaIn);
+			
+			keyList.getVScrollBar().onResizeUpdate(posY, xIn, yIn, areaIn);
+			keyList.getHScrollBar().onResizeUpdate(posX, 1, yIn, areaIn);
+			if (l != null) {
+				keyList.setSelectedLine(keyList.getLineWithTextAndObject(l.getText(), l.getStoredObj()));
+			}
+			if (selectedKey != null) {
+				changeKey.setVisible(true);
+				resetKey.setVisible(true);
+				loadKeyValues(selectedKey);
+			}
+		}
 		return this;
 	}
 	
-	protected void buildKeyList() {
-		keyList.clear();
+	protected boolean updateLists() { return updateLists(null); }
+	protected boolean updateLists(KeyBinding test) {
+		//create lists for the keys to be added, total number of used keys, and key categories
+		keys = new StorageBoxHolder();
+		used = new StorageBoxHolder();
+		categories = new EArrayList();
 		
-		StorageBoxHolder<String, KeyBinding> keys = new StorageBoxHolder();
-		EArrayList<String> categories = new EArrayList();
-		
-		keys.setAllowDuplicates(true);
-		
+		//add all the keybindings and their descriptions to the key list
 		for (KeyBinding k : mc.gameSettings.keyBindings) {
 			String category = I18n.format(k.getKeyCategory(), new Object[0]);
 			
-			keys.add(category, k);
+			try {
+				keys.add(category, k);
+				
+				//don't add the keybinding to the used list if the binding is 'NONE'
+				if (k.getKeyCode() != 0) {
+					int val = 1;
+					if (used.contains(k.getKeyCode())) {
+						val = used.getValueInBox(k.getKeyCode()) + 1; //increment the number of times used
+					}
+					used.put(k.getKeyCode(), val); //update the existing value
+				}
+			}
+			catch (Exception e) { e.printStackTrace(); }
 			
 			if (!categories.contains(category)) {
 				categories.add(category);
 			}
 		}
 		
+		if (test != null) {
+			return used.contains(test.getKeyCode()) && used.getValueInBox(test.getKeyCode()) > 1;
+		}
+		
+		return false;
+	}
+	
+	protected boolean buildKeyList() { return buildKeyList(null); }
+	protected boolean buildKeyList(KeyBinding test) {
+		//prep the list to be rebuilt
+		keyList.clear();
+		
+		boolean contains = updateLists(test);
+		
 		for (int i = 0; i < categories.size(); i++) {
 			String s = categories.get(i);
 			keyList.addTextLine(EnumChatFormatting.BLUE + "" + EnumChatFormatting.BOLD + s).setLineNumberColor(0xb2b2b2);
 			for (StorageBox<String, KeyBinding> b : keys.getAllBoxesWithObj(s)) {
 				KeyBinding k = b.getValue();
-				keyList.addTextLine("   " +	I18n.format(k.getKeyDescription(), new Object[0]), (k.getKeyCodeDefault() != k.getKeyCode() ? 0x55ff55 : 0xb2b2b2), k).setLineNumberColor(0xb2b2b2);
+				
+				int color = k.getKeyCode() != 0 ? used.getValueInBox(k.getKeyCode()) > 1 ? EColors.lightRed.c() : (k.getKeyCodeDefault() != k.getKeyCode() ? 0x55ff55 : 0xb2b2b2) : 0x606060;
+				keyList.addTextLine("   " +	I18n.format(k.getKeyDescription(), new Object[0]), color, k).setLineNumberColor(0xb2b2b2);
 			}
 			if (i < categories.size() - 1) { keyList.addTextLine(); }
 		}
+		
+		return contains;
 	}
 	
 	protected void drawKeyValues() {
@@ -190,8 +240,8 @@ public class KeyBindGui extends WindowParent {
 			drawStringWithShadow(defaultKey, keyList.endX + 28, startY + 86, 0x00ffdc);
 		}
 		else {
-			drawCenteredStringWithShadow("Click on a key binding", keyList.endX + 90, startY + 120, 0xffbb00);
-			drawCenteredStringWithShadow("to see its values.", keyList.endX + 90, startY + 132, 0xffbb00);
+			drawCenteredStringWithShadow("Click on a key binding", keyList.endX + (endX - (keyList.endX)) / 2, startY + 10 + ((endY - 10) - (startY + 10)) / 2 - 6, 0xffbb00);
+			drawCenteredStringWithShadow("to see its values.", keyList.endX + (endX - (keyList.endX)) / 2, startY + 10 + ((endY - 10) - (startY + 10)) / 2 + 6, 0xffbb00);
 		}
 	}
 	
@@ -202,23 +252,64 @@ public class KeyBindGui extends WindowParent {
 			resetKey.setVisible(true);
 			selectedKey = keyIn;
 			category = I18n.format(keyIn.getKeyCategory(), new Object[0]);
-			
-			String descriptionCheck = I18n.format(keyIn.getKeyDescription(), new Object[0]);
-			if (mc.fontRendererObj.getStringWidth(descriptionCheck) > 130) {
-				description = descriptionCheck.substring(0, descriptionCheck.length() - 5) + "...";
-			}
-			else { description = descriptionCheck; }
-			
+			description = I18n.format(keyIn.getKeyDescription(), new Object[0]);
 			defaultKey = GameSettings.getKeyDisplayString(keyIn.getKeyCodeDefault());
 			key = GameSettings.getKeyDisplayString(keyIn.getKeyCode());
 			changeKey.setDisplayString(GameSettings.getKeyDisplayString(keyIn.getKeyCode()));
-			changeKey.setDisplayStringColor(keyIn.getKeyCodeDefault() != keyIn.getKeyCode() ? 0x55ff55 : 0xffffff);
+			int color = !updateLists(selectedKey) ? (selectedKey.getKeyCodeDefault() != selectedKey.getKeyCode() ? 0x55ff55 : 0xffffff) : 0xff5555;
+			changeKey.setDisplayStringColor(color);
 			resetKey.setEnabled(keyIn.getKeyCodeDefault() != keyIn.getKeyCode());
 		} catch (Exception e) { e.printStackTrace(); }
 	}
 	
+	protected void updateListVisuals() {
+		int pos = keyList.getVScrollBar().getScrollPos();
+		int color = !buildKeyList(selectedKey) ? (selectedKey.getKeyCodeDefault() != selectedKey.getKeyCode() ? 0x55ff55 : 0xffffff) : 0xff5555;
+		
+		changing = false;
+		changeKey.setDisplayString(GameSettings.getKeyDisplayString(selectedKey.getKeyCode()));
+		changeKey.setDisplayStringColor(color);
+		resetKey.setEnabled(selectedKey.getKeyCodeDefault() != selectedKey.getKeyCode());
+		
+		TextAreaLine l = keyList.getLineWithText("   " + I18n.format(selectedKey.getKeyDescription(), new Object[0]));
+		keyList.setSelectedLine(l);
+		keyList.getVScrollBar().setScrollBarPos(pos);
+		
+		getTopParent().setEscapeStopper(null);
+	}
+	
+	@Override
+	public void actionPerformed(IEnhancedActionObject object, Object... args) {
+		if (object == changeKey) {
+			changing = true;
+			changeKey.setDisplayString(EnumChatFormatting.WHITE + "> " + EnumChatFormatting.YELLOW + changeKey.getDisplayString() + EnumChatFormatting.WHITE + " <");
+			changeKey.setDisplayStringColor(selectedKey.getKeyCodeDefault() != selectedKey.getKeyCode() ? 0x55ff55 : 0xffffff);
+			getTopParent().setEscapeStopper(this);
+		}
+		if (object == resetKey) {
+			mc.gameSettings.setOptionKeyBinding(selectedKey, selectedKey.getKeyCodeDefault());
+			KeyBinding.resetKeyBindingArrayAndHash();
+			updateListVisuals();
+			
+			/*
+			int pos = keyList.getVScrollBar().getScrollPos();
+			int color = !buildKeyList(selectedKey) ? (selectedKey.getKeyCodeDefault() != selectedKey.getKeyCode() ? 0x55ff55 : 0xffffff) : 0xff5555;
+			
+			
+			changeKey.setDisplayString(GameSettings.getKeyDisplayString(selectedKey.getKeyCode()));
+			changeKey.setDisplayStringColor(color);
+			resetKey.setEnabled(selectedKey.getKeyCodeDefault() != selectedKey.getKeyCode());
+			
+			TextAreaLine l = keyList.getLineWithText("   " + I18n.format(selectedKey.getKeyDescription(), new Object[0]));
+			keyList.setSelectedLine(l);
+			keyList.getVScrollBar().setScrollBarPos(pos);
+			*/
+		}
+	}
+	
 	public void resetValues() {
 		selectedKey = null;
+		changing = false;
 		changeKey.setVisible(false);
 		resetKey.setVisible(false);
 		category = "";
@@ -228,25 +319,15 @@ public class KeyBindGui extends WindowParent {
 	}
 	
 	@Override
-	public void actionPerformed(IEnhancedActionObject object, Object... args) {
-		if (object == changeKey) {
-			changing = true;
-			changeKey.setDisplayString(EnumChatFormatting.WHITE + "> " + EnumChatFormatting.YELLOW + changeKey.getDisplayString() + EnumChatFormatting.WHITE + " <");
-			changeKey.setDisplayStringColor(selectedKey.getKeyCodeDefault() != selectedKey.getKeyCode() ? 0x55ff55 : 0xffffff);
-		}
-		if (object == resetKey) {
-			mc.gameSettings.setOptionKeyBinding(selectedKey, selectedKey.getKeyCodeDefault());
-			changeKey.setDisplayString(GameSettings.getKeyDisplayString(selectedKey.getKeyCode()));
-			changeKey.setDisplayStringColor(selectedKey.getKeyCodeDefault() != selectedKey.getKeyCode() ? 0x55ff55 : 0xffffff);
-			resetKey.setEnabled(selectedKey.getKeyCodeDefault() != selectedKey.getKeyCode());
-			KeyBinding.resetKeyBindingArrayAndHash();
-		}
-	}
-	
-	@Override
 	public void keyPressed(char typedChar, int keyCode) {
 		if (!changing) {
 			if (keyCode == 1) { close(); }
 		}
+	}
+	
+	@Override
+	public void close() {
+		getTopParent().setEscapeStopper(null);
+		super.close();
 	}
 }

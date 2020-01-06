@@ -7,6 +7,8 @@ import com.Whodundid.core.terminal.terminalCommand.IConsoleCommand;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
+//Author: Hunter Bragg
+
 public class Config implements IConsoleCommand {
 
 	@Override public String getName() { return "config"; }
@@ -17,7 +19,7 @@ public class Config implements IConsoleCommand {
 	
 	@Override
 	public EArrayList<String> getTabCompleteList() {
-		return null;
+		return new EArrayList("reload", "save");
 	}
 	
 	@Override

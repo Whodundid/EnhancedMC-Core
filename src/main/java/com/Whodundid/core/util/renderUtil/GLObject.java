@@ -20,8 +20,6 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
-//Last edited: Jan 3, 2019
-//First Added: Dec 18, 2018
 //Author: Hunter Bragg
 
 public class GLObject {
@@ -355,7 +353,7 @@ public class GLObject {
 	}
 	public static void endScissor() { GL11.glDisable(GL11.GL_SCISSOR_TEST); }
 	
-	public static void drawTexture(double x, double y, double w, double h) { drawTexture(x, y, 0, 0, w, h, w, h, 0.0D); }
+	public static void drawTexture(double x, double y, double w, double h) { drawTexture(x, y, w, h, 0, 0, w, h, 0.0D); }
 	public static void drawTexture(double x, double y, double w, double h, double oX, double oY, double tW, double tH) { drawTexture(x, y, w, h, oX, oY, tW, tH, 0.0D); }
 	public static void drawTexture(double x, double y, double w, double h, double oX, double oY, double tW, double tH, double z) {
 		double f = 1.0 / tW;

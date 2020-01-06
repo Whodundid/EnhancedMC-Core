@@ -13,8 +13,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 
-//Last edited: Jan 2, 2019
-//First Added: Sep 14, 2018
 //Author: Hunter Bragg
 
 public class EGuiButton extends EnhancedActionObject implements IEnhancedActionObject {
@@ -37,6 +35,10 @@ public class EGuiButton extends EnhancedActionObject implements IEnhancedActionO
 	protected ResourceLocation btnSelTexture = EMCResources.guiButtonSel;
 	
 	protected EGuiButton(IEnhancedGuiObject parentIn) { super(parentIn); }
+	public EGuiButton(IEnhancedGuiObject parentIn, int posX, int posY, int width, int height, ModSetting<Boolean> settingIn) {
+		this(parentIn, posX, posY, width, height);
+		setTrueFalseButton(true, settingIn);
+	}
 	public EGuiButton(IEnhancedGuiObject parentIn, int posX, int posY, int width, int height) { this(parentIn, posX, posY, width, height, ""); }
 	public EGuiButton(IEnhancedGuiObject parentIn, int posX, int posY, int width, int height, String displayStringIn) {
 		init(parentIn, posX, posY, width, height);
@@ -113,7 +115,6 @@ public class EGuiButton extends EnhancedActionObject implements IEnhancedActionO
 	
 	@Override
 	public void mousePressed(int mX, int mY, int button) {
-		if (this.getActionReciever() != null) { this.getActionReciever().bringToFront(); }
 		pressButton(button);
     }
 	
@@ -140,20 +141,16 @@ public class EGuiButton extends EnhancedActionObject implements IEnhancedActionO
 		}
 	}
 	
+	public EGuiButton updateTrueFalseDisplay(ModSetting<Boolean> setting) { return updateTrueFalseDisplay(setting.get()); }
 	public EGuiButton updateTrueFalseDisplay(boolean val) {
 		if (trueFalseButton) { setDisplayString(val ? "True" : "False").setDisplayStringColor(val ? 0x55ff55 : 0xff5555); }
 		return this;
 	}
 	
-	public EGuiButton updateTrueFalseDisplay(ModSetting setting) {
-		if (trueFalseButton) { setDisplayString(setting.get() ? "True" : "False").setDisplayStringColor(setting.get() ? 0x55ff55 : 0xff5555); }
-		return this;
-	}
-	
-	public EGuiButton toggleTrueFalse(ModSetting setting, SubMod m, boolean saveAll) {
+	public EGuiButton toggleTrueFalse(ModSetting<Boolean> setting, SubMod m, boolean saveAll) {
 		if (trueFalseButton) {
-			setting.set(!setting.get());
-			setDisplayString(setting.get() ? "True" : "False").setDisplayStringColor(setting.get() ? 0x55ff55 : 0xff5555);
+			boolean val = setting.get();
+			setDisplayString(val ? "True" : "False").setDisplayStringColor(val ? 0x55ff55 : 0xff5555);
 			if (m != null) {
 				if (saveAll) { m.getConfig().saveAllConfigs(); }
 				else { m.getConfig().saveMainConfig(); }
@@ -191,7 +188,7 @@ public class EGuiButton extends EnhancedActionObject implements IEnhancedActionO
 	public EGuiButton setBackgroundColor(EColors colorIn) { if (colorIn != null) { backgroundColor = colorIn.c(); } return this; }
 	public EGuiButton setDrawDefault(boolean val) { drawDefault = val; return this; }
 	public EGuiButton setTrueFalseButton(boolean val) { return setTrueFalseButton(val, false); }
-	public EGuiButton setTrueFalseButton(boolean val, ModSetting settingIn) { return setTrueFalseButton(val, settingIn != null ? settingIn.get() : false); }
+	public EGuiButton setTrueFalseButton(boolean val, ModSetting<Boolean> settingIn) { return setTrueFalseButton(val, settingIn != null ? settingIn.get() : false); }
 	public EGuiButton setTrueFalseButton(boolean val, boolean initial) { trueFalseButton = val; updateTrueFalseDisplay(initial); return this; }
 	public EGuiButton setDrawString(boolean val) { drawString = val; return this; }
 	

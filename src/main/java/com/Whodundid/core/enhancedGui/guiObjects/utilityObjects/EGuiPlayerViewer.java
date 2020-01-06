@@ -11,6 +11,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
+//Author: Hunter Bragg
+
 public class EGuiPlayerViewer extends EnhancedGuiObject {
 	
 	ScreenLocation hLoc = ScreenLocation.left;

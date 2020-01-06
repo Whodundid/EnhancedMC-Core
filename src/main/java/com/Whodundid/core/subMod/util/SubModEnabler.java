@@ -8,6 +8,8 @@ import com.Whodundid.core.subMod.gui.SubModErrorType;
 import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
+//Author: Hunter Bragg
+
 public class SubModEnabler {
 
 	public static boolean enableMod(String modNameIn) { return enableMod(RegisteredSubMods.getMod(modNameIn), null); }

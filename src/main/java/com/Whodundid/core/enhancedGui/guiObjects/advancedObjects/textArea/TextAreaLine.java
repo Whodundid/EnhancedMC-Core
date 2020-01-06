@@ -11,8 +11,6 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ChatAllowedCharacters;
 
-//Last edited: Jan 9, 2019
-//First Added: Oct 2, 2018
 //Author: Hunter Bragg
 
 public class TextAreaLine<obj> extends EGuiTextField {
@@ -74,6 +72,8 @@ public class TextAreaLine<obj> extends EGuiTextField {
 			}
 		}
 	}
+	
+	@Override public void updateCursorImage() {}
 	
 	@Override
 	public void keyPressed(char typedChar, int keyCode) {

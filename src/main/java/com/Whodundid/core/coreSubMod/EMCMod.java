@@ -17,7 +17,10 @@ import com.Whodundid.core.util.renderUtil.CursorHelper;
 import com.Whodundid.core.util.serverUtil.ServerConnector;
 import com.Whodundid.core.util.storageUtil.ModSetting;
 import com.Whodundid.core.util.worldUtil.WorldEditListener;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiIngameMenu;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.MouseEvent;
@@ -29,26 +32,27 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
 
-public class EnhancedMCMod extends SubMod {
+//Author: Hunter Bragg
+
+public class EMCMod extends SubMod {
 	
-	public static final ModSetting emcMenuOverride = new ModSetting(true);
-	public static final ModSetting useDebugKey = new ModSetting(false);
-	public static final ModSetting showIncompats = new ModSetting(false);
-	public static final ModSetting enableTerminal = new ModSetting(false);
-	public static final ModSetting drawChatOnGui = new ModSetting(true);
+	public static final ModSetting<Boolean> emcMenuOverride = new ModSetting(true);
+	public static final ModSetting<Boolean> useDebugKey = new ModSetting(false);
+	public static final ModSetting<Boolean> showIncompats = new ModSetting(false);
+	public static final ModSetting<Boolean> enableTerminal = new ModSetting(false);
+	public static final ModSetting<String> drawChatOnGui = new ModSetting("Partial").setArgs("Partial", "Off", "Full");
 	
 	private boolean oldWasProxy;
 	private boolean firstPass = false;
-	private int loadCount = 0;
 	private long startLoadTime = 0l;
 	
-	public EnhancedMCMod() {
+	public EMCMod() {
 		super(SubModType.CORE);
 		version = EnhancedMC.VERSION;
 		author = "Whodundid";
-		configManager.setMainConfig(new CoreConfig(this, "enhancedMCCore"));
+		configManager.setMainConfig(new EMCConfig(this, "enhancedMCCore"));
 		setEnabled(true);
-		setMainGui(new CoreSettingsGui());
+		setMainGui(new EMCModSettingsGui());
 		addGui(new SettingsGuiMain(), new KeyBindGui());
 		setAliases("enhancedmc", "emc", "core");
 		isDisableable = false;
@@ -59,7 +63,7 @@ public class EnhancedMCMod extends SubMod {
 	//---------------
 	
 	@Override
-	public void eventClientTick(TickEvent.ClientTickEvent e) {
+	public void clientTickEvent(TickEvent.ClientTickEvent e) {
 		//update apis
 		EMouseHelper.updateMousePos();
 		EnhancedMC.getNotificationHandler().update();
@@ -77,12 +81,12 @@ public class EnhancedMCMod extends SubMod {
 	}
 	
 	@Override
-	public void eventInitGui(GuiScreenEvent.InitGuiEvent e) {
+	public void initGuiEvent(GuiScreenEvent.InitGuiEvent e) {
 		CursorHelper.reset();
 		
 		//hijack the vanilla pause menu
 		if (e.gui instanceof GuiIngameMenu) {
-			if (EnhancedMCMod.emcMenuOverride.get()) { mc.displayGuiScreen(new EMCInGameMenu()); }
+			if (EMCMod.emcMenuOverride.get()) { mc.displayGuiScreen(new EMCPauseMenu()); }
 		}
 		
 		//remove the unpinned objects when a proxy isn't being loaded
@@ -92,7 +96,7 @@ public class EnhancedMCMod extends SubMod {
 	}
 	
 	@Override
-	public void eventWorldUnload(WorldEvent.Unload e) {
+	public void worldUnloadEvent(WorldEvent.Unload e) {
 		CursorHelper.reset();
 		BlockDrawer.clearBlocks();
 		EnhancedMC.getRenderer().removeUnpinnedObjects();
@@ -102,33 +106,32 @@ public class EnhancedMCMod extends SubMod {
 	}
 	
 	@Override
-	public void eventPreOverlayRenderTick(RenderGameOverlayEvent.Pre e) {
-		if (e.type == ElementType.CHAT && mc.currentScreen instanceof IRendererProxy && !EnhancedMC.getEMCMod().drawChatOnGui.get()) { e.setCanceled(true); }
+	public void overlayPreEvent(RenderGameOverlayEvent.Pre e) {
+		if (e.type == ElementType.CHAT && mc.currentScreen instanceof IRendererProxy && EnhancedMC.getEMCMod().drawChatOnGui.get().equals("Off")) { e.setCanceled(true); }
 	}
 	
-	@Override public void eventKey(KeyInputEvent e) { EnhancedMC.checkKeyBinds(); }
-	@Override public void eventMouse(MouseEvent e) { EMouseHelper.mouseClicked(e.button); }
-	@Override public void eventRenderTick(TickEvent.RenderTickEvent e) { PlayerFacing.checkEyePosition(e); }
-	@Override public void eventPostOverlayRenderTick(RenderGameOverlayEvent.Post e) { EnhancedMC.getRenderer().onRenderTick(e); }
-	@Override public void eventLastWorldRender(RenderWorldLastEvent e) { BlockDrawer.draw(e); }
-	@Override public void eventChat(ClientChatReceivedEvent e) { EChatUtil.readChat(e.message); WorldEditListener.checkForPositions(); }
-	@Override public void eventTabCompletion(TabCompletionEvent e) { EChatUtil.onTabComplete(e.getCompletion()); }
-	@Override public void eventWorldLoadClient(WorldEvent.Load e) { CursorHelper.reset(); }
-	@Override public void eventWorldLoadServer(WorldEvent.Load e) { CursorHelper.reset(); }
-	@Override public void eventServerJoin(EntityJoinWorldEvent e) { CursorHelper.reset(); }
+	@Override public void keyEvent(KeyInputEvent e) { EnhancedMC.checkKeyBinds(); }
+	@Override public void mouseEvent(MouseEvent e) { EMouseHelper.mouseClicked(e.button); }
+	@Override public void renderTickEvent(TickEvent.RenderTickEvent e) { PlayerFacing.checkEyePosition(e); }
+	@Override public void OverlayPostEvent(RenderGameOverlayEvent.Post e) { EnhancedMC.getRenderer().onRenderTick(e); }
+	@Override public void renderLastWorldEvent(RenderWorldLastEvent e) { BlockDrawer.draw(e); }
+	@Override public void chatEvent(ClientChatReceivedEvent e) { EChatUtil.readChat(e.message); WorldEditListener.checkForPositions(); }
+	@Override public void tabCompletionEvent(TabCompletionEvent e) { EChatUtil.onTabComplete(e.getCompletion()); }
+	@Override public void worldLoadClientEvent(WorldEvent.Load e) { CursorHelper.reset(); }
+	@Override public void worldLoadServerEvent(WorldEvent.Load e) { CursorHelper.reset(); }
+	@Override public void serverJoinEvent(EntityJoinWorldEvent e) { CursorHelper.reset(); }
 	
 	//--------------------
 	//EMC Core Mod Methods
 	//--------------------
 	
 	private void proxyCheckUnload() {
-		if (loadCount > 2) { loadCount = 0; }
-		
-		//checks if the current screen at the time of unloading was a renderer proxy
-		if (loadCount == 0 && mc.currentScreen instanceof IRendererProxy) { oldWasProxy = true; }
+		//checks if the current screen at the time of unloading was a renderer proxy and that there were pinned objects
+		if (mc.currentScreen instanceof IRendererProxy) {
+			oldWasProxy = EnhancedMC.getRenderer().hasPinnedObjects();
+		}
 		
 		startLoadTime = System.currentTimeMillis();
-		loadCount++; //increment the number of times the world has been unloaded in this unload cycle
 	}
 	
 	private void persistentProxyCheck() {
@@ -150,10 +153,17 @@ public class EnhancedMCMod extends SubMod {
 					else {
 						firstPass = false;
 						oldWasProxy = false;
-						loadCount = 0;
 					}
 				}
 			}
 		}
+	}
+	
+	public static boolean getChatOpen() {
+		GuiScreen s = Minecraft.getMinecraft().currentScreen;
+		if (s instanceof IRendererProxy) {
+			return drawChatOnGui.get().equals("Full");
+		}
+		return s instanceof GuiChat;
 	}
 }

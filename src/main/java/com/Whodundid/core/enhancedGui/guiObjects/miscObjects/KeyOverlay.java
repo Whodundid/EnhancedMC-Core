@@ -4,8 +4,6 @@ import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHead
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 
-//Last edited: Apr 1, 2019
-//First Added: Apr 1, 2019
 //Author: Hunter Bragg
 
 public class KeyOverlay extends WindowParent {

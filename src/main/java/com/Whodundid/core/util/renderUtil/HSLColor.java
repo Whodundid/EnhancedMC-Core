@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+//Author: Hunter Bragg
+
 public class HSLColor {
 	
 	double hue = 0;

@@ -19,6 +19,8 @@ import net.minecraft.client.gui.ScreenChatOptions;
 import net.minecraft.client.resources.LanguageManager;
 import net.minecraft.client.settings.GameSettings;
 
+//Author: Hunter Bragg
+
 /** A holder class containing a repository of useful GuiScreens in vanilla minecraft. */
 public class CommonVanillaGuis {
 	

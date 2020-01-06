@@ -1,12 +1,10 @@
 package com.Whodundid.core.enhancedGui.guiObjects.basicObjects;
 
 import com.Whodundid.core.enhancedGui.StaticEGuiObject;
-import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
 import com.Whodundid.core.enhancedGui.objectEvents.EventModify;
 import com.Whodundid.core.enhancedGui.objectEvents.EventObjects;
 import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.ObjectEventType;
 import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.ObjectModifyType;
-import com.Whodundid.core.enhancedGui.objectExceptions.HeaderAlreadyExistsException;
 import com.Whodundid.core.enhancedGui.objectExceptions.ObjectInitException;
 import com.Whodundid.core.enhancedGui.types.EnhancedGui;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
@@ -26,8 +24,6 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
-//Last edited: Oct 22, 2018
-//First Added: Oct 12, 2018
 //Author: Hunter Bragg
 
 public class EGuiScrollList extends EnhancedGuiObject {
@@ -137,13 +133,13 @@ public class EGuiScrollList extends EnhancedGuiObject {
 	@Override
 	public void move(int newX, int newY) {
 		if (eventHandler != null) { eventHandler.processEvent(new EventModify(this, this, ObjectModifyType.Move)); }
-		if (!moveable) {
+		if (moveable) {
 			EArrayList<IEnhancedGuiObject> objs = new EArrayList(guiObjects);
 			objs.addAll(objsToBeAdded);
 			Iterator<IEnhancedGuiObject> it = objs.iterator();
 			while (it.hasNext()) {
 				IEnhancedGuiObject o = it.next();
-				if (!o.isMoveable()) {
+				if (o.isMoveable()) {
 					if (o instanceof WindowParent) {
 						if (((WindowParent) o).movesWithParent()) { o.move(newX, newY); }
 					} else {
@@ -161,33 +157,35 @@ public class EGuiScrollList extends EnhancedGuiObject {
 	
 	@Override
 	public EGuiScrollList setPosition(int newX, int newY) {
-		EDimension d = getDimensions();
-		StorageBox<Integer, Integer> loc = new StorageBox(d.startX, d.startY);
-		StorageBoxHolder<IEnhancedGuiObject, StorageBox<Integer, Integer>> previousLocations = new StorageBoxHolder();
-		EArrayList<IEnhancedGuiObject> objs = new EArrayList();
-		objs.addAll(getObjects());
-		objs.addAll(getAddingObjects());
-		for (IEnhancedGuiObject o : objs) {
-			previousLocations.add(o, new StorageBox(o.getDimensions().startX - loc.getObject(), o.getDimensions().startY - loc.getValue()));
-		}
-		setDimensions(newX, newY, d.width, d.height);
-		for (IEnhancedGuiObject o : objs) {
-			if (!o.isMoveable()) {
-				StorageBox<Integer, Integer> oldLoc = previousLocations.getBoxWithObj(o).getValue();
-				o.setInitialPosition(newX + oldLoc.getObject(), newY + oldLoc.getValue());
-				
-				if (listContents.contains(o) || listObjsToBeAdded.contains(o)) {
-					int eX = endX - (isVScrollDrawn() ? verticalScroll.width + 2 : 1);
-					int eY = endY - (isHScrollDrawn() ? horizontalScroll.height - 4 : 1);
+		if (isMoveable()) {
+			EDimension d = getDimensions();
+			StorageBox<Integer, Integer> loc = new StorageBox(d.startX, d.startY);
+			StorageBoxHolder<IEnhancedGuiObject, StorageBox<Integer, Integer>> previousLocations = new StorageBoxHolder();
+			EArrayList<IEnhancedGuiObject> objs = new EArrayList();
+			objs.addAll(getObjects());
+			objs.addAll(getAddingObjects());
+			for (IEnhancedGuiObject o : objs) {
+				previousLocations.add(o, new StorageBox(o.getDimensions().startX - loc.getObject(), o.getDimensions().startY - loc.getValue()));
+			}
+			setDimensions(newX, newY, d.width, d.height);
+			for (IEnhancedGuiObject o : objs) {
+				if (o.isMoveable()) {
+					StorageBox<Integer, Integer> oldLoc = previousLocations.getBoxWithObj(o).getValue();
+					o.setInitialPosition(newX + oldLoc.getObject(), newY + oldLoc.getValue());
 					
-					EDimension bounds = new EDimension(startX + 1, startY + 1, eX, eY);
+					if (listContents.contains(o) || listObjsToBeAdded.contains(o)) {
+						int eX = endX - (isVScrollDrawn() ? verticalScroll.width + 2 : 1);
+						int eY = endY - (isHScrollDrawn() ? horizontalScroll.height - 4 : 1);
+						
+						EDimension bounds = new EDimension(startX + 1, startY + 1, eX, eY);
+						
+						o.setBoundaryEnforcer(getDimensions());
+						for (IEnhancedGuiObject q : o.getObjects()) { q.setBoundaryEnforcer(bounds); }
+						for (IEnhancedGuiObject q : o.getAddingObjects()) { q.setBoundaryEnforcer(bounds); }
+					}
 					
-					o.setBoundaryEnforcer(getDimensions());
-					for (IEnhancedGuiObject q : o.getObjects()) { q.setBoundaryEnforcer(bounds); }
-					for (IEnhancedGuiObject q : o.getAddingObjects()) { q.setBoundaryEnforcer(bounds); }
+					o.setPosition(newX + oldLoc.getObject(), newY + oldLoc.getValue());
 				}
-				
-				o.setPosition(newX + oldLoc.getObject(), newY + oldLoc.getValue());
 			}
 		}
 		return this;
@@ -277,9 +275,6 @@ public class EGuiScrollList extends EnhancedGuiObject {
 			try {
 				if (o != null && o != this) {
 					if (o instanceof EnhancedGui) { continue; }
-					if (o instanceof EGuiHeader && hasHeader()) { 
-						 throw new HeaderAlreadyExistsException(getHeader());
-					}
 					
 					int eX = endX - (isVScrollDrawn() ? verticalScroll.width + 2 : 2);
 					int eY = endY - (isHScrollDrawn() ? horizontalScroll.height - 4 : 1);
@@ -308,7 +303,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 					listObjsToBeAdded.add(o);
 					objsToBeAdded.add(o);
 				}
-			} catch (HeaderAlreadyExistsException e) { e.printStackTrace(); }
+			} catch (Exception e) { e.printStackTrace(); }
 		}
 		return this;
 	}

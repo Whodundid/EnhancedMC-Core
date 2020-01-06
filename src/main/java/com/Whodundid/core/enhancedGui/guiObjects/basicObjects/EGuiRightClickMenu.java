@@ -13,8 +13,6 @@ import java.util.List;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
-//Last edited: Oct 26, 2018
-//First Added: Oct 26, 2018
 //Author: Hunter Bragg
 
 public class EGuiRightClickMenu extends WindowParent implements IEnhancedActionObject {

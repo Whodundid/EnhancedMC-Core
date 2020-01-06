@@ -10,6 +10,8 @@ import com.Whodundid.core.util.renderUtil.HSLColor;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import java.awt.Color;
 
+//Author: Hunter Bragg
+
 public class EGuiColorPicker extends WindowParent {
 
 	int color = 0x00000000;

@@ -11,6 +11,8 @@ import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
+//Author: Hunter Bragg
+
 public class OpenGui implements IConsoleCommand {
 	
 	@Override public String getName() { return "gui"; }

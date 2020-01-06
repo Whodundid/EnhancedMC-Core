@@ -9,8 +9,6 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.subMod.IUseScreenLocation;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 
-//Last edited: Jan 2, 2019
-//First Added: Dec 14, 2018
 //Author: Hunter Bragg
 
 public class EGuiScreenLocationSelector extends EnhancedActionObject {

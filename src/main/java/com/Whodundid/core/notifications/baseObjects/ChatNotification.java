@@ -6,6 +6,8 @@ import com.Whodundid.core.notifications.NotificationType;
 import com.Whodundid.core.util.renderUtil.EColors;
 import net.minecraft.client.renderer.GlStateManager;
 
+//Author: Hunter Bragg
+
 public class ChatNotification extends NotificationObject {
 	
 	public String sender;

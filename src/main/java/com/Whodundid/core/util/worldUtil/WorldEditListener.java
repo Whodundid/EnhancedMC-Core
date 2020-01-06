@@ -5,8 +5,6 @@ import com.Whodundid.core.util.renderUtil.BlockDrawer;
 import com.Whodundid.core.util.storageUtil.Vector3D;
 import com.Whodundid.core.util.storageUtil.WorldRegion;
 
-//Last edited: 10-15-18
-//First Added: 9-14-18
 //Author: Hunter Bragg
 
 public class WorldEditListener {

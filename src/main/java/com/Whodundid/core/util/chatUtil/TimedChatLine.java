@@ -6,10 +6,6 @@ import java.util.TimeZone;
 import net.minecraft.client.gui.ChatLine;
 import net.minecraft.util.IChatComponent;
 
-//Dec 27, 2018
-//Jan 18, 2019
-//Last edited: Jan 20, 2019
-//First Added: Dec 27, 2018
 //Author: Hunter Bragg
 
 public class TimedChatLine extends ChatLine implements Comparable<TimedChatLine> {

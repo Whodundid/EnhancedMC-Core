@@ -15,6 +15,8 @@ import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EDimension;
 
+//Author: Hunter Bragg
+
 public class EGuiColorPickerSimple extends ActionWindowParent {
 	
 	//color buttons

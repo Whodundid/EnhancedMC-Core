@@ -5,10 +5,12 @@ import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.IConsoleCommand;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
+//Author: Hunter Bragg
+
 public class ToggleSafeRM implements IConsoleCommand {
 
 	@Override public String getName() { return "saferemotedesktop"; }
-	@Override public boolean showInHelp() { return true; }
+	@Override public boolean showInHelp() { return EnhancedMC.isOpMode(); }
 	@Override public EArrayList<String> getAliases() { return new EArrayList<String>("srm"); }
 	
 	@Override public String getHelpInfo(boolean runVisually) {

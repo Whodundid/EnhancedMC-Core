@@ -13,8 +13,6 @@ import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 import net.minecraft.client.gui.ScaledResolution;
 
-//Last edited: Jan 24, 2019
-//First Added: Jan 23, 2019
 //Author: Hunter Bragg
 
 public class EGuiSelectionList extends WindowParent implements IEnhancedActionObject {
@@ -80,7 +78,9 @@ public class EGuiSelectionList extends WindowParent implements IEnhancedActionOb
 			TextAreaLine l = new TextAreaLine(selectionList, b.getObject(), 0xffffff, b.getValue()) {
 				@Override
 				public void onDoubleClick() {
-					selectCurrentOptionAndClose();
+					if (selectionList.getCurrentLine() != null && selectionList.getCurrentLine().getStoredObj() != null) {
+						selectCurrentOptionAndClose();
+					}
 				}
 				@Override
 				public void keyPressed(char typedChar, int keyCode) {
@@ -111,7 +111,7 @@ public class EGuiSelectionList extends WindowParent implements IEnhancedActionOb
 	@Override
 	public void drawObject(int mXIn, int mYIn, float ticks) {
 		drawDefaultBackground();
-		select.setEnabled(selectionList.getCurrentLine() != null);
+		select.setEnabled(selectionList.getCurrentLine() != null && selectionList.getCurrentLine().getStoredObj() != null);
 		super.drawObject(mXIn, mYIn, ticks);
 	}
 	

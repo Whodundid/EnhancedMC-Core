@@ -2,6 +2,8 @@ package com.Whodundid.core.util.mathUtil;
 
 import java.awt.Color;
 
+//Author: Hunter Bragg
+
 public class HexMath {
 	
 	public static int RGBtoHEX(Color color) {

@@ -6,6 +6,8 @@ import com.Whodundid.core.notifications.NotificationType;
 import com.Whodundid.core.util.renderUtil.EColors;
 import net.minecraft.client.renderer.GlStateManager;
 
+//Author: Hunter Bragg
+
 public class EMCNotification extends NotificationObject {
 	
 	public EMCNotification(String messageIn) {

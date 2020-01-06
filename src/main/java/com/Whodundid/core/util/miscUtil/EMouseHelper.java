@@ -4,6 +4,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import org.lwjgl.input.Mouse;
 
+//Author: Hunter Bragg
+
 public class EMouseHelper {
 	
 	public static int mX = -1, mY = -1;

@@ -5,6 +5,8 @@ import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.notifications.baseObjects.NotificationRCM;
 import com.Whodundid.core.util.renderUtil.CenterType;
 
+//Author: Hunter Bragg
+
 public abstract class NotificationObject extends WindowParent {
 
 	protected String message = "";

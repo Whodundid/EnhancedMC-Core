@@ -1,5 +1,7 @@
 package com.Whodundid.core.util.renderUtil;
 
+//Author: Hunter Bragg
+
 public enum EColors {
 	
 	red(0xffff0000, "Red"),

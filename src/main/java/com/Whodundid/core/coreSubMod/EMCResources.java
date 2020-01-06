@@ -4,10 +4,6 @@ import com.Whodundid.core.util.renderUtil.CursorHelper;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Cursor;
 
-//Dec 18, 2018
-//Last edited: Feb 18, 2019
-//Edit note: changed ArrayList -> EArrayList. Added support to find all submod guis.
-//First Added: Sep 14, 2018
 //Author: Hunter Bragg
 
 public class EMCResources {

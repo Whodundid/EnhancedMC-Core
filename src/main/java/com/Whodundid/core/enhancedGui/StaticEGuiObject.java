@@ -1,6 +1,8 @@
 package com.Whodundid.core.enhancedGui;
 
+import com.Whodundid.core.coreSubMod.EMCResources;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
+import com.Whodundid.core.enhancedGui.guiUtil.EGui;
 import com.Whodundid.core.enhancedGui.objectEvents.EventKeyboard;
 import com.Whodundid.core.enhancedGui.objectEvents.EventModify;
 import com.Whodundid.core.enhancedGui.objectEvents.EventMouse;
@@ -9,7 +11,6 @@ import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.KeyboardType;
 import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.MouseType;
 import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.ObjectEventType;
 import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.ObjectModifyType;
-import com.Whodundid.core.enhancedGui.objectExceptions.HeaderAlreadyExistsException;
 import com.Whodundid.core.enhancedGui.objectExceptions.ObjectInitException;
 import com.Whodundid.core.enhancedGui.types.EnhancedGui;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
@@ -17,6 +18,7 @@ import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
+import com.Whodundid.core.util.renderUtil.CursorHelper;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
@@ -24,8 +26,51 @@ import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
+import org.lwjgl.input.Mouse;
 
-public class StaticEGuiObject {
+//Author: Hunter Bragg
+
+public class StaticEGuiObject extends EGui {
+	
+	//main draw
+	public static void updateCursorImage(IEnhancedGuiObject obj) {
+		if (obj != null && obj.isResizeable() && obj.getTopParent().getModifyType() != ObjectModifyType.Resize) {
+			int rStartY = obj.hasHeader() ? obj.getHeader().startY : obj.getDimensions().startY;
+			if (!Mouse.isButtonDown(0)) {
+				switch (obj.getEdgeAreaMouseIsOn()) {
+				case top: case bot: CursorHelper.updateCursor(EMCResources.resizeNS); break;
+				case left: case right: CursorHelper.updateCursor(EMCResources.resizeEW); break;
+				case topRight: case botLeft: CursorHelper.updateCursor(EMCResources.resizeDL); break;
+				case topLeft: case botRight: CursorHelper.updateCursor(EMCResources.resizeDR); break;
+				default: CursorHelper.setCursor(null); break;
+				}
+			}
+		}
+		else { CursorHelper.updateCursor(null); }
+	}
+	public static void onMouseHover(IEnhancedGuiObject obj, int mX, int mY, String hoverText, int textColor) {
+		if (hoverText != null && !hoverText.isEmpty()) {
+			ScaledResolution res = new ScaledResolution(mc);
+			int strWidth = Minecraft.getMinecraft().fontRendererObj.getStringWidth(hoverText);
+			int sX = mX + 8;
+			int sY = mY - 7;
+			
+			sX = sX < 0 ? 1 : sX;
+			sY = (sY - 7) < 2 ? 2 + 7 : sY;
+			if (sX + strWidth + 10 > res.getScaledWidth()) {
+				sX = -1 + sX - (sX + strWidth + 10 - res.getScaledWidth() + 6);
+				sY -= 10;
+			}
+			sY = sY + 16 > res.getScaledHeight() ? -2 + sY - (sY + 16 - res.getScaledHeight() + 6) : sY;
+			
+			int eX = sX + strWidth + 10;
+			int eY = sY + 16;
+			
+			drawRect(sX, sY, sX + strWidth + 10, sY + 16, 0xff000000);
+			drawRect(sX + 1, sY + 1, eX - 1, eY - 1, 0xff323232);
+			drawStringWithShadow(hoverText, sX + 5, sY + 4, textColor);
+		}
+	}
 	
 	//size
 	/** Returns true if the object has an EGuiHeader. */
@@ -42,18 +87,43 @@ public class StaticEGuiObject {
 		obj.postEvent(new EventModify(obj, obj, ObjectModifyType.Resize)); //post an event
 		if (xIn != 0 || yIn != 0) { //make sure that there is actually a change in the cursor position
 			EDimension d = obj.getDimensions();
+			//EDimension c = obj.getClickableArea();
 			int x = 0, y = 0, w = 0, h = 0;
 			boolean e = false, s = false;
 			//perform resizing on different sides depending on the side that's being resized
 			switch (areaIn) {
-			case top: x = d.startX; y = d.startY + yIn; w = d.width; h = d.height - yIn; break;
-			case bot: x = d.startX; y = d.startY; w = d.width; h = d.height + yIn; break;
-			case right: x = d.startX; y = d.startY; w = d.width + xIn; h = d.height; break;
-			case left: x = d.startX + xIn; y = d.startY; w = d.width - xIn; h = d.height; break;
-			case topRight: x = d.startX; y = d.startY + yIn; w = d.width + xIn; h = d.height - yIn; break;
-			case botRight: x = d.startX; y = d.startY; w = d.width + xIn; h = d.height + yIn; break;
-			case topLeft: x = d.startX + xIn; y = d.startY + yIn; w = d.width - xIn; h = d.height - yIn; break;
-			case botLeft: x = d.startX + xIn; y = d.startY; w = d.width - xIn; h = d.height + yIn; break;
+			case top:
+				x = d.startX; y = d.startY + yIn; w = d.width; h = d.height - yIn;
+				//obj.setClickableArea(c.startX, c.startY + yIn, c.width, c.height - yIn);
+				break;
+			case bot:
+				x = d.startX; y = d.startY; w = d.width; h = d.height + yIn;
+				//obj.setClickableArea(c.startX, c.startY, c.width, c.height + yIn);
+				break;
+			case right:
+				x = d.startX; y = d.startY; w = d.width + xIn; h = d.height;
+				//obj.setClickableArea(c.startX, c.startY, c.width + xIn, c.height);
+				break;
+			case left:
+				x = d.startX + xIn; y = d.startY; w = d.width - xIn; h = d.height;
+				//obj.setClickableArea(c.startX + xIn, c.startY, c.width - xIn, c.height);
+				break;
+			case topRight:
+				x = d.startX; y = d.startY + yIn; w = d.width + xIn; h = d.height - yIn;
+				//obj.setClickableArea(c.startX, c.startY + yIn, c.width + xIn, c.height - yIn);
+				break;
+			case botRight:
+				x = d.startX; y = d.startY; w = d.width + xIn; h = d.height + yIn;
+				//obj.setClickableArea(c.startX, c.startY, c.width + xIn, c.height + yIn);
+				break;
+			case topLeft:
+				x = d.startX + xIn; y = d.startY + yIn; w = d.width - xIn; h = d.height - yIn;
+				//obj.setClickableArea(c.startX + xIn, c.startY + yIn, c.width - xIn, c.height - yIn);
+				break;
+			case botLeft:
+				x = d.startX + xIn; y = d.startY; w = d.width - xIn; h = d.height + yIn;
+				//obj.setClickableArea(c.startX + xIn, c.startY, c.width - xIn, c.height + yIn);
+				break;
 			default: break;
 			}
 			//restrict the object to its allowed minimum width
@@ -92,7 +162,8 @@ public class StaticEGuiObject {
 				default: break;
 				}
 			}
-			obj.setDimensions(x, y, w, h); //set the dimensions of the object to the resized dimensions
+			//set the dimensions of the object to the resized dimensions
+			obj.setDimensions(x, y, w, h);
 			try {
 				//(lazy approach) remake all the children based on the resized dimensions
 				obj.reInitObjects();
@@ -104,10 +175,10 @@ public class StaticEGuiObject {
 	/** Translates the specified object by a given x and y amount. */
 	public static void move(IEnhancedGuiObject obj, int newX, int newY) {
 		obj.postEvent(new EventModify(obj, obj, ObjectModifyType.Move)); //post an event
-		if (!obj.isMoveable()) { //only allow the object to be moved if it's not locked in place
+		if (obj.isMoveable()) { //only allow the object to be moved if it's not locked in place
 			//get all of the children in the object
 			for (IEnhancedGuiObject o : EArrayList.combineLists(obj.getObjects(), obj.getAddingObjects())) {
-				if (!o.isMoveable()) { //only move the child if it's not locked in place
+				if (o.isMoveable()) { //only move the child if it's not locked in place
 					if (o instanceof WindowParent) { //only move the window if it moves with the parent
 						if (((WindowParent) o).movesWithParent()) { o.move(newX, newY); }
 					} else { o.move(newX, newY); }
@@ -115,6 +186,7 @@ public class StaticEGuiObject {
 			}
 			EDimension d = obj.getDimensions();
 			obj.setDimensions(d.startX + newX, d.startY + newY, d.width, d.height); //offset the original position by the specified offset
+			//obj.getClickableArea().move(newX, newY);
 			if (obj.isBoundaryEnforced()) { //also move the boundary enforcer, if there is one
 				EDimension b = obj.getBoundaryEnforcer();
 				obj.getBoundaryEnforcer().setPosition(b.startX + newX, b.startY + newY);
@@ -123,18 +195,42 @@ public class StaticEGuiObject {
 	}
 	/** Moves the object to the specified x and y coordinates. */
 	public static void setPosition(IEnhancedGuiObject obj, int newX, int newY) {
-		EDimension d = obj.getDimensions();
-		StorageBox<Integer, Integer> loc = new StorageBox(d.startX, d.startY); //the object's current position for shorter code
-		StorageBoxHolder<IEnhancedGuiObject, StorageBox<Integer, Integer>> previousLocations = new StorageBoxHolder();
-		EArrayList<IEnhancedGuiObject> objs = EArrayList.combineLists(obj.getObjects(), obj.getAddingObjects());
-		for (IEnhancedGuiObject o : objs) { //get each of the object's children's relative positions
-			previousLocations.add(o, new StorageBox(o.getDimensions().startX - loc.getObject(), o.getDimensions().startY - loc.getValue()));
-		}
-		obj.setDimensions(newX, newY, d.width, d.height); //move the object to the new position
-		for (IEnhancedGuiObject o : objs) {
-			if (!o.isMoveable()) { //don't move the child if its position is locked
-				StorageBox<Integer, Integer> oldLoc = previousLocations.getBoxWithObj(o).getValue();
-				o.setPosition(newX + oldLoc.getObject(), newY + oldLoc.getValue()); //move the child to the new location with the parent's offest
+		//only move this object and its children if it is moveable
+		if (obj.isMoveable()) {
+			EDimension d = obj.getDimensions();
+			//EDimension c = obj.getClickableArea();
+			
+			//the object's current position and relative clickArea for shorter code
+			StorageBox<Integer, Integer> loc = new StorageBox(d.startX, d.startY);
+			//StorageBox<Integer, Integer> relLoc = new StorageBox(d.startX - c.startX, d.startY - c.startY);
+			
+			//holder to store each object and their relative child locations
+			StorageBoxHolder<IEnhancedGuiObject, StorageBox<Integer, Integer>> previousLocations = new StorageBoxHolder();
+			
+			//grab all immediate objects
+			EArrayList<IEnhancedGuiObject> objs = EArrayList.combineLists(obj.getObjects(), obj.getAddingObjects());
+			
+			//get each of the object's children's relative positions and clickable areas relative to each child
+			for (IEnhancedGuiObject o : objs) {
+				previousLocations.add(o, new StorageBox(o.getDimensions().startX - loc.getObject(), o.getDimensions().startY - loc.getValue()));
+				//new StorageBox(o.getClickableArea().startX - o.getDimensions().startX, o.getClickableArea().startY - o.getDimensions().startY))
+			}
+			
+			//apply the new location to parent
+			obj.setDimensions(newX, newY, d.width, d.height); //move the object to the new position
+			//obj.setClickableArea(newX + relLoc.getObject(), newY + relLoc.getValue(), c.width, c.height);
+			
+			//apply the new location to each child
+			for (IEnhancedGuiObject o : objs) {
+				//don't move the child if its position is locked
+				if (o.isMoveable()) {
+					StorageBox<Integer, Integer> oldLoc = previousLocations.getBoxWithObj(o).getValue();
+					//StorageBox<Integer, Integer> oldClick = previousLocations.getBoxWithObj(o).getValue().getValue();
+					
+					//move the child to the new location with the parent's offest
+					o.setPosition(newX + oldLoc.getObject(), newY + oldLoc.getValue()); 
+					//o.setClickableArea(o.getDimensions().startX + oldClick.getObject(), o.getDimensions().startY + oldClick.getObject(), o.getClickableArea().width, o.getClickableArea().height);
+				}
 			}
 		}
 	}
@@ -161,31 +257,32 @@ public class StaticEGuiObject {
 			height = sHeight;
 		}
 		obj.setDimensions(startX, startY, width, height); //apply the dimensions to the object
+		//obj.setClickableArea(startX, startY, startX + width, startY + height); //aplly the dimension to the clickableArea
 	}
 	
 	//objects
 	/** Returns true if the given object is a child of the specified parent. */
 	public static boolean isChildOfObject(IEnhancedGuiObject child, IEnhancedGuiObject parent) {
-		IEnhancedGuiObject curObj = child;
-		//recursively check if the child's lineage contain's the specified parent
-		while (curObj != null && curObj.getParent() != null) {
-			if (curObj.getParent().equals(curObj)) { return false; }
-			if (curObj.getParent().equals(parent)) { return true; }
-			curObj = curObj.getParent();
+		IEnhancedGuiObject parentObj = child.getParent();
+		
+		//recursively check through the object's parent lineage to see if that parent is the possible parent
+		while (parentObj != null) {
+			if (parentObj.equals(parent)) { return true; }
+			parentObj = parentObj.getParent();
 		}
+		
 		return false;
 	}
-	/** Start the process of adding a child to this object. Children are fully added on the next draw cycle. */
+	/** Start the process of adding a child to this object. Children are fully added on the next draw cycle. 
+	 *  There is an issue where a child of a child can be added to the parent again. */
 	public static void addObject(IEnhancedGuiObject parent, IEnhancedGuiObject... objsIn) {
 		for (IEnhancedGuiObject o : objsIn) {
 			try {
 				if (o != null) { //only add if the object isn't null
-					//don't let the object be added to itself, or if the object is already in the object
+					//don't let the object be added to itself, or if the object is already in the object - this only goes 1 layer deep however
 					if (o != parent && parent.getObjects().notContains(o) && parent.getAddingObjects().notContains(o)) {
 						if (o instanceof EnhancedGui) { continue; } //don't add GuiScreens
-						if (o instanceof EGuiHeader && parent.hasHeader()) { 
-							throw new HeaderAlreadyExistsException(parent.getHeader()); //remove this exception -- it's pointless
-						}
+						if (o instanceof EGuiHeader && parent.hasHeader()) { continue; } //prevent multiple headers being added
 						try {
 							if (o instanceof WindowParent) { ((WindowParent) o).initGui(); } //if it's a window, do it's init
 							o.setParent(parent).initObjects(); //initialize all of the children's children
@@ -196,8 +293,11 @@ public class StaticEGuiObject {
 						} catch (ObjectInitException e) { e.printStackTrace(); }
 						parent.getAddingObjects().add(o); //give the processed child to the parent so that it will be added
 					}
+					else {
+						System.out.println(parent + " already contains " + o + "!");
+					}
 				}
-			} catch (HeaderAlreadyExistsException e) { e.printStackTrace(); }
+			} catch (Exception e) { e.printStackTrace(); }
 		}
 	}
 	/** Start the process of removing a child from this object. Children are fully removed on the next draw cycle. */
@@ -250,7 +350,7 @@ public class StaticEGuiObject {
 		//recursively check through the object's parent lineage to see if that parent is a topParent
 		while (parentObj != null) {
 			if (parentObj instanceof IEnhancedTopParent) { return (IEnhancedTopParent) parentObj; }
-			if (parentObj.getParent() != null) { parentObj = parentObj.getParent(); }
+			parentObj = parentObj.getParent();
 		}
 		return obj instanceof IEnhancedTopParent ? (IEnhancedTopParent) obj : null;
 	}
@@ -260,9 +360,22 @@ public class StaticEGuiObject {
 		//recursively check through the object's parent lineage to see if that parent is a window
 		while (parentObject != null && !(parentObject instanceof IEnhancedTopParent)) {
 			if (parentObject instanceof IWindowParent) { return (IWindowParent) parentObject; }
-			if (parentObject.getParent() != null) { parentObject = parentObject.getParent(); }
+			parentObject = parentObject.getParent();
 		}
 		return obj instanceof IWindowParent ? (IWindowParent) obj : null;
+	}
+	
+	//zLevel
+	public static int getZLevel(IEnhancedGuiObject obj, int objZLevel) {
+		int zLevel = new Integer(objZLevel);
+		IEnhancedGuiObject lastObj = obj.getParent();
+		if (lastObj != null && !lastObj.equals(obj)) {
+			while (lastObj != null && lastObj.getParent() != lastObj) {
+				zLevel += lastObj.getZLevel();
+				lastObj = lastObj.getParent();
+			}
+		}
+		return zLevel;
 	}
 	
 	//mouse checks
@@ -289,6 +402,17 @@ public class StaticEGuiObject {
 			else if (bottom) { return ScreenLocation.bot; }
 		}
 		return ScreenLocation.out;
+	}
+	public static boolean isMouseInside(IEnhancedGuiObject obj, int mX, int mY) {
+		if (obj != null) {
+			EDimension d = obj.getDimensions();
+			if (obj.isBoundaryEnforced()) {
+				EDimension b = obj.getBoundaryEnforcer();
+				return mX >= d.startX && mX >= b.startX && mX <= d.endX && mX <= b.endX && mY >= d.startY && mY >= b.startY && mY <= d.endY && mY <= b.endY;
+			}
+			return mX >= d.startX && mX <= d.endX && mY >= d.startY && mY <= d.endY;
+		}
+		return false;
 	}
 	
 	//basic inputs

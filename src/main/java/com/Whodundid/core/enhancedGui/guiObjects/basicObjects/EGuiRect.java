@@ -4,6 +4,8 @@ import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.renderUtil.EColors;
 
+//Author: Hunter Bragg
+
 public class EGuiRect extends EnhancedGuiObject {
 	
 	public int color = 0xff000000;

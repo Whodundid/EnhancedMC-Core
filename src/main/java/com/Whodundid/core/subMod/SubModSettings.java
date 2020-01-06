@@ -6,8 +6,6 @@ import java.io.PrintWriter;
 import java.util.Scanner;
 import org.apache.logging.log4j.Level;
 
-//Last edited: 10-16-18
-//First Added: 9-14-18
 //Author: Hunter Bragg
 
 public class SubModSettings {

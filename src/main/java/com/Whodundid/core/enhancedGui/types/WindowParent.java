@@ -10,8 +10,6 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 import java.util.Stack;
 import net.minecraft.client.gui.GuiScreen;
 
-//Last edited: Jan 9, 2019
-//First Added: Sep 14, 2018
 //Author: Hunter Bragg
 
 public abstract class WindowParent extends EnhancedGuiObject implements IWindowParent {

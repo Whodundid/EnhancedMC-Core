@@ -6,6 +6,8 @@ import com.Whodundid.core.subMod.gui.SubModErrorDialogueBox;
 import com.Whodundid.core.subMod.gui.SubModErrorType;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
+//Author: Hunter Bragg
+
 public class SubModErrorDisplay {
 
 	public static void displayError(SubModErrorType type) { displayError(type, null, null, null); }

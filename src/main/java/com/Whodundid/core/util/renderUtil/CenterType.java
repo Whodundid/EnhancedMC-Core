@@ -1,5 +1,7 @@
 package com.Whodundid.core.util.renderUtil;
 
+//Author: Hunter Bragg
+
 public enum CenterType {
 	screen,
 	botLeftScreen,

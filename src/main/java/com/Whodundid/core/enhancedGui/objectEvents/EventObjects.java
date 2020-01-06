@@ -4,6 +4,8 @@ import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.EventType;
 import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.ObjectEventType;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 
+//Author: Hunter Bragg
+
 public class EventObjects extends ObjectEvent {
 	
 	ObjectEventType type;

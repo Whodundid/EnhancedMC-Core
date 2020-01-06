@@ -1,5 +1,7 @@
 package com.Whodundid.core.util.chatUtil;
 
+//Author: Hunter Bragg
+
 public interface ITabCompleteListener {
 	
 	/** Event fired from EMC when a tab completion result has been returned. */

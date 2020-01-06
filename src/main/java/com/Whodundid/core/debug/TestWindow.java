@@ -5,6 +5,8 @@ import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.EGuiPlayerViewer
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 
+//Author: Hunter Bragg
+
 public class TestWindow extends WindowParent {
 
 	EGuiPlayerViewer viewer;

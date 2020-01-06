@@ -4,6 +4,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
+//Author: Hunter Bragg
+
 public class PlayerInventory {
 	
 	static final Minecraft mc = Minecraft.getMinecraft();

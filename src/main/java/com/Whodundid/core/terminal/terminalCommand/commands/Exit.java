@@ -4,6 +4,8 @@ import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.IConsoleCommand;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
+//Author: Hunter Bragg
+
 public class Exit implements IConsoleCommand {
 
 	@Override public String getName() { return "exit"; }

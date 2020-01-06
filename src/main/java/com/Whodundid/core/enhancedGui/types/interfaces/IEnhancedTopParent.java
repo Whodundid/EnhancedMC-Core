@@ -4,9 +4,6 @@ import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.ObjectModifyType;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
-//Jan 1, 2019
-//Last edited: Jan 21, 2019
-//First Added: Dec 27, 2018
 //Author: Hunter Bragg
 
 /** An interface outlining behavior for Top Level Enhanced Gui Objects. Top level objects handle drawing, object focus, object manipulation, and inputs. */
@@ -74,4 +71,6 @@ public interface IEnhancedTopParent extends IEnhancedGuiObject {
 	public void closeGui(boolean fullClose);
 	/** Essentially deprecated */
 	public IEnhancedTopParent setCloseAndRecenter(boolean val);
+	public IEnhancedTopParent setEscapeStopper(IEnhancedGuiObject obj);
+	public IEnhancedGuiObject getEscapeStopper();
 }

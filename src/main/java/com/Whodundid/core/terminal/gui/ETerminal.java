@@ -16,6 +16,8 @@ import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import java.awt.Color;
 
+//Author: Hunter Bragg
+
 public class ETerminal extends WindowParent {
 
 	TerminalTextField inputField;
@@ -64,7 +66,7 @@ public class ETerminal extends WindowParent {
 		
 		addObject(inputField, history);
 		
-		if (!init) { history.addTextLine("> EMC Terminal v1.0 initialized..", 0xffff00); init = true; }
+		if (!init) { history.addTextLine("> EMC " + (EnhancedMC.isOpMode() ? "Op " : "") + "Terminal v1.0 initialized..", 0xffff00); init = true; }
 		
 		if (getTopParent().getModifyingObject() != this) { inputField.requestFocus(); }
 	}

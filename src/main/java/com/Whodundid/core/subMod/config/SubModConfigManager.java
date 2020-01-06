@@ -6,8 +6,6 @@ import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 
-//Last edited: Dec 12, 2018
-//First Added: Dec 12, 2018
 //Author: Hunter Bragg
 
 public class SubModConfigManager {

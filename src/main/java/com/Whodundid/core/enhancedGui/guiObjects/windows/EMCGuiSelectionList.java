@@ -1,7 +1,7 @@
 package com.Whodundid.core.enhancedGui.guiObjects.windows;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.coreSubMod.EnhancedMCMod;
+import com.Whodundid.core.coreSubMod.EMCMod;
 import com.Whodundid.core.debug.ExperimentGui;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.renderer.EnhancedMCRenderer;
@@ -15,6 +15,8 @@ import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.EnumChatFormatting;
+
+//Author: Hunter Bragg
 
 public class EMCGuiSelectionList extends EGuiSelectionList {
 	
@@ -32,10 +34,10 @@ public class EMCGuiSelectionList extends EGuiSelectionList {
 	private StorageBoxHolder<String, Object> buildList() {
 		StorageBoxHolder<String, Object> list = new StorageBoxHolder();
 		if (RegisteredSubMods.getAllGuiClasses().size() > 0) {
-			boolean flag = ((EnhancedMCMod) RegisteredSubMods.getMod(SubModType.CORE)).enableTerminal.get();
+			boolean flag = ((EMCMod) RegisteredSubMods.getMod(SubModType.CORE)).enableTerminal.get();
 			if (EnhancedMC.isDebugMode() || flag) {
 				list.add(EnumChatFormatting.GRAY + "EMC Debug Guis", null);
-				if (EnhancedMC.isDebugMode()) {
+				if (EnhancedMC.isDebugMode() && EnhancedMC.isUserDev()) {
 					list.add(EnumChatFormatting.LIGHT_PURPLE + "Experiment Gui", new StorageBox<Class, StorageBox<Class[], Object[]>>(ExperimentGui.class, null));
 				}
 				if (flag) {
@@ -49,11 +51,10 @@ public class EMCGuiSelectionList extends EGuiSelectionList {
 			for (Class c : RegisteredSubMods.getAllGuiClasses()) {
 				list.add(EnumChatFormatting.GREEN + c.getSimpleName(), new StorageBox<Class, StorageBox<Class[], Object[]>>(c, null));
 			}
-			list.add("", null);
 		}
-		list.add("", null);
 		
 		if (CommonVanillaGuis.getGuis().size() > 0) {
+			list.add("", null);
 			list.add(EnumChatFormatting.GRAY + "Vanilla Guis", null);
 			for (StorageBox<Class, StorageBox<Class[], Object[]>> g : CommonVanillaGuis.getGuis()) {
 				list.add(EnumChatFormatting.GREEN + g.getObject().getSimpleName(), g);

@@ -1,7 +1,7 @@
 package com.Whodundid.core;
 
 import com.Whodundid.core.coreEvents.EventListener;
-import com.Whodundid.core.coreSubMod.EnhancedMCMod;
+import com.Whodundid.core.coreSubMod.EMCMod;
 import com.Whodundid.core.debug.DebugFunctions;
 import com.Whodundid.core.enhancedGui.types.EnhancedGui;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
@@ -48,7 +48,7 @@ import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 
-//First Added: Nov 16, 2017
+//Project Started: April 14, 2017
 //Author: Hunter Bragg
 
 @Mod(modid = EnhancedMC.MODID, version = EnhancedMC.VERSION, name = EnhancedMC.NAME)
@@ -60,6 +60,7 @@ public final class EnhancedMC {
 	public static final Minecraft mc = Minecraft.getMinecraft();
 	public static final KeyBinding openSettingsGui = new KeyBinding("Settings", Keyboard.KEY_P, "EnhancedMC");
 	public static final KeyBinding debugCommand = new KeyBinding("Debug key", Keyboard.KEY_GRAVE, "EnhancedMC");
+	public static final KeyBinding openHud = new KeyBinding("Open Hud", Keyboard.KEY_F, "EnhancedMC");
 	public static final Logger EMCLogger = LogManager.getLogger("EnhancedMC");
 	public static EFontRenderer fontRenderer;
 	private static final EnhancedMCRenderer renderer = EnhancedMCRenderer.getInstance();
@@ -70,9 +71,10 @@ public final class EnhancedMC {
 	private static boolean isInitialized = false;
 	public static int updateCounter = 0;
 	public static boolean enableDebugFunctions = false;
-	public static final EnhancedMCMod modInstance = new EnhancedMCMod();
+	public static final EMCMod modInstance = new EMCMod();
 	public static boolean safeRemoteDesktopMode = false;
 	public static boolean enableOpFunctions = false;
+	private static boolean isDev = false;
 	
 	@EventHandler
 	private void init(FMLInitializationEvent event) {
@@ -91,6 +93,7 @@ public final class EnhancedMC {
 		//register keybinds
 		ClientRegistry.registerKeyBinding(openSettingsGui);
 		ClientRegistry.registerKeyBinding(debugCommand);
+		ClientRegistry.registerKeyBinding(openHud);
 		
 		//initialize client resources
 		CursorHelper.init();
@@ -108,10 +111,11 @@ public final class EnhancedMC {
 	
 	@EventHandler
 	private void postInit(FMLPostInitializationEvent e) {
-		if (mc.getSession() != null && mc.getSession().getUsername() != null && mc.getSession().getUsername().equals("Jenarie")) {
-			Display.setTitle("Alt Acc");
-		}
-		enableOpFunctions = mc.getSession().getUsername().equals("Whodundid") || mc.getSession().getUsername().equals("Jenarie");
+		String id = mc.getSession() != null ? mc.getSession().getProfile().getId().toString() : "";
+		
+		isDev = id.equals("be8ba059-2644-4f4c-a5e7-88a38e555b1e") || id.equals("e8f9070f-74f0-4229-8134-5857c794e44d");
+		if (enableOpFunctions = isDev) { log(Level.INFO, "Dev detected -- Running EMC in Op mode"); }
+		if (id.equals("e8f9070f-74f0-4229-8134-5857c794e44d")) { Display.setTitle("Alt Acc"); }
 		
 		EArrayList<SubMod> foundMods = new EArrayList();
 		EArrayList<SubMod> coreCheck = new EArrayList();
@@ -219,11 +223,14 @@ public final class EnhancedMC {
 		if (openSettingsGui.isPressed()) { openSettingsGui(); }
 		if (debugCommand.isPressed()) {
 			if (!RegisteredSubMods.isModRegistered(SubModType.HOTKEYS)) {
-				if (EnhancedMCMod.useDebugKey.get()) { DebugFunctions.runDebugFunction(0); }
+				if (EMCMod.useDebugKey.get()) { DebugFunctions.runDebugFunction(0); }
 			}
-			else if (EnhancedMCMod.useDebugKey.get()) {
+			else if (EMCMod.useDebugKey.get()) {
 				DebugFunctions.runDebugFunction(0);
 			}
+		}
+		if (openHud.isPressed()) {
+			mc.displayGuiScreen(new RendererProxyGui(true));
 		}
 	}
 	
@@ -347,6 +354,7 @@ public final class EnhancedMC {
 	
 	public static boolean isDebugMode() { return enableDebugFunctions; }
 	public static boolean isOpMode() { return enableOpFunctions; }
+	public static boolean isUserDev() { return isDev; }
 	public static void setDebugMode(boolean val) { enableDebugFunctions = val; }
 	public static void setOpMode(boolean val) { enableOpFunctions = val; }
 	
@@ -365,7 +373,7 @@ public final class EnhancedMC {
 	public static void postNotification(String messageIn, WindowParent guiIn) { notifications.post(messageIn, guiIn); }
 	public static void postNotification(NotificationObject obj) { notifications.post(obj); }
 	
-	public static EnhancedMCMod getEMCMod() { return modInstance; }
+	public static EMCMod getEMCMod() { return modInstance; }
 	public static EventListener getEventListener() { return eventListener; }
 	public static EFontRenderer getFontRenderer() { return fontRenderer; }
 	public static EnhancedMCRenderer getRenderer() { return renderer; }

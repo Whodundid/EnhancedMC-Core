@@ -4,6 +4,8 @@ import com.Whodundid.core.asm.transformers.*;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import net.minecraft.launchwrapper.IClassTransformer;
 
+//Author: Hunter Bragg
+
 public class EMCTransformer implements IClassTransformer {
 
 	private static final EArrayList<IETransformer> transformers = new EArrayList();
@@ -11,10 +13,10 @@ public class EMCTransformer implements IClassTransformer {
 	
 	public EMCTransformer() {
 		transformers.add(
-			new ChatCommandFixer(),
-			new ChatGrabber(),
-			new GIGFItemHighlight(),
-			new TabCompleteHijacker()
+			new GuiScreenTransformer(),
+			new GuiNewChatTransformer(),
+			new GuiInGameForgeTransformer(),
+			new NetHandlerPlayClientTransformer()
 		);
 	}
 	

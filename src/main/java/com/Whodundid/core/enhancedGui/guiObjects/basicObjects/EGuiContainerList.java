@@ -3,7 +3,6 @@ package com.Whodundid.core.enhancedGui.guiObjects.basicObjects;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
 import com.Whodundid.core.enhancedGui.objectEvents.EventModify;
 import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.ObjectModifyType;
-import com.Whodundid.core.enhancedGui.objectExceptions.HeaderAlreadyExistsException;
 import com.Whodundid.core.enhancedGui.objectExceptions.ObjectInitException;
 import com.Whodundid.core.enhancedGui.types.EnhancedGui;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
@@ -13,6 +12,8 @@ import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 import java.util.Iterator;
+
+//Author: Hunter Bragg
 
 public class EGuiContainerList extends EGuiContainer {
 	
@@ -101,9 +102,7 @@ public class EGuiContainerList extends EGuiContainer {
 			try {
 				if (o != null && o != this) {
 					if (o instanceof EnhancedGui) { continue; }
-					if (o instanceof EGuiHeader && hasHeader()) {
-						 throw new HeaderAlreadyExistsException(getHeader());
-					}
+					if (o instanceof EGuiHeader && hasHeader()) { continue; }
 					
 					EDimension bounds = new EDimension(startX + 1, startY + titleAreaHeight, endX - 1, endY - 1);
 					
@@ -129,7 +128,7 @@ public class EGuiContainerList extends EGuiContainer {
 					containerObjsToBeAdded.add(o);
 					objsToBeAdded.add(o);
 				}
-			} catch (HeaderAlreadyExistsException e) { e.printStackTrace(); }
+			} catch (Exception e) { e.printStackTrace(); }
 		}
 		return this;
 	}

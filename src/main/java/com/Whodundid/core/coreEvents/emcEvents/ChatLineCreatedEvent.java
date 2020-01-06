@@ -4,6 +4,8 @@ import com.Whodundid.core.util.chatUtil.TimedChatLine;
 
 import net.minecraftforge.fml.common.eventhandler.Event;
 
+//Author: Hunter Bragg
+
 public class ChatLineCreatedEvent extends Event {
 
 	TimedChatLine l;

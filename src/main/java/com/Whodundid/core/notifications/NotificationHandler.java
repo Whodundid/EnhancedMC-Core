@@ -7,6 +7,8 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import net.minecraft.client.Minecraft;
 
+//Author: Hunter Bragg
+
 public class NotificationHandler {
 	
 	private static NotificationHandler instance = null;

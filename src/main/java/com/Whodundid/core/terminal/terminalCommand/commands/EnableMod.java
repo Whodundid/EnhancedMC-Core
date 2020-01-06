@@ -8,9 +8,9 @@ import com.Whodundid.core.terminal.terminalCommand.IConsoleCommand;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
+//Author: Hunter Bragg
+
 public class EnableMod implements IConsoleCommand {
-	
-	//mult dep don't work
 	
 	@Override public String getName() { return "enable"; }
 	@Override public boolean showInHelp() { return true; }

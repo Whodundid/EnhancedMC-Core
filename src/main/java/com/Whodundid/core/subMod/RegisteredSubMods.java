@@ -9,10 +9,6 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 
-//Dec 28, 2018
-//Last edited: Feb 17, 2019
-//Edit note: changing isModAlreadyRegistered -> isModRegistered. Added ability to check if SubModType is registered.
-//First Added: Oct 16, 2018
 //Author: Hunter Bragg
 
 public final class RegisteredSubMods {

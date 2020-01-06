@@ -2,6 +2,8 @@ package com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.dropDownList;
 
 import net.minecraft.client.Minecraft;
 
+//Author: Hunter Bragg
+
 public class DropDownListEntry<obj> {
 	
 	static Minecraft mc = Minecraft.getMinecraft();

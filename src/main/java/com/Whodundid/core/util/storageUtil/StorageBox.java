@@ -1,5 +1,7 @@
 package com.Whodundid.core.util.storageUtil;
 
+//Author: Hunter Bragg
+
 public class StorageBox<Obj, Val> {
 	
 	private Obj storedObj;
@@ -23,10 +25,13 @@ public class StorageBox<Obj, Val> {
 	public Obj getObject() { return storedObj; }	
 	public Val getValue() { return storedVal; }
 	
-	public boolean compareObject(Object objIn) { return objIn != null ? storedObj != null ? storedObj.equals(objIn) : false : storedObj == null; }
-	public boolean compareValue(Object valIn) { return valIn != null ? storedVal != null ? storedVal.equals(valIn) : false : storedVal == null; }
-	public boolean compareContents(StorageBox<?, ?> boxIn) { return compareContents(boxIn.getObject(), boxIn.getValue()); }
-	public boolean compareContents(Object inObj, Object inVal) { return (storedObj.equals(inObj) && storedVal.equals(inVal)); }
+	public boolean containsObject(Object obj) { return (obj == null ) ? storedObj == null : obj.equals(storedObj); }
+	public boolean containsValue(Object val) { return (val == null) ? storedVal == null : val.equals(storedVal); }
+	
+	public boolean compare(StorageBox<?, ?> boxIn) { return compare(boxIn.getObject(), boxIn.getValue()); }
+	public boolean compare(Object inObj, Object inVal) { return (storedObj.equals(inObj) && storedVal.equals(inVal)); }
+	
+	public static boolean compare(StorageBox<?, ?> box1, StorageBox<?, ?> box2) { return (box1 != null && box2 != null) ? box1.compare(box2) : false; }
 	
 	@Override public String toString() { return "[" + storedObj + ", " + storedVal + "]"; }
 }

@@ -3,6 +3,8 @@ package com.Whodundid.core.enhancedGui.objectEvents;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
+//Author: Hunter Bragg
+
 public class ObjectEventHandler {
 	
 	IEnhancedGuiObject parent;

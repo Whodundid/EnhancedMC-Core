@@ -18,13 +18,13 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
+//Author: Hunter Bragg
+
 /**
  * PlayerFacing contains methods for determining the player's current facing
  * direction and methods for checking if the player is facing a type of entity
  * or block. PlayerFacing is also used to set the players facing direction both
  * instantaneously and gradually. PlayerFacing
- *
- * Created by Hunter Bragg on 5/20/2017.
  */
 public final class PlayerFacing {
 

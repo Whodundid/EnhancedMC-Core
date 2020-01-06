@@ -59,14 +59,6 @@ import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-//Jan 4, 2019
-//Jan 21, 2019
-//Jan 24, 2019 : added objsToBeAdded
-//Jan 25, 2019 : fixed logic behind adding objects with drawing delays, implemented fix for adding objects when moving
-//Jan 27, 2019 : removed gWidth/height -> width/height, shadowed GuiScreen width/height with sWidth/height
-//Last edited: Mar 26, 2019
-//Edit note: implemented listeners
-//First Added: Sep 7, 2018
 //Author: Hunter Bragg
 
 public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParent, IWindowParent, IRendererProxy {
@@ -75,6 +67,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	public static final Splitter NEWLINE_SPLITTER = Splitter.on('\n');
 	public EnhancedGui guiInstance;
 	public GuiScreen oldGui;
+	protected EDimension boundaryDimension;
 	protected IEnhancedGuiObject parent, modifyingObject;
 	public URI clickedLinkURI;
 	public int startXPos, startYPos, startWidth, startHeight;
@@ -124,6 +117,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	protected IEnhancedGuiObject focusedObject, defaultFocusObject, focusLockObject, focusObjectOnClose;
 	protected IEnhancedGuiObject toFront, toBack;
 	protected IEnhancedGuiObject hoveringTextObject;
+	protected IEnhancedGuiObject escapeStopper;
 	protected EArrayList<IEnhancedGuiObject> guiObjects = new EArrayList();
 	protected EArrayList<IEnhancedGuiObject> objsToBeRemoved = new EArrayList();
 	protected EArrayList<IEnhancedGuiObject> objsToBeAdded = new EArrayList();
@@ -471,8 +465,6 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override public IEnhancedGuiObject setEnabled(boolean val) { enabled = val; return this; }
 	@Override public IEnhancedGuiObject setVisible(boolean val) { visible = val; return this; }
 	@Override public IEnhancedGuiObject setPersistent(boolean val) { return this; }
-	@Override public IEnhancedGuiObject setBoundaryEnforcer(EDimension dimIn) { return this; }
-	@Override public EDimension getBoundaryEnforcer() { return getDimensions(); }
 	
 	//size
 	@Override public boolean hasHeader() { return StaticEGuiObject.hasHeader(this); }
@@ -615,8 +607,17 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	//mouse checks
 	@Override public void mouseEntered(int mX, int mY) { postEvent(new EventMouse(this, mX, mY, -1, MouseType.Entered)); }
 	@Override public void mouseExited(int mX, int mY) { postEvent(new EventMouse(this, mX, mY, -1, MouseType.Exited)); }
-	@Override public boolean isMouseInside(int mX, int mY) { return mX >= startX && mX <= endX && mY >= startY && mY <= endY; }
+	@Override
+	public boolean isMouseInside(int mX, int mY) {
+		if (isBoundaryEnforced()) {
+			EDimension b = boundaryDimension;
+			return mX >= startX && mX >= b.startX && mX <= endX && mX <= b.endX && mY >= startY && mY >= b.startY && mY <= endY && mY <= b.endY;
+		}
+		return mX >= startX && mX <= endX && mY >= startY && mY <= endY;
+	}
 	@Override public boolean isMouseOver(int mX, int mY) { return isMouseInside(mX, mY) && this.equals(getTopParent().getHighestZObjectUnderMouse()); }
+	@Override public IEnhancedGuiObject setBoundaryEnforcer(EDimension dimIn) { boundaryDimension = new EDimension(dimIn); return this; }
+	@Override public EDimension getBoundaryEnforcer() { return boundaryDimension; }
 	@Override public boolean isClickable() { return clickable; }
 	@Override public IEnhancedGuiObject setClickable(boolean valIn) { clickable = valIn; return this; }
 	
@@ -871,6 +872,8 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 		}
 	}
 	@Override public EnhancedGui setCloseAndRecenter(boolean val) { closeAndRecenter = val; return this; }
+	@Override public EnhancedGui setEscapeStopper(IEnhancedGuiObject obj) { if (obj != this) { escapeStopper = obj; } return this; }
+	@Override public IEnhancedGuiObject getEscapeStopper() { return escapeStopper; }
 	
 	//------------------------
 	//IRendererProxy Overrides

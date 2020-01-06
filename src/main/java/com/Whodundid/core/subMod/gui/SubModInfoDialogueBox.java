@@ -10,6 +10,8 @@ import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import net.minecraft.util.EnumChatFormatting;
 
+//Author: Hunter Bragg
+
 public class SubModInfoDialogueBox extends EGuiDialogueBox {
 
 	protected SubMod mod;

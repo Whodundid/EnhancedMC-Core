@@ -7,13 +7,10 @@ import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHead
 import com.Whodundid.core.enhancedGui.guiUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.objectEvents.EventAction;
 import com.Whodundid.core.enhancedGui.objectEvents.EventFocus;
-import com.Whodundid.core.enhancedGui.objectEvents.EventModify;
-import com.Whodundid.core.enhancedGui.objectEvents.EventMouse;
 import com.Whodundid.core.enhancedGui.objectEvents.EventRedraw;
 import com.Whodundid.core.enhancedGui.objectEvents.ObjectEvent;
 import com.Whodundid.core.enhancedGui.objectEvents.ObjectEventHandler;
 import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.FocusType;
-import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.MouseType;
 import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.ObjectModifyType;
 import com.Whodundid.core.enhancedGui.types.EnhancedGui;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
@@ -34,8 +31,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import org.lwjgl.opengl.GL11;
 
-//Last edited: Apr 10, 2019
-//First Added: Apr 10, 2019
 //Author: Hunter Bragg
 
 public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTopParent {
@@ -46,6 +41,7 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	protected IEnhancedGuiObject defaultFocusObject;
 	protected IEnhancedGuiObject toFront, toBack;
 	protected IEnhancedGuiObject hoveringTextObject;
+	protected IEnhancedGuiObject escapeStopper;
 	protected IRendererProxy proxy;
 	protected StorageBox<Integer, Integer> oldMousePos = new StorageBox();
 	protected EArrayList<IEnhancedGuiObject> guiObjects = new EArrayList();
@@ -92,14 +88,11 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	@Override public void completeInit() {}
 	@Override
 	public void initObjects() {
-		//addObject(hotBarRenderer = HotBarRenderer.getInstance(this));
-		//addObject(new EGuiPlayerViewer(this, 50, 50, 100, 150));
-		//addObject(new SettingsGuiMain());
-		//addObject(new EGuiContainer(this, 15, 205, 100, 100).setDisplayString("Baccon"));
 		objectInit = true;
 	}
 	@Override
 	public void reInitObjects() {
+		objectInit = false;
 		guiObjects.clear();
 		initObjects();
 	}
@@ -151,13 +144,11 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	@Override public boolean isVisible() { return visible; }
 	@Override public boolean isPersistent() { return true; }
 	@Override public boolean isBoundaryEnforced() { return false; }
-	@Override public boolean isResizing() { return getTopParent().getModifyingObject() == this && getTopParent().getModifyType() == ObjectModifyType.Resize; }
-	@Override public boolean isMoving() { return getTopParent().getModifyingObject() == this && getTopParent().getModifyType() == ObjectModifyType.Move; }
-	@Override public EnhancedMCRenderer setEnabled(boolean val) { enabled = val; return this; }
-	@Override public EnhancedMCRenderer setVisible(boolean val) { visible = val; return this; }
+	@Override public boolean isResizing() { return false; }
+	@Override public boolean isMoving() { return false; }
+	@Override public EnhancedMCRenderer setEnabled(boolean val) { return this; }
+	@Override public EnhancedMCRenderer setVisible(boolean val) { return this; }
 	@Override public EnhancedMCRenderer setPersistent(boolean val) { return this; }
-	@Override public EnhancedMCRenderer setBoundaryEnforcer(EDimension dimIn) { return this; }
-	@Override public EDimension getBoundaryEnforcer() { return getDimensions(); }
 	
 	//size
 	@Override public boolean hasHeader() { return false; }
@@ -174,16 +165,16 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	@Override public EnhancedMCRenderer setMaxWidth(int widthIn) { return this; }
 	@Override public EnhancedMCRenderer setMaxHeight(int heightIn) { return this; }
 	@Override public EnhancedMCRenderer setResizeable(boolean val) { return this; }
-	@Override public EnhancedMCRenderer resize(int xIn, int yIn, ScreenLocation areaIn) { return postEvent(new EventModify(this, this, ObjectModifyType.Resize)); }
+	@Override public EnhancedMCRenderer resize(int xIn, int yIn, ScreenLocation areaIn) { return this; }
 	
 	//position
-	@Override public void move(int newX, int newY) { postEvent(new EventModify(this, this, ObjectModifyType.Move)); }
-	@Override public boolean isMoveable() { return true; }
+	@Override public void move(int newX, int newY) {}
+	@Override public boolean isMoveable() { return false; }
 	@Override public EnhancedMCRenderer resetPosition() { return this; }
 	@Override public EnhancedMCRenderer setPosition(int xIn, int yIn) { return this; }
 	@Override public EnhancedMCRenderer setMoveable(boolean val) { return this; }
 	@Override public EnhancedMCRenderer setDimensions(EDimension dimIn) { return this; }
-	@Override public EnhancedMCRenderer setDimensions(int widthIn, int heightIn) { return setDimensions(startX, startY, widthIn, heightIn); }
+	@Override public EnhancedMCRenderer setDimensions(int widthIn, int heightIn) { return this; }
 	@Override public EnhancedMCRenderer setDimensions(int startXIn, int startYIn, int widthIn, int heightIn) { return this; }
 	@Override public StorageBox<Integer, Integer> getInitialPosition() { return new StorageBox<Integer, Integer>(0, 0); }
 	@Override public EnhancedMCRenderer setInitialPosition(int startXIn, int startYIn) { return this; }
@@ -204,7 +195,7 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	@Override public EArrayList<IEnhancedGuiObject> getAllChildrenUnderMouse() { return StaticEGuiObject.getAllChildrenUnderMouse(this, mX, mY); }
 	
 	//parents
-	@Override public IEnhancedGuiObject getParent() { return this; }
+	@Override public IEnhancedGuiObject getParent() { return null; }
 	@Override public EnhancedMCRenderer setParent(IEnhancedGuiObject parentIn) { return this; }
 	@Override public IEnhancedTopParent getTopParent() { return this; }
 	@Override public IWindowParent getWindowParent() { return null; }
@@ -251,12 +242,17 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	@Override public IEnhancedGuiObject setDefaultFocusObject(IEnhancedGuiObject objIn) { defaultFocusObject = objIn; return this; }
 	
 	//mouse checks
-	@Override public void mouseEntered(int mX, int mY) { postEvent(new EventMouse(this, mX, mY, -1, MouseType.Entered)); }
-	@Override public void mouseExited(int mX, int mY) { postEvent(new EventMouse(this, mX, mY, -1, MouseType.Exited)); }
+	@Override public void mouseEntered(int mX, int mY) {}
+	@Override public void mouseExited(int mX, int mY) {}
 	@Override public boolean isMouseInside(int mX, int mY) { return false; }
-	@Override public boolean isMouseOver(int mX, int mY) { return isMouseInside(mX, mY) && equals(getTopParent().getHighestZObjectUnderMouse()); }
+	@Override public boolean isMouseOver(int mX, int mY) { return false; }
+	@Override public EnhancedMCRenderer setBoundaryEnforcer(EDimension dimIn) { return this; }
+	@Override public EDimension getBoundaryEnforcer() { return getDimensions(); }
 	@Override public boolean isClickable() { return true; }
 	@Override public IEnhancedGuiObject setClickable(boolean valIn) { return this; }
+	//@Override public IEnhancedGuiObject setClickableArea(EDimension dimIn) { return this; }
+	//@Override public IEnhancedGuiObject setClickableArea(int startX, int startY, int width, int height) { return this; }
+	//@Override public EDimension getClickableArea() { return getDimensions(); }
 	
 	//basic inputs
 	@Override public void parseMousePosition(int mX, int mY) { guiObjects.stream().filter(o -> o.isMouseInside(mX, mY)).forEach(o -> o.parseMousePosition(mX, mY)); }
@@ -281,9 +277,9 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	@Override public boolean isCloseable() { return false; }
 	@Override public boolean isClosed() { return closed; }
 	@Override public IEnhancedGuiObject setCloseable(boolean val) { return this; }
-	@Override public void close() {}
+	@Override public void close() { System.out.println("FOOL! Dagoth Ur cannot be closed, I am a god!"); }
 	@Override public void onClosed() {}
-	@Override public EnhancedMCRenderer setFocusedObjectOnClose(IEnhancedGuiObject objIn) { System.out.println("FOOL! Dagoth Ur cannot be closed, I am a god!"); return this; }
+	@Override public EnhancedMCRenderer setFocusedObjectOnClose(IEnhancedGuiObject objIn) { return this; }
 	
 	//-------------------------
 	//IEnhancedTopGui Overrides
@@ -335,6 +331,8 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	//close
 	@Override public void closeGui(boolean fullClose) {}
 	@Override public EnhancedMCRenderer setCloseAndRecenter(boolean val) { return this; }
+	@Override public EnhancedMCRenderer setEscapeStopper(IEnhancedGuiObject obj) { if (obj != this) { escapeStopper = obj; } return this; }
+	@Override public IEnhancedGuiObject getEscapeStopper() { return escapeStopper; }
 	
 	//--------------------------
 	//EnhancedMCRenderer methods
@@ -355,7 +353,7 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 		//handle cursor stuff for highest obj
 		if (!EnhancedMC.safeRemoteDesktopMode) {
 			if (getHighestZObjectUnderMouse() != null) { getHighestZObjectUnderMouse().updateCursorImage(); }
-			else { this.updateCursorImage(); }
+			else { updateCursorImage(); }
 		}
 		if (!CursorHelper.isNormalCursor() && getHighestZObjectUnderMouse() == null && modifyType != ObjectModifyType.Resize) { CursorHelper.reset(); }
 		
@@ -366,6 +364,7 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 		//update objects
 		if (!objsToBeRemoved.isEmpty()) { StaticEGuiObject.removeObjects(this, objsToBeRemoved); }
 		if (!objsToBeAdded.isEmpty()) { StaticEGuiObject.addObjects(this, objsToBeAdded); }
+		if (escapeStopper != null && getAllChildren().notContains(escapeStopper)) { escapeStopper = null; }
 		
 		//update object states
 		updateZLayers();

@@ -7,8 +7,6 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-//Last edited: Jan 10, 2019
-//First Added: Jan 10, 2019
 //Author: Hunter Bragg
 
 public class EObjectGroup {

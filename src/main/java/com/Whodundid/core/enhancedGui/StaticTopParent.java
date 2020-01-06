@@ -1,6 +1,6 @@
 package com.Whodundid.core.enhancedGui;
 
-import com.Whodundid.core.coreEvents.emcEvents.ModCalloutEvent;
+import com.Whodundid.core.coreEvents.emcEvents.SubModCalloutEvent;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiUtil.EGui;
@@ -25,6 +25,8 @@ import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 import java.util.Deque;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
+
+//Author: Hunter Bragg
 
 public class StaticTopParent extends EGui {
 
@@ -82,7 +84,7 @@ public class StaticTopParent extends EGui {
 			else { obj.mouseScrolled(change); }
 		} else { //if there were no objects under the mouse, scroll the chat
 			if (RegisteredSubMods.isModRegistered(SubModType.ENHANCEDCHAT)) {
-				ModCalloutEvent callout = new ModCalloutEvent(objIn, "has chat window"); // I AM NOT SURE IF THIS ACTUALLY ACCOMPLISHED ANYTHING!
+				SubModCalloutEvent callout = new SubModCalloutEvent(objIn, "has chat window"); // I AM NOT SURE IF THIS ACTUALLY ACCOMPLISHED ANYTHING!
 				if (MinecraftForge.EVENT_BUS.post(callout)) {
 					if (!isShiftKeyDown()) { change *= 7; }
 					mc.ingameGUI.getChatGUI().scroll(change);
@@ -92,14 +94,14 @@ public class StaticTopParent extends EGui {
 	}
 	/** Notify the focused object that the keyboard just had a key pressed. */
 	public static void keyPressed(IEnhancedTopParent objIn, char typedChar, int keyCode) {
-		IEnhancedGuiObject fo = objIn.getFocusedObject();
-		objIn.postEvent(new EventKeyboard(objIn, typedChar, keyCode, KeyboardType.Pressed)); //post a new event too
-		if (fo != null && fo != objIn) { fo.keyPressed(Keyboard.getEventCharacter(), Keyboard.getEventKey()); }
-		if (keyCode == 1) { //check if the pressed key was escape in which case all unpinned objects will be removed and the proxy gui is closed
+		objIn.postEvent(new EventKeyboard(objIn, typedChar, keyCode, KeyboardType.Pressed)); //post a new event
+		if (keyCode == 1 && objIn.getEscapeStopper() == null) { //check if the pressed key was escape in which case all unpinned objects will be removed and the proxy gui is closed
 			objIn.removeUnpinnedObjects();
 			mc.displayGuiScreen(null);
 			mc.setIngameFocus();
 		}
+		IEnhancedGuiObject fo = objIn.getFocusedObject();
+		if (fo != null && fo != objIn) { fo.keyPressed(Keyboard.getEventCharacter(), Keyboard.getEventKey()); }
 	}
 	/** Notify the focused object that the keyboard just had a key released. */
 	public static void keyReleased(IEnhancedTopParent objIn, char typedChar, int keyCode) {
@@ -112,34 +114,37 @@ public class StaticTopParent extends EGui {
 	/** Debug method used to display topParent information in the top left corner of the screen. */
 	public static void drawDebugInfo(IEnhancedTopParent objIn) {
 		//draw what the topParent is
-		drawStringWithShadow("TopParent: " + objIn.getTopParent(), 3, 2, 0x70f3ff);
+		drawStringWithShadow("TopParent: " + objIn.getTopParent(), 2, 2, 0x70f3ff);
 		
 		//draw the currently focused object - if it's a button, show that too
 		if (objIn.getFocusedObject() instanceof EGuiButton) {
 			drawStringWithShadow("FocuedObject: " + (((EGuiButton) objIn.getFocusedObject()).getDisplayString().isEmpty() ? objIn.getFocusedObject() : "EGuiButton: " +
-													((EGuiButton) objIn.getFocusedObject()).getDisplayString()), 3, 12, 0x70f3ff);
+													((EGuiButton) objIn.getFocusedObject()).getDisplayString()), 2, 12, 0x70f3ff);
 		}
-		else { drawStringWithShadow("FocuedObject: " + objIn.getFocusedObject(), 3, 12, 0x70f3ff); }
+		else { drawStringWithShadow("FocuedObject: " + objIn.getFocusedObject(), 2, 12, 0x70f3ff); }
 		
 		//draw the current focusLockObject - if it's a button, show that too
 		if (objIn.getFocusLockObject() instanceof EGuiButton) {
 			drawStringWithShadow("FocusLockObject: " + (((EGuiButton) objIn.getFocusLockObject()).getDisplayString().isEmpty() ? objIn.getFocusedObject() : "EGuiButton: " +
-													((EGuiButton) objIn.getFocusLockObject()).getDisplayString()), 3, 22, 0x70f3ff);
+													((EGuiButton) objIn.getFocusLockObject()).getDisplayString()), 2, 22, 0x70f3ff);
 		}
-		else { drawStringWithShadow("FocusLockObject: " + objIn.getFocusLockObject(), 3, 22, 0x70f3ff); }
+		else { drawStringWithShadow("FocusLockObject: " + objIn.getFocusLockObject(), 2, 22, 0x70f3ff); }
 		
 		//draw the topParent's current immediate children
-		drawStringWithShadow("objs: " + objIn.getObjects(), 3, 32, 0x70f3ff);
+		drawStringWithShadow("objs: " + objIn.getObjects(), 2, 32, 0x70f3ff);
 		
 		//draw the topParent's current modifying object and type
-		drawStringWithShadow("ModifyingObject & type: (" + objIn.getModifyingObject() + " : " + objIn.getModifyType() + ")", 3, 42, 0x70f3ff);
+		drawStringWithShadow("ModifyingObject & type: (" + objIn.getModifyingObject() + " : " + objIn.getModifyType() + ")", 2, 42, 0x70f3ff);
 		
 		//draw the highest object currently under the mouse
 		IEnhancedGuiObject ho = objIn.getHighestZObjectUnderMouse();
-		drawStringWithShadow("Object under mouse: " + ho + " " + (ho != null ? ho.getZLevel() : -1), 3, 52, 0xffbb00);
+		drawStringWithShadow("Object under mouse: " + ho + " " + (ho != null ? ho.getZLevel() : -1), 2, 52, 0xffbb00);
 		
 		//draw the current mouse position
-		drawStringWithShadow("(" + EMouseHelper.mX + ", " + EMouseHelper.mY + ")", 3, 62, 0xffbb00);
+		drawStringWithShadow("(" + EMouseHelper.mX + ", " + EMouseHelper.mY + ")", 2, 62, 0xffbb00);
+		
+		//draw escape stopper
+		//drawStringWithShadow("EscapeStopper: " + objIn.getEscapeStopper(), 2, 72, 0x70f3ff);
 	}
 	
 	//objects

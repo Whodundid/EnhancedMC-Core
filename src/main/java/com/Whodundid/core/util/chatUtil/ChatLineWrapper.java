@@ -10,8 +10,6 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 
-//Last edited: Jan 10, 2019
-//First Added: Jan 10, 2019
 //Author: Hunter Bragg
 
 public class ChatLineWrapper {

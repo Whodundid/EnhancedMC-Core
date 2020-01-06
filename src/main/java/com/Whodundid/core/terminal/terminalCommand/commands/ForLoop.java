@@ -7,6 +7,8 @@ import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.mathUtil.NumberUtil;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
+//Author: Hunter Bragg
+
 public class ForLoop implements IConsoleCommand {
 
 	@Override public String getName() { return "for"; }

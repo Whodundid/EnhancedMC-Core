@@ -10,8 +10,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 
-//Last edited: 10-16-18
-//First Added: 9-14-18
 //Author: Hunter Bragg
 
 public abstract class WorldHelper {

@@ -3,15 +3,12 @@ package com.Whodundid.core.enhancedGui.guiObjects.basicObjects;
 import com.Whodundid.core.enhancedGui.objectEvents.EventFocus;
 import com.Whodundid.core.enhancedGui.types.EnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import net.minecraft.util.MathHelper;
 
-//Jan 9, 2019
-//Jan 21, 2019
-//Last edited: Jan 22, 2019
-//First Added: Oct 3, 2018
 //Author: Hunter Bragg
 
 public class EGuiScrollBar extends EnhancedActionObject {
@@ -29,6 +26,7 @@ public class EGuiScrollBar extends EnhancedActionObject {
 	protected int thumbEndX = 0, thumbEndY = 0;
 	public boolean isScrolling = false;
 	public boolean renderThumb = true;
+	protected IWindowParent window;
 	private StorageBox<Integer, Integer> mousePos = new StorageBox(0, 0);
 	
 	public EGuiScrollBar(IEnhancedGuiObject parentIn, int visibleAmountIn, int highValIn) {
@@ -61,6 +59,7 @@ public class EGuiScrollBar extends EnhancedActionObject {
 		setThumb();
 		
 		setScrollBarValues(visibleAmountIn, highValIn, vertical ? height : width);
+		window = getWindowParent();
 	}
 	
 	private void setThumb() {
@@ -91,6 +90,15 @@ public class EGuiScrollBar extends EnhancedActionObject {
 		case topLeft: vResizeVal = -yIn; hResizeVal = -xIn; break;
 		case topRight: vResizeVal = -yIn; hResizeVal = xIn; break;
 		default: break;
+		}
+		
+		if (window != null) {
+
+			IWindowParent p = window;
+			EDimension d = p.getDimensions();
+			
+			//if (p.getMinHeight() <= d.height || p.getMaxHeight() >= d.height) { vResizeVal = 0; }
+			//if (p.getMinWidth() <= d.width || p.getMaxWidth() >= d.width) { hResizeVal = 0; }
 		}
 		
 		setScrollBarPos(val + (vertical ? vResizeVal : hResizeVal));
@@ -130,7 +138,7 @@ public class EGuiScrollBar extends EnhancedActionObject {
 		if (renderThumb) {
 			int color = 0xffbbbbbb;
 			if (isMouseInThumb(mX, mY) || isScrolling) {
-				color = isScrolling ? 0xffdddddd : 0xffdddddd;
+				color = isScrolling ? 0xffffffff : 0xffdddddd;
 			}
 			drawRect(thumbStartX, thumbStartY, thumbEndX, thumbEndY, color);
 		}

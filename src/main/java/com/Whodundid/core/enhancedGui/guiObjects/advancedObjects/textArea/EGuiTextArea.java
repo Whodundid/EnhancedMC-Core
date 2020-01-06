@@ -8,8 +8,6 @@ import com.Whodundid.core.util.storageUtil.EDimension;
 import java.util.Iterator;
 import org.lwjgl.input.Keyboard;
 
-//Last edited: Jan 9, 2019
-//First Added: Oct 2, 2018
 //Author: Hunter Bragg
 
 public class EGuiTextArea<obj> extends EGuiScrollList {
@@ -41,18 +39,51 @@ public class EGuiTextArea<obj> extends EGuiScrollList {
 	}
 	
 	@Override
+	public void mousePressed(int mXIn, int mYIn, int button) {
+		if (button == 0) {
+			if (isEditable() && textDocument.isEmpty()) {
+				setSelectedLine(addTextLine());
+			}
+			else if (textDocument.isNotEmpty()) {
+				TextAreaLine first = getTextLine(0);
+				if (first != null) {
+					int fy = first.getDimensions().startY;
+					int va = verticalScroll.getVisibleAmount();
+					int hv = verticalScroll.getHighVal() - va;
+					int s = verticalScroll.getScrollPos() - va;
+					int sl = getListDimensions().startY;
+					
+					
+					//System.out.println("the pos: " + (((double) s / (double) hv) * 100));
+					
+					//System.out.println(verticalScroll.getVisibleAmount() + " " + verticalScroll.getHighVal() + " " + s);
+				}
+			}
+		}
+	}
+	
+	@Override
 	public void mouseScrolled(int change) {
 		super.mouseScrolled(change);
 	}
 	
+	//override to prevent cursor updates
+	@Override
+	public void updateCursorImage() {
+		if (!isEditable()) { super.updateCursorImage(); }
+	}
+	
 	@Override
 	public void mouseEntered(int mX, int mY) {
-		
+		//if (isEditable()) {
+		//	System.out.println("entered");
+		//	CursorHelper.setCursor(EMCResources.iBeam);
+		//}
 	}
 	
 	@Override
 	public void mouseExited(int mX, int mY) {
-		
+		//CursorHelper.reset();
 	}
 	
 	@Override
@@ -75,6 +106,7 @@ public class EGuiTextArea<obj> extends EGuiScrollList {
 		int moveArg = moveDown ? 1 : 0;
 		EDimension ld = this.getListDimensions();
 		lineIn.setDimensions(3, 1 + (textDocument.size() * 10), fontRenderer.getStringWidth(lineIn.getText()), 10);
+		//lineIn.setDimensions(3, 1 + (textDocument.size() * 10), ld.width, 10);
 		//if (textDocument.size() % 2 == 1) {
 		//	EGuiRect back = new EGuiRect(this, 0, 2 + (textDocument.size() * 10), ld.width, 12 + (textDocument.size() * 10), 0x1a000000);
 		//	addObjectToList(back.setClickable(false));
@@ -90,6 +122,12 @@ public class EGuiTextArea<obj> extends EGuiScrollList {
 	public EGuiTextArea insertTextLine(String textIn) { return insertTextLine(textIn, 0xffffff, -1); }
 	public EGuiTextArea insertTextLine(String textIn, int atPos) { return insertTextLine(textIn, 0xffffff, atPos); }
 	public EGuiTextArea insertTextLine(String textIn, int colorIn, int atPos) {
+		if (atPos == -1) {
+			if (currentLine == null) {
+				atPos = textDocument.size();
+				
+			}
+		}
 		return this;
 	}
 	

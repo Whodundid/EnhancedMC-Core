@@ -5,6 +5,8 @@ import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiTextField;
 import com.Whodundid.core.terminal.TerminalCommandHandler;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
+//Author: Hunter Bragg
+
 public class TerminalTextField extends EGuiTextField {
 
 	protected TerminalCommandHandler handler;

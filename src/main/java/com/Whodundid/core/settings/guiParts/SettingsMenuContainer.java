@@ -18,6 +18,8 @@ import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import org.lwjgl.input.Keyboard;
 
+//Author: Hunter Bragg
+
 public class SettingsMenuContainer extends EnhancedGuiObject {
 	
 	SubMod mod = null;

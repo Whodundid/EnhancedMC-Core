@@ -5,6 +5,8 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
 import com.Whodundid.core.util.mathUtil.NumberUtil;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 
+//Author: Hunter Bragg
+
 public class HeaderTab extends EGuiButton {
 
 	protected EGuiHeader header;

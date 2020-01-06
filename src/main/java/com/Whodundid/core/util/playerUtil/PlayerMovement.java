@@ -3,6 +3,8 @@ package com.Whodundid.core.util.playerUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 
+//Author: Hunter Bragg
+
 public class PlayerMovement {
 	
 	private static boolean isSprinting = false;

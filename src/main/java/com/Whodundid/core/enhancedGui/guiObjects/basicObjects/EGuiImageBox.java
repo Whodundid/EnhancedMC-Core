@@ -6,6 +6,8 @@ import com.Whodundid.core.util.renderUtil.EColors;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
+//Author: Hunter Bragg
+
 public class EGuiImageBox extends EnhancedGuiObject {
 	
 	ResourceLocation image = null;

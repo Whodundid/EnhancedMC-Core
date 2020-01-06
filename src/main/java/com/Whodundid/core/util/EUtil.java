@@ -14,8 +14,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
 import org.lwjgl.input.Keyboard;
 
-//Last edited: Jan 16, 2019
-//First Added: Sep 14, 2018
 //Author: Hunter Bragg
 
 public class EUtil {
@@ -160,6 +158,19 @@ public class EUtil {
 			else { return false; }
 		}
 		return true;
+	}
+	
+	/** Captializes the first letter in the given string. */
+	public static String capitalFirst(String in) {
+		if (in != null) {
+			String val = "";
+			if (in.length() > 0) {
+				val += Character.toUpperCase(in.charAt(0));
+				val += in.substring(1, in.length());
+				return val;
+			}
+		}
+		return in;
 	}
 	
 	/** Creates a substring from a given string ending at the first space found from the given starting position. */

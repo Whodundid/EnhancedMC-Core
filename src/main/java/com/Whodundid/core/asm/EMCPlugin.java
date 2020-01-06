@@ -3,6 +3,8 @@ package com.Whodundid.core.asm;
 import java.util.Map;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 
+//Author: Hunter Bragg
+
 @IFMLLoadingPlugin.MCVersion("1.8.9")
 @IFMLLoadingPlugin.TransformerExclusions({"com.Whodundid.core.asm"})
 public class EMCPlugin implements IFMLLoadingPlugin {

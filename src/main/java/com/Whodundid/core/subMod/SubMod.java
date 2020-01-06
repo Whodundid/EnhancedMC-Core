@@ -1,7 +1,7 @@
 package com.Whodundid.core.subMod;
 
 import com.Whodundid.core.coreEvents.emcEvents.ChatLineCreatedEvent;
-import com.Whodundid.core.coreEvents.emcEvents.ModCalloutEvent;
+import com.Whodundid.core.coreEvents.emcEvents.SubModCalloutEvent;
 import com.Whodundid.core.coreEvents.emcEvents.TabCompletionEvent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.subMod.config.SubModConfigManager;
@@ -23,11 +23,9 @@ import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.event.world.WorldEvent.Load;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
 
-//First Added: Oct 15, 2018
 //Author: Hunter Bragg
 
 public abstract class SubMod {
@@ -53,7 +51,6 @@ public abstract class SubMod {
 		configManager = new SubModConfigManager(this);
 	}
 	
-	//public abstract SubMod getInstance();
 	public SubModType getModType() { return SubModType.getTypeFromString(modName); }
 	public boolean isEnabled() { return enabled; }
 	public boolean hasConfig() { return configManager.getNumberOfConfigFiles() > 0; }
@@ -110,30 +107,46 @@ public abstract class SubMod {
 	
 	public Object sendArgs(Object... args) { return null; }
 	
-	public void eventTick(TickEvent e) {}
-	public void eventClientTick(TickEvent.ClientTickEvent e) {}
-	public void eventRenderTick(TickEvent.RenderTickEvent e) {}
-	public void eventOverlayRenderTick(RenderGameOverlayEvent e) {}
-	public void eventTextOverlayRenderTick(RenderGameOverlayEvent.Text e) {}
-	public void eventPreOverlayRenderTick(RenderGameOverlayEvent.Pre e) {}
-	public void eventPostOverlayRenderTick(RenderGameOverlayEvent.Post e) {}
-	public void eventRenderFogTick(EntityViewRenderEvent.FogDensity e) {}
-	public void eventBlockOverlayTick(RenderBlockOverlayEvent e) {}
-	public void eventRenderPlayer(RenderPlayerEvent e) {}
-	public void eventLastWorldRender(RenderWorldLastEvent e) {}
-	public void eventLivingTick(LivingUpdateEvent e) {}
-	public void eventMouse(MouseEvent e) {}
-	public void eventKey(KeyInputEvent e) {}
-	public void eventChat(ClientChatReceivedEvent e) {}
-	public void eventChatLineCreated(ChatLineCreatedEvent e) {}
-	public void eventWorldLoadClient(WorldEvent.Load e) {}
-	public void eventWorldLoadServer(Load e) {}
-	public void eventWorldUnload(WorldEvent.Unload e) {}
-	public void eventInitGui(GuiScreenEvent.InitGuiEvent e) {}
-	public void eventServerJoin(EntityJoinWorldEvent e) {}
-	public void eventModCallout(ModCalloutEvent e) {}
-	public void eventCommand(CommandEvent e) {}
-	public void eventResize(ScaledResolution newRes) {}
-	public void eventTerminalRegister(ETerminal termIn, boolean runVisually) {}
-	public void eventTabCompletion(TabCompletionEvent e) {}
+	//events
+	
+	//ticks
+	public void tickEvent(TickEvent e) {}
+	public void clientTickEvent(TickEvent.ClientTickEvent e) {}
+	public void renderTickEvent(TickEvent.RenderTickEvent e) {}
+	public void livingTickEvent(LivingUpdateEvent e) {}
+	
+	//overlay renders
+	public void overlayEvent(RenderGameOverlayEvent e) {}
+	public void overlayTextEvent(RenderGameOverlayEvent.Text e) {}
+	public void overlayPreEvent(RenderGameOverlayEvent.Pre e) {}
+	public void OverlayPostEvent(RenderGameOverlayEvent.Post e) {}
+	
+	//visual renders
+	public void renderFogDensityEvent(EntityViewRenderEvent.FogDensity e) {}
+	public void renderFogEvent(EntityViewRenderEvent.RenderFogEvent e) {}
+	public void renderBlockOverlayEvent(RenderBlockOverlayEvent e) {}
+	public void renderPlayerPreEvent(RenderPlayerEvent.Pre e) {}
+	public void renderPlayerPostEvent(RenderPlayerEvent.Post e) {}
+	public void renderLastWorldEvent(RenderWorldLastEvent e) {}
+	
+	//input
+	public void mouseEvent(MouseEvent e) {}
+	public void keyEvent(KeyInputEvent e) {}
+	public void chatEvent(ClientChatReceivedEvent e) {}
+	public void commandEvent(CommandEvent e) {}
+	
+	//guis
+	public void initGuiEvent(GuiScreenEvent.InitGuiEvent e) {}
+	
+	//world
+	public void worldLoadClientEvent(WorldEvent.Load e) {}
+	public void worldLoadServerEvent(WorldEvent.Load e) {}
+	public void worldUnloadEvent(WorldEvent.Unload e) {}
+	public void serverJoinEvent(EntityJoinWorldEvent e) {}
+	
+	//emc specific
+	public void terminalRegisterCommandEvent(ETerminal termIn, boolean runVisually) {}
+	public void tabCompletionEvent(TabCompletionEvent e) {}
+	public void chatLineCreatedEvent(ChatLineCreatedEvent e) {}
+	public void subModCalloutEvent(SubModCalloutEvent e) {}
 }

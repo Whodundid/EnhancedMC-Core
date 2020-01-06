@@ -4,8 +4,6 @@ import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import java.util.List;
 
-//Last edited: 9-16-18
-//First Added: 9-14-18
 //Author: Hunter Bragg
 
 public class NumberUtil {

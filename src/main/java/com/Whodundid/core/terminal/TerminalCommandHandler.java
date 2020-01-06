@@ -12,6 +12,8 @@ import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 import java.util.Iterator;
 import java.util.List;
 
+//Author: Hunter Bragg
+
 public class TerminalCommandHandler {
 
 	public static final String version = "1.0";
@@ -59,13 +61,14 @@ public class TerminalCommandHandler {
 		if (EnhancedMC.isOpMode()) { registerCommand(new Server(), conIn, runVisually); }
 		if (EnhancedMC.isOpMode()) { registerCommand(new ToggleSafeRM(), conIn, runVisually); }
 		registerCommand(new Version(), conIn, runVisually);
+		registerCommand(new WhoAmI(), conIn, runVisually);
 		
 		registerCommand(new OpControl(), conIn, false);
 	}
 	
 	private void registerSubModCommands(boolean runVisually) { registerSubModCommands(null, runVisually); }
 	private void registerSubModCommands(ETerminal conIn, boolean runVisually) {
-		for (SubMod m : RegisteredSubMods.getModsList()) { m.eventTerminalRegister(conIn, runVisually); }
+		for (SubMod m : RegisteredSubMods.getModsList()) { m.terminalRegisterCommandEvent(conIn, runVisually); }
 	}
 	
 	public void registerCommand(IConsoleCommand command, boolean runVisually) { registerCommand(command, null, runVisually); }

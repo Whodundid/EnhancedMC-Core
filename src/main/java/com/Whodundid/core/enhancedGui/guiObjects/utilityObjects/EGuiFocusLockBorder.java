@@ -7,8 +7,6 @@ import com.Whodundid.core.util.storageUtil.EDimension;
 
 import net.minecraft.client.audio.PositionedSoundRecord;
 
-//Last edited: Jan 2, 2019
-//First Added: Dec 25, 2018
 //Author: Hunter Bragg
 
 public class EGuiFocusLockBorder extends EnhancedGuiObject {

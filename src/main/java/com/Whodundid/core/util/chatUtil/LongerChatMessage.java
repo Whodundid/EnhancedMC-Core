@@ -4,8 +4,6 @@ import java.lang.reflect.Field;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.client.C01PacketChatMessage;
 
-//Last edited: Oct 20, 2018
-//First Added: Oct 20, 2018
 //Author: Hunter Bragg
 
 public class LongerChatMessage {

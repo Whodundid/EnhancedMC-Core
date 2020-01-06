@@ -12,6 +12,8 @@ import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+//Author: Hunter Bragg
+
 /** A type of GuiScreen which sends it's inputs to the EnhancedMCRenderer.
  *  Extends GuiChat to allow autocomplete events to be processed fully.
  */
@@ -34,18 +36,22 @@ public class RendererProxyGui extends GuiChat implements IRendererProxy {
     public int sentHistoryCursor = -1;
     public String historyBuffer = "";
     public static boolean pauseGame = false;
+    public boolean ignoreEmpty = false;
 
-	public RendererProxyGui() {}
-	public RendererProxyGui(WindowParent guiIn) {
+	public RendererProxyGui() { this(false); }
+	public RendererProxyGui(boolean ignoreEmptyIn) { ignoreEmpty = ignoreEmptyIn; }
+	public RendererProxyGui(WindowParent guiIn) { this(guiIn, false); }
+	public RendererProxyGui(WindowParent guiIn, boolean ignoreEmptyIn) {
 		renderer = EnhancedMC.getRenderer();
 		renderer.addObject(guiIn);
+		ignoreEmpty = ignoreEmptyIn;
 	}
 
 	@Override
 	public void drawScreen(int mXIn, int mYIn, float ticks) {
 		mX = mXIn;
 		mY = mYIn;
-		if (renderer.getObjects().isEmpty()) {
+		if (!ignoreEmpty && renderer.getObjects().isEmpty()) {
 			mc.displayGuiScreen(null);
 			mc.setIngameFocus();
 		}

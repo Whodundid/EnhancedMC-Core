@@ -4,6 +4,8 @@ import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.subMod.gui.SubModErrorType;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
+//Author: Hunter Bragg
+
 public class SubModToggleException extends Exception {
 	
 	SubModErrorType type;

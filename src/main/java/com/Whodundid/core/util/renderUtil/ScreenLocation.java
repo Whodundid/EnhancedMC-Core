@@ -1,7 +1,5 @@
 package com.Whodundid.core.util.renderUtil;
 
-//Last edited: Dec 10, 2018
-//First Added: Dec 10, 2018
 //Author: Hunter Bragg
 
 /** A enum representing a location or direction on the physical screen. */

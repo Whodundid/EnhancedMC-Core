@@ -1,19 +1,10 @@
 package com.Whodundid.core.subMod;
 
-//Oct 15, 2018
-//Jun 28, 2019: added 'Unknown' type
-
-//Last edited: Jun 28, 2019
-//Edit note: removed 'All' type
-//First Added: Oct 15, 2018
 //Author: Hunter Bragg
 
 /** A pre-built list of base EMC mods, additional mods can be registered beyond these.
- * Anyone will in theory be able to create their own submods and have them be compatible
- * with the EMC core, their base mod classes only need to extend the SubMod class.
- * 
- * @author Hunter Bragg
- *
+ *  Anyone will in theory be able to create their own submods and have them be compatible
+ *  with the EMC core, their base mod classes only need to extend the SubMod class.
  */
 public enum SubModType {
 	AUTOCORRECT("CMD Autocorrect", "cmdautocorrect"),

@@ -11,6 +11,8 @@ import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 import net.minecraft.util.EnumChatFormatting;
 
+//Author: Hunter Bragg
+
 public class ReloaderDialogueBox extends EGuiDialogueBox {
 
 	EArrayList<SubMod> reloadedMods = new EArrayList();

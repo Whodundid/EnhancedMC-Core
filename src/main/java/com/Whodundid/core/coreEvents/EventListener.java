@@ -1,26 +1,24 @@
 package com.Whodundid.core.coreEvents;
 
-import org.lwjgl.opengl.GL11;
-import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.coreEvents.emcEvents.ChatLineCreatedEvent;
-import com.Whodundid.core.coreEvents.emcEvents.ModCalloutEvent;
+import com.Whodundid.core.coreEvents.emcEvents.SubModCalloutEvent;
 import com.Whodundid.core.coreEvents.emcEvents.TabCompletionEvent;
-import com.Whodundid.core.subMod.RegisteredSubMods;
-import com.Whodundid.core.subMod.SubMod;
+import com.Whodundid.core.coreEvents.eventUtil.EMCEventDistributor;
+import com.Whodundid.core.coreEvents.eventUtil.EMCEvents;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -29,186 +27,61 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
+//Author: Hunter Bragg
+
 /** A forge event wrapper for EnhancedMC and its SubMods */
 public class EventListener {
 	
 	Minecraft mc = Minecraft.getMinecraft();
+	EMCEventDistributor distributor = new EMCEventDistributor();
 	
-	@SubscribeEvent
-    public void eventClientTick(TickEvent.ClientTickEvent e) {
-		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventClientTick(e); }
-		}
-    }
+	//-----------
+	//event hooks
+	//-----------
 	
-	@SubscribeEvent
-    public void eventTick(TickEvent e) {
-		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventTick(e); }
-		}
-    }
+	//ticks
+	@SubscribeEvent public void eventTick(TickEvent e) { distributeEvent(EMCEvents.tick, e); }
+	@SubscribeEvent public void eventClientTick(ClientTickEvent e) { distributeEvent(EMCEvents.cTick, e); }
+	@SubscribeEvent public void eventRenderTick(TickEvent.RenderTickEvent e) { distributeEvent(EMCEvents.rTick, e); }
+	@SubscribeEvent public void eventLivingTick(LivingUpdateEvent e) { distributeEvent(EMCEvents.lTick, e); }
 	
-	@SubscribeEvent
-	public void eventInitGui(GuiScreenEvent.InitGuiEvent e) {
-		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventInitGui(e); }
-		}
-	}
+	//overlay renders
+	@SubscribeEvent(priority = EventPriority.HIGH) public void eventOverlayRenderTick(RenderGameOverlayEvent e) { distributeEvent(EMCEvents.overlay, e); }
+	@SubscribeEvent(priority = EventPriority.HIGH) public void eventTextOverlayRenderTick(RenderGameOverlayEvent.Text e) { distributeEvent(EMCEvents.overlayText, e); }
+	@SubscribeEvent(priority = EventPriority.HIGH) public void eventPostOverlayRenderTick(RenderGameOverlayEvent.Post e) { distributeEvent(EMCEvents.overlayPost, e); }
+	@SubscribeEvent(priority = EventPriority.HIGH) public void eventPreOverlayRenderTick(RenderGameOverlayEvent.Pre e) { distributeEvent(EMCEvents.overlayPre, e); }
 	
-	@SubscribeEvent
-	public void eventRenderPlayer(RenderPlayerEvent.Pre e) {
-		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventRenderPlayer(e); }
-		}
-	}
+	//visual renders
+	@SubscribeEvent public void eventRenderFogTick(EntityViewRenderEvent.FogDensity e) { distributeEvent(EMCEvents.renderFogDensity, e); }
+	@SubscribeEvent public void eventRenderFog(EntityViewRenderEvent.RenderFogEvent e) { distributeEvent(EMCEvents.renderFog, e); }
+	@SubscribeEvent public void eventBlockOverlayTick(RenderBlockOverlayEvent e) { distributeEvent(EMCEvents.renderBlock, e); }
+	@SubscribeEvent public void eventRenderPlayerPre(RenderPlayerEvent.Pre e) { distributeEvent(EMCEvents.renderPlayerPre, e); }
+	@SubscribeEvent public void eventRenderPlayerPost(RenderPlayerEvent.Post e) { distributeEvent(EMCEvents.renderPlayerPost, e); }
+	@SubscribeEvent public void eventLastWorldRender(RenderWorldLastEvent e) { distributeEvent(EMCEvents.renderLastWorld, e); }
 	
-	@SubscribeEvent
-	public void eventRenderFogTick(EntityViewRenderEvent.FogDensity e) {
-		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventRenderFogTick(e); }
-		}
-	}
+	//input
+	@SubscribeEvent public void eventMouse(MouseEvent e) { distributeEvent(EMCEvents.mouse, e); }
+	@SideOnly(Side.CLIENT) @SubscribeEvent(priority = EventPriority.NORMAL, receiveCanceled = true) public void eventKey(KeyInputEvent e) { distributeEvent(EMCEvents.keyboard, e); }
+	@SubscribeEvent public void eventChat(ClientChatReceivedEvent e) { distributeEvent(EMCEvents.chat, e); }
+	@SubscribeEvent public void eventCommand(CommandEvent e) { distributeEvent(EMCEvents.command, e); }
 	
-	@SubscribeEvent
-	public void eventBlockOverlayTick(RenderBlockOverlayEvent e) {
-		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventBlockOverlayTick(e); }
-		}
-	}
+	//guis
+	@SubscribeEvent public void eventInitGui(GuiScreenEvent.InitGuiEvent e) { distributeEvent(EMCEvents.initGui, e); }
 	
-	@SubscribeEvent
-	public void eventLivingTick(LivingUpdateEvent e) {
-		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventLivingTick(e); }
-		}
-	}
+	//world
+	@SideOnly(Side.CLIENT) @SubscribeEvent public void eventWorldLoadClient(WorldEvent.Load e) { distributeEvent(EMCEvents.worldLoadClient, e); }
+	@SideOnly(Side.SERVER) @SubscribeEvent public void eventWorldLoadServer(WorldEvent.Load e) { distributeEvent(EMCEvents.worldLoadServer, e); }
+	@SubscribeEvent public void eventWorldUnload(WorldEvent.Unload e) { distributeEvent(EMCEvents.worldUnload, e); }
+	@SubscribeEvent public void eventServerJoin(EntityJoinWorldEvent e) { distributeEvent(EMCEvents.serverJoin, e); }
 	
-	@SideOnly(Side.CLIENT)
-	@SubscribeEvent(priority = EventPriority.NORMAL, receiveCanceled = true)
-	public void eventKey(KeyInputEvent e) {
-		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventKey(e); }
-		}
-	}
+	//emc specific
+	@SubscribeEvent public void eventTabCompletion(TabCompletionEvent e) { distributeEvent(EMCEvents.tabComplete, e); }
+	@SubscribeEvent public void eventChatLineCreated(ChatLineCreatedEvent e) { distributeEvent(EMCEvents.chatLine, e); }
+	@SubscribeEvent public void eventModCallout(SubModCalloutEvent e) { distributeEvent(EMCEvents.modCallout, e); }
 	
-	@SubscribeEvent
-	public void eventMouse(MouseEvent e) {
-		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventMouse(e); }
-		}
-	}
+	//-----------
+	//distributor
+	//-----------
 	
-	@SubscribeEvent(priority = EventPriority.HIGH)
-	public void eventOverlayRenderTick(RenderGameOverlayEvent e) {
-		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventOverlayRenderTick(e); }
-		}
-	}
-	
-	@SubscribeEvent
-	public void eventTextOverlayRenderTick(RenderGameOverlayEvent.Text e) {
-		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventTextOverlayRenderTick(e); }
-		}
-	}
-	
-	@SubscribeEvent
-	public void eventPreOverlayRenderTick(RenderGameOverlayEvent.Pre e) {
-		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventPreOverlayRenderTick(e); }
-		}
-	}
-	
-	@SubscribeEvent
-	public void eventRenderTick(TickEvent.RenderTickEvent e) {
-		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventRenderTick(e); }
-		}
-	}
-	
-	@SubscribeEvent(priority = EventPriority.HIGH)
-	public void eventPostOverlayRenderTick(RenderGameOverlayEvent.Post e) {
-		if (EnhancedMC.isInitialized()) {
-			if (e.type == ElementType.ALL) {
-				GL11.glPushMatrix();
-				GlStateManager.disableAlpha();
-				GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
-				for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventPostOverlayRenderTick(e); }
-				GlStateManager.enableAlpha();
-				GL11.glPopMatrix();
-			}
-		}
-	}
-	
-	@SubscribeEvent
-	public void eventLastWorldRender(RenderWorldLastEvent e) {
-		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventLastWorldRender(e); }
-		}
-	}
-	
-	@SubscribeEvent
-	public void eventChat(ClientChatReceivedEvent e) {
-		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventChat(e); }
-		}
-	}
-	
-	@SubscribeEvent
-	public void eventChatLineCreated(ChatLineCreatedEvent e) {
-		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventChatLineCreated(e); }
-		}
-	}
-	
-	@SubscribeEvent
-	public void eventTabCompletion(TabCompletionEvent e) {
-		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventTabCompletion(e); }
-		}
-	}
-	
-	@SubscribeEvent
-	public void eventWorldUnload(WorldEvent.Unload e) {
-		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventWorldUnload(e); }
-		}
-	}
-	
-	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
-	public void eventWorldLoadClient(WorldEvent.Load e) {
-		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventWorldLoadClient(e); }
-		}
-	}
-	
-	@SubscribeEvent
-	@SideOnly(Side.SERVER)
-	public void eventWorldLoadServer(WorldEvent.Load e) {
-		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventWorldLoadServer(e); }
-		}
-	}
-	
-	@SubscribeEvent
-    public void eventServerJoin(EntityJoinWorldEvent e) {
-		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventServerJoin(e); }
-		}
-    }
-	
-	@SubscribeEvent
-	public void eventCommand(CommandEvent e) {
-		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventCommand(e); }
-		}
-	}
-	
-	@SubscribeEvent
-	public void eventModCallout(ModCalloutEvent e) {
-		if (EnhancedMC.isInitialized()) {
-			for (SubMod m : RegisteredSubMods.getRegisteredModsList()) { m.eventModCallout(e); }
-		}
-	}
+	public void distributeEvent(EMCEvents type, Event e) { distributor.distributeEvent(type, e); }
 }

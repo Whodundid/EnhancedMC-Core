@@ -6,6 +6,8 @@ import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.IConsoleCommand;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
+//Author: Hunter Bragg
+
 public class DebugControl implements IConsoleCommand {
 
 	@Override public String getName() { return "debug"; }
@@ -13,7 +15,7 @@ public class DebugControl implements IConsoleCommand {
 	@Override public EArrayList<String> getAliases() { return new EArrayList<String>("deb", "dev"); }
 	@Override public String getHelpInfo(boolean runVisually) { return "Toggles debug mode for EMC."; }
 	@Override public String getUsage() { return "ex: deb | deb 0"; }
-	@Override public EArrayList<String> getTabCompleteList() { return null; }
+	@Override public EArrayList<String> getTabCompleteList() { return new EArrayList("0", "1", "2", "3", "4"); }
 	
 	@Override
 	public void runCommand(ETerminal conIn, EArrayList<String> args, boolean runVisually) {

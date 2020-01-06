@@ -13,13 +13,24 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-public class ChatGrabber extends IETransformer {
+//Author: Hunter Bragg
+
+public class GuiNewChatTransformer extends IETransformer {
 	
 	@Override
 	public String getClassName() { return "net.minecraft.client.gui.GuiNewChat"; }
 	
 	@Override
 	public void transform(ClassNode classIn) {
+		if (chatGrabber(classIn) && historyDisplay(classIn)) { System.out.println("EMC: GuiNewChat transform successful!"); }
+		else { System.err.println("EMC: GUINEWCHAT ASM TRANSFORM FAILED!"); }
+	}
+	
+	//------------
+	//Transformers
+	//------------
+	
+	private boolean chatGrabber(ClassNode classIn) {
 		final String CHATMETHOD = isObfuscated ? "a" : "printChatMessageWithOptionalDeletion";
 		final String CHATMETHOD_DESC = isObfuscated ? "(Leu;I)V" : "(Lnet/minecraft/util/IChatComponent;I)V";
 		
@@ -55,10 +66,45 @@ public class ChatGrabber extends IETransformer {
 					toInsert.add(new InsnNode(POP));
 					
 					method.instructions.insert(targetNode, toInsert);
-					System.out.println("EMC: GuiNewChat transform successful!");
+					System.out.println("EMC: ChatGrabber successful!");
+					return true;
 				}
-				else { System.out.println("EMC: GUINEWCHAT ASM TRANSFORM FAILED!"); }
+				System.err.println("EMC: ChatGrabber FAILED!");
 			}
 		}
+		return false;
+	}
+	
+	private boolean historyDisplay(ClassNode classIn) {
+		final String METHOD = isObfuscated ? "e" : "getChatOpen";
+		final String METHOD_DESC = isObfuscated ? "()Z" : "()Z";
+		
+		for (MethodNode method : classIn.methods) {
+			if (method.name.equals(METHOD) && method.desc.equals(METHOD_DESC) && method.instructions.toArray().length > 0) {
+				AbstractInsnNode targetNode = method.instructions.toArray()[0];
+				
+				if (targetNode != null) {
+					
+					//remove old code
+					for (int i = 0; i < 6; i++) {
+						targetNode = targetNode.getNext();
+						method.instructions.remove(targetNode.getPrevious());
+					}
+					
+					//insert new code
+					InsnList toInsert = new InsnList();
+					
+					//redirect boolean return to EMC core
+					toInsert.add(new MethodInsnNode(INVOKESTATIC, "com/Whodundid/core/coreSubMod/EMCMod", "getChatOpen", "()Z", false));
+					
+					method.instructions.insertBefore(targetNode, toInsert);
+					
+					System.out.println("EMC: HistoryDisplay successful!");
+					return true;
+				}
+				System.err.println("EMC: HistoryDisplay FAILED!");
+			}
+		}
+		return false;
 	}
 }

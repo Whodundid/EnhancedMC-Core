@@ -7,8 +7,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MovingObjectPosition;
 
-//Last edited: 10-20-18
-//First Added: 3-22-18
 //Author: Hunter Bragg
 
 public class EChatUtil {

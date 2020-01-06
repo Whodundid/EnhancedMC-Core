@@ -6,6 +6,8 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 
+//Author: Hunter Bragg
+
 public abstract class SetLocationGui extends WindowParent {
 	
 	protected StorageBoxHolder<IEnhancedGuiObject, Boolean> previousStates = new StorageBoxHolder();

@@ -3,6 +3,8 @@ package com.Whodundid.core.enhancedGui.types;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 
+//Author: Hunter Bragg
+
 public abstract class ActionWindowParent extends WindowParent implements IEnhancedActionObject {
 
 	protected boolean runActionOnPress = false;

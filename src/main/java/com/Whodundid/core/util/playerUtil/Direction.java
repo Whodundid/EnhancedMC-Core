@@ -1,5 +1,7 @@
 package com.Whodundid.core.util.playerUtil;
 
+//Author: Hunter Bragg
+
 public enum Direction {
 	N("N", 180f, "-Z"),
 	NE("NE", 225f, "-Z / +X"),

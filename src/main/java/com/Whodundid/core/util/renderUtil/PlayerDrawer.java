@@ -7,6 +7,8 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.EntityLivingBase;
 
+//Author: Hunter Bragg
+
 public class PlayerDrawer {
 
 	public static void drawPlayer(EntityLivingBase entityIn, int posX, int posY, float horizontalRotIn, float verticalRotIn, float scaleIn) {

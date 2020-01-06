@@ -14,7 +14,9 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-public class TabCompleteHijacker extends IETransformer {
+//Author: Hunter Bragg
+
+public class NetHandlerPlayClientTransformer extends IETransformer {
 	
 	@Override
 	public String getClassName() { return "net.minecraft.client.network.NetHandlerPlayClient"; }

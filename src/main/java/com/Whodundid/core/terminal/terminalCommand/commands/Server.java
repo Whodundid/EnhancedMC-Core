@@ -23,14 +23,16 @@ import net.minecraft.realms.RealmsBridge;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.fml.client.FMLClientHandler;
 
+//Author: Hunter Bragg
+
 public class Server implements IConsoleCommand {
 
 	@Override public String getName() { return "server"; }
-	@Override public boolean showInHelp() { return true; }
+	@Override public boolean showInHelp() { return EnhancedMC.isOpMode(); }
 	@Override public EArrayList<String> getAliases() { return null; }
 	@Override public String getHelpInfo(boolean runVisually) { return "Used to interface with Minecraft servers." + (runVisually ? " connect, disconnect" : ""); }
 	@Override public String getUsage() { return "ex: server connect localhost"; }
-	@Override public EArrayList<String> getTabCompleteList() { return null; }
+	@Override public EArrayList<String> getTabCompleteList() { return new EArrayList("disconnect", "connect", "ping"); }
 	
 	@Override
 	public void runCommand(ETerminal conIn, EArrayList<String> args, boolean runVisually) {

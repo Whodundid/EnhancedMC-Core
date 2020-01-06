@@ -6,8 +6,6 @@ import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
-//Last edited: Jan 2, 2019
-//First Added: Dec 18, 2018
 //Author: Hunter Bragg
 
 public class EGuiLabel extends EnhancedGuiObject {

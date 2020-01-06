@@ -4,6 +4,8 @@ import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.EventType;
 import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.KeyboardType;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 
+//Author: Hunter Bragg
+
 public class EventKeyboard extends ObjectEvent {
 
 	KeyboardType type;

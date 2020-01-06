@@ -6,8 +6,6 @@ import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.world.WorldSettings;
 
-//Last edited: Oct 19, 2018
-//First Added: Oct 19, 2018
 //Author: Hunter Bragg
 
 public class NetPlayerComparator implements Comparator<NetworkPlayerInfo> {

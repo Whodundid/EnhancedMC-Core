@@ -7,6 +7,8 @@ import com.Whodundid.core.enhancedGui.types.WindowParent;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 
+//Author: Hunter Bragg
+
 public class ImportantGui extends WindowParent {
 	
 	importantHolder holder;

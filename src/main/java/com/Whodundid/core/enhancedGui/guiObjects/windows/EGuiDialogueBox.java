@@ -6,8 +6,6 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
-//Last edited: Jan 2, 2019
-//First Added: Oct 22, 2018
 //Author: Hunter Bragg
 
 public class EGuiDialogueBox extends WindowParent {

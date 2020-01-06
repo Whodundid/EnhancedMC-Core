@@ -11,8 +11,6 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 
-//Last edited: Dec 12, 2018
-//First Added: Dec 12, 2018
 //Author: Hunter Bragg
 
 public abstract class SubModConfigFile {

@@ -5,7 +5,9 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
-public class GIGFItemHighlight extends IETransformer {
+//Author: Hunter Bragg
+
+public class GuiInGameForgeTransformer extends IETransformer {
 	
 	@Override
 	public String getClassName() { return "net.minecraftforge.client.GuiIngameForge"; }

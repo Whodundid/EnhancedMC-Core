@@ -1,7 +1,5 @@
 package com.Whodundid.core.enhancedGui.objectEvents.eventUtil;
 
-//Last edited: Dec 31, 2018
-//First Added: Dec 31, 2018
 //Author: Hunter Bragg
 
 public enum FocusType {

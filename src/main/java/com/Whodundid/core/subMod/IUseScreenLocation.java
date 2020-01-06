@@ -4,8 +4,6 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 
-//Last edited: Dec 14, 2018
-//First Added: Dec 14, 2018
 //Author: Hunter Bragg
 
 public interface IUseScreenLocation {

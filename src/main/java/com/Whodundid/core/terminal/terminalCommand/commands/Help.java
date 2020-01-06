@@ -8,6 +8,8 @@ import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import net.minecraft.util.EnumChatFormatting;
 
+//Author: Hunter Bragg
+
 public class Help implements IConsoleCommand {
 	
 	TerminalCommandHandler handler;

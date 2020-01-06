@@ -3,8 +3,6 @@ package com.Whodundid.core.enhancedGui.objectEvents;
 import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.EventType;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 
-//Last edited: Mar 26, 2019
-//First Added: Mar 26, 2019
 //Author: Hunter Bragg
 
 /** The base event class pertaining to all IEnhancedGuiObject events. */

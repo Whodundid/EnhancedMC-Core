@@ -10,8 +10,6 @@ import java.util.Iterator;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.renderer.GlStateManager;
 
-//Last edited: Jan 2, 2019
-//First Added: Sep 30, 2018
 //Author: Hunter Bragg
 
 public class EGuiDropDownList extends EnhancedGuiObject {

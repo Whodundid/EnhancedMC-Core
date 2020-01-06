@@ -4,6 +4,8 @@ import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.renderUtil.EColors;
 
+//Author: Hunter Bragg
+
 public class ColorButton extends EGuiButton {
 
 	public ColorButton(IEnhancedGuiObject parentIn, int posX, int posY, int width, int height) { this(parentIn, posX, posY, width, height, "White", EColors.white); }

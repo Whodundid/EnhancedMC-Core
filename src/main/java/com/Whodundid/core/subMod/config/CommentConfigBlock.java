@@ -4,8 +4,6 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 import java.util.List;
 
-//Last edited: Dec 12, 2018
-//First Added: Dec 12, 2018
 //Author: Hunter Bragg
 
 public class CommentConfigBlock extends ConfigBlock {

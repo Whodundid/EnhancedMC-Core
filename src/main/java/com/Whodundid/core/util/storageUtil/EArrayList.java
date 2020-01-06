@@ -20,8 +20,6 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
-//Last edited: Dec 12, 2018
-//First Added: Dec 12, 2018
 //Author: Hunter Bragg
 
 public class EArrayList<E> extends AbstractList<E> {

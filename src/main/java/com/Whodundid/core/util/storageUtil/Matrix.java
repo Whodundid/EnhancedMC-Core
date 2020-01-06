@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.List;
 
-//Created: 9-16-19
 //Author: Hunter Bragg
 
 /**
@@ -305,7 +304,7 @@ public class Matrix {
 	}
 	
 	public static boolean compareDimensions(Matrix m1, Matrix m2) {
-		 return m1 != null && m2 != null ? m1.getDimensions().compareContents(m2.getDimensions()) : false;
+		 return m1 != null && m2 != null ? m1.getDimensions().compare(m2.getDimensions()) : false;
 	}
 	
 	public static boolean multiplyCheck(Matrix m1, Matrix m2) {

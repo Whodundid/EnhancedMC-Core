@@ -17,8 +17,6 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Cursor;
 import org.lwjgl.input.Mouse;
 
-//Last edited: Dec 23, 2018
-//First Added: Sep 14, 2018
 //Author: Hunter Bragg
 
 public class CursorHelper {

@@ -21,6 +21,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
 
+//Author: Hunter Bragg
+
 public class ListCMD implements IConsoleCommand {
 
 	@Override public String getName() { return "list"; }
@@ -28,7 +30,7 @@ public class ListCMD implements IConsoleCommand {
 	@Override public EArrayList<String> getAliases() { return new EArrayList<String>("l"); }
 	@Override public String getHelpInfo(boolean runVisually) { return "Used to list various things. (mods, players, etc.)"; }
 	@Override public String getUsage() { return "ex: list players"; }
-	@Override public EArrayList<String> getTabCompleteList() { return null; }
+	@Override public EArrayList<String> getTabCompleteList() { return new EArrayList("submods", "players", "objects", "guis"); }
 	
 	@Override
 	public void runCommand(ETerminal conIn, EArrayList<String> args, boolean runVisually) {

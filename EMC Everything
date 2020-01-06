@@ -105,7 +105,8 @@ F   26. When resizing a scrollList, the horizontal scroll position is based off 
     
     27. When resizing a scrollList, if the list is scrolled to the bottom and the size becomes smaller than the contents width, the vertical scroll pos is not changed to account for the h scrollbar's height.
     
-    28. The KeyBindGui needs some help with it's minimum dimensions.
+F   28. The KeyBindGui needs some help with it's minimum dimensions.
+        --Further restricted min width/height, made text draw off of ratio positions.
     
 F   29. When enabling or disabling submods that require or have mods with dependencies around said mod, nothing is shown in the terminal.
     
@@ -117,13 +118,32 @@ F   31. The resize cursor appears on objects whose edges are under another objec
 
 F   32. When action objects are fired the parent window is not brought to the front.
     
-    33. Chat history is always fully drawn while the proxy gui is open.
+F   33. Chat history is always fully drawn while the proxy gui is open.
+        --Added 3 different drawing modes for chat history with proxies - full, partial, and off.
     
     34. TextAreaLines are not highlighted when clicking the white space of the line they are on.
     
     35. When using the arrow keys to traverse through an EGuiTextField's text, the letters appear to shift horizontally.
     
-    36. The KeyBindGui does not show same key assignment conflicts.
+F   36. The KeyBindGui does not show same key assignment conflicts.
+        --Added logic to check if the keycode has been assigned more than once.
+    
+F   37. Anything can be typed into the settings window's search field when just typing while the window itself is focused.
+        --Removed the ability to type into search field when it's not focused.
+        
+F   38. When pressing escape to clear a keybind in the KeyBindGui, the whole gui is closed instead.
+        --Added escapeStopper to topParents - an object that prevents the escape key from closing the window and all unpinned guis.
+    
+F   39. When attempting to assign a mouse button to a KeyBinding in the KeyBindGui, either nothing happens or many many arrows are continually added to the button.
+
+    40. When a textArea is resized, textLines can no longer be clicked on.
+    
+    41. Certain textures are not being drawn.
+    
+    42. When resizing a window while the window is at one of it's maximum or minimum widths/heights, any resizing scrollBar thumb will move even though the window doesn't.
+    
+    43. TextAreas don't fully show the entire horizontal scroll width, it's cut short by like 10 pixels.
+
 
 
 EnhancedChat: (MAIN PRIORITY AFTER CORE)

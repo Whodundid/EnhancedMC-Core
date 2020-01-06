@@ -2,6 +2,8 @@ package com.Whodundid.core.util.renderUtil;
 
 import net.minecraft.client.renderer.GlStateManager;
 
+//Author: Hunter Bragg
+
 public class EGLHelper {
 	
 	public static void setColor(int colorIn) {

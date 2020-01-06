@@ -10,6 +10,8 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.EnumChatFormatting;
 
+//Author: Hunter Bragg
+
 public class Version implements IConsoleCommand {
 	
 	@Override public String getName() { return "version"; }

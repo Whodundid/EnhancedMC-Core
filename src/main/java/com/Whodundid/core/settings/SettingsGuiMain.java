@@ -1,7 +1,7 @@
 package com.Whodundid.core.settings;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.coreSubMod.EnhancedMCMod;
+import com.Whodundid.core.coreSubMod.EMCMod;
 import com.Whodundid.core.coreSubMod.EMCResources;
 import com.Whodundid.core.debug.ImportantGui;
 import com.Whodundid.core.enhancedGui.StaticEGuiObject;
@@ -11,13 +11,8 @@ import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiLabel;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiRect;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiScrollList;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiTextField;
-import com.Whodundid.core.enhancedGui.guiUtil.EObjectGroup;
-import com.Whodundid.core.enhancedGui.objectEvents.EventKeyboard;
-import com.Whodundid.core.enhancedGui.objectEvents.ObjectEvent;
-import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.KeyboardType;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
-import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.settings.guiParts.ReloaderDialogueBox;
 import com.Whodundid.core.settings.guiParts.SettingsMenuContainer;
 import com.Whodundid.core.settings.guiParts.SettingsRCM;
@@ -31,11 +26,6 @@ import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
 
-//Dec 28, 2018
-
-//Last edited: Jun 28, 2019
-//Edit note: replaced page system with scrollable list to make space for more options
-//First Added: Sep 14, 2018
 //Author: Hunter Bragg
 
 public class SettingsGuiMain extends WindowParent {
@@ -144,12 +134,8 @@ public class SettingsGuiMain extends WindowParent {
 		addObject(scrollList, problem, searchField, keyBindGui, reloadConfigs);
 		addObject(hiddenButton1, hiddenButton2);
 		
-		EnhancedMCMod em = (EnhancedMCMod) RegisteredSubMods.getMod(SubModType.CORE);
+		EMCMod em = (EMCMod) RegisteredSubMods.getMod(SubModType.CORE);
 		if (em.enableTerminal.get()) { addObject(consoleBtn); }
-		
-		objectGroup = new EObjectGroup(this);
-		objectGroup.addObjects(getAllChildren());
-		for (IEnhancedGuiObject o : getAllChildren()) { o.setObjectGroup(objectGroup); }
 		
 		//then build the list
 		if (RegisteredSubMods.getRegisteredModsList().isEmpty()) { //THIS SHOULD BE IMPOSSIBLE!
@@ -218,7 +204,7 @@ public class SettingsGuiMain extends WindowParent {
 		EDimension l = scrollList.getListDimensions();
 		EDimension ld = scrollList.getDimensions();
 		EGuiRect separator = new EGuiRect(this, ld.getMidX() + 16, ld.startY, ld.getMidX() + 17, ld.endY, 0xff000000);
-		int size = filteredMods.size() + (EnhancedMCMod.showIncompats.get() ? incompats.size() : 0);
+		int size = filteredMods.size() + (EMCMod.showIncompats.get() ? incompats.size() : 0);
 		
 		//actually add mods to list
 		if (size > 0) {
@@ -247,7 +233,7 @@ public class SettingsGuiMain extends WindowParent {
 				addObject(separator); //add the general separator instead
 			}
 			
-			if (EnhancedMCMod.showIncompats.get() && incompats.isNotEmpty()) {
+			if (EMCMod.showIncompats.get() && incompats.isNotEmpty()) {
 				int space = 2;
 				//add box
 				scrollList.growListHeight(cHeight);
@@ -293,24 +279,6 @@ public class SettingsGuiMain extends WindowParent {
 			if (object == consoleBtn) { EnhancedMC.displayEGui(new ETerminal(), this, true, false, false, CenterType.objectIndent); }
 			if (object == problem) { EnhancedMC.displayEGui(new IncompatibleWindowList()); }
 		}
-	}
-	
-	@Override
-	public void onGroupNotification(ObjectEvent e) {
-		if (e instanceof EventKeyboard) {
-			EventKeyboard kbe = (EventKeyboard) e;
-			if (kbe.getKeyboardType() == KeyboardType.Pressed) {
-				if (searchField != null && kbe.getEventKey() != 1) {
-					searchField.requestFocus();
-					searchField.writeText("" + kbe.getEventChar());
-				}
-			}
-		}
-	}
-	
-	@Override
-	public void keyPressed(char typedChar, int keyCode) {
-		if (searchField != null && keyCode != 1) { searchField.requestFocus(); searchField.writeText("" + typedChar); }
 	}
 	
 	public void openRCM(int mXIn, int mYIn) { addObject(rcm = new SettingsRCM(this)); }

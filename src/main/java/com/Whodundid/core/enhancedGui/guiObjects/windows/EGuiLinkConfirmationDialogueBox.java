@@ -9,8 +9,6 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.resources.I18n;
 
-//Last edited: Jan 1, 2019
-//First Added: Dec 31, 2018
 //Author: Hunter Bragg
 
 public class EGuiLinkConfirmationDialogueBox extends EGuiDialogueBox {

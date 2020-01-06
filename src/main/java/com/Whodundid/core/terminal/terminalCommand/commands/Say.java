@@ -6,6 +6,8 @@ import com.Whodundid.core.util.chatUtil.EChatUtil;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import net.minecraft.client.Minecraft;
 
+//Author: Hunter Bragg
+
 public class Say implements IConsoleCommand {
 
 	@Override public String getName() { return "say"; }

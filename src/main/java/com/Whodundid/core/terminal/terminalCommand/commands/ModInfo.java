@@ -10,6 +10,8 @@ import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 import net.minecraft.util.EnumChatFormatting;
 
+//Author: Hunter Bragg
+
 public class ModInfo implements IConsoleCommand {
 
 	@Override public String getName() { return "modinfo"; }

@@ -1,5 +1,7 @@
 package com.Whodundid.core.util.playerUtil;
 
+//Author: Hunter Bragg
+
 public abstract class PlayerLimits {
 	
 	public static final float maxVerticalJumpHeight = 1.249187078744681f;

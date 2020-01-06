@@ -3,6 +3,8 @@ package com.Whodundid.core.terminal.terminalCommand;
 import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
+//Author: Hunter Bragg
+
 public interface IConsoleCommand {
 	
 	public String getName();
