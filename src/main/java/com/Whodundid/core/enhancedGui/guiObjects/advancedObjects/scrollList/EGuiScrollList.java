@@ -1,6 +1,8 @@
-package com.Whodundid.core.enhancedGui.guiObjects.basicObjects;
+package com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.scrollList;
 
 import com.Whodundid.core.enhancedGui.StaticEGuiObject;
+import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
+import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiScrollBar;
 import com.Whodundid.core.enhancedGui.objectEvents.EventModify;
 import com.Whodundid.core.enhancedGui.objectEvents.EventObjects;
 import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.ObjectEventType;
@@ -18,6 +20,7 @@ import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.MathHelper;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 import org.lwjgl.input.Keyboard;
@@ -51,7 +54,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 	}
 	
 	@Override
-	public void initObjects() throws ObjectInitException {
+	public void initObjects() {
 		verticalScroll = new EGuiScrollBar(this, height - 2, scrollableHeight, ScreenLocation.right);
 		horizontalScroll = new EGuiScrollBar(this, width - 2, scrollableWidth, ScreenLocation.bot);
 		
@@ -86,19 +89,21 @@ public class EGuiScrollList extends EnhancedGuiObject {
 				GlStateManager.pushMatrix();
 				GlStateManager.enableBlend();
 				
+				//GL11.glScissor(
+				//		((startX + 1) * scale),
+				//		(Display.getHeight() - startY * scale) - (height - (isHScrollDrawn() ? horizontalScroll.height + 1 : 0) - 1) * scale,
+				//		(width - (isVScrollDrawn() ? verticalScroll.width + 1 : 0) - 2) * scale,
+				//		(height - (isHScrollDrawn() ? 6 : 2)) * scale);
+				
 				//draw list contents scissored
-				GL11.glEnable(GL11.GL_SCISSOR_TEST);
-				GL11.glScissor(
-						((startX + 1) * scale),
-						(Display.getHeight() - startY * scale) - (height - (isHScrollDrawn() ? horizontalScroll.height + 1 : 0) - 1) * scale,
-						(width - (isVScrollDrawn() ? verticalScroll.width + 1 : 0) - 2) * scale,
-						(height - (isHScrollDrawn() ? 6 : 2)) * scale);
+				scissor(startX + 1, startY + 1, endX - (isVScrollDrawn() ? verticalScroll.width + 1 : 1), endY - (isHScrollDrawn() ? horizontalScroll.height + 1 : 1));
 				{ //scissor start
+					
 					//draw background
 					drawRect(startX + 1, startY + 1, endX - 1, endY - 1, backgroundColor);
 					
 					//only draw the objects that are actually in the viewable area
-					for (IEnhancedGuiObject o : this.drawnListObjects) {
+					for (IEnhancedGuiObject o : drawnListObjects) {
 						if (o.checkDraw()) {
 							if (!o.hasFirstDraw()) { o.onFirstDraw(); o.onFirstDraw(); }
 							GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
@@ -108,7 +113,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 						}
 					}
 				}
-				GL11.glDisable(GL11.GL_SCISSOR_TEST);
+				endScissor();
 				
 				//draw non list contents as normal (non scissored)
 				for (IEnhancedGuiObject o : guiObjects) {
@@ -191,6 +196,12 @@ public class EGuiScrollList extends EnhancedGuiObject {
 		return this;
 	}
 	
+	//@Override
+	//public IEnhancedGuiObject setDimensions(int startXIn, int startYIn, int widthIn, int heightIn) {
+	//	super.setDimensions(startXIn, startYIn, widthIn, heightIn);
+	//	return this;
+	//}
+	
 	@Override
 	public void actionPerformed(IEnhancedActionObject object, Object... args) {
 		if (object == reset) {
@@ -231,6 +242,35 @@ public class EGuiScrollList extends EnhancedGuiObject {
 		}
 		else if (scrollableHeight - (height - 2) > 0) { verticalScroll.setScrollBarPos(verticalScroll.getScrollPos() - change * 18); }
 		super.mouseScrolled(change);
+	}
+	
+	public EGuiScrollList fitItemsInList() { return fitItemsInList(0, 0); }
+	public EGuiScrollList fitItemsInList(int overShootX, int overShootY) {
+		int right = 0;
+		int down = 0;
+		
+		//get both the current list objects and those being added
+		EArrayList<IEnhancedGuiObject> objs = EArrayList.combineLists(listContents, listObjsToBeAdded);
+		
+		//find right
+		for (IEnhancedGuiObject o : objs) {
+			EDimension od = o.getDimensions();
+			if (od.endX > right) { right = od.endX; }
+		}
+		
+		//find down
+		for (IEnhancedGuiObject o : objs) {
+			EDimension od = o.getDimensions();
+			if (od.endY > down) { down = od.endY; }
+		}
+		
+		//prevent negative values
+		int w = MathHelper.clamp_int((right - startX) + overShootX, 0, Integer.MAX_VALUE);
+		int h = MathHelper.clamp_int((down - startY) + overShootY, 0, Integer.MAX_VALUE);
+		
+		setListSize(w, h);
+		
+		return this;
 	}
 	
 	public EGuiScrollList setListSize(int widthIn, int heightIn) {

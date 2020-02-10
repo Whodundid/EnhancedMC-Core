@@ -1,9 +1,9 @@
 package com.Whodundid.core.enhancedGui.guiObjects.windows;
 
+import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.textArea.EGuiTextArea;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.textArea.TextAreaLine;
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;

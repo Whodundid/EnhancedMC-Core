@@ -358,7 +358,7 @@ public class EArrayList<E> extends AbstractList<E> {
         return false;
     }
 	
-	public void removeIfPresent(E... e) {
+	public void removeIfContains(E... e) {
 		for (E entry : e) {
 			if (contains(entry)) { remove(entry); }
 		}

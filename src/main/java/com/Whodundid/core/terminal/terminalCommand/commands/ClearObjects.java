@@ -3,12 +3,12 @@ package com.Whodundid.core.terminal.terminalCommand.commands;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.renderer.EnhancedMCRenderer;
 import com.Whodundid.core.terminal.gui.ETerminal;
-import com.Whodundid.core.terminal.terminalCommand.IConsoleCommand;
+import com.Whodundid.core.terminal.terminalCommand.ITerminalCommand;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
 //Author: Hunter Bragg
 
-public class ClearObjects implements IConsoleCommand {
+public class ClearObjects implements ITerminalCommand {
 
 	@Override public String getName() { return "clearobj"; }
 	@Override public boolean showInHelp() { return true; }

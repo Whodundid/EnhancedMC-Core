@@ -1,5 +1,7 @@
-package com.Whodundid.core.enhancedGui.guiObjects.basicObjects;
+package com.Whodundid.core.enhancedGui.guiObjects.utilityObjects;
 
+import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
+import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiLabel;
 import com.Whodundid.core.enhancedGui.objectEvents.EventMouse;
 import com.Whodundid.core.enhancedGui.objectEvents.ObjectEvent;
 import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.MouseType;
@@ -70,10 +72,10 @@ public class EGuiRightClickMenu extends WindowParent implements IEnhancedActionO
 				}
 				@Override
 				public void onPress() {
-					if (getPressedButton() == 0) {
+					if (getPressedButton() == 0 && isEnabled()) {
 						playPressSound();
 						instance.setSelectedObject(getDisplayString());
-						instance.performAction(null);
+						instance.performAction(null, null);
 						getTopParent().unregisterListener(instance);
 						instance.close();
 					}
@@ -81,7 +83,7 @@ public class EGuiRightClickMenu extends WindowParent implements IEnhancedActionO
 			};
 			b.setDrawStringCentered(false);
 			b.setDisplayStringOffset(22);
-			b.setDrawDefault(false);
+			b.setDrawTextures(false);
 			b.setRunActionOnPress(true);
 			options.add(optionName, b);
 			addObject(b);
@@ -101,6 +103,16 @@ public class EGuiRightClickMenu extends WindowParent implements IEnhancedActionO
 			}
 			resize();
 		}
+	}
+	
+	public EGuiRightClickMenu setOptionEnabled(String optionName, boolean enabledVal) {
+		List<StorageBox<String, EGuiButton>> boxes = options.getAllBoxesWithObj(optionName);
+		if (boxes.size() > 0) {
+			for (StorageBox<String, EGuiButton> b : boxes) {
+				if (b.getObject().equals(optionName)) { b.getValue().setEnabled(enabledVal); }
+			}
+		}
+		return this;
 	}
 	
 	private void resize() {

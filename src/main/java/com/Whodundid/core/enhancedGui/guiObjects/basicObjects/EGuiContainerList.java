@@ -1,6 +1,7 @@
 package com.Whodundid.core.enhancedGui.guiObjects.basicObjects;
 
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
+import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.scrollList.EGuiScrollList;
 import com.Whodundid.core.enhancedGui.objectEvents.EventModify;
 import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.ObjectModifyType;
 import com.Whodundid.core.enhancedGui.objectExceptions.ObjectInitException;

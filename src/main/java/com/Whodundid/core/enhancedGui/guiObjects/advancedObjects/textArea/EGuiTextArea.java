@@ -1,6 +1,6 @@
 package com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.textArea;
 
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiScrollList;
+import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.scrollList.EGuiScrollList;
 import com.Whodundid.core.enhancedGui.objectEvents.EventFocus;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.storageUtil.EArrayList;
@@ -113,7 +113,8 @@ public class EGuiTextArea<obj> extends EGuiScrollList {
 		//}
 		textDocument.add(lineIn);
 		addObjectToList(lineIn);
-		fitDocumentInDims();
+		fitItemsInList(5, 8);
+		//fitDocumentInDims();
 		return lineIn;
 	}
 	
@@ -136,7 +137,7 @@ public class EGuiTextArea<obj> extends EGuiScrollList {
 	public EGuiTextArea deleteLine(TextAreaLine lineIn) {
 		textDocument.remove(lineIn);
 		removeObjectFromList(lineIn);
-		fitDocumentInDims();
+		fitItemsInList(5, 8);
 		return this;
 	}
 	
@@ -167,6 +168,7 @@ public class EGuiTextArea<obj> extends EGuiScrollList {
 		return this;
 	}
 	
+	/*
 	private void fitDocumentInDims() {
 		//get current scroll position -- if there is one
 		//EGuiScrollBar vs = getVScrollBar();
@@ -194,6 +196,7 @@ public class EGuiTextArea<obj> extends EGuiScrollList {
 		//return to original scroll position
 		//if (vs != null) { vs.setScrollBarPos(prevScroll); }
 	}
+	*/
 	
 	public TextAreaLine getTextLine(int numIn) {
 		if (numIn >= 0 && numIn < textDocument.size()) {

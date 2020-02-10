@@ -1,6 +1,6 @@
 package com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header;
 
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
+import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
 import com.Whodundid.core.util.mathUtil.NumberUtil;
 import com.Whodundid.core.util.storageUtil.StorageBox;
@@ -29,7 +29,7 @@ public class HeaderTab extends EGuiButton {
 		init(parentHeaderIn, 0, 0, widthIn, parentHeaderIn.getDimensions().height - 3);
 		header = parentHeaderIn;
 		setDisplayString(titleIn);
-		setDrawDefault(false);
+		setDrawTextures(false);
 		setDrawString(false);
 	}
 	
@@ -46,7 +46,7 @@ public class HeaderTab extends EGuiButton {
 			}
 		};
 		
-		closeButton.setDrawDefault(false);
+		closeButton.setDrawTextures(false);
 		closeButton.setRunActionOnPress(true);
 		closeButton.setDisplayStringHoverColor(0xff6060);
 		

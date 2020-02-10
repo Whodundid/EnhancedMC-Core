@@ -1,4 +1,4 @@
-package com.Whodundid.core.enhancedGui.guiObjects.basicObjects;
+package com.Whodundid.core.enhancedGui.guiObjects.actionObjects;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.guiUtil.EObjectGroup;

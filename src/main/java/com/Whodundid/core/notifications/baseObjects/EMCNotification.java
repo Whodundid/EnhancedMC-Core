@@ -1,5 +1,6 @@
 package com.Whodundid.core.notifications.baseObjects;
 
+import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.coreSubMod.EMCResources;
 import com.Whodundid.core.notifications.NotificationObject;
 import com.Whodundid.core.notifications.NotificationType;
@@ -26,7 +27,7 @@ public class EMCNotification extends NotificationObject {
 		super.drawObject(mXIn, mYIn, ticks);
 		GlStateManager.color(1f, 1f, 1f, 0.75f);
 		mc.renderEngine.bindTexture(EMCResources.guiInfo);
-		this.drawTexture(startX + 5, midY - 10, 0, 0, 20, 20, 20, 20);
+		drawTexture(startX + 5, midY - 10, 20, 20);
 		drawStringWithShadow(message, startX + 30, midY - 3, EColors.cyan.c());
 	}
 	
@@ -36,6 +37,12 @@ public class EMCNotification extends NotificationObject {
 		
 		if (button == 0) {
 			close();
+			if (attentionObject != null) {
+				if (EnhancedMC.getRenderer().getObjects().contains(attentionObject)) { attentionObject.requestFocus(); }
+				else {
+					EnhancedMC.displayEGui(attentionObject);
+				}
+			}
 		}
 	}
 }

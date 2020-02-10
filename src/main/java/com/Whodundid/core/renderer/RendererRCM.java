@@ -2,7 +2,7 @@ package com.Whodundid.core.renderer;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.coreSubMod.EMCResources;
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiRightClickMenu;
+import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.EGuiRightClickMenu;
 import com.Whodundid.core.enhancedGui.guiObjects.windows.EMCGuiSelectionList;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;

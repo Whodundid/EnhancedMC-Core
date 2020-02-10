@@ -1,8 +1,8 @@
 package com.Whodundid.core.settings;
 
+import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.textArea.EGuiTextArea;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.textArea.TextAreaLine;
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
@@ -46,11 +46,6 @@ public class KeyBindGui extends WindowParent {
 		super.initGui();
 		setResizeable(true);
 		setMinDims(361, 178);
-		buildLists();
-	}
-	
-	protected void buildLists() {
-
 	}
 	
 	@Override
@@ -173,18 +168,18 @@ public class KeyBindGui extends WindowParent {
 	
 	protected boolean updateLists() { return updateLists(null); }
 	protected boolean updateLists(KeyBinding test) {
-		//create lists for the keys to be added, total number of used keys, and key categories
-		keys = new StorageBoxHolder();
-		used = new StorageBoxHolder();
-		categories = new EArrayList();
-		
-		//add all the keybindings and their descriptions to the key list
-		for (KeyBinding k : mc.gameSettings.keyBindings) {
-			String category = I18n.format(k.getKeyCategory(), new Object[0]);
+		try {
+			//create lists for the keys to be added, total number of used keys, and key categories
+			keys = new StorageBoxHolder();
+			used = new StorageBoxHolder();
+			categories = new EArrayList();
 			
-			try {
-				keys.add(category, k);
+			//add all the keybindings and their descriptions to the key list
+			for (KeyBinding k : mc.gameSettings.keyBindings) {
+				String category = I18n.format(k.getKeyCategory(), new Object[0]);
 				
+				keys.add(category, k);
+					
 				//don't add the keybinding to the used list if the binding is 'NONE'
 				if (k.getKeyCode() != 0) {
 					int val = 1;
@@ -194,16 +189,16 @@ public class KeyBindGui extends WindowParent {
 					used.put(k.getKeyCode(), val); //update the existing value
 				}
 			}
-			catch (Exception e) { e.printStackTrace(); }
 			
 			if (!categories.contains(category)) {
 				categories.add(category);
 			}
+				
+			if (test != null) {
+				return used.contains(test.getKeyCode()) && used.getValueInBox(test.getKeyCode()) > 1;
+			}
 		}
-		
-		if (test != null) {
-			return used.contains(test.getKeyCode()) && used.getValueInBox(test.getKeyCode()) > 1;
-		}
+		catch (Exception e) { e.printStackTrace(); }
 		
 		return false;
 	}

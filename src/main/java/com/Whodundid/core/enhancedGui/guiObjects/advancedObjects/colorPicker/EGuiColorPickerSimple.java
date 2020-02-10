@@ -1,11 +1,11 @@
 package com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.colorPicker;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
+import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
+import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiTextField;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiContainer;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiLabel;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiRect;
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiTextField;
 import com.Whodundid.core.enhancedGui.guiObjects.windows.EGuiDialogueBox;
 import com.Whodundid.core.enhancedGui.guiObjects.windows.EGuiDialogueBox.DialogueBoxTypes;
 import com.Whodundid.core.enhancedGui.types.ActionWindowParent;

@@ -168,6 +168,10 @@ public interface IEnhancedGuiObject extends ITabCompleteListener {
 	public EArrayList<IEnhancedGuiObject> getAllChildren();
 	/** Returns a list of all children from 'getAllChildren()' that are currently under the mouse. */
 	public EArrayList<IEnhancedGuiObject> getAllChildrenUnderMouse();
+	/** Returns true if the specified object is a child of the parent or is being added to the parent. */
+	public boolean containsObject(IEnhancedGuiObject object);
+	/** Returns a list combining the objects currently within within this object as well as the ones being added. */
+	public EArrayList<IEnhancedGuiObject> getCombinedChildren();
 	
 	//parents
 	

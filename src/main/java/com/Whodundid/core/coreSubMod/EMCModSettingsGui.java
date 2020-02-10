@@ -1,16 +1,15 @@
 package com.Whodundid.core.coreSubMod;
 
+import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
+import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton3Stage;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton3Stage;
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiContainer;
+import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.scrollList.EGuiScrollList;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiLabel;
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiScrollList;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubModType;
-import com.Whodundid.core.util.storageUtil.EDimension;
+import com.Whodundid.core.util.renderUtil.EColors;
 
 //Author: Hunter Bragg
 
@@ -18,10 +17,8 @@ public class EMCModSettingsGui extends WindowParent {
 	
 	EMCMod mod = (EMCMod) RegisteredSubMods.getMod(SubModType.CORE);
 	EGuiScrollList list;
-	EGuiContainer functionality, visual, debug;
-	EGuiButton menuOverride, showIncompats, showTerminal, useDebugKey;
+	EGuiButton menuOverride, closeHudEmpty, showIncompats, drawProxyBorder, showTerminal;
 	EGuiButton3Stage drawChat;
-	EGuiLabel menuLabel, drawChatLabel, incompatLabel, terminalLabel, debugLabel;
 	
 	public EMCModSettingsGui() {
 		super();
@@ -31,88 +28,116 @@ public class EMCModSettingsGui extends WindowParent {
 	@Override
 	public void initGui() {
 		setObjectName("EMC Core Mod Settings");
-		setDimensions(startX, startY, defaultWidth, defaultHeight);
+		setDimensions(defaultWidth, defaultHeight);
 		setMinDims(170, 75);
 		setResizeable(true);
-		super.initGui();
 	}
 	
 	@Override
 	public void initObjects() {
 		setHeader(new EGuiHeader(this));
 		
-		int h = (height - 24) / 3;
-		int diff = (height - 24) % 3;
+		list = new EGuiScrollList(this, startX + 2, startY + 20, width - 4, height - 22);
+		list.setBackgroundColor(0xff303030);
 		
-		functionality = new EGuiContainer(this, startX + 2, startY + 20, width - 4, h);
-		visual = new EGuiContainer(this, startX + 2, functionality.endY + 1, width - 4, h);
-		debug = new EGuiContainer(this, startX + 2, visual.endY + 1, width - 4, h + diff);
+		int fY = addFunction(8);
+		int vY = addVisual(fY);
+		int dY = addDebug(vY);
 		
-		functionality.setTitle("Functionality");
-		visual.setTitle("Visual");
-		debug.setTitle("Debug");
+		list.fitItemsInList(6, 6);
 		
-		EDimension fd = functionality.getDimensions();
-		EDimension vd = visual.getDimensions();
-		EDimension dd = debug.getDimensions();
+		addObject(list);
+	}
+	
+	private int addFunction(int yPos) {
+		//build objects
 		
-		EGuiScrollList fl = new EGuiScrollList(functionality, fd.startX, fd.startY + 17, fd.width, fd.height - 17);
-		menuOverride = new EGuiButton(fl, 6, 6, 60, 20, EMCMod.emcMenuOverride);
-		menuLabel = new EGuiLabel(fl, menuOverride.endX + 10, menuOverride.startY + 6, "Override Pause Menu");
-		fl.addObjectToList(menuOverride, menuLabel);
-		fl.growListHeight(10 + menuOverride.height);
-		fl.setListWidth(190);
-		functionality.addObject(fl);
+		EGuiLabel functionLabel = new EGuiLabel(list, 6, yPos, "Functionality", EColors.orange.c());
 		
-		EGuiScrollList vl = new EGuiScrollList(visual, vd.startX, vd.startY + 17, vd.width, vd.height - 17);
-		drawChat = new EGuiButton3Stage(vl, 6, 6, 60, 20, EMCMod.drawChatOnGui);
-		showIncompats = new EGuiButton(vl, 6, drawChat.endY + 7, 60, 20, EMCMod.showIncompats);
-		drawChatLabel = new EGuiLabel(vl, drawChat.endX + 10, drawChat.startY + 6, "Draw Chat When Open");
-		incompatLabel = new EGuiLabel(vl, showIncompats.endX + 10, showIncompats.startY + 6, "Display Incompatible Mods");
+		menuOverride = new EGuiButton(list, 6, functionLabel.endY + 8, 60, 20, EMCMod.menuOverride);
+		EGuiLabel menuLabel = new EGuiLabel(list, menuOverride.endX + 10, menuOverride.startY + 6, "Override Pause Menu");
 		
-		vl.addObjectToList(drawChat, showIncompats, drawChatLabel, incompatLabel);
-		vl.growListHeight(58);
-		vl.setListWidth(210);
-		visual.addObject(vl);
+		closeHudEmpty = new EGuiButton(list, 6, menuOverride.endY + 7, 60, 20, EMCMod.closeHudWhenEmpty);
+		EGuiLabel closeEmptyLabel = new EGuiLabel(list, closeHudEmpty.endX + 10, closeHudEmpty.startY + 6, "Close Hud When Empty");
 		
-		EGuiScrollList dl = new EGuiScrollList(functionality, dd.startX, dd.startY + 17, dd.width, dd.height - 17);
-		showTerminal = new EGuiButton(dl, 6, 6, 60, 20, EMCMod.enableTerminal);
-		useDebugKey = new EGuiButton(dl, 6, showTerminal.endY + 5, 60, 20, EMCMod.useDebugKey);
-		terminalLabel = new EGuiLabel(dl, showTerminal.endX + 10, showTerminal.startY + 6, "Enable EMC Terminal");
-		debugLabel = new EGuiLabel(dl, useDebugKey.endX + 10, useDebugKey.startY + 6, "Use Debug Key");
-		dl.addObjectToList(showTerminal, useDebugKey, terminalLabel, debugLabel);
-		dl.growListHeight(58);
-		dl.setListWidth(180);
-		debug.addObject(dl);
+		//set values
 		
 		menuOverride.setActionReciever(this);
-		drawChat.setActionReciever(this);
-		showIncompats.setActionReciever(this);
-		showTerminal.setActionReciever(this);
-		useDebugKey.setActionReciever(this);
-		
-		menuLabel.setDisplayStringColor(0xb2b2b2);
-		drawChatLabel.setDisplayStringColor(0xb2b2b2);
-		incompatLabel.setDisplayStringColor(0xb2b2b2);
-		terminalLabel.setDisplayStringColor(0xb2b2b2);
-		debugLabel.setDisplayStringColor(0xb2b2b2);
+		closeHudEmpty.setActionReciever(this);
 		
 		menuLabel.setHoverText("Replaces Minecraft's pause menu with Enhanced MC's pause menu.");
+		closeEmptyLabel.setHoverText("Closes the EMC hud if there are no windows or objects on screen.");
+		menuLabel.setDisplayStringColor(0xb2b2b2);
+		closeEmptyLabel.setDisplayStringColor(0xb2b2b2);
+		
+		//add objects
+		
+		list.addObjectToList(functionLabel);
+		list.addObjectToList(menuOverride, menuLabel);
+		list.addObjectToList(closeHudEmpty, closeEmptyLabel);
+		//list.addObjectToList(keysOnHud, keysOnHudLabel);
+		
+		return closeHudEmpty.endY - list.getDimensions().startY;
+	}
+	
+	private int addVisual(int yPos) {
+		//build objects
+		
+		EGuiLabel visualLabel = new EGuiLabel(list, 6, yPos + 10, "Visual", EColors.orange.c());
+		
+		drawChat = new EGuiButton3Stage(list, 6, visualLabel.endY + 8, 60, 20, EMCMod.drawChatOnHud);
+		EGuiLabel drawChatLabel = new EGuiLabel(list, drawChat.endX + 10, drawChat.startY + 6, "Draw Chat When Open");
+		
+		drawProxyBorder = new EGuiButton(list, 6, drawChat.endY + 7, 60, 20, EMCMod.drawHudBorder);
+		EGuiLabel drawProxyBorderLabel = new EGuiLabel(list, drawProxyBorder.endX + 10, drawProxyBorder.startY + 6, "Draw Hud Border");
+		
+		showIncompats = new EGuiButton(list, 6, drawProxyBorder.endY + 7, 60, 20, EMCMod.showIncompats);
+		EGuiLabel incompatLabel = new EGuiLabel(list, showIncompats.endX + 10, showIncompats.startY + 6, "Display Incompatible Mods");
+		
+		//set values
+		
+		drawChat.setActionReciever(this);
+		drawProxyBorder.setActionReciever(this);
+		showIncompats.setActionReciever(this);
+		
 		drawChatLabel.setHoverText("Allows chat messages to be drawn when windows are open.");
+		drawProxyBorderLabel.setHoverText("Draws a red border on the screen whenever the EMC hud is open.");
 		incompatLabel.setHoverText("Displays incompatible EMC sub mods within the main settings window.");
+		drawChatLabel.setDisplayStringColor(0xb2b2b2);
+		drawProxyBorderLabel.setDisplayStringColor(0xb2b2b2);
+		incompatLabel.setDisplayStringColor(0xb2b2b2);
+		
+		//add objects
+		
+		list.addObjectToList(visualLabel);
+		list.addObjectToList(drawChat, drawChatLabel);
+		list.addObjectToList(drawProxyBorder, drawProxyBorderLabel);
+		list.addObjectToList(showIncompats, incompatLabel);
+		
+		return showIncompats.endY - list.getDimensions().startY;
+	}
+	
+	private int addDebug(int yPos) {
+		//build objects
+		
+		EGuiLabel debugLabel = new EGuiLabel(list, 6, yPos + 10, "Debug", EColors.orange.c());
+		
+		showTerminal = new EGuiButton(list, 6, debugLabel.endY + 8, 60, 20, EMCMod.enableTerminal);
+		EGuiLabel terminalLabel = new EGuiLabel(list, showTerminal.endX + 10, showTerminal.startY + 6, "Enable EMC Terminal");
+		
+		//set values
+		
+		showTerminal.setActionReciever(this);
+		
 		terminalLabel.setHoverText("Terminal used for debug and advanced purposes.");
+		terminalLabel.setDisplayStringColor(0xb2b2b2);
 		
-		//functionality.addObject(menuOverride, menuLabel);
-		//visual.addObject(drawChat, showIncompats, drawChatLabel, incompatLabel);
-		//debug.addObject(showTerminal, useDebugKey, terminalLabel, debugLabel);
+		//add objects
 		
-		//list.growListHeight(2 + functionality.height);
-		//list.growListHeight(2 + visual.height);
-		//list.growListHeight(debug.height);
+		list.addObjectToList(debugLabel);
+		list.addObjectToList(showTerminal, terminalLabel);
 		
-		//int w = list.getListDimensions().width - 2;
-		
-		addObject(functionality, visual, debug);
+		return showTerminal.endY - list.getDimensions().startY;
 	}
 	
 	@Override
@@ -129,10 +154,15 @@ public class EMCModSettingsGui extends WindowParent {
 	
 	@Override
 	public void actionPerformed(IEnhancedActionObject object, Object... args) {
-		if (object == menuOverride) { menuOverride.toggleTrueFalse(mod.emcMenuOverride, mod, false); }
+		//function
+		if (object == menuOverride) { menuOverride.toggleTrueFalse(mod.menuOverride, mod, false); }
+		if (object == closeHudEmpty) { closeHudEmpty.toggleTrueFalse(mod.closeHudWhenEmpty, mod, false); }
+		//visual
+		if (object == drawChat) { drawChat.updateDislay(mod.drawChatOnHud, mod, false); }
+		if (object == drawProxyBorder) { drawProxyBorder.toggleTrueFalse(mod.drawHudBorder, mod, false); }
 		if (object == showIncompats) { showIncompats.toggleTrueFalse(mod.showIncompats, mod, false); }
+		//debug
 		if (object == showTerminal) { showTerminal.toggleTrueFalse(mod.enableTerminal, mod, false); }
-		if (object == useDebugKey) { useDebugKey.toggleTrueFalse(mod.useDebugKey, mod, false); }
-		if (object == drawChat) { drawChat.updateDislay(mod.drawChatOnGui, mod, false); }
+		
 	}
 }

@@ -1,14 +1,14 @@
 package com.Whodundid.core.terminal.terminalCommand.commands;
 
 import com.Whodundid.core.terminal.gui.ETerminal;
-import com.Whodundid.core.terminal.terminalCommand.IConsoleCommand;
+import com.Whodundid.core.terminal.terminalCommand.ITerminalCommand;
 import com.Whodundid.core.util.chatUtil.EChatUtil;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import net.minecraft.client.Minecraft;
 
 //Author: Hunter Bragg
 
-public class Say implements IConsoleCommand {
+public class Say implements ITerminalCommand {
 
 	@Override public String getName() { return "say"; }
 	@Override public boolean showInHelp() { return true; }

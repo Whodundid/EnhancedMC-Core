@@ -1,6 +1,6 @@
 package com.Whodundid.core.debug;
 
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
+import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.EGuiPlayerViewer;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;

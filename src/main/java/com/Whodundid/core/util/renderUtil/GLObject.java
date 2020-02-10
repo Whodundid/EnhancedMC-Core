@@ -39,10 +39,39 @@ public class GLObject {
 	//opengl drawing functions
 	//------------------------
 	
+	public static int drawString(Object o, double x, double y, EColors colorIn) { return drawString(o.toString(), x, y, colorIn.c()); }
+	public static int drawCenteredString(Object o, double x, double y, EColors colorIn) { return drawCenteredString(o.toString(), x, y, colorIn.c()); }
+	public static int drawStringWithShadow(Object o, double x, double y, EColors colorIn) { return drawStringWithShadow(o.toString(), x, y, colorIn.c()); }
+	public static int drawCenteredStringWithShadow(Object o, double x, double y, EColors colorIn) { return drawCenteredStringWithShadow(o.toString(), x, y, colorIn.c()); }
+	
+	public static int drawString(Object o, double x, double y, int color) { return EnhancedMC.getFontRenderer().drawStringI(o.toString(), x, y, color); }
+	public static int drawCenteredString(Object o, double x, double y, int color) { return EnhancedMC.getFontRenderer().drawStringI(o.toString(), x - EnhancedMC.getFontRenderer().getStringWidth(o.toString()) / 2, y, color); }
+	public static int drawStringWithShadow(Object o, double x, double y, int color) { return EnhancedMC.getFontRenderer().drawStringWithShadowI(o.toString(), x, y, color); }
+	public static int drawCenteredStringWithShadow(Object o, double x, double y, int color) { return EnhancedMC.getFontRenderer().drawStringWithShadowI(o.toString(), x - EnhancedMC.getFontRenderer().getStringWidth(o.toString()) / 2, y, color); }
+	
+	public static int drawString(String text, double x, double y, EColors colorIn) { return drawString(text, x, y, colorIn.c()); }
+	public static int drawCenteredString(String text, double x, double y, EColors colorIn) { return drawCenteredString(text, x, y, colorIn.c()); }
+	public static int drawStringWithShadow(String text, double x, double y, EColors colorIn) { return drawStringWithShadow(text, x, y, colorIn.c()); }
+	public static int drawCenteredStringWithShadow(String text, double x, double y, EColors colorIn) { return drawCenteredStringWithShadow(text, x, y, colorIn.c()); }
+	
 	public static int drawString(String text, double x, double y, int color) { return EnhancedMC.getFontRenderer().drawStringI(text, x, y, color); }
 	public static int drawCenteredString(String text, double x, double y, int color) { return EnhancedMC.getFontRenderer().drawStringI(text, x - EnhancedMC.getFontRenderer().getStringWidth(text) / 2, y, color); }
 	public static int drawStringWithShadow(String text, double x, double y, int color) { return EnhancedMC.getFontRenderer().drawStringWithShadowI(text, x, y, color); }
 	public static int drawCenteredStringWithShadow(String text, double x, double y, int color) { return EnhancedMC.getFontRenderer().drawStringWithShadowI(text, x - EnhancedMC.getFontRenderer().getStringWidth(text) / 2, y, color); }
+	
+	public static int drawStringC(Object o, double x, double y, EColors colorIn) { return drawStringC(o.toString(), x, y, colorIn.c()); }
+	public static int drawStringS(Object o, double x, double y, EColors colorIn) { return drawStringS(o.toString(), x, y, colorIn.c()); }
+	public static int drawStringCS(Object o, double x, double y, EColors colorIn) { return drawStringCS(o.toString(), x, y, colorIn.c()); }
+	public static int drawStringC(Object o, double x, double y, int color) { return drawCenteredString(o.toString(), x, y, color); }
+	public static int drawStringS(Object o, double x, double y, int color) { return drawStringWithShadow(o.toString(), x, y, color); }
+	public static int drawStringCS(Object o, double x, double y, int color) { return drawCenteredStringWithShadow(o.toString(), x, y, color); }
+	
+	public static int drawStringC(String text, double x, double y, EColors colorIn) { return drawStringC(text, x, y, colorIn.c()); }
+	public static int drawStringS(String text, double x, double y, EColors colorIn) { return drawStringS(text, x, y, colorIn.c()); }
+	public static int drawStringCS(String text, double x, double y, EColors colorIn) { return drawStringCS(text, x, y, colorIn.c()); }
+	public static int drawStringC(String text, double x, double y, int color) { return drawCenteredString(text, x, y, color); }
+	public static int drawStringS(String text, double x, double y, int color) { return drawStringWithShadow(text, x, y, color); }
+	public static int drawStringCS(String text, double x, double y, int color) { return drawCenteredStringWithShadow(text, x, y, color); }
 	
 	protected void drawMenuGradient() { drawGradientRect(0, 0, res.getScaledWidth(), res.getScaledHeight(), -1072689136, -804253680); }
 	protected void drawCreativeTabHoveringText(String tabName, int mX, int mY) { drawHoveringText(Arrays.<String>asList(new String[] {tabName}), mX, mY); }

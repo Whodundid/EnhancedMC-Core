@@ -3,7 +3,7 @@ package com.Whodundid.core.terminal.terminalCommand.commands;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.terminal.gui.ETerminal;
-import com.Whodundid.core.terminal.terminalCommand.IConsoleCommand;
+import com.Whodundid.core.terminal.terminalCommand.ITerminalCommand;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
@@ -12,7 +12,7 @@ import net.minecraft.util.EnumChatFormatting;
 
 //Author: Hunter Bragg
 
-public class ModInfo implements IConsoleCommand {
+public class ModInfo implements ITerminalCommand {
 
 	@Override public String getName() { return "modinfo"; }
 	@Override public boolean showInHelp() { return true; }

@@ -1,8 +1,8 @@
 package com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.colorPicker;
 
+import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
+import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiSlider;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiSlider;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;

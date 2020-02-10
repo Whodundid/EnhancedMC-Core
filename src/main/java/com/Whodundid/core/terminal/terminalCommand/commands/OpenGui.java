@@ -4,7 +4,7 @@ import com.Whodundid.core.debug.ExperimentGui;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.terminal.gui.ETerminal;
-import com.Whodundid.core.terminal.terminalCommand.IConsoleCommand;
+import com.Whodundid.core.terminal.terminalCommand.ITerminalCommand;
 import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.guiUtil.GuiOpener;
 import com.Whodundid.core.util.renderUtil.CenterType;
@@ -13,7 +13,7 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 
 //Author: Hunter Bragg
 
-public class OpenGui implements IConsoleCommand {
+public class OpenGui implements ITerminalCommand {
 	
 	@Override public String getName() { return "gui"; }
 	@Override public boolean showInHelp() { return true; }
@@ -35,25 +35,27 @@ public class OpenGui implements IConsoleCommand {
 				}
 				
 				Object lastGui = null;
-				for (int i = 0; i < guis.size(); i++) {
-					Class guiClass = guis.get(i);
-					if (guiClass != null) {
-						if (lastGui == null) {
-							lastGui = GuiOpener.openGui(guiClass, CenterType.screen);
-						}
-						else {
-							if (lastGui instanceof IWindowParent) {
-								lastGui = GuiOpener.openGui(guiClass, (IWindowParent) lastGui, CenterType.objectIndent);
+				if (guis.isNotEmpty()) {
+					for (int i = 0; i < guis.size(); i++) {
+						Class guiClass = guis.get(i);
+						if (guiClass != null) {
+							if (lastGui == null) {
+								lastGui = GuiOpener.openGui(guiClass, CenterType.screen);
 							}
 							else {
-								GuiOpener.openGui(guiClass, CenterType.screen);
+								if (lastGui instanceof IWindowParent) {
+									lastGui = GuiOpener.openGui(guiClass, (IWindowParent) lastGui, CenterType.objectIndent);
+								}
+								else {
+									GuiOpener.openGui(guiClass, CenterType.screen);
+								}
 							}
+							conIn.writeln("Opening gui: " + guiClass.getSimpleName(), EColors.green);
 						}
-						conIn.writeln("Opening gui: " + guiClass.getSimpleName(), EColors.green);
 					}
-					else {
-						conIn.error("No gui found under: " + args.get(i));
-					}
+				}
+				else {
+					conIn.error("No guis found");
 				}
 			}
 		} catch (Exception e) { e.printStackTrace(); }

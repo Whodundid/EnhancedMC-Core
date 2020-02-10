@@ -2,12 +2,12 @@ package com.Whodundid.core.terminal.terminalCommand.commands;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.terminal.gui.ETerminal;
-import com.Whodundid.core.terminal.terminalCommand.IConsoleCommand;
+import com.Whodundid.core.terminal.terminalCommand.ITerminalCommand;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
 //Author: Hunter Bragg
 
-public class ClearTerminalHistory implements IConsoleCommand {
+public class ClearTerminalHistory implements ITerminalCommand {
 	
 	@Override public String getName() { return "clearhistory"; }
 	@Override public boolean showInHelp() { return true; }

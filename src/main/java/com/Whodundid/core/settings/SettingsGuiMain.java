@@ -5,12 +5,12 @@ import com.Whodundid.core.coreSubMod.EMCMod;
 import com.Whodundid.core.coreSubMod.EMCResources;
 import com.Whodundid.core.debug.ImportantGui;
 import com.Whodundid.core.enhancedGui.StaticEGuiObject;
+import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
+import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiTextField;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
+import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.scrollList.EGuiScrollList;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiLabel;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiRect;
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiScrollList;
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiTextField;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.settings.guiParts.ReloaderDialogueBox;
@@ -229,9 +229,8 @@ public class SettingsGuiMain extends WindowParent {
 			if (incompats.isNotEmpty()) {
 				EGuiRect workingSeparator = new EGuiRect(this, l.getMidX() + 18, lineStart, l.getMidX() + 19, lineEnd, 0xff000000);
 				scrollList.addObjectToList(workingSeparator);
-			} else {
-				addObject(separator); //add the general separator instead
 			}
+			else { addObject(separator); } //add the general separator instead
 			
 			if (EMCMod.showIncompats.get() && incompats.isNotEmpty()) {
 				int space = 2;

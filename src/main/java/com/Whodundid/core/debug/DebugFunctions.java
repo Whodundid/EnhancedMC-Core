@@ -7,10 +7,12 @@ import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.colorPicker.EGu
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.colorPicker.EGuiColorPickerSimple;
 import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.EGuiPlayerViewer;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
-import com.Whodundid.core.notifications.baseObjects.ChatNotification;
+import com.Whodundid.core.notifications.baseObjects.EMCNotification;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.renderUtil.CenterType;
+import com.Whodundid.slc.gui.SLCNew;
+
 import java.io.File;
 import java.lang.reflect.Method;
 import net.minecraft.client.Minecraft;
@@ -18,6 +20,8 @@ import net.minecraft.client.gui.GuiChat;
 import net.minecraft.network.PacketThreadUtil;
 import net.minecraft.network.play.server.S3APacketTabComplete;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 
 //Author: Hunter Bragg
 
@@ -47,7 +51,7 @@ public class DebugFunctions {
 	}
 	
 	private static void debug_1() throws Throwable {
-		EnhancedMC.getRenderer().addObject(new ChatNotification("EMC", "Welcome to EnhancedMC!"));
+		EnhancedMC.getRenderer().addObject(new EMCNotification("EMC: Welcome to EnhancedMC!"));
 	}
 	
 	private static void debug_2() throws Throwable {
@@ -55,15 +59,7 @@ public class DebugFunctions {
 	}
 	
 	private static void debug_3() throws Throwable {
-		Class c = SubMod.class;
-		for (Method m : c.getMethods()) {
-			System.out.println(m.getName());
-		}
-		
-		
-		//EnhancedMC.setOpMode(true);
-		//EnhancedMC.postNotification("HELLO");
-		//EnhancedMC.displayEGui(new TestWindow(), CenterType.screen);
+		EnhancedMC.displayEGui(new SLCNew());
 	}
 	
 	private static void debug_4() throws Throwable {

@@ -7,10 +7,10 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.subMod.config.SubModConfigManager;
 import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.util.storageUtil.EArrayList;
+import com.Whodundid.core.util.storageUtil.ModSetting;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 import java.util.Iterator;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -37,6 +37,7 @@ public abstract class SubMod {
 	protected StorageBoxHolder<String, String> softDependencies = new StorageBoxHolder().noDuplicates();
 	protected String modName = "no name";
 	protected EArrayList<String> nameAliases = new EArrayList();
+	protected EArrayList<ModSetting> modSettings = new EArrayList();
 	protected SubModConfigManager configManager;
 	protected boolean enabled = false;
 	protected String version = "no version";
@@ -58,6 +59,7 @@ public abstract class SubMod {
 	public boolean isIncompatible() { return incompatible; }
 	public EArrayList<IWindowParent> getGuis() { return guis; }
 	public EArrayList<String> getNameAliases() { return nameAliases; }
+	public EArrayList<ModSetting> getSettings() { return modSettings; }
 	public StorageBoxHolder<String, String> getDependencies() { return dependencies; }
 	public StorageBoxHolder<String, String> getSoftDependencies() { return softDependencies; }
 	public IWindowParent getMainGui() throws Exception { return mainGui != null ? mainGui.getClass().newInstance() : null; }
@@ -70,9 +72,20 @@ public abstract class SubMod {
 	public String getVersionDate() { return versionDate; }
 	
 	public SubMod setAliases(String alias, String... additional) {
-		nameAliases.clear();
-		nameAliases.add(alias);
-		for (String s : additional) { nameAliases.add(s); }
+		if (alias != null) {
+			nameAliases.clear();
+			nameAliases.add(alias);
+			for (String s : additional) { nameAliases.add(s); }
+		}
+		return this;
+	}
+	
+	public SubMod registerSetting(ModSetting setting, ModSetting... additional) {
+		if (setting != null) {
+			modSettings.add(setting);
+			setting.setMod(this);
+			for (ModSetting s : additional) { modSettings.add(s); s.setMod(this); }
+		}
 		return this;
 	}
 	

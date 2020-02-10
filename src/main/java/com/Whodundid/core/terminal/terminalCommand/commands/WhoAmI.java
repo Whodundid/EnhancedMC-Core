@@ -2,14 +2,14 @@ package com.Whodundid.core.terminal.terminalCommand.commands;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.terminal.gui.ETerminal;
-import com.Whodundid.core.terminal.terminalCommand.IConsoleCommand;
+import com.Whodundid.core.terminal.terminalCommand.ITerminalCommand;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import net.minecraft.client.Minecraft;
 
 //Author: Hunter Bragg
 
-public class WhoAmI implements IConsoleCommand {
+public class WhoAmI implements ITerminalCommand {
 
 	@Override public String getName() { return "whoami"; }
 	@Override public boolean showInHelp() { return true; }

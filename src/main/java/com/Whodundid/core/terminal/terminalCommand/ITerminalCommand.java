@@ -5,7 +5,7 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 
 //Author: Hunter Bragg
 
-public interface IConsoleCommand {
+public interface ITerminalCommand {
 	
 	public String getName();
 	public boolean showInHelp();

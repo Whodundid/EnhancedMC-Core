@@ -105,7 +105,11 @@ public final class RegisteredSubMods {
 	
 	//returns a submod object from a given submodtype if it is currently registered
 	public static SubMod getMod(SubModType typeIn) {
-		for (SubMod m : allMods) { if (m.getModType().equals(typeIn)) { return m; } }
+		for (SubMod m : allMods) {
+			if (m.getModType() != null) {
+				if (m.getModType().equals(typeIn)) { return m; }
+			}
+		}
 		return null;
 	}
 	

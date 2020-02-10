@@ -1,5 +1,7 @@
 package com.Whodundid.core.coreEvents.eventUtil;
 
+//Author: Hunter Bragg
+
 public enum EMCEvents {
 	
 	//ticks

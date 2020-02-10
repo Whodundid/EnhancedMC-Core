@@ -36,11 +36,12 @@ import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
 
 public class EMCMod extends SubMod {
 	
-	public static final ModSetting<Boolean> emcMenuOverride = new ModSetting(true);
-	public static final ModSetting<Boolean> useDebugKey = new ModSetting(false);
-	public static final ModSetting<Boolean> showIncompats = new ModSetting(false);
-	public static final ModSetting<Boolean> enableTerminal = new ModSetting(false);
-	public static final ModSetting<String> drawChatOnGui = new ModSetting("Partial").setArgs("Partial", "Off", "Full");
+	public static final ModSetting<Boolean> menuOverride = new ModSetting("menuOverride", true);
+	public static final ModSetting<Boolean> closeHudWhenEmpty = new ModSetting("closeHudWhenEmpty", true);
+	public static final ModSetting<Boolean> drawHudBorder = new ModSetting("drawHudBorder", true);
+	public static final ModSetting<Boolean> showIncompats = new ModSetting("showIncompats", false);
+	public static final ModSetting<Boolean> enableTerminal = new ModSetting("enableTerminal", false);
+	public static final ModSetting<String> drawChatOnHud = new ModSetting("drawChatOnHud", "partial").setArgs("partial", "off", "full");
 	
 	private boolean oldWasProxy;
 	private boolean firstPass = false;
@@ -56,6 +57,8 @@ public class EMCMod extends SubMod {
 		addGui(new SettingsGuiMain(), new KeyBindGui());
 		setAliases("enhancedmc", "emc", "core");
 		isDisableable = false;
+		
+		registerSetting(menuOverride, closeHudWhenEmpty, drawHudBorder, showIncompats, enableTerminal, drawChatOnHud);
 	}
 	
 	//---------------
@@ -86,7 +89,7 @@ public class EMCMod extends SubMod {
 		
 		//hijack the vanilla pause menu
 		if (e.gui instanceof GuiIngameMenu) {
-			if (EMCMod.emcMenuOverride.get()) { mc.displayGuiScreen(new EMCPauseMenu()); }
+			if (EMCMod.menuOverride.get()) { mc.displayGuiScreen(new EMCPauseMenu()); }
 		}
 		
 		//remove the unpinned objects when a proxy isn't being loaded
@@ -107,13 +110,13 @@ public class EMCMod extends SubMod {
 	
 	@Override
 	public void overlayPreEvent(RenderGameOverlayEvent.Pre e) {
-		if (e.type == ElementType.CHAT && mc.currentScreen instanceof IRendererProxy && EnhancedMC.getEMCMod().drawChatOnGui.get().equals("Off")) { e.setCanceled(true); }
+		if (e.type == ElementType.CHAT && mc.currentScreen instanceof IRendererProxy && EnhancedMC.getEMCMod().drawChatOnHud.get().equals("Off")) { e.setCanceled(true); }
 	}
 	
 	@Override public void keyEvent(KeyInputEvent e) { EnhancedMC.checkKeyBinds(); }
 	@Override public void mouseEvent(MouseEvent e) { EMouseHelper.mouseClicked(e.button); }
 	@Override public void renderTickEvent(TickEvent.RenderTickEvent e) { PlayerFacing.checkEyePosition(e); }
-	@Override public void OverlayPostEvent(RenderGameOverlayEvent.Post e) { EnhancedMC.getRenderer().onRenderTick(e); }
+	@Override public void OverlayPostEvent(RenderGameOverlayEvent.Post e) { }
 	@Override public void renderLastWorldEvent(RenderWorldLastEvent e) { BlockDrawer.draw(e); }
 	@Override public void chatEvent(ClientChatReceivedEvent e) { EChatUtil.readChat(e.message); WorldEditListener.checkForPositions(); }
 	@Override public void tabCompletionEvent(TabCompletionEvent e) { EChatUtil.onTabComplete(e.getCompletion()); }
@@ -162,7 +165,7 @@ public class EMCMod extends SubMod {
 	public static boolean getChatOpen() {
 		GuiScreen s = Minecraft.getMinecraft().currentScreen;
 		if (s instanceof IRendererProxy) {
-			return drawChatOnGui.get().equals("Full");
+			return drawChatOnHud.get().equals("Full");
 		}
 		return s instanceof GuiChat;
 	}

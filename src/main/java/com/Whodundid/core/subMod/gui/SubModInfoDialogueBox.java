@@ -1,7 +1,7 @@
 package com.Whodundid.core.subMod.gui;
 
+import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.textArea.EGuiTextArea;
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiLabel;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiRect;
 import com.Whodundid.core.enhancedGui.guiObjects.windows.EGuiDialogueBox;

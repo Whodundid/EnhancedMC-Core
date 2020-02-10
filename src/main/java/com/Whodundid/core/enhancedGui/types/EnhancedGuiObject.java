@@ -3,7 +3,6 @@ package com.Whodundid.core.enhancedGui.types;
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.StaticEGuiObject;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
-import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.textArea.EGuiTextArea;
 import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.EGuiFocusLockBorder;
 import com.Whodundid.core.enhancedGui.guiObjects.windows.EGuiLinkConfirmationDialogueBox;
 import com.Whodundid.core.enhancedGui.guiUtil.EGui;
@@ -264,6 +263,8 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	@Override public EArrayList<IEnhancedGuiObject> getRemovingObjects() { return objsToBeRemoved; }
 	@Override public EArrayList<IEnhancedGuiObject> getAllChildren() { return StaticEGuiObject.getAllChildren(this); }
 	@Override public EArrayList<IEnhancedGuiObject> getAllChildrenUnderMouse() { return StaticEGuiObject.getAllChildrenUnderMouse(this, mX, mY); }
+	@Override public boolean containsObject(IEnhancedGuiObject object) { return getCombinedChildren().contains(object); }
+	@Override public EArrayList<IEnhancedGuiObject> getCombinedChildren() { return EArrayList.combineLists(guiObjects, objsToBeAdded); }
 	
 	//parents
 	@Override public IEnhancedGuiObject getParent() { return parent; }

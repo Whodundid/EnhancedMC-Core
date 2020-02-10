@@ -1,7 +1,7 @@
 package com.Whodundid.core.enhancedGui.guiObjects.utilityObjects;
 
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiSlider;
+import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
+import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiSlider;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
@@ -48,21 +48,30 @@ public class EGuiPlayerViewer extends EnhancedGuiObject {
 		drawRect(xs + 2, ys + 2, xe - 2, ye - 2, 0xff2b2b2b); //gray inner
 		drawRect(xs + 3, ys + 3, xe - 3, ye - 3, 0xff303030); //gray inner
 		
+		//System.out.println(midY + " " + ((ys + ye) / 2));
+		
 		int scale = res.getScaleFactor();
-		GL11.glEnable(GL11.GL_SCISSOR_TEST);
-		GL11.glScissor((vSlider.endX + 1) * scale,
-					   (Display.getHeight() - startY * scale) - (height - hSlider.height - 1) * scale,
-					   (width - vSlider.width - 2) * scale,
-					   (height - 2 - hSlider.height) * scale);
-		{ //scissor start
+		scissor(xs, ys, xe, ye);
+		{
+			//idk why this works, but it do
+			
+			double val = (height - (height / 10) - hSlider.height < width - (width / 10) - vSlider.width ? height - (height / 10) - hSlider.height : width - (width / 10) - vSlider.width) / 2.0;
+			int xm = (xs + xe) / 2;
+			int ym = (ys + ye) / 2;
+			float hS = hSlider.getSliderValue();
+			float vS = vSlider.getSliderValue(); 
+			int newVal = (ye - ys) / 3;
+			int tPos = ye - newVal;
+			double innerH = ye - ys;
+			double magicS = 1.921149939049167; //idk where this value comes from
+			double magicH = magicS * val;
+			double yStart = (innerH - magicH) / 2;
 			
 			//draw player model
 			GlStateManager.color(2.0f, 2.0f, 2.0f, 2.0f);
-			double val = (height - (height / 10) - hSlider.height < width - (width / 10) - vSlider.width ? height - (height / 10) - hSlider.height : width - (width / 10) - vSlider.width) / 2.0;
-			PlayerDrawer.drawPlayer(mc.thePlayer, (xs + xe) / 2, ye - (height / 16), hSlider.getSliderValue(), vSlider.getSliderValue(), (float) val);
-			
+			PlayerDrawer.drawPlayer(mc.thePlayer, xm, ys + yStart + magicH, hS, vS, val);
 		}
-		GL11.glDisable(GL11.GL_SCISSOR_TEST);
+		endScissor();
 		
 		super.drawObject(mXIn, mYIn, ticks);
 	}

@@ -33,6 +33,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent;
 import org.lwjgl.opengl.GL11;
 
+//Author: Hunter Bragg
+
 public class EMCEventDistributor {
 
 	public static void distributeEvent(EMCEvents type, Event e) {
@@ -58,6 +60,7 @@ public class EMCEventDistributor {
 					for (SubMod m : mods) { m.OverlayPostEvent((Post) e); }
 					GlStateManager.enableAlpha();
 					GL11.glPopMatrix();
+					EnhancedMC.getRenderer().onRenderTick((RenderGameOverlayEvent) e);
 				}
 				break;
 			

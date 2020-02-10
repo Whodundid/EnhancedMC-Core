@@ -2,7 +2,6 @@ package com.Whodundid.core;
 
 import com.Whodundid.core.coreEvents.EventListener;
 import com.Whodundid.core.coreSubMod.EMCMod;
-import com.Whodundid.core.debug.DebugFunctions;
 import com.Whodundid.core.enhancedGui.types.EnhancedGui;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
@@ -59,7 +58,6 @@ public final class EnhancedMC {
 	public static final String NAME = "EnhancedMC";
 	public static final Minecraft mc = Minecraft.getMinecraft();
 	public static final KeyBinding openSettingsGui = new KeyBinding("Settings", Keyboard.KEY_P, "EnhancedMC");
-	public static final KeyBinding debugCommand = new KeyBinding("Debug key", Keyboard.KEY_GRAVE, "EnhancedMC");
 	public static final KeyBinding openHud = new KeyBinding("Open Hud", Keyboard.KEY_F, "EnhancedMC");
 	public static final Logger EMCLogger = LogManager.getLogger("EnhancedMC");
 	public static EFontRenderer fontRenderer;
@@ -92,7 +90,6 @@ public final class EnhancedMC {
 		
 		//register keybinds
 		ClientRegistry.registerKeyBinding(openSettingsGui);
-		ClientRegistry.registerKeyBinding(debugCommand);
 		ClientRegistry.registerKeyBinding(openHud);
 		
 		//initialize client resources
@@ -221,14 +218,6 @@ public final class EnhancedMC {
 	
 	public static void checkKeyBinds() {
 		if (openSettingsGui.isPressed()) { openSettingsGui(); }
-		if (debugCommand.isPressed()) {
-			if (!RegisteredSubMods.isModRegistered(SubModType.HOTKEYS)) {
-				if (EMCMod.useDebugKey.get()) { DebugFunctions.runDebugFunction(0); }
-			}
-			else if (EMCMod.useDebugKey.get()) {
-				DebugFunctions.runDebugFunction(0);
-			}
-		}
 		if (openHud.isPressed()) {
 			mc.displayGuiScreen(new RendererProxyGui(true));
 		}

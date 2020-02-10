@@ -1,6 +1,7 @@
 package com.Whodundid.core.renderer;
 
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.coreSubMod.EMCMod;
 import com.Whodundid.core.enhancedGui.StaticEGuiObject;
 import com.Whodundid.core.enhancedGui.StaticTopParent;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
@@ -18,6 +19,7 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
+import com.Whodundid.core.util.renderUtil.BlockDrawer;
 import com.Whodundid.core.util.renderUtil.CursorHelper;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
@@ -28,6 +30,7 @@ import java.util.Deque;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import org.lwjgl.opengl.GL11;
 
@@ -101,6 +104,7 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	//main draw
 	@Override
 	public void drawObject(int mXIn, int mYIn, float ticks) {
+		//System.out.println(PlayerTraits.getHeldItemId());
 		checkForProxy();
 		updateBeforeNextDraw(mXIn, mYIn);
 		GlStateManager.pushMatrix();
@@ -121,9 +125,22 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 			});
 			if (getObjectWithHoveringText() != null) { getObjectWithHoveringText().onMouseHover(mX, mY); }
 			if (EnhancedMC.isDebugMode() && !mc.gameSettings.showDebugInfo) { drawDebugInfo(); }
+			if (hasProxy && EMCMod.drawHudBorder.get()) {
+				int borderColor = 0x88ff0000;
+				drawRect(0, 0, 1, res.getScaledHeight(), borderColor); //left
+				drawRect(1, 0, res.getScaledWidth() - 1, 2, borderColor); //top
+				drawRect(res.getScaledWidth() - 1, 0, res.getScaledWidth(), res.getScaledHeight(), borderColor); //right
+				drawRect(1, res.getScaledHeight() - 2, res.getScaledWidth() - 1, res.getScaledHeight(), borderColor); //bottom
+			}
 		}
 		
 		GlStateManager.popMatrix();
+		BlockDrawer.clearBlocks();
+		for (EntityPlayer p : mc.theWorld.playerEntities) {
+			if (p.getName().equals("Shion6781")) {
+				BlockDrawer.addBlock(p.getPosition(), 0x66ff0000);
+			}
+		}
 	}
 	@Override public void onFirstDraw() {}
 	@Override public boolean hasFirstDraw() { return firstDraw; }
@@ -386,7 +403,7 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 		if (getHighestZObjectUnderMouse() != null) {
 			if (mX == oldMousePos.getObject() && mY == oldMousePos.getValue()) {
 				mouseHoverTime = (System.currentTimeMillis() - hoverRefTime);
-				if (mouseHoverTime >= 1000) {
+				if (mouseHoverTime >= 500) {
 					setObjectWithHoveringText(getHighestZObjectUnderMouse());
 				}
 			}

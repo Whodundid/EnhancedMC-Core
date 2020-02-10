@@ -2,8 +2,8 @@ package com.Whodundid.core.settings.guiParts;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.coreSubMod.EMCResources;
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiScrollList;
+import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
+import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.scrollList.EGuiScrollList;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;

@@ -1,7 +1,7 @@
 package com.Whodundid.core.terminal.gui;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiTextField;
+import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiTextField;
 import com.Whodundid.core.terminal.TerminalCommandHandler;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 

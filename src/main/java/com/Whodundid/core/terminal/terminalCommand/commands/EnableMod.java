@@ -4,13 +4,13 @@ import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.subMod.util.SubModEnabler;
 import com.Whodundid.core.terminal.gui.ETerminal;
-import com.Whodundid.core.terminal.terminalCommand.IConsoleCommand;
+import com.Whodundid.core.terminal.terminalCommand.ITerminalCommand;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
 //Author: Hunter Bragg
 
-public class EnableMod implements IConsoleCommand {
+public class EnableMod implements ITerminalCommand {
 	
 	@Override public String getName() { return "enable"; }
 	@Override public boolean showInHelp() { return true; }

@@ -1,11 +1,10 @@
 package com.Whodundid.core.enhancedGui.types;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.debug.DebugFunctions;
 import com.Whodundid.core.enhancedGui.StaticEGuiObject;
 import com.Whodundid.core.enhancedGui.StaticTopParent;
+import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.EGuiFocusLockBorder;
 import com.Whodundid.core.enhancedGui.guiUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.objectEvents.EventAction;
@@ -296,9 +295,6 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override
 	public void handleKeyboardInput() throws IOException {
 		if (Keyboard.getEventKeyState()) {
-			if (Keyboard.getEventKey() == EnhancedMC.debugCommand.getKeyCode()) {
-				DebugFunctions.runDebugFunction(0);
-			}
 			keyTyped(Keyboard.getEventCharacter(), Keyboard.getEventKey());
 			if (focusedObject != null) {
 				focusedObject.keyPressed(Keyboard.getEventCharacter(), Keyboard.getEventKey());

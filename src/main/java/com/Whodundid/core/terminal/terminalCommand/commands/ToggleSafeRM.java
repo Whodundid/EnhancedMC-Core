@@ -2,12 +2,12 @@ package com.Whodundid.core.terminal.terminalCommand.commands;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.terminal.gui.ETerminal;
-import com.Whodundid.core.terminal.terminalCommand.IConsoleCommand;
+import com.Whodundid.core.terminal.terminalCommand.ITerminalCommand;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
 //Author: Hunter Bragg
 
-public class ToggleSafeRM implements IConsoleCommand {
+public class ToggleSafeRM implements ITerminalCommand {
 
 	@Override public String getName() { return "saferemotedesktop"; }
 	@Override public boolean showInHelp() { return EnhancedMC.isOpMode(); }

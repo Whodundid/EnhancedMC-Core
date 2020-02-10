@@ -1,8 +1,8 @@
 package com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.textArea;
 
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiTextField;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiLabel;
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiTextField;
 import com.Whodundid.core.enhancedGui.objectEvents.EventFocus;
 import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.ObjectModifyType;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;

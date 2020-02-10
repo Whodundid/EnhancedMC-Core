@@ -1,6 +1,6 @@
 package com.Whodundid.core.enhancedGui.guiObjects.windows;
 
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
+import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.EUtil;

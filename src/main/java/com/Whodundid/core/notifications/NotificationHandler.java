@@ -3,6 +3,8 @@ package com.Whodundid.core.notifications;
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.notifications.baseObjects.EMCNotification;
+import com.Whodundid.core.util.storageUtil.EArrayList;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 import net.minecraft.client.Minecraft;
@@ -13,6 +15,9 @@ public class NotificationHandler {
 	
 	private static NotificationHandler instance = null;
 	protected Deque<NotificationObject> notificationQueue;
+	protected EArrayList<String> registeredNotifications = new EArrayList();
+	protected EArrayList<String> enabledNotifications = new EArrayList();
+	protected EArrayList<String> disabledNotifications = new EArrayList();
 	protected NotificationObject curNote = null;
 	protected long delayStart = 0l;
 	protected long delayTime = 300l;
@@ -64,5 +69,13 @@ public class NotificationHandler {
 	public void removeCurrentNotification() {
 		curNote = null;
 		delayStart = System.currentTimeMillis();
+	}
+	
+	public void registerNotificationType(String typeIn) {
+		registeredNotifications.addIfNotNullAndNotContains(typeIn);
+	}
+	
+	public void unregisterNotificationType(String typeIn) {
+		registeredNotifications.removeIfContains(typeIn);
 	}
 }

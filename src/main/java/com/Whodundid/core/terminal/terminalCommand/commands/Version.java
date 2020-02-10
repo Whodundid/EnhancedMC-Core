@@ -4,15 +4,17 @@ import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.terminal.TerminalCommandHandler;
 import com.Whodundid.core.terminal.gui.ETerminal;
-import com.Whodundid.core.terminal.terminalCommand.IConsoleCommand;
+import com.Whodundid.core.terminal.terminalCommand.ITerminalCommand;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraftforge.common.ForgeVersion;
+import net.minecraftforge.fml.common.Loader;
 
 //Author: Hunter Bragg
 
-public class Version implements IConsoleCommand {
+public class Version implements ITerminalCommand {
 	
 	@Override public String getName() { return "version"; }
 	@Override public boolean showInHelp() { return true; }
@@ -33,10 +35,19 @@ public class Version implements IConsoleCommand {
 			case "t":
 			case "term":
 			case "terminal": conIn.writeln("EMC Terminal Version: " + EnumChatFormatting.GREEN + TerminalCommandHandler.version, EColors.cyan); break;
+			
 			case "mc":
 			case "minecraft": conIn.writeln("Minecraft Version: " + EnumChatFormatting.GREEN + Minecraft.getMinecraft().getVersion(), EColors.cyan); break;
+			
 			case "forge":
-			case "minecraftforge": conIn.writeln("Minecraft Forge Version: " + EnumChatFormatting.GREEN + "1.8.9-11.15.1.2318", EColors.cyan); break;
+			case "minecraftforge": conIn.writeln("Minecraft Forge Version: " + EnumChatFormatting.GREEN + ForgeVersion.getVersion(), EColors.cyan); break;
+			
+			case "minecraftcoderpack":
+			case "mcp": conIn.writeln("Minecraft Coder Pack Version: " + EnumChatFormatting.GREEN + ForgeVersion.mcpVersion, EColors.cyan); break;
+			
+			case "forgemodloader":
+			case "fml": conIn.writeln("Forge Mod Loader Version: " + EnumChatFormatting.GREEN + Loader.instance().getFMLVersionString(), EColors.cyan); break;
+			
 			default:
 				SubMod mod = RegisteredSubMods.getModByAlias(arg);
 				if (mod != null) {

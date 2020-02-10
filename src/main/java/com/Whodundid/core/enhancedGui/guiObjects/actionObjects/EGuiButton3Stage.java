@@ -1,7 +1,8 @@
-package com.Whodundid.core.enhancedGui.guiObjects.basicObjects;
+package com.Whodundid.core.enhancedGui.guiObjects.actionObjects;
 
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.subMod.SubMod;
+import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.ModSetting;
@@ -77,9 +78,9 @@ public class EGuiButton3Stage extends EGuiButton {
 			if (stages != null) {
 				for (int i = 0; i < stages.size() && i < 3; i++) {
 					switch (i) {
-					case 0: setStage0(stages.get(i)); break;
-					case 1: setStage1(stages.get(i)); break;
-					case 2: setStage2(stages.get(i)); break;
+					case 0: setStage0(EUtil.capitalFirst(stages.get(i))); break;
+					case 1: setStage1(EUtil.capitalFirst(stages.get(i))); break;
+					case 2: setStage2(EUtil.capitalFirst(stages.get(i))); break;
 					}
 				}
 			}

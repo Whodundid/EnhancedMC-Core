@@ -36,7 +36,7 @@ public class ETerminal extends WindowParent {
 	public void initGui() {
 		setObjectName("EMC Terminal" + (EnhancedMC.isOpMode() ? " +" : ""));
 		setDimensions(300, 153);
-		setMinDims(70, 25);
+		setMinDims(70, 32);
 		setResizeable(true);
 		super.initGui();
 	}
@@ -122,7 +122,7 @@ public class ETerminal extends WindowParent {
 				super.resize(xIn, yIn, areaIn);
 				
 				lines.forEach(l -> history.addTextLine(l));
-				history.getVScrollBar().setScrollBarPos(vPos);
+				history.getVScrollBar().onResizeUpdate(vPos, xIn, yIn, areaIn);
 				history.getHScrollBar().onResizeUpdate(hPos, xIn, yIn, areaIn);
 				inputField.setText(text);
 			}

@@ -102,5 +102,4 @@ public abstract class NotificationObject extends WindowParent {
 	public WindowParent getAttentionObject() { return attentionObject; }
 
 	public NotificationObject setAttentionObject(WindowParent objIn) { attentionObject = objIn; return this; }
-
 }

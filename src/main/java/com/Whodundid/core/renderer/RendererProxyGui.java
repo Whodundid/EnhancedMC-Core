@@ -1,6 +1,7 @@
 package com.Whodundid.core.renderer;
 
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.coreSubMod.EMCMod;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.google.common.collect.Lists;
 import java.io.IOException;
@@ -51,9 +52,12 @@ public class RendererProxyGui extends GuiChat implements IRendererProxy {
 	public void drawScreen(int mXIn, int mYIn, float ticks) {
 		mX = mXIn;
 		mY = mYIn;
-		if (!ignoreEmpty && renderer.getObjects().isEmpty()) {
-			mc.displayGuiScreen(null);
-			mc.setIngameFocus();
+		
+		if (!ignoreEmpty && EMCMod.closeHudWhenEmpty.get()) {
+			if (renderer.getObjects().isEmpty()) {
+				mc.displayGuiScreen(null);
+				mc.setIngameFocus();
+			}
 		}
 	}
 

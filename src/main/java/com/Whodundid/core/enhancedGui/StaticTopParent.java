@@ -1,8 +1,9 @@
 package com.Whodundid.core.enhancedGui;
 
 import com.Whodundid.core.coreEvents.emcEvents.SubModCalloutEvent;
+import com.Whodundid.core.coreSubMod.EMCMod;
+import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiUtil.EGui;
 import com.Whodundid.core.enhancedGui.objectEvents.EventFocus;
 import com.Whodundid.core.enhancedGui.objectEvents.EventKeyboard;
@@ -24,6 +25,7 @@ import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 import java.util.Deque;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
 import org.lwjgl.input.Keyboard;
 
 //Author: Hunter Bragg
@@ -83,9 +85,9 @@ public class StaticTopParent extends EGui {
 			if (p != null) { p.mouseScrolled(change); }
 			else { obj.mouseScrolled(change); }
 		} else { //if there were no objects under the mouse, scroll the chat
-			if (RegisteredSubMods.isModRegistered(SubModType.ENHANCEDCHAT)) {
-				SubModCalloutEvent callout = new SubModCalloutEvent(objIn, "has chat window"); // I AM NOT SURE IF THIS ACTUALLY ACCOMPLISHED ANYTHING!
-				if (MinecraftForge.EVENT_BUS.post(callout)) {
+			if (RegisteredSubMods.isModRegEn(SubModType.ENHANCEDCHAT) && EMCMod.drawChatOnHud.get().equals("Full")) {
+				SubModCalloutEvent callout = new SubModCalloutEvent(objIn, "EnhancedChat: has chat window"); // I AM NOT SURE IF THIS ACTUALLY ACCOMPLISHED ANYTHING!
+				if (!MinecraftForge.EVENT_BUS.post(callout)) {
 					if (!isShiftKeyDown()) { change *= 7; }
 					mc.ingameGUI.getChatGUI().scroll(change);
 				}
@@ -102,6 +104,7 @@ public class StaticTopParent extends EGui {
 		}
 		IEnhancedGuiObject fo = objIn.getFocusedObject();
 		if (fo != null && fo != objIn) { fo.keyPressed(Keyboard.getEventCharacter(), Keyboard.getEventKey()); }
+		if (fo == null || fo == objIn) { if (RegisteredSubMods.isModRegEn(SubModType.ENHANCEDCHAT)) { RegisteredSubMods.getMod(SubModType.ENHANCEDCHAT).keyEvent(new KeyInputEvent()); } }
 	}
 	/** Notify the focused object that the keyboard just had a key released. */
 	public static void keyReleased(IEnhancedTopParent objIn, char typedChar, int keyCode) {

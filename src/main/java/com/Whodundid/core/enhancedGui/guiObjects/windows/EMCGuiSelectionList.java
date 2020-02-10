@@ -37,7 +37,7 @@ public class EMCGuiSelectionList extends EGuiSelectionList {
 			boolean flag = ((EMCMod) RegisteredSubMods.getMod(SubModType.CORE)).enableTerminal.get();
 			if (EnhancedMC.isDebugMode() || flag) {
 				list.add(EnumChatFormatting.GRAY + "EMC Debug Guis", null);
-				if (EnhancedMC.isDebugMode() && EnhancedMC.isUserDev()) {
+				if (EnhancedMC.isDebugMode() || EnhancedMC.isUserDev()) {
 					list.add(EnumChatFormatting.LIGHT_PURPLE + "Experiment Gui", new StorageBox<Class, StorageBox<Class[], Object[]>>(ExperimentGui.class, null));
 				}
 				if (flag) {

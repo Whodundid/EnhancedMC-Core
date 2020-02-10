@@ -1,7 +1,7 @@
 package com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header;
 
 import com.Whodundid.core.coreSubMod.EMCResources;
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
+import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiUtil.EObjectGroup;
 import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.ObjectModifyType;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
@@ -20,6 +20,7 @@ import org.lwjgl.input.Mouse;
 
 public class EGuiHeader extends EnhancedGuiObject {
 	
+	public static int defaultHeight = 19;
 	public EGuiButton fileUpButton, closeButton, pinButton;
 	public boolean fullClose = false;
 	public boolean drawDefault = true;
@@ -28,6 +29,7 @@ public class EGuiHeader extends EnhancedGuiObject {
 	public int borderColor = 0xff000000;
 	public int mainColor = 0xff2D2D2D;
 	public int titleColor = 0xb2b2b2;
+	public int titleOffset = 0;
 	protected boolean drawBackground = true;
 	protected boolean drawHeader = true;
 	protected boolean drawParentFocus = true;
@@ -36,7 +38,7 @@ public class EGuiHeader extends EnhancedGuiObject {
 	protected IWindowParent window;
 	
 	protected EGuiHeader() {}
-	public EGuiHeader(IEnhancedGuiObject parentIn) { this(parentIn, true, 19, ""); }
+	public EGuiHeader(IEnhancedGuiObject parentIn) { this(parentIn, true, defaultHeight, ""); }
 	public EGuiHeader(IEnhancedGuiObject parentIn, boolean drawDefaultIn, int headerHeight) { this(parentIn, drawDefaultIn, headerHeight, ""); }
 	public EGuiHeader(IEnhancedGuiObject parentIn, boolean drawDefaultIn, int headerHeight, String titleIn) {
 		if (parentIn != null) {
@@ -54,10 +56,14 @@ public class EGuiHeader extends EnhancedGuiObject {
 			if (titleIn.isEmpty()) {
 				title = getParent().getObjectName();
 			}
+			else { title = titleIn; }
 			
 			EObjectGroup group = new EObjectGroup(getParent());
 			group.addObject(this, fileUpButton, pinButton, closeButton);
 			setObjectGroup(group);
+		}
+		else {
+			title = titleIn;
 		}
 	}
 	
@@ -103,7 +109,7 @@ public class EGuiHeader extends EnhancedGuiObject {
 		if (drawHeader) {
 			boolean anyFocus = false;
 			if (drawParentFocus) {
-				IWindowParent p = getWindowParent();
+				IEnhancedGuiObject p = drawDefault ? getWindowParent() : getParent();
 				if (p != null) {
 					if (p.hasFocus()) { anyFocus = true; }
 					else {
@@ -122,7 +128,7 @@ public class EGuiHeader extends EnhancedGuiObject {
 			
 			scissor(startX + 1, startY + 1, endX - 1, endY - 1);
 			{
-				if (drawTitle) { drawString(title, startX + 4, startY + height / 2 - 3, titleColor); }
+				if (drawTitle) { drawString(title, startX + 4 + titleOffset, startY + height / 2 - 3, titleColor); }
 				super.drawObject(mX, mY, ticks);
 			}
 			endScissor();
@@ -233,6 +239,7 @@ public class EGuiHeader extends EnhancedGuiObject {
 	public EGuiHeader setBorderColor(int colorIn) { borderColor = colorIn; return this; }
 	public EGuiHeader setMainColor(int colorIn) { mainColor = colorIn; return this; }
 	public EGuiHeader setTitle(String stringIn) { title = stringIn; return this; }
+	public EGuiHeader setTitleOffset(int offsetIn) { titleOffset = offsetIn; return this; }
 	public EGuiHeader setDrawTitle(boolean val) { drawTitle = val; return this; }
 	public EGuiHeader setDrawBackground(boolean val) { drawBackground = val; return this; }
 	public EGuiHeader setDrawHeader(boolean val) { drawHeader = val; return this; }

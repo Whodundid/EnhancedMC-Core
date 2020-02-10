@@ -3,14 +3,14 @@ package com.Whodundid.core.terminal.terminalCommand.commands;
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.terminal.TerminalCommandHandler;
 import com.Whodundid.core.terminal.gui.ETerminal;
-import com.Whodundid.core.terminal.terminalCommand.IConsoleCommand;
+import com.Whodundid.core.terminal.terminalCommand.ITerminalCommand;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import net.minecraft.util.EnumChatFormatting;
 
 //Author: Hunter Bragg
 
-public class Help implements IConsoleCommand {
+public class Help implements ITerminalCommand {
 	
 	TerminalCommandHandler handler;
 	
@@ -26,7 +26,7 @@ public class Help implements IConsoleCommand {
 		handler = EnhancedMC.getTerminalHandler();
 		if (args.size() == 0) {
 			conIn.writeln("Available commands:", EColors.cyan);
-			for (IConsoleCommand command : handler.getCommandList()) {
+			for (ITerminalCommand command : handler.getCommandList()) {
 				if (command.showInHelp()) {
 					if (command.getAliases() == null) {
 						conIn.writeln("-" + command.getName(), 0xb2b2b2);
@@ -47,7 +47,7 @@ public class Help implements IConsoleCommand {
 		} else if (args.size() == 1) {
 			String commandName = args.get(0);
 			if (handler.getCommandNames().contains(commandName)) {
-				IConsoleCommand command = handler.getCommand(commandName);
+				ITerminalCommand command = handler.getCommand(commandName);
 				if (command.showInHelp()) {
 					conIn.writeln(command.getHelpInfo(runVisually), 0xffff00);
 					if (command.getUsage() != null && !command.getUsage().isEmpty()) {

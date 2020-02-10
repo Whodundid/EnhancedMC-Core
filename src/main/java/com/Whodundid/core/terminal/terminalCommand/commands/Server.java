@@ -2,7 +2,7 @@ package com.Whodundid.core.terminal.terminalCommand.commands;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.terminal.gui.ETerminal;
-import com.Whodundid.core.terminal.terminalCommand.IConsoleCommand;
+import com.Whodundid.core.terminal.terminalCommand.ITerminalCommand;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import java.net.InetAddress;
@@ -25,7 +25,7 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 
 //Author: Hunter Bragg
 
-public class Server implements IConsoleCommand {
+public class Server implements ITerminalCommand {
 
 	@Override public String getName() { return "server"; }
 	@Override public boolean showInHelp() { return EnhancedMC.isOpMode(); }

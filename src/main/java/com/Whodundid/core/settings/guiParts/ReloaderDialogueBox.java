@@ -1,7 +1,7 @@
 package com.Whodundid.core.settings.guiParts;
 
+import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.textArea.EGuiTextArea;
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.windows.EGuiDialogueBox;
 import com.Whodundid.core.renderer.EnhancedMCRenderer;
 import com.Whodundid.core.subMod.SubMod;
@@ -91,4 +91,3 @@ public class ReloaderDialogueBox extends EGuiDialogueBox {
 		}
 	}
 }
-

@@ -4,7 +4,7 @@ import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.terminal.gui.ETerminal;
-import com.Whodundid.core.terminal.terminalCommand.IConsoleCommand;
+import com.Whodundid.core.terminal.terminalCommand.ITerminalCommand;
 import com.Whodundid.core.terminal.terminalCommand.commands.*;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
@@ -18,9 +18,9 @@ public class TerminalCommandHandler {
 
 	public static final String version = "1.0";
 	private static TerminalCommandHandler instance;
-	protected StorageBoxHolder<String, IConsoleCommand> commands;
-	protected EArrayList<IConsoleCommand> commandList;
-	protected EArrayList<IConsoleCommand> customCommandList;
+	protected StorageBoxHolder<String, ITerminalCommand> commands;
+	protected EArrayList<ITerminalCommand> commandList;
+	protected EArrayList<ITerminalCommand> customCommandList;
 	public static boolean drawSpace = true;
 	public static EArrayList<String> cmdHistory = new EArrayList();
 	
@@ -64,15 +64,19 @@ public class TerminalCommandHandler {
 		registerCommand(new WhoAmI(), conIn, runVisually);
 		
 		registerCommand(new OpControl(), conIn, false);
+		
 	}
 	
 	private void registerSubModCommands(boolean runVisually) { registerSubModCommands(null, runVisually); }
 	private void registerSubModCommands(ETerminal conIn, boolean runVisually) {
-		for (SubMod m : RegisteredSubMods.getModsList()) { m.terminalRegisterCommandEvent(conIn, runVisually); }
+		for (SubMod m : RegisteredSubMods.getModsList()) {
+			registerCommand(new SubModTerminalCommands(m), conIn, runVisually);
+			m.terminalRegisterCommandEvent(conIn, runVisually);
+		}
 	}
 	
-	public void registerCommand(IConsoleCommand command, boolean runVisually) { registerCommand(command, null, runVisually); }
-	public void registerCommand(IConsoleCommand command, ETerminal conIn, boolean runVisually) {
+	public void registerCommand(ITerminalCommand command, boolean runVisually) { registerCommand(command, null, runVisually); }
+	public void registerCommand(ITerminalCommand command, ETerminal conIn, boolean runVisually) {
 		commandList.add(command);
 		commands.put(command.getName(), command);
 		if (conIn != null & runVisually) { conIn.writeln("Registering command call: " + command.getName(), 0xffff00); }
@@ -96,7 +100,7 @@ public class TerminalCommandHandler {
 				commandArguments.add(commandParts[i]);
 			}
 			if (commands.getBoxWithObj(baseCommand) != null) {
-				IConsoleCommand command = commands.getBoxWithObj(baseCommand).getValue();
+				ITerminalCommand command = commands.getBoxWithObj(baseCommand).getValue();
 				
 				if (command == null) {
 					conIn.error("Unrecognized command.");
@@ -129,14 +133,14 @@ public class TerminalCommandHandler {
 	
 	public synchronized void reregisterAllCommands(boolean runVisually) { reregisterAllCommands(null, runVisually); }
 	public synchronized void reregisterAllCommands(ETerminal conIn, boolean runVisually) {
-		Iterator<IConsoleCommand> a = commandList.iterator();
+		Iterator<ITerminalCommand> a = commandList.iterator();
 		while (a.hasNext()) {
 			String commandName = a.next().getName();
 			if (conIn != null & runVisually) { conIn.writeln("Unregistering command: " + commandName, 0xb2b2b2); }
 			a.remove();
 		}
 		
-		Iterator<StorageBox<String, IConsoleCommand>> b = commands.iterator();
+		Iterator<StorageBox<String, ITerminalCommand>> b = commands.iterator();
 		while (b.hasNext()) {
 			String commandName = b.next().getObject();
 			if (conIn != null & runVisually) { conIn.writeln("Unregistering command alias: " + commandName, 0xb2b2b2); }
@@ -150,15 +154,15 @@ public class TerminalCommandHandler {
 		registerSubModCommands(conIn, runVisually);
 	}
 	
-	public IConsoleCommand getCommand(String commandName) {
-		StorageBox<String, IConsoleCommand> box = commands.getBoxWithObj(commandName);
+	public ITerminalCommand getCommand(String commandName) {
+		StorageBox<String, ITerminalCommand> box = commands.getBoxWithObj(commandName);
 		if (box != null) {
 			return commands.getBoxWithObj(commandName).getValue();
 		}
 		return null;
 	}
 	
-	public EArrayList<IConsoleCommand> getCommandList() { return commandList; }
+	public EArrayList<ITerminalCommand> getCommandList() { return commandList; }
 	public List<String> getCommandNames() { return commands.getObjects(); }
 	public EArrayList<String> getHistory() { return cmdHistory; }
 	public TerminalCommandHandler clearHistory() { cmdHistory.clear(); return this; }

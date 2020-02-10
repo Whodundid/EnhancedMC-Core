@@ -2,14 +2,14 @@ package com.Whodundid.core.terminal.terminalCommand.commands;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.terminal.gui.ETerminal;
-import com.Whodundid.core.terminal.terminalCommand.IConsoleCommand;
+import com.Whodundid.core.terminal.terminalCommand.ITerminalCommand;
 import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.mathUtil.NumberUtil;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
 //Author: Hunter Bragg
 
-public class ForLoop implements IConsoleCommand {
+public class ForLoop implements ITerminalCommand {
 
 	@Override public String getName() { return "for"; }
 	@Override public boolean showInHelp() { return EnhancedMC.isOpMode(); }

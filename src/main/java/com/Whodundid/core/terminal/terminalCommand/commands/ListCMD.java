@@ -7,7 +7,7 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.subMod.RegisteredSubMods;
 import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.terminal.gui.ETerminal;
-import com.Whodundid.core.terminal.terminalCommand.IConsoleCommand;
+import com.Whodundid.core.terminal.terminalCommand.ITerminalCommand;
 import com.Whodundid.core.util.chatUtil.EChatUtil;
 import com.Whodundid.core.util.miscUtil.NetPlayerComparator;
 import com.Whodundid.core.util.renderUtil.EColors;
@@ -20,10 +20,12 @@ import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 
 //Author: Hunter Bragg
 
-public class ListCMD implements IConsoleCommand {
+public class ListCMD implements ITerminalCommand {
 
 	@Override public String getName() { return "list"; }
 	@Override public boolean showInHelp() { return true; }
@@ -41,6 +43,9 @@ public class ListCMD implements IConsoleCommand {
 		else if (args.size() > 1) { conIn.error("Too many arguments!"); }
 		else {
 			switch (args.get(0)) {
+			case "c":
+			case "command":
+			case "commands": listCommands(conIn, args, runVisually); break;
 			case "m":
 			case "mods":
 			case "submods": listMods(conIn, args, runVisually); break;
@@ -58,10 +63,45 @@ public class ListCMD implements IConsoleCommand {
 		}
 	}
 	
+	private void listCommands(ETerminal conIn, EArrayList<String> args, boolean runVisually) {
+		EArrayList<ITerminalCommand> list = EnhancedMC.getTerminalHandler().getCommandList();
+		
+		if (list.isEmpty()) { conIn.info("The command list appears to be empty, this shouldn't be possible :)"); }
+		else {
+			conIn.writeln("Listing all terminal commands...", 0x00ffff);
+			for (ITerminalCommand c : list) {
+				String out = "-" + c.getName();
+				
+				//add the aliases to the output if running visually
+				if (runVisually && c.getAliases() != null && c.getAliases().isNotEmpty()) {
+					out += ": " + EnumChatFormatting.GREEN;
+					for (String s : c.getAliases()) {
+						out += s + ", ";
+					}
+					out = out.substring(0, out.length() - 2);
+				}
+				
+				conIn.writeln(out, 0xb2b2b2);
+			}
+		}
+	}
+	
 	private void listMods(ETerminal conIn, EArrayList<String> args, boolean runVisually) {
 		EArrayList<SubMod> mods = RegisteredSubMods.getModsList();
 		if (mods != null) {
-			conIn.writeln("Listing all EMC Submods...", 0x00ffff);
+			conIn.writeln("Listing all Minecraft mods...", 0x00ffff);
+			int modCount = 0;
+			for (ModContainer c : Loader.instance().getModList()) {
+				Object m = c.getMod();
+				
+				if (!(m instanceof SubMod)) {
+					conIn.writeln("-" + c.getName() + ": " + EnumChatFormatting.WHITE + c.getDisplayVersion(), EColors.lgray);
+					modCount++;
+				}
+			}
+			conIn.writeln("Total mods: " + modCount, 0xffff00);
+			conIn.writeln();
+			conIn.writeln("Listing all EMC submods...", 0x00ffff);
 			for (SubMod m : RegisteredSubMods.getModsList()) {
 				EColors c = m.isIncompatible() ? EColors.lightRed : EColors.lgray;
 				String s = "-" + m.getName() + ": " + (m.isEnabled() ? EnumChatFormatting.GREEN + "Enabled" : EnumChatFormatting.RED + "Disabled");
@@ -78,7 +118,7 @@ public class ListCMD implements IConsoleCommand {
 				
 				conIn.writeln(s, c);
 			}
-			conIn.writeln("Total mods: " + mods.size(), 0xffff00);
+			conIn.writeln("Total sub mods: " + mods.size(), 0xffff00);
 		} else { conIn.error("Unknown error!"); }
 	}
 	
