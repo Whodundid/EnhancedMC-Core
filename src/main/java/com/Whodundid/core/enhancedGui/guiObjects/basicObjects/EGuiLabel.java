@@ -56,6 +56,7 @@ public class EGuiLabel extends EnhancedGuiObject {
 	public EGuiLabel setDisplayString(String stringIn) {
 		displayString = stringIn;
 		if (wordWrap) { wordWrappedLines = EUtil.createWordWrapString(displayString, widthMax); }
+		setDimensions(fontRenderer.getStringWidth(stringIn), fontRenderer.FONT_HEIGHT);
 		return this;
 	}
 	
