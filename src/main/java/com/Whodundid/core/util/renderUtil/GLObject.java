@@ -22,6 +22,7 @@ import org.lwjgl.opengl.GL11;
 
 //Author: Hunter Bragg
 
+/** An extension to the Gui class in Minecraft that contains many more OpenGL drawing methods and helpful functions. */
 public class GLObject {
 	
 	protected static Minecraft mc = Minecraft.getMinecraft();
@@ -39,26 +40,31 @@ public class GLObject {
 	//opengl drawing functions
 	//------------------------
 	
+	/** Draws the toString representation of an object at the specified position. */
 	public static int drawString(Object o, double x, double y, EColors colorIn) { return drawString(o.toString(), x, y, colorIn.c()); }
 	public static int drawCenteredString(Object o, double x, double y, EColors colorIn) { return drawCenteredString(o.toString(), x, y, colorIn.c()); }
 	public static int drawStringWithShadow(Object o, double x, double y, EColors colorIn) { return drawStringWithShadow(o.toString(), x, y, colorIn.c()); }
 	public static int drawCenteredStringWithShadow(Object o, double x, double y, EColors colorIn) { return drawCenteredStringWithShadow(o.toString(), x, y, colorIn.c()); }
 	
+	/** Draws the toString representation of an object at the specified position. */
 	public static int drawString(Object o, double x, double y, int color) { return EnhancedMC.getFontRenderer().drawStringI(o.toString(), x, y, color); }
 	public static int drawCenteredString(Object o, double x, double y, int color) { return EnhancedMC.getFontRenderer().drawStringI(o.toString(), x - EnhancedMC.getFontRenderer().getStringWidth(o.toString()) / 2, y, color); }
 	public static int drawStringWithShadow(Object o, double x, double y, int color) { return EnhancedMC.getFontRenderer().drawStringWithShadowI(o.toString(), x, y, color); }
 	public static int drawCenteredStringWithShadow(Object o, double x, double y, int color) { return EnhancedMC.getFontRenderer().drawStringWithShadowI(o.toString(), x - EnhancedMC.getFontRenderer().getStringWidth(o.toString()) / 2, y, color); }
 	
+	/** Draws a String at the specified position. */
 	public static int drawString(String text, double x, double y, EColors colorIn) { return drawString(text, x, y, colorIn.c()); }
 	public static int drawCenteredString(String text, double x, double y, EColors colorIn) { return drawCenteredString(text, x, y, colorIn.c()); }
 	public static int drawStringWithShadow(String text, double x, double y, EColors colorIn) { return drawStringWithShadow(text, x, y, colorIn.c()); }
 	public static int drawCenteredStringWithShadow(String text, double x, double y, EColors colorIn) { return drawCenteredStringWithShadow(text, x, y, colorIn.c()); }
 	
+	/** Draws a String at the specified position. */
 	public static int drawString(String text, double x, double y, int color) { return EnhancedMC.getFontRenderer().drawStringI(text, x, y, color); }
 	public static int drawCenteredString(String text, double x, double y, int color) { return EnhancedMC.getFontRenderer().drawStringI(text, x - EnhancedMC.getFontRenderer().getStringWidth(text) / 2, y, color); }
 	public static int drawStringWithShadow(String text, double x, double y, int color) { return EnhancedMC.getFontRenderer().drawStringWithShadowI(text, x, y, color); }
 	public static int drawCenteredStringWithShadow(String text, double x, double y, int color) { return EnhancedMC.getFontRenderer().drawStringWithShadowI(text, x - EnhancedMC.getFontRenderer().getStringWidth(text) / 2, y, color); }
 	
+	/** Draws the toString representation of an object at the specified position. */
 	public static int drawStringC(Object o, double x, double y, EColors colorIn) { return drawStringC(o.toString(), x, y, colorIn.c()); }
 	public static int drawStringS(Object o, double x, double y, EColors colorIn) { return drawStringS(o.toString(), x, y, colorIn.c()); }
 	public static int drawStringCS(Object o, double x, double y, EColors colorIn) { return drawStringCS(o.toString(), x, y, colorIn.c()); }
@@ -66,6 +72,7 @@ public class GLObject {
 	public static int drawStringS(Object o, double x, double y, int color) { return drawStringWithShadow(o.toString(), x, y, color); }
 	public static int drawStringCS(Object o, double x, double y, int color) { return drawCenteredStringWithShadow(o.toString(), x, y, color); }
 	
+	/** Draws a String at the specified position. */
 	public static int drawStringC(String text, double x, double y, EColors colorIn) { return drawStringC(text, x, y, colorIn.c()); }
 	public static int drawStringS(String text, double x, double y, EColors colorIn) { return drawStringS(text, x, y, colorIn.c()); }
 	public static int drawStringCS(String text, double x, double y, EColors colorIn) { return drawStringCS(text, x, y, colorIn.c()); }
@@ -73,9 +80,12 @@ public class GLObject {
 	public static int drawStringS(String text, double x, double y, int color) { return drawStringWithShadow(text, x, y, color); }
 	public static int drawStringCS(String text, double x, double y, int color) { return drawCenteredStringWithShadow(text, x, y, color); }
 	
+	/** Draws a gradient covering the entire screen. */
 	protected void drawMenuGradient() { drawGradientRect(0, 0, res.getScaledWidth(), res.getScaledHeight(), -1072689136, -804253680); }
+	/** Draws a small window containing info on a creative tab. */
 	protected void drawCreativeTabHoveringText(String tabName, int mX, int mY) { drawHoveringText(Arrays.<String>asList(new String[] {tabName}), mX, mY); }
 	
+	/** Draws a small window containing info on an ItemStack. */
 	protected void renderToolTip(ItemStack stack, int x, int y) {
 		List<String> list = stack.getTooltip(mc.thePlayer, mc.gameSettings.advancedItemTooltips);
 		
@@ -86,6 +96,7 @@ public class GLObject {
 		drawHoveringText(list, x, y);
 	}
 	
+	/** Draws a small window with the specified text. */
 	protected void drawHoveringText(List<String> textLines, int mX, int mY) {
 		if (!textLines.isEmpty()) {
 			GlStateManager.disableDepth();
@@ -133,6 +144,39 @@ public class GLObject {
 		}
 	}
 	
+	/** Draws a line from point a to b with a variable thickness. */
+	public static void drawLine(double startX, double startY, double endX, double endY, EColors color) { drawLine(startX, startY, endX, endY, 2, color.c()); }
+	public static void drawLine(double startX, double startY, double endX, double endY, int color) { drawLine(startX, startY, endX, endY, 2, color); }
+	public static void drawLine(double startX, double startY, double endX, double endY, int thickness, EColors color) { drawLine(startX, startY, endX, endY, thickness, color.c()); }
+	public static void drawLine(double startX, double startY, double endX, double endY, int thickness, int color) {
+		if (startX < endX) {
+			double i = startX;
+			startX = endX;
+			endX = i;
+		}
+		
+		if (startY < endY) {
+			double j = startY;
+			startY = endY;
+			endY = j;
+		}
+		
+		Tessellator tessellator = Tessellator.getInstance();
+		WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+		GlStateManager.enableBlend();
+		GlStateManager.disableTexture2D();
+		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+		EGLHelper.setColor(color);
+		GL11.glLineWidth(thickness);
+		worldrenderer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
+		worldrenderer.pos(startX, startY, 0).endVertex();
+		worldrenderer.pos(endX, endY, 0).endVertex();
+		tessellator.draw();
+		GlStateManager.enableTexture2D();
+		GlStateManager.disableBlend();
+	}
+	
+	/** Draws a horizontal line with a thickness of 1. */
 	public static void drawHorizontalLine(double startX, double endX, double y, EColors color) { drawHorizontalLine(startX, endX, y, color.c()); }
 	public static void drawHorizontalLine(double startX, double endX, double y, int color) {
 		if (endX < startX) {
@@ -143,6 +187,7 @@ public class GLObject {
 		drawRect(startX, y, endX + 1, y + 1, color);
 	}
 	
+	/** Draws a vertical line with a thickness of 1. */
 	public static void drawVerticalLine(double x, double startY, double endY, EColors color) { drawVerticalLine(x, startY, endY, color.c()); }
 	public static void drawVerticalLine(double x, double startY, double endY, int color) {
 		if (endY < startY) {
@@ -153,6 +198,7 @@ public class GLObject {
 		drawRect(x, startY + 1, x + 1, endY, color);
 	}
 	
+	/** Draws a hollow circle expanding out from the center. */
 	public static void drawCircle(double posX, double posY, double radius, int detail, EColors color) { drawCircle(posX, posY, radius, detail, color.c()); }
 	public static void drawCircle(double posX, double posY, double radius, int detail, int color) {
 		GlStateManager.enableBlend();
@@ -171,6 +217,7 @@ public class GLObject {
 		GlStateManager.disableBlend();
 	}
 	
+	/** Draws a solid circle expanding out from the center. */
 	public static void drawFilledCircle(double posX, double posY, double radius, int detail, EColors color) { drawFilledCircle(posX, posY, radius, detail, color.c()); }
 	public static void drawFilledCircle(double posX, double posY, double radius, int detail, int color) {
 		GlStateManager.enableBlend();
@@ -194,6 +241,7 @@ public class GLObject {
 		GlStateManager.disableBlend();
 	}
 	
+	/** Draws a hollow ellipse expanding out from the center. */
 	public static void drawEllipse(double posX, double posY, double radiusX, double radiusY, int detail, EColors color) { drawEllipse(posX, posY, radiusX, radiusY, detail, color.c()); }
 	public static void drawEllipse(double posX, double posY, double radiusX, double radiusY, int detail, int color) {
 		GlStateManager.enableBlend();
@@ -212,6 +260,7 @@ public class GLObject {
 		GlStateManager.disableBlend();
 	}
 	
+	/** Draws a solid ellipse expanding out from the center. */
 	public static void drawFilledEllipse(double posX, double posY, double radiusX, double radiusY, int detail, EColors color) { drawFilledEllipse(posX, posY, radiusX, radiusY, detail, color.c()); }
 	public static void drawFilledEllipse(double posX, double posY, double radiusX, double radiusY, int detail, int color) {
 		GlStateManager.enableBlend();
@@ -235,6 +284,7 @@ public class GLObject {
 		GlStateManager.disableBlend();
 	}
 	
+	/** Draws a rectangle. */
 	public static void drawRect(double left, double top, double right, double bottom, EColors colorIn) { drawRect(left, top, right, bottom, colorIn.c()); }
 	public static void drawRect(double left, double top, double right, double bottom, int color) {
 		if (left < right) {
@@ -265,6 +315,16 @@ public class GLObject {
 		GlStateManager.disableBlend();
 	}
 	
+	/** Draws a hollow rectangle. */
+	public static void drawHRect(double left, double top, double right, double bottom, double borderWidth, EColors colorIn) { drawHRect(left, top, right, bottom, borderWidth, colorIn.c()); }
+	public static void drawHRect(double left, double top, double right, double bottom, double borderWidth, int color) {
+		drawRect(left, top, left + borderWidth, bottom, color); //left
+		drawRect(left, top, right, top + borderWidth, color); //top
+		drawRect(right - borderWidth, top, right, bottom, color); //right
+		drawRect(left, bottom - borderWidth, right, bottom, color); //bottom
+	}
+	
+	/** Draws a rectangle with a gradient. Ripped straight from Gui. */
 	protected void drawGradientRect(double left, double top, double right, double bottom, EColors startColor, EColors endColor) { drawGradientRect(left, top, right, bottom, startColor.c(), endColor.c()); }
 	protected void drawGradientRect(double left, double top, double right, double bottom, int startColor, int endColor) {
 		float f = (startColor >> 24 & 255) / 255.0F;
@@ -294,6 +354,7 @@ public class GLObject {
 		GlStateManager.enableTexture2D();
 	}
 	
+	/** Draws a rectangle with texture offset capability. */
 	public void drawTexturedModalRect(double x, double y, double oX, double oY, double w, double h) {
 		float f = 0.00390625F;
 		float f1 = 0.00390625F;
@@ -307,6 +368,7 @@ public class GLObject {
 		tessellator.draw();
 	}
 	
+	/** Draws a rectangle with texture offset capability. */
 	public void drawTexturedModalRect(float x, float y, int minU, int minV, int maxU, int maxV) {
 		float f = 0.00390625F;
 		float f1 = 0.00390625F;
@@ -320,6 +382,7 @@ public class GLObject {
 		tessellator.draw();
 	}
 	
+	/** Draws a rectangle with texture offset capability. */
 	public void drawTexturedModalRect(float x, float y, float minU, float minV, float maxU, float maxV) {
 		float f = 0.00390625F;
 		Tessellator tessellator = Tessellator.getInstance();
@@ -332,6 +395,7 @@ public class GLObject {
 		tessellator.draw();
 	}
 	
+	/** Draws a rectangle with dimensions based on a TextureAtlasSprite object. */
 	public void drawTexturedModalRect(double x, double y, TextureAtlasSprite sprite, int wIn, int hIn) {
 		Tessellator tessellator = Tessellator.getInstance();
 		WorldRenderer worldrenderer = tessellator.getWorldRenderer();
@@ -343,6 +407,7 @@ public class GLObject {
 		tessellator.draw();
 	}
 	
+	/** Draws a rectangle with texture offset and texture scaling capability. */
 	public static void drawModalRectWithCustomSizedTexture(int x, int y, float u, float v, int w, int h, float textureWidth, float textureHeight) {
 		float f = 1.0F / textureWidth;
 		float f1 = 1.0F / textureHeight;
@@ -356,6 +421,7 @@ public class GLObject {
 		tessellator.draw();
 	}
 	
+	/** Draws a rectangle with texture offset and texture scaling capability. */
 	public static void drawScaledCustomSizeModalRect(int x, int y, float u, float v, int uWidth, int vHeight, int w, int h, float tileWidth, float tileHeight) {
 		float f = 1.0F / tileWidth;
 		float f1 = 1.0F / tileHeight;
@@ -369,6 +435,7 @@ public class GLObject {
 		tessellator.draw();
 	}
 	
+	/** Performs a scissoring on the specified region. IMPORTANT: ALWAYS USE 'endScissor' OR gl11.disable(gl_scissor) AFTER THIS TO PREVENT ERRORS!*/
 	public static void scissor(int startX, int startY, int endX, int endY) { scissor(startX, startY, endX, endY, false); }
 	public static void scissor(int startX, int startY, int endX, int endY, boolean useGlY) {
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
@@ -380,8 +447,10 @@ public class GLObject {
 		int y = useGlY ? startY * scale : (Display.getHeight() - (startY * scale) - h);
 		if (w >= 0 && h >= 0) { GL11.glScissor(x, y, w, h); }
 	}
+	/** Stops scissoring an area. */
 	public static void endScissor() { GL11.glDisable(GL11.GL_SCISSOR_TEST); }
 	
+	/** A simplified texture draw method. */
 	public static void drawTexture(double x, double y, double w, double h) { drawTexture(x, y, w, h, 0, 0, w, h, 0.0D); }
 	public static void drawTexture(double x, double y, double w, double h, double oX, double oY, double tW, double tH) { drawTexture(x, y, w, h, oX, oY, tW, tH, 0.0D); }
 	public static void drawTexture(double x, double y, double w, double h, double oX, double oY, double tW, double tH, double z) {
