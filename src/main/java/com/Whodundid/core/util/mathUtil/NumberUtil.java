@@ -24,6 +24,10 @@ public class NumberUtil {
 		return true;
 	}
 	
+	public static double distance(int x1, int y1, int x2, int y2) {
+		return Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
+	}
+	
 	public static int getDistance(StorageBox<Integer, Integer> point1, StorageBox<Integer, Integer> point2) {
 		if (point1 != null && point2 != null) {
 			if (point1.getObject() != null && point1.getValue() != null && point2.getObject() != null && point2.getValue() != null) {
@@ -32,7 +36,7 @@ public class NumberUtil {
 				int x2 = point2.getObject();
 				int y2 = point2.getValue();
 				
-				return (int) Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
+				return (int) distance(x1, y1, x2, y2);
 			}
 		}
 		return 0;
