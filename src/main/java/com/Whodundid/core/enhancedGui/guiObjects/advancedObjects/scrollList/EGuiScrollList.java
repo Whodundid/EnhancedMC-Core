@@ -96,7 +96,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 				//		(height - (isHScrollDrawn() ? 6 : 2)) * scale);
 				
 				//draw list contents scissored
-				scissor(startX + 1, startY + 1, endX - (isVScrollDrawn() ? verticalScroll.width + 1 : 1), endY - (isHScrollDrawn() ? horizontalScroll.height + 1 : 1));
+				scissor(startX + 1, startY + 1, endX - (isVScrollDrawn() ? verticalScroll.width + 2 : 1), endY - (isHScrollDrawn() ? horizontalScroll.height + 2 : 1));
 				{ //scissor start
 					
 					//draw background
@@ -310,7 +310,8 @@ public class EGuiScrollList extends EnhancedGuiObject {
 		return this;
 	}
 	
-	public EGuiScrollList addObjectToList(IEnhancedGuiObject... objsIn) {
+	public EGuiScrollList addObjectToList(IEnhancedGuiObject... objsIn) { return addObjectToList(true, objsIn); }
+	public EGuiScrollList addObjectToList(boolean addToObject, IEnhancedGuiObject... objsIn) {
 		for (IEnhancedGuiObject o : objsIn) {
 			try {
 				if (o != null && o != this) {
@@ -341,7 +342,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 					o.setInitialPosition(o.getDimensions().startX, o.getDimensions().startY);
 					
 					listObjsToBeAdded.add(o);
-					objsToBeAdded.add(o);
+					if (addToObject) { objsToBeAdded.add(o); }
 				}
 			} catch (Exception e) { e.printStackTrace(); }
 		}
@@ -410,7 +411,10 @@ public class EGuiScrollList extends EnhancedGuiObject {
 		}
 		if (isHScrollDrawn() && isVScrollDrawn()) {
 			EDimension h = horizontalScroll.getDimensions();
+			EDimension v = verticalScroll.getDimensions();
+			
 			horizontalScroll.setDimensions(h.startX, h.startY, width - verticalScroll.width - 3, h.height);
+			verticalScroll.setDimensions(v.startX, v.startY, v.width, height - 2 - (isResetDrawn() ? 4 : 0));
 		}
 	}
 	
@@ -431,4 +435,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 	public boolean isResetDrawn() { return resetVis && (isVScrollDrawn() || isHScrollDrawn()); }
 	public EGuiScrollBar getVScrollBar() { return verticalScroll; }
 	public EGuiScrollBar getHScrollBar() { return horizontalScroll; }
+	public EArrayList<IEnhancedGuiObject> getDrawnObjects() { return drawnListObjects; }
+	public EArrayList<IEnhancedGuiObject> getListObjects() { return listContents; }
+	public EArrayList<IEnhancedGuiObject> getAddingListObjects() { return listObjsToBeAdded; }
 }
