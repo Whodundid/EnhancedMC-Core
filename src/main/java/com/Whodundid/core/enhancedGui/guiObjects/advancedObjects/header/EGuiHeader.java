@@ -25,11 +25,13 @@ public class EGuiHeader extends EnhancedGuiObject {
 	public boolean fullClose = false;
 	public boolean drawDefault = true;
 	public boolean drawTitle = true;
+	public boolean titleCentered = false;
 	public String title = "";
 	public int borderColor = 0xff000000;
 	public int mainColor = 0xff2D2D2D;
 	public int titleColor = 0xb2b2b2;
 	public int titleOffset = 0;
+	protected boolean headerMoveable = true;
 	protected boolean drawBackground = true;
 	protected boolean drawHeader = true;
 	protected boolean drawParentFocus = true;
@@ -128,7 +130,14 @@ public class EGuiHeader extends EnhancedGuiObject {
 			
 			scissor(startX + 1, startY + 1, endX - 1, endY - 1);
 			{
-				if (drawTitle) { drawString(title, startX + 4 + titleOffset, startY + height / 2 - 3, titleColor); }
+				if (drawTitle) {
+					double tx = startX + 4 + titleOffset;
+					if (titleCentered) {
+						double tw = fontRenderer.getStringWidth(title);
+						tx = startX + (width / 2 - tw / 2) + titleOffset + 1;
+					}
+					drawString(title, tx, startY + height / 2 - 3, titleColor);
+				}
 				super.drawObject(mX, mY, ticks);
 			}
 			endScissor();
@@ -172,8 +181,10 @@ public class EGuiHeader extends EnhancedGuiObject {
 		getParent().bringToFront();
 		IEnhancedTopParent topParent = getTopParent();
 		if (button == 0) {
-			topParent.setModifyingObject(parent, ObjectModifyType.Move);
-			topParent.setModifyMousePos(mX, mY);
+			if (headerMoveable) {
+				topParent.setModifyingObject(parent, ObjectModifyType.Move);
+				topParent.setModifyMousePos(mX, mY);
+			}
 		}
 		else { topParent.clearModifyingObject(); }
 	}
@@ -235,11 +246,13 @@ public class EGuiHeader extends EnhancedGuiObject {
 		return this;
 	}
 	
+	public EGuiHeader setMoveable(boolean val) { headerMoveable = val; return this; }
 	public EGuiHeader setTitleColor(int colorIn) { titleColor = colorIn; return this; }
 	public EGuiHeader setBorderColor(int colorIn) { borderColor = colorIn; return this; }
 	public EGuiHeader setMainColor(int colorIn) { mainColor = colorIn; return this; }
 	public EGuiHeader setTitle(String stringIn) { title = stringIn; return this; }
 	public EGuiHeader setTitleOffset(int offsetIn) { titleOffset = offsetIn; return this; }
+	public EGuiHeader setDrawTitleCentered(boolean val) { titleCentered = val; return this; }
 	public EGuiHeader setDrawTitle(boolean val) { drawTitle = val; return this; }
 	public EGuiHeader setDrawBackground(boolean val) { drawBackground = val; return this; }
 	public EGuiHeader setDrawHeader(boolean val) { drawHeader = val; return this; }
@@ -250,4 +263,5 @@ public class EGuiHeader extends EnhancedGuiObject {
 	public int getTitleColor() { return titleColor; }
 	public String getTitle() { return title; }
 	public boolean isParentFocusDrawn() { return drawParentFocus; }
+	public boolean isHeaderMoveable() { return headerMoveable; }
 }
