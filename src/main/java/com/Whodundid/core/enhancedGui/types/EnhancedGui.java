@@ -543,6 +543,8 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override public EArrayList<IEnhancedGuiObject> getRemovingObjects() { return objsToBeRemoved; }
 	@Override public EArrayList<IEnhancedGuiObject> getAllChildren() { return StaticEGuiObject.getAllChildren(this); }
 	@Override public EArrayList<IEnhancedGuiObject> getAllChildrenUnderMouse() { return StaticEGuiObject.getAllChildrenUnderMouse(this, mX, mY); }
+	@Override public boolean containsObject(IEnhancedGuiObject object) { return getCombinedChildren().contains(object); }
+	@Override public EArrayList<IEnhancedGuiObject> getCombinedChildren() { return EArrayList.combineLists(guiObjects, objsToBeAdded); }
 	
 	//parents
 	@Override public IEnhancedGuiObject getParent() { return parent; }
