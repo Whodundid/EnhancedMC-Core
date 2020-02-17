@@ -403,7 +403,7 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 		if (getHighestZObjectUnderMouse() != null) {
 			if (mX == oldMousePos.getObject() && mY == oldMousePos.getValue()) {
 				mouseHoverTime = (System.currentTimeMillis() - hoverRefTime);
-				if (mouseHoverTime >= 500) {
+				if (mouseHoverTime >= 650) {
 					setObjectWithHoveringText(getHighestZObjectUnderMouse());
 				}
 			}
