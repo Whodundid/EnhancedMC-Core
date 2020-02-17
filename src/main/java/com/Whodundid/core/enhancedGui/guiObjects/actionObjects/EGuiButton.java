@@ -235,6 +235,7 @@ public class EGuiButton extends EnhancedActionObject {
 	public EGuiButton setTrueFalseButton(boolean val, ModSetting<Boolean> settingIn) { return setTrueFalseButton(val, settingIn != null ? settingIn.get() : false); }
 	public EGuiButton setTrueFalseButton(boolean val, boolean initial) { trueFalseButton = val; updateTrueFalseDisplay(initial); return this; }
 	public EGuiButton setDrawString(boolean val) { drawString = val; return this; }
+	public EGuiButton setDrawStretched(boolean val) { stretchBaseTextures = val; return this; }
 	
 	//------------------
 	//EGuiButton Getters
