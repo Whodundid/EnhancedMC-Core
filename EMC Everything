@@ -143,6 +143,8 @@ F   39. When attempting to assign a mouse button to a KeyBinding in the KeyBindG
     42. When resizing a window while the window is at one of it's maximum or minimum widths/heights, any resizing scrollBar thumb will move even though the window doesn't.
     
     43. TextAreas don't fully show the entire horizontal scroll width, it's cut short by like 10 pixels.
+    
+    44. GLObject draws (ie. rects, ellipses, etc.) do not seem to accept being scissoring.
 
 
 
@@ -173,6 +175,8 @@ F   9. InGameChatWindow doesn't open at mouse position from RendererRCM.
     
 Clear Visuals:
 
+    1. Bug where when toggling fog render, it permanently creates the fog layer which then cannot be fully disabled.
+
 Ping Display:
 
 Player Info:
@@ -180,6 +184,8 @@ Player Info:
 Multi Hotbar:
 
 Hotkeys:
+
+    -option for hotkeys to run while proxy is open
 
 SLC:
 
