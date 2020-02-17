@@ -77,7 +77,7 @@ public class EGuiScreenLocationSelector extends EnhancedActionObject {
 			//mc.displayGuiScreen(newGui);
 			EnhancedMC.displayEGui(newGui, this);
 		}
-		performAction(null);
+		performAction(null, null);
 	}
 	
 	public EGuiScreenLocationSelector setDisplayName(String nameIn) { drawName = nameIn; return this; }

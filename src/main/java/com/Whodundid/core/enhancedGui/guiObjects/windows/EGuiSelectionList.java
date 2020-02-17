@@ -98,7 +98,7 @@ public class EGuiSelectionList extends WindowParent implements IEnhancedActionOb
 	protected void selectCurrentOptionAndClose() {
 		if (selectionList.getCurrentLine() != null && selectionList.getCurrentLine().getStoredObj() != null) {
 			selectedObject = selectionList.getCurrentLine().getStoredObj();
-			performAction(null);
+			performAction(null, null);
 			close();
 		}
 	}
