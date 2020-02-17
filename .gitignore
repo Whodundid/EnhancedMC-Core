@@ -8,14 +8,6 @@ src/api
 src/old
 .gradle
 .settings
-.metadata
-.classpath
-.project
-
-# idea
-out
-*.ipr
-*.iws
 *.iml
 gradlew
 gradlew.bat
@@ -23,8 +15,7 @@ forge-1.8.9-11.15.1.2318-1.8.9-mdk.zip
 /.classpath
 /.project
 CREDITS-fml.txt
-EnhancedMC Core_Client.launch
-EnhancedMC Core_Server.launch
+*.launch
 LICENSE-fml.txt
 MinecraftForge-Credits.txt
 MinecraftForge-License.txt
