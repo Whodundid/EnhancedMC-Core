@@ -28,13 +28,13 @@ public class EGuiButton3Stage extends EGuiButton {
 	}
 	public EGuiButton3Stage(IEnhancedGuiObject parentIn, int posX, int posY, int width, int height, ModSetting settingIn, int colorIn) {
 		super(parentIn, posX, posY, width, height);
-		parseStages(settingIn);
 		setColor(colorIn);
+		parseStages(settingIn);
 	}
 	public EGuiButton3Stage(IEnhancedGuiObject parentIn, int posX, int posY, int width, int height, ModSetting settingIn, int color0In, int color1In, int color2In) {
 		super(parentIn, posX, posY, width, height);
-		parseStages(settingIn);
 		setColors(color0In, color1In, color2In);
+		parseStages(settingIn);
 	}
 	
 	@Override
