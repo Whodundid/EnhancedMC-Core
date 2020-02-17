@@ -8,6 +8,14 @@ src/api
 src/old
 .gradle
 .settings
+.metadata
+.classpath
+.project
+
+# idea
+out
+*.ipr
+*.iws
 *.iml
 gradlew
 gradlew.bat
