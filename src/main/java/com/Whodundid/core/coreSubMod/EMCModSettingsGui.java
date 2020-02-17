@@ -85,7 +85,7 @@ public class EMCModSettingsGui extends WindowParent {
 		
 		EGuiLabel visualLabel = new EGuiLabel(list, 6, yPos + 10, "Visual", EColors.orange.c());
 		
-		drawChat = new EGuiButton3Stage(list, 6, visualLabel.endY + 8, 60, 20, EMCMod.drawChatOnHud);
+		drawChat = new EGuiButton3Stage(list, 6, visualLabel.endY + 8, 60, 20, EMCMod.drawChatOnHud, EColors.yellow.intVal);
 		EGuiLabel drawChatLabel = new EGuiLabel(list, drawChat.endX + 10, drawChat.startY + 6, "Draw Chat When Open");
 		
 		drawProxyBorder = new EGuiButton(list, 6, drawChat.endY + 7, 60, 20, EMCMod.drawHudBorder);
