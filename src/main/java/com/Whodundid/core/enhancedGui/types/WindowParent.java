@@ -12,13 +12,14 @@ import net.minecraft.client.gui.GuiScreen;
 
 //Author: Hunter Bragg
 
-public abstract class WindowParent extends EnhancedGuiObject implements IWindowParent {
+public class WindowParent extends EnhancedGuiObject implements IWindowParent {
 	
 	public WindowParent guiInstance;
 	protected EGuiHeader header;
 	protected boolean moveWithParent = false;
 	protected boolean pinned = false;
 	protected boolean pinnable = true;
+	protected boolean drawDefaultBackground = false;
 	protected Stack<Object> guiHistory = new Stack();
 	protected Object oldObject = null;
 	public static int defaultWidth = 220, defaultHeight = 255;
@@ -63,6 +64,13 @@ public abstract class WindowParent extends EnhancedGuiObject implements IWindowP
 	protected void defaultPos() { centerObjectWithSize(defaultWidth, defaultHeight); }
 	protected void defaultDims() { setDimensions(startX, startY, defaultWidth, defaultHeight); }
 	protected void defaultHeader(IWindowParent in) { setHeader(new EGuiHeader(in)); }
+	
+	@Override
+	public void drawObject(int mXIn, int mYIn, float ticks) {
+		if (drawDefaultBackground) { drawDefaultBackground(); }
+		
+		super.drawObject(mXIn, mYIn, ticks);
+	}
 	
 	@Override
 	public void mousePressed(int mXIn, int mYIn, int button) {
@@ -132,6 +140,8 @@ public abstract class WindowParent extends EnhancedGuiObject implements IWindowP
 		if (header != null) { header.setEnabled(val); }
 		return this;
 	}
+	
+	public WindowParent setDrawDefaultBackground(boolean val) { drawDefaultBackground = val; return this; }
 	
 	public boolean movesWithParent() { return moveWithParent; }
 	public WindowParent setMoveWithParent(boolean val) { moveWithParent = val; return this; }
