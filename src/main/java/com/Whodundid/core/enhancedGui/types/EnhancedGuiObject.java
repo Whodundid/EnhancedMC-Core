@@ -35,6 +35,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.util.IChatComponent;
+import net.minecraft.util.MathHelper;
 
 //Author: Hunter Bragg
 
@@ -238,10 +239,10 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	@Override public IEnhancedGuiObject setDimensions(int startXIn, int startYIn, int widthIn, int heightIn) {
 		startX = startXIn;
 		startY = startYIn;
-		width = widthIn;
-		height = heightIn;
-		endX = startX + widthIn;
-		endY = startY + heightIn;
+		width = MathHelper.clamp_int(widthIn, minWidth, maxWidth);
+		height = MathHelper.clamp_int(heightIn, minHeight, maxHeight);
+		endX = startX + width;
+		endY = startY + height;
 		midX = startX + width / 2;
 		midY = startY + height / 2;
 		return this;
