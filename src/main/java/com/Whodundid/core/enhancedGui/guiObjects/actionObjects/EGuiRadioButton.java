@@ -1,10 +1,10 @@
 package com.Whodundid.core.enhancedGui.guiObjects.actionObjects;
 
+import com.Whodundid.core.app.AppConfigSetting;
+import com.Whodundid.core.app.EMCApp;
 import com.Whodundid.core.enhancedGui.types.EnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
-import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.util.renderUtil.EColors;
-import com.Whodundid.core.util.storageUtil.ModSetting;
 
 //Author: Hunter Bragg
 
@@ -14,14 +14,14 @@ public class EGuiRadioButton extends EnhancedActionObject {
 	int color = EColors.green.c();
 	
 	public EGuiRadioButton(IEnhancedGuiObject objIn, int xIn, int yIn, int widthIn, int heightIn) { this(objIn, xIn, yIn, widthIn, heightIn, false); }
-	public EGuiRadioButton(IEnhancedGuiObject objIn, int xIn, int yIn, int widthIn, int heightIn, ModSetting<Boolean> settingIn) { this(objIn, xIn, yIn, widthIn, heightIn, settingIn.get()); }
+	public EGuiRadioButton(IEnhancedGuiObject objIn, int xIn, int yIn, int widthIn, int heightIn, AppConfigSetting<Boolean> settingIn) { this(objIn, xIn, yIn, widthIn, heightIn, settingIn.get()); }
 	public EGuiRadioButton(IEnhancedGuiObject objIn, int xIn, int yIn, int widthIn, int heightIn, boolean checkedIn) {
 		init(objIn, xIn, yIn, widthIn, heightIn);
 		checked = checkedIn;
 	}
 
 	@Override
-	public void drawObject(int mXIn, int mYIn, float ticks) {
+	public void drawObject(int mXIn, int mYIn) {
 		drawFilledEllipse(midX, midY, width / 2, height / 2, 30, EColors.black);
 		drawFilledEllipse(midX, midY, width / 2 - 1, height / 2 - 1, 30, EColors.steel);
 		
@@ -39,7 +39,7 @@ public class EGuiRadioButton extends EnhancedActionObject {
 		}
 	}
 	
-	public EGuiRadioButton updateCheck(ModSetting<Boolean> settingIn, SubMod m, boolean saveAll) {
+	public EGuiRadioButton updateCheck(AppConfigSetting<Boolean> settingIn, EMCApp m, boolean saveAll) {
 		boolean val = settingIn.get();
 		if (m != null) {
 			if (saveAll) { m.getConfig().saveAllConfigs(); }

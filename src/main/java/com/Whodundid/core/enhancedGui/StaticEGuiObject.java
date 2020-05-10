@@ -1,6 +1,6 @@
 package com.Whodundid.core.enhancedGui;
 
-import com.Whodundid.core.coreSubMod.EMCResources;
+import com.Whodundid.core.coreApp.EMCResources;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
 import com.Whodundid.core.enhancedGui.guiUtil.EGui;
 import com.Whodundid.core.enhancedGui.objectEvents.EventKeyboard;
@@ -34,14 +34,22 @@ public class StaticEGuiObject extends EGui {
 	
 	//main draw
 	public static void updateCursorImage(IEnhancedGuiObject obj) {
+		
+		//make sure that the window isn't maximized
+		if (obj instanceof IWindowParent && ((IWindowParent) obj).isMaximized()) {
+			CursorHelper.updateCursor(null);
+			return;
+		}
+		
 		if (obj != null && obj.isResizeable() && obj.getTopParent().getModifyType() != ObjectModifyType.Resize) {
 			int rStartY = obj.hasHeader() ? obj.getHeader().startY : obj.getDimensions().startY;
 			if (!Mouse.isButtonDown(0)) {
+				
 				switch (obj.getEdgeAreaMouseIsOn()) {
-				case top: case bot: CursorHelper.updateCursor(EMCResources.resizeNS); break;
-				case left: case right: CursorHelper.updateCursor(EMCResources.resizeEW); break;
-				case topRight: case botLeft: CursorHelper.updateCursor(EMCResources.resizeDL); break;
-				case topLeft: case botRight: CursorHelper.updateCursor(EMCResources.resizeDR); break;
+				case top: case bot: CursorHelper.updateCursor(EMCResources.cursorResizeNS); break;
+				case left: case right: CursorHelper.updateCursor(EMCResources.cursorResizeEW); break;
+				case topRight: case botLeft: CursorHelper.updateCursor(EMCResources.cursorResizeDL); break;
+				case topLeft: case botRight: CursorHelper.updateCursor(EMCResources.cursorResizeDR); break;
 				default: CursorHelper.setCursor(null); break;
 				}
 			}
@@ -302,6 +310,7 @@ public class StaticEGuiObject extends EGui {
 	}
 	/** Start the process of removing a child from this object. Children are fully removed on the next draw cycle. */
 	public static void removeObject(IEnhancedGuiObject parent, IEnhancedGuiObject... objsIn) {
+		for (IEnhancedGuiObject o : objsIn) { o.setBeingRemoved(); }
 		parent.getRemovingObjects().addAll(objsIn);
 	}
 	/** Returns a list containing every single child from every object in the specified object. */

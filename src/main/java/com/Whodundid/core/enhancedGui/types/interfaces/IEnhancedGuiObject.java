@@ -35,7 +35,7 @@ public interface IEnhancedGuiObject extends ITabCompleteListener {
 	//main draw
 	
 	/** Event fired from the top parent to draw this object. */
-	public void drawObject(int mX, int mY, float ticks);
+	public void drawObject(int mX, int mY);
 	/** Event fired from the top parent when the object is drawn for the first time. */
 	public void onFirstDraw();
 	/** Returns true if this object has been drawn at least once. */
@@ -44,6 +44,8 @@ public interface IEnhancedGuiObject extends ITabCompleteListener {
 	public void updateCursorImage();
 	/** Event fired from the top parent when the mouse has been hovering over this object for a short period of time. */
 	public void onMouseHover(int mX, int mY);
+	/** Hook that indicates when the object is drawing its hovering layer. */
+	public boolean isDrawingHover();
 	/** Sets generic mouse hovering background with specified text. */
 	public IEnhancedGuiObject setHoverText(String textIn);
 	/** Sets hover text color. */
@@ -76,12 +78,16 @@ public interface IEnhancedGuiObject extends ITabCompleteListener {
 	public boolean isResizing();
 	/** Returns true if this object is moving. */
 	public boolean isMoving();
+	/** Returns true if this object will always be drawn on top. */
+	public boolean isAlwaysOnTop();
 	/** Set this object's enabled state. */
 	public IEnhancedGuiObject setEnabled(boolean val);
 	/** Set this object's visibility. A non-visible object can still run actions if it is still enabled. */
 	public IEnhancedGuiObject setVisible(boolean val);
 	/** Sets this object to be drawn regardless of it being visible or enabled. */
 	public IEnhancedGuiObject setPersistent(boolean val);
+	/** Sets this object to always be drawn on top. */
+	public IEnhancedGuiObject setAlwaysOnTop(boolean val);
 	
 	//size
 	
@@ -170,6 +176,8 @@ public interface IEnhancedGuiObject extends ITabCompleteListener {
 	public EArrayList<IEnhancedGuiObject> getAllChildrenUnderMouse();
 	/** Returns true if the specified object is a child of the parent or is being added to the parent. */
 	public boolean containsObject(IEnhancedGuiObject object);
+	/** Returns true if the specified object type is a child of the parent or is being added to the parent. */
+	public <T> boolean containsObject(Class<T> objIn);
 	/** Returns a list combining the objects currently within within this object as well as the ones being added. */
 	public EArrayList<IEnhancedGuiObject> getCombinedChildren();
 	
@@ -227,7 +235,7 @@ public interface IEnhancedGuiObject extends ITabCompleteListener {
 	public void mouseEntered(int mX, int mY);
 	/** Event fired upon the mouse exiting this object. */
 	public void mouseExited(int mX, int mY);
-	/** Returns true if the mouse is currently inside this object. If a boundary enforcer is set, this method will return true if the mouse is inside of the the specified boundary. */
+	/** Returns true if the mouse is currently inside this object regardless of z-level. If a boundary enforcer is set, this method will return true if the mouse is inside of the the specified boundary. */
 	public boolean isMouseInside(int mX, int mY);
 	/** Returns true if the mouse is currently inside this object and that this is the top most object inside of the parent. */
 	public boolean isMouseOver(int mX, int mY);
@@ -259,6 +267,8 @@ public interface IEnhancedGuiObject extends ITabCompleteListener {
 	
 	//events
 	
+	/** Used to send some kind of message to this object. */
+	public void sendArgs(Object... args);
 	/** Gets the EventHandler. */
 	public ObjectEventHandler getEventHandler();
 	/** Register an object that listens to this object's events. */
@@ -289,4 +299,8 @@ public interface IEnhancedGuiObject extends ITabCompleteListener {
 	public void onClosed();
 	/** Upon closing, this object will attempt to transfer it's focus to the specified object if possible. */
 	public IEnhancedGuiObject setFocusedObjectOnClose(IEnhancedGuiObject objIn);
+	/** Internal method used to indicate that this object will be removed soon. */
+	public void setBeingRemoved();
+	/** Returns true if this object is currently scheduled to be removed on the next draw cycle. */
+	public boolean isBeingRemoved();
 }

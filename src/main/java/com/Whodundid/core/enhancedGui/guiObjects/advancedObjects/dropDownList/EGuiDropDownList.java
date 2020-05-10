@@ -1,6 +1,6 @@
 package com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.dropDownList;
 
-import com.Whodundid.core.coreSubMod.EMCResources;
+import com.Whodundid.core.coreApp.EMCResources;
 import com.Whodundid.core.enhancedGui.objectEvents.EventFocus;
 import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.FocusType;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
@@ -32,9 +32,9 @@ public class EGuiDropDownList extends EnhancedGuiObject {
 	//ANCIENT -- REWRITE FROM SCRATCH
 	
 	@Override
-	public void drawObject(int mX, int mY, float ticks) {
+	public void drawObject(int mX, int mY) {
 		int color = enabled ? 0xffffff : 0x777777;
-		mc.renderEngine.bindTexture(EMCResources.guiButtonBase);
+		//mc.renderEngine.bindTexture(EMCResources.guiButtonBase);
 		drawModalRectWithCustomSizedTexture(startX, startY, 0, 0, width, entryHeight, width, entryHeight);
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		if (!hasFocus() && listOpen) { closeList(); }
@@ -42,17 +42,17 @@ public class EGuiDropDownList extends EnhancedGuiObject {
 			drawCenteredString(selectedEntry.getDisplayString(), startX + (width / 2), startY + (entryHeight / 4), color);
 		}
 		if (isEnabled() && checkDraw() && listOpen) {
-			mc.renderEngine.bindTexture(EMCResources.guiButtonSel);
+			bindTexture(EMCResources.guiButtonSel);
 			drawModalRectWithCustomSizedTexture(startX, startY, 0, 0, width, entryHeight, width, entryHeight);
 			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 			drawCenteredString("...", startX + (width / 2), startY + (entryHeight / 4), color);
 			for (int i = 0; i < listContents.size(); i++) {
-				mc.renderEngine.bindTexture(EMCResources.guiButtonBase);
+				//mc.renderEngine.bindTexture(EMCResources.guiButtonBase);
 				drawModalRectWithCustomSizedTexture(startX, startY + (i * entryHeight) + entryHeight, 0, 0, width, entryHeight, width, entryHeight);
 				drawCenteredString(listContents.get(i).getDisplayString(), startX + (width / 2), startY + (entryHeight / 4) + (i * entryHeight) + entryHeight, color);
 			}
 		}
-		super.drawObject(mX, mY, ticks);
+		super.drawObject(mX, mY);
 	}
 	
 	@Override
@@ -141,7 +141,7 @@ public class EGuiDropDownList extends EnhancedGuiObject {
 				String displayString = e.getDisplayString();
 				if (displayString.length() > longestString.length()) { longestString = displayString; }
 			}
-			width = fontRenderer.getStringWidth(longestString) + 6;
+			width = mc.fontRendererObj.getStringWidth(longestString) + 6;
 			setDimensions(startX, startY, width, height);
 		}
 	}

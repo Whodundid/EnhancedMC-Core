@@ -1,6 +1,6 @@
 package com.Whodundid.core.notifications.baseObjects;
 
-import com.Whodundid.core.coreSubMod.EMCResources;
+import com.Whodundid.core.coreApp.EMCResources;
 import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.EGuiRightClickMenu;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 

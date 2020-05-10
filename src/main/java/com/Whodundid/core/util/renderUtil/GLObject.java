@@ -1,6 +1,8 @@
 package com.Whodundid.core.util.renderUtil;
 
-import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.util.resourceUtil.EResource;
+import com.Whodundid.core.util.resourceUtil.EResourceHandler;
+import com.Whodundid.core.util.storageUtil.DynamicTextureHandler;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Sets;
 import java.util.Arrays;
@@ -12,6 +14,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
@@ -31,7 +34,6 @@ public class GLObject {
 	public static final ResourceLocation optionsBackground = new ResourceLocation("textures/gui/options_background.png");
 	public static final ResourceLocation statIcons = new ResourceLocation("textures/gui/container/stats_icons.png");
 	public static final ResourceLocation icons = new ResourceLocation("textures/gui/icons.png");
-	protected EFontRenderer fontRenderer = EnhancedMC.getFontRenderer();
 	protected RenderItem renderItem = mc.getRenderItem();
 	protected ScaledResolution res;
 	protected float glZLevel;
@@ -41,16 +43,16 @@ public class GLObject {
 	//------------------------
 	
 	/** Draws the toString representation of an object at the specified position. */
-	public static int drawString(Object o, double x, double y, EColors colorIn) { return drawString(o.toString(), x, y, colorIn.c()); }
-	public static int drawCenteredString(Object o, double x, double y, EColors colorIn) { return drawCenteredString(o.toString(), x, y, colorIn.c()); }
-	public static int drawStringWithShadow(Object o, double x, double y, EColors colorIn) { return drawStringWithShadow(o.toString(), x, y, colorIn.c()); }
-	public static int drawCenteredStringWithShadow(Object o, double x, double y, EColors colorIn) { return drawCenteredStringWithShadow(o.toString(), x, y, colorIn.c()); }
+	public static int drawString(Object o, double x, double y, EColors colorIn) { return drawString(o != null ? o.toString() : "null", x, y, colorIn.c()); }
+	public static int drawCenteredString(Object o, double x, double y, EColors colorIn) { return drawCenteredString(o != null ? o.toString() : "null", x, y, colorIn.c()); }
+	public static int drawStringWithShadow(Object o, double x, double y, EColors colorIn) { return drawStringWithShadow(o != null ? o.toString() : "null", x, y, colorIn.c()); }
+	public static int drawCenteredStringWithShadow(Object o, double x, double y, EColors colorIn) { return drawCenteredStringWithShadow(o != null ? o.toString() : "null", x, y, colorIn.c()); }
 	
 	/** Draws the toString representation of an object at the specified position. */
-	public static int drawString(Object o, double x, double y, int color) { return EnhancedMC.getFontRenderer().drawStringI(o.toString(), x, y, color); }
-	public static int drawCenteredString(Object o, double x, double y, int color) { return EnhancedMC.getFontRenderer().drawStringI(o.toString(), x - EnhancedMC.getFontRenderer().getStringWidth(o.toString()) / 2, y, color); }
-	public static int drawStringWithShadow(Object o, double x, double y, int color) { return EnhancedMC.getFontRenderer().drawStringWithShadowI(o.toString(), x, y, color); }
-	public static int drawCenteredStringWithShadow(Object o, double x, double y, int color) { return EnhancedMC.getFontRenderer().drawStringWithShadowI(o.toString(), x - EnhancedMC.getFontRenderer().getStringWidth(o.toString()) / 2, y, color); }
+	public static int drawString(Object o, double x, double y, int color) { return mc.fontRendererObj.drawString(o != null ? o.toString() : "null", (float) x, (float) y, color, false); }
+	public static int drawCenteredString(Object o, double x, double y, int color) { return mc.fontRendererObj.drawString(o != null ? o.toString() : "null", (float) (x - mc.fontRendererObj.getStringWidth(o.toString()) / 2), (float) y, color, false); }
+	public static int drawStringWithShadow(Object o, double x, double y, int color) { return mc.fontRendererObj.drawString(o != null ? o.toString() : "null",(float) x, (float) y, color, true); }
+	public static int drawCenteredStringWithShadow(Object o, double x, double y, int color) { return mc.fontRendererObj.drawString(o != null ? o.toString() : "null", (float) (x - mc.fontRendererObj.getStringWidth(o.toString()) / 2), (float) y, color, true); }
 	
 	/** Draws a String at the specified position. */
 	public static int drawString(String text, double x, double y, EColors colorIn) { return drawString(text, x, y, colorIn.c()); }
@@ -59,18 +61,18 @@ public class GLObject {
 	public static int drawCenteredStringWithShadow(String text, double x, double y, EColors colorIn) { return drawCenteredStringWithShadow(text, x, y, colorIn.c()); }
 	
 	/** Draws a String at the specified position. */
-	public static int drawString(String text, double x, double y, int color) { return EnhancedMC.getFontRenderer().drawStringI(text, x, y, color); }
-	public static int drawCenteredString(String text, double x, double y, int color) { return EnhancedMC.getFontRenderer().drawStringI(text, x - EnhancedMC.getFontRenderer().getStringWidth(text) / 2, y, color); }
-	public static int drawStringWithShadow(String text, double x, double y, int color) { return EnhancedMC.getFontRenderer().drawStringWithShadowI(text, x, y, color); }
-	public static int drawCenteredStringWithShadow(String text, double x, double y, int color) { return EnhancedMC.getFontRenderer().drawStringWithShadowI(text, x - EnhancedMC.getFontRenderer().getStringWidth(text) / 2, y, color); }
+	public static int drawString(String text, double x, double y, int color) { return mc.fontRendererObj.drawString(text, (float) x, (float) y, color, false); }
+	public static int drawCenteredString(String text, double x, double y, int color) { return mc.fontRendererObj.drawString(text, (float) (x - mc.fontRendererObj.getStringWidth(text) / 2), (float) y, color, false); }
+	public static int drawStringWithShadow(String text, double x, double y, int color) { return mc.fontRendererObj.drawString(text, (float) x, (float) y, color, true); }
+	public static int drawCenteredStringWithShadow(String text, double x, double y, int color) { return mc.fontRendererObj.drawString(text, (float) (x - mc.fontRendererObj.getStringWidth(text) / 2), (float) y, color, true); }
 	
 	/** Draws the toString representation of an object at the specified position. */
-	public static int drawStringC(Object o, double x, double y, EColors colorIn) { return drawStringC(o.toString(), x, y, colorIn.c()); }
-	public static int drawStringS(Object o, double x, double y, EColors colorIn) { return drawStringS(o.toString(), x, y, colorIn.c()); }
-	public static int drawStringCS(Object o, double x, double y, EColors colorIn) { return drawStringCS(o.toString(), x, y, colorIn.c()); }
-	public static int drawStringC(Object o, double x, double y, int color) { return drawCenteredString(o.toString(), x, y, color); }
-	public static int drawStringS(Object o, double x, double y, int color) { return drawStringWithShadow(o.toString(), x, y, color); }
-	public static int drawStringCS(Object o, double x, double y, int color) { return drawCenteredStringWithShadow(o.toString(), x, y, color); }
+	public static int drawStringC(Object o, double x, double y, EColors colorIn) { return drawStringC(o != null ? o.toString() : "null", x, y, colorIn.c()); }
+	public static int drawStringS(Object o, double x, double y, EColors colorIn) { return drawStringS(o != null ? o.toString() : "null", x, y, colorIn.c()); }
+	public static int drawStringCS(Object o, double x, double y, EColors colorIn) { return drawStringCS(o != null ? o.toString() : "null", x, y, colorIn.c()); }
+	public static int drawStringC(Object o, double x, double y, int color) { return drawCenteredString(o != null ? o.toString() : "null", x, y, color); }
+	public static int drawStringS(Object o, double x, double y, int color) { return drawStringWithShadow(o != null ? o.toString() : "null", x, y, color); }
+	public static int drawStringCS(Object o, double x, double y, int color) { return drawCenteredStringWithShadow(o != null ? o.toString() : "null", x, y, color); }
 	
 	/** Draws a String at the specified position. */
 	public static int drawStringC(String text, double x, double y, EColors colorIn) { return drawStringC(text, x, y, colorIn.c()); }
@@ -103,7 +105,7 @@ public class GLObject {
 			int i = 0;
 			
 			for (String s : textLines) {
-				int j = fontRenderer.getStringWidth(s);
+				int j = mc.fontRendererObj.getStringWidth(s);
 				if (j > i) { i = j; } //find longest string
 			}
 			
@@ -166,7 +168,7 @@ public class GLObject {
 		GlStateManager.enableBlend();
 		GlStateManager.disableTexture2D();
 		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-		EGLHelper.setColor(color);
+		setGLColor(color);
 		GL11.glLineWidth(thickness);
 		worldrenderer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
 		worldrenderer.pos(startX, startY, 0).endVertex();
@@ -204,7 +206,7 @@ public class GLObject {
 		GlStateManager.enableBlend();
 		GlStateManager.disableTexture2D();
 		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-		EGLHelper.setColor(color);
+		setGLColor(color);
 		GL11.glBegin(GL11.GL_LINE_LOOP);
 		for (int i = 0; i < detail; i++) {
 			double theta = 2.0f * Math.PI * i / detail;
@@ -223,7 +225,7 @@ public class GLObject {
 		GlStateManager.enableBlend();
 		GlStateManager.disableTexture2D();
 		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-		EGLHelper.setColor(color);
+		setGLColor(color);
 		GL11.glBegin(GL11.GL_TRIANGLE_FAN);
 		double prevX = 0.0, prevY = 0.0;
 		GL11.glVertex2d(posX, posY);
@@ -247,7 +249,7 @@ public class GLObject {
 		GlStateManager.enableBlend();
 		GlStateManager.disableTexture2D();
 		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-		EGLHelper.setColor(color);
+		setGLColor(color);
 		GL11.glBegin(GL11.GL_LINE_LOOP);
 		for (int i = 0; i < detail + 1; i++) {
 			double theta = 2.0f * Math.PI * i / detail;
@@ -266,7 +268,7 @@ public class GLObject {
 		GlStateManager.enableBlend();
 		GlStateManager.disableTexture2D();
 		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-		EGLHelper.setColor(color);
+		setGLColor(color);
 		GL11.glBegin(GL11.GL_TRIANGLE_FAN);
 		double prevX = 0.0, prevY = 0.0;
 		GL11.glVertex2d(posX, posY);
@@ -304,7 +306,7 @@ public class GLObject {
 		GlStateManager.enableBlend();
 		GlStateManager.disableTexture2D();
 		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-		EGLHelper.setColor(color);
+		setGLColor(color);
 		worldrenderer.begin(7, DefaultVertexFormats.POSITION);
 		worldrenderer.pos(left, bottom, 0).endVertex();
 		worldrenderer.pos(right, bottom, 0).endVertex();
@@ -450,6 +452,12 @@ public class GLObject {
 	/** Stops scissoring an area. */
 	public static void endScissor() { GL11.glDisable(GL11.GL_SCISSOR_TEST); }
 	
+	/** Texture draw wrapper methods. */
+	public static void drawTexture(double x, double y, double w, double h, ResourceLocation imageIn) { if (imageIn != null) { bindTexture(imageIn); drawTexture(x, y, w, h); } }
+	public static void drawTexture(double x, double y, double w, double h, DynamicTexture imageIn) { if (imageIn != null) { bindTexture(imageIn); drawTexture(x, y, w, h); } }
+	public static void drawTexture(double x, double y, double w, double h, DynamicTextureHandler imageIn) { if (imageIn != null) { bindTexture(imageIn); drawTexture(x, y, w, h); } }
+	public static void drawTexture(double x, double y, double w, double h, EResource imageIn) { if (imageIn != null) { bindTexture(imageIn); drawTexture(x, y, w, h); } }
+	
 	/** A simplified texture draw method. */
 	public static void drawTexture(double x, double y, double w, double h) { drawTexture(x, y, w, h, 0, 0, w, h, 0.0D); }
 	public static void drawTexture(double x, double y, double w, double h, double oX, double oY, double tW, double tH) { drawTexture(x, y, w, h, oX, oY, tW, tH, 0.0D); }
@@ -465,15 +473,22 @@ public class GLObject {
 		worldrenderer.pos(x, y, z).tex(oX * f, oY * f1).endVertex();
 		tessellator.draw();
 	}
-	public static void drawTexture(double posX, double posY, double w, double h, ResourceLocation imageIn) {
-		if (imageIn != null) {
-			GlStateManager.enableAlpha();
-			GlStateManager.enableBlend();
-			GlStateManager.color(2.0f, 2.0f, 2.0f, 2.0f);
-			mc.renderEngine.bindTexture(imageIn);
-			drawTexture(posX, posY, w, h);
-			GlStateManager.disableAlpha();
-			GlStateManager.disableBlend();
-		}
+	
+	//--------------
+	//Util functions
+	//--------------
+	
+	public static void setGLColor(int colorIn) {
+		float f3 = (colorIn >> 24 & 255) / 255.0F;
+        float f = (colorIn >> 16 & 255) / 255.0F;
+        float f1 = (colorIn >> 8 & 255) / 255.0F;
+        float f2 = (colorIn & 255) / 255.0F;
+        GlStateManager.color(f, f1, f2, f3);
 	}
+	
+	public static void bindTexture(ResourceLocation imageIn) { EResourceHandler.bindTexture(imageIn); }
+	public static void bindTexture(DynamicTexture imageIn) { EResourceHandler.bindTexture(imageIn); }
+	public static void bindTexture(DynamicTextureHandler imageIn) { EResourceHandler.bindTexture(imageIn); }
+	public static void bindTexture(EResource imageIn) { EResourceHandler.bindTexture(imageIn); }
+	
 }

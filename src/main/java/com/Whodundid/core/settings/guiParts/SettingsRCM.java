@@ -1,15 +1,15 @@
 package com.Whodundid.core.settings.guiParts;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.coreSubMod.EMCResources;
+import com.Whodundid.core.app.EMCApp;
+import com.Whodundid.core.app.gui.AppErrorType;
+import com.Whodundid.core.app.util.AppEnabler;
+import com.Whodundid.core.app.util.AppErrorDisplay;
+import com.Whodundid.core.coreApp.EMCResources;
 import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.EGuiRightClickMenu;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.settings.SettingsGuiMain;
-import com.Whodundid.core.subMod.SubMod;
-import com.Whodundid.core.subMod.gui.SubModErrorType;
-import com.Whodundid.core.subMod.util.SubModEnabler;
-import com.Whodundid.core.subMod.util.SubModErrorDisplay;
 import com.Whodundid.core.util.renderUtil.CenterType;
 
 //Author: Hunter Bragg
@@ -17,14 +17,14 @@ import com.Whodundid.core.util.renderUtil.CenterType;
 public class SettingsRCM extends EGuiRightClickMenu {
 
 	private SettingsGuiMain window;
-	private SubMod mod;
+	private EMCApp mod;
 	private IWindowParent gui;
 	private String title;
 	
 	public SettingsRCM(SettingsGuiMain parentIn) { this(parentIn, null); }
 	public SettingsRCM(SettingsGuiMain parentIn, IWindowParent guiIn, String titleIn) { this (parentIn, null, guiIn, titleIn); }
-	public SettingsRCM(SettingsGuiMain parentIn, SubMod modIn) { this(parentIn, modIn, null, ""); }
-	protected SettingsRCM(SettingsGuiMain parentIn, SubMod modIn, IWindowParent guiIn, String titleIn) {
+	public SettingsRCM(SettingsGuiMain parentIn, EMCApp modIn) { this(parentIn, modIn, null, ""); }
+	protected SettingsRCM(SettingsGuiMain parentIn, EMCApp modIn, IWindowParent guiIn, String titleIn) {
 		window = parentIn;
 		mod = modIn;
 		gui = guiIn;
@@ -67,21 +67,21 @@ public class SettingsRCM extends EGuiRightClickMenu {
 	private void open() {
 		try {
 			IWindowParent g = mod != null ? mod.getMainGui() : gui;
-			if (g != null) { EnhancedMC.displayEGui(g, getWindowParent()); }
-			else { SubModErrorDisplay.displayError(SubModErrorType.NOGUI, mod); }
+			if (g != null) { EnhancedMC.displayWindow(g, getWindowParent()); }
+			else { AppErrorDisplay.displayError(AppErrorType.NOGUI, mod); }
 		} catch (Exception e) { e.printStackTrace(); }
 	}
 	
 	private void openNewWindow() {
 		try {
 			IWindowParent g = mod != null ? mod.getMainGui() : gui;
-			if (g != null) { EnhancedMC.displayEGui(g, window, true, false, false, CenterType.objectIndent); }
-			else { SubModErrorDisplay.displayError(SubModErrorType.NOGUI, mod); }
+			if (g != null) { EnhancedMC.displayWindow(g, window, true, false, false, CenterType.objectIndent); }
+			else { AppErrorDisplay.displayError(AppErrorType.NOGUI, mod); }
 		} catch (Exception e) { e.printStackTrace(); }
 	}
 	
 	private void toggleEnabled() {
-		SubModEnabler.toggleEnabled(mod);
+		AppEnabler.toggleEnabled(mod);
 		window.updateList();
 	}
 }

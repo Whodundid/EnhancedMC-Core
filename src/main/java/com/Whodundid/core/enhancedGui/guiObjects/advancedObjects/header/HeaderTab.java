@@ -37,8 +37,8 @@ public class HeaderTab extends EGuiButton {
 	public void onAdded() {
 		closeButton = new EGuiButton(this, width >= 9 ? (endX - 9) : midX + (width - 7), startY + 3, 7, 7, "x") {
 			@Override
-			public void drawObject(int mXIn, int mYIn, float ticks) {
-				super.drawObject(mXIn, mYIn, ticks);
+			public void drawObject(int mXIn, int mYIn) {
+				super.drawObject(mXIn, mYIn);
 			}
 			@Override
 			public void onPress() {
@@ -54,7 +54,7 @@ public class HeaderTab extends EGuiButton {
 	}
 	
 	@Override
-	public void drawObject(int mXIn, int mYIn, float ticks) {
+	public void drawObject(int mXIn, int mYIn) {
 		if (pressed) { checkForMove(mXIn, mYIn); }
 		if (closeButton != null) { closeButton.setVisible(width > 17 && isMouseInside(mXIn, mYIn)); }
 		
@@ -63,7 +63,7 @@ public class HeaderTab extends EGuiButton {
 		try {
 			String actual = getDisplayString();
 			for (int i = 0; i < actual.length(); i++) {
-				if (fontRenderer.getStringWidth(drawString) <= width - 13) {
+				if (mc.fontRendererObj.getStringWidth(drawString) <= width - 13) {
 					drawString += actual.charAt(i);
 					continue;
 				}
@@ -110,7 +110,7 @@ public class HeaderTab extends EGuiButton {
 		drawRect(startX + 1, startY + 1, endX - 1, endY - 1, drawString.length() > 0 ? 0xaa757575 : borderColor + 0x00222200); //middle background
 		
 		drawStringWithShadow(drawString, startX + 4, startY + 4, drawColor);
-		super.drawObject(mXIn, mYIn, ticks);
+		super.drawObject(mXIn, mYIn);
 	}
 	
 	@Override

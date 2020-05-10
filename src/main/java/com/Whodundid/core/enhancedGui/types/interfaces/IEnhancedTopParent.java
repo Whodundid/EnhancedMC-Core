@@ -20,8 +20,8 @@ public interface IEnhancedTopParent extends IEnhancedGuiObject {
 	
 	//hovering text
 	
-	public IEnhancedTopParent setObjectWithHoveringText(IEnhancedGuiObject objIn);
-	public IEnhancedGuiObject getObjectWithHoveringText();
+	public IEnhancedTopParent setHoveringObject(IEnhancedGuiObject objIn);
+	public IEnhancedGuiObject getHoveringObject();
 	
 	//objects
 	

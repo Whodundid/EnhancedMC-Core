@@ -8,7 +8,6 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.renderUtil.HSLColor;
 import com.Whodundid.core.util.storageUtil.EArrayList;
-import java.awt.Color;
 
 //Author: Hunter Bragg
 
@@ -43,8 +42,8 @@ public class EGuiColorPicker extends WindowParent {
 	}
 
 	@Override
-	public void drawObject(int mXIn, int mYIn, float ticks) {
-		super.drawObject(mXIn, mYIn, ticks);
+	public void drawObject(int mXIn, int mYIn) {
+		super.drawObject(mXIn, mYIn);
 		drawDefaultBackground();
 
 		drawPallete();

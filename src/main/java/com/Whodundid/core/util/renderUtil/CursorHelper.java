@@ -1,6 +1,6 @@
 package com.Whodundid.core.util.renderUtil;
 
-import com.Whodundid.core.coreSubMod.EMCResources;
+import com.Whodundid.core.util.resourceUtil.EResource;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
@@ -27,7 +27,7 @@ public class CursorHelper {
 	
 	public static void init() {
 		cursor = Mouse.getNativeCursor();
-		invisibleCursor = createCursorFromResourceLocation(EMCResources.emptyPixel);
+		invisibleCursor = createCursor(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB));
 	}
 	
 	/** Will only change the cursor if the current one is different than the one to be set. */
@@ -35,7 +35,7 @@ public class CursorHelper {
 		if (getCursor() == null) {
 			if (cursorIn != null) { setCursor(cursorIn); }
 		}
-		else if (!getCursor().equals(cursorIn)) {
+		else if (!(getCursor() == cursorIn)) {
 			setCursor(cursorIn);
 		}
 	}
@@ -44,7 +44,19 @@ public class CursorHelper {
 	public static void setCursor(Cursor cursorIn) {
 		try {
 			Mouse.setNativeCursor(cursorIn);
-		} catch (LWJGLException e) { e.printStackTrace(); }
+		}
+		catch (LWJGLException e) { e.printStackTrace(); }
+	}
+	
+	/** Returns a new Cursor Object created from an EMC EResource. */
+	public static Cursor createCursorFromEResource(EResource resIn) {
+		try {
+			if (resIn != null && resIn.getHandler() != null) {
+				return createCursor(resIn.getHandler().GBI());
+			}
+		}
+		catch (Exception e) { e.printStackTrace(); }
+		return null;
 	}
 	
 	/** Returns a new Cursor Object created from a Minecraft ResourceLocation. */
@@ -54,7 +66,8 @@ public class CursorHelper {
 			InputStream stream = resource.getInputStream();
 			BufferedImage image = ImageIO.read(stream);
 			return createCursor(image);		
-		} catch (Exception e) { e.printStackTrace(); }
+		}
+		catch (Exception e) { e.printStackTrace(); }
 		return null;
 	}
 	
@@ -64,7 +77,8 @@ public class CursorHelper {
 			InputStream stream = new FileInputStream(fileIn);
 			BufferedImage image = ImageIO.read(stream);
 			return createCursor(image);
-		} catch (Exception e) { e.printStackTrace(); }
+		}
+		catch (Exception e) { e.printStackTrace(); }
 		return null;
 	}
 	
@@ -93,7 +107,8 @@ public class CursorHelper {
 			
 			Cursor createdCursor = new Cursor(width, height, width / 2, height / 2, 1, buffer.asIntBuffer(), null);
 			return createdCursor;			
-		} catch (Exception e) { e.printStackTrace(); }
+		}
+		catch (Exception e) { e.printStackTrace(); }
 		return null;
 	}
 	
@@ -118,7 +133,9 @@ public class CursorHelper {
 	
 	
 	/** Resets the cursor image back to default. */
-	public static void reset() { setCursor(null); }
+	public static void reset() {
+		setCursor(null);
+	}
 	/** Returns true if the cursor is currently the default cursor. */
 	public static boolean isNormalCursor() { return Mouse.isCreated() && Mouse.getNativeCursor() == null; }
 	/** Returns the current cursor. */

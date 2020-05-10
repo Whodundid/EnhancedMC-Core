@@ -149,7 +149,7 @@ public class EGuiColorPickerSimple extends ActionWindowParent {
 	}
 	
 	@Override
-	public void drawObject(int mXIn, int mYIn, float ticks) {
+	public void drawObject(int mXIn, int mYIn) {
 		drawDefaultBackground();
 		
 		if (colorDisplay != null) {
@@ -157,7 +157,7 @@ public class EGuiColorPickerSimple extends ActionWindowParent {
 			//drawRect(cDim.startX - 1, cDim.startY - 1, cDim.endX + 1, cDim.endY + 1, 0xff000000);
 		}
 		
-		super.drawObject(mXIn, mYIn, ticks);
+		super.drawObject(mXIn, mYIn);
 	}
 	
 	@Override
@@ -188,10 +188,10 @@ public class EGuiColorPickerSimple extends ActionWindowParent {
 			e.printStackTrace();
 			EGuiDialogueBox error = new EGuiDialogueBox(DialogueBoxTypes.ok);
 			error.setTitle("Error!");
-			error.setTitleColor(EColors.lightRed.c());
+			error.setTitleColor(EColors.lred.c());
 			error.setMessage("Cannot parse the value: " + inputField.getText());
 			error.setMessageColor(EColors.lgray.c());
-			EnhancedMC.displayEGui(error, CenterType.screen);
+			EnhancedMC.displayWindow(error, CenterType.screen);
 			inputField.clear();
 			inputField.setTextWhenEmpty(inputField.textWhenEmpty);
 		}

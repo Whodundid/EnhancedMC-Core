@@ -1,6 +1,5 @@
 package com.Whodundid.core.util.renderUtil;
 
-import com.Whodundid.core.EnhancedMC;
 import java.util.List;
 import java.util.concurrent.Callable;
 import net.minecraft.client.Minecraft;
@@ -30,7 +29,6 @@ import net.minecraftforge.client.model.pipeline.LightUtil;
 
 //Author: Hunter Bragg
 
-@SuppressWarnings("deprecation")
 public class EItemDrawer {
 
 	public Minecraft mc = Minecraft.getMinecraft();
@@ -212,7 +210,7 @@ public class EItemDrawer {
 				GlStateManager.disableLighting();
 				GlStateManager.disableDepth();
 				GlStateManager.disableBlend();
-				EnhancedMC.getFontRenderer().drawStringWithShadow(s, xPosition, yPosition, 16777215);
+				GLObject.drawStringWithShadow(s, xPosition, yPosition, 16777215);
 				GlStateManager.enableLighting();
 				GlStateManager.enableDepth();
 			}

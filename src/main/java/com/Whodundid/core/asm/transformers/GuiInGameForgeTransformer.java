@@ -14,7 +14,7 @@ public class GuiInGameForgeTransformer extends IETransformer {
 	
 	@Override
 	protected void transform(ClassNode gigfClass) {
-		System.out.println("HERER!: " + gigfClass + " " + isObfuscated);
+		//System.out.println("HERER!: " + gigfClass + " " + isObfuscated);
 		final String CHATMETHOD = "renderToolHightlight";
 		final String CHATMETHOD_DESC = isObfuscated ? "(Lavr)V" : "(Lnet/minecraft/client/gui/ScaledResolution)V";
 		

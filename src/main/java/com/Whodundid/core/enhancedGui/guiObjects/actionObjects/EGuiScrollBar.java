@@ -128,7 +128,7 @@ public class EGuiScrollBar extends EnhancedActionObject {
 	}
 	
 	@Override
-	public void drawObject(int mX, int mY, float ticks) {
+	public void drawObject(int mX, int mY) {
 		if (isScrolling && mousePos != null && mousePos.getObject() != null && mousePos.getValue() != null) {
 			if (vertical && mY - mousePos.getValue() != 0) { moveThumb(0, mY - mousePos.getValue()); }
 			else if (mX - mousePos.getObject() != 0) { moveThumb(mX - mousePos.getObject(), 0); }
@@ -142,7 +142,7 @@ public class EGuiScrollBar extends EnhancedActionObject {
 			}
 			drawRect(thumbStartX, thumbStartY, thumbEndX, thumbEndY, color);
 		}
-		super.drawObject(mX, mY, ticks);
+		super.drawObject(mX, mY);
 	}
 	
 	@Override

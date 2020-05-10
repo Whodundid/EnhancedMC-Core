@@ -1,7 +1,7 @@
 package com.Whodundid.core.notifications.baseObjects;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.coreSubMod.EMCResources;
+import com.Whodundid.core.coreApp.EMCResources;
 import com.Whodundid.core.notifications.NotificationObject;
 import com.Whodundid.core.notifications.NotificationType;
 import com.Whodundid.core.util.renderUtil.EColors;
@@ -18,15 +18,15 @@ public class EMCNotification extends NotificationObject {
 	
 	@Override
 	public void initGui() {
-		setDimensions(startX, res.getScaledHeight() - 52, 44 + fontRenderer.getStringWidth(message), 30);
+		setDimensions(startX, res.getScaledHeight() - 52, 44 + mc.fontRendererObj.getStringWidth(message), 30);
 		setPinned(true);
 	}
 	
 	@Override
-	public void drawObject(int mXIn, int mYIn, float ticks) {
-		super.drawObject(mXIn, mYIn, ticks);
+	public void drawObject(int mXIn, int mYIn) {
+		super.drawObject(mXIn, mYIn);
 		GlStateManager.color(1f, 1f, 1f, 0.75f);
-		mc.renderEngine.bindTexture(EMCResources.guiInfo);
+		bindTexture(EMCResources.guiInfo);
 		drawTexture(startX + 5, midY - 10, 20, 20);
 		drawStringWithShadow(message, startX + 30, midY - 3, EColors.cyan.c());
 	}
@@ -40,7 +40,7 @@ public class EMCNotification extends NotificationObject {
 			if (attentionObject != null) {
 				if (EnhancedMC.getRenderer().getObjects().contains(attentionObject)) { attentionObject.requestFocus(); }
 				else {
-					EnhancedMC.displayEGui(attentionObject);
+					EnhancedMC.displayWindow(attentionObject);
 				}
 			}
 		}

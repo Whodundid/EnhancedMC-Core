@@ -24,8 +24,6 @@ import net.minecraft.util.MathHelper;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
 
 //Author: Hunter Bragg
 
@@ -75,7 +73,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 	}
 	
 	@Override
-	public void drawObject(int mXIn, int mYIn, float ticks) {
+	public void drawObject(int mXIn, int mYIn) {
 		updateBeforeNextDraw(mXIn, mYIn);
 		drawRect(startX, startY, endX, endY, borderColor);
 		
@@ -109,7 +107,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 							GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 							EDimension d = o.getDimensions();
 							//drawRect(d.startX, d.startY, d.endX, d.endY, 0xffff0000);
-							o.drawObject(mXIn, mYIn, ticks);
+							o.drawObject(mXIn, mYIn);
 						}
 					}
 				}
@@ -120,7 +118,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 					if (o.checkDraw() && listContents.notContains(o)) {
 						if (!o.hasFirstDraw()) { o.onFirstDraw(); o.onFirstDraw(); }
 	    				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-	    	        	o.drawObject(mXIn, mYIn, ticks);
+	    	        	o.drawObject(mXIn, mYIn);
 	    			}
 				}
 				
@@ -251,15 +249,20 @@ public class EGuiScrollList extends EnhancedGuiObject {
 		
 		//get both the current list objects and those being added
 		EArrayList<IEnhancedGuiObject> objs = EArrayList.combineLists(listContents, listObjsToBeAdded);
+		EArrayList<IEnhancedGuiObject> aObjs = new EArrayList();
+		
+		for (IEnhancedGuiObject o : objs) {
+			if (listObjsToBeRemoved.notContains(o)) { aObjs.add(o); }
+		}
 		
 		//find right
-		for (IEnhancedGuiObject o : objs) {
+		for (IEnhancedGuiObject o : aObjs) {
 			EDimension od = o.getDimensions();
 			if (od.endX > right) { right = od.endX; }
 		}
 		
 		//find down
-		for (IEnhancedGuiObject o : objs) {
+		for (IEnhancedGuiObject o : aObjs) {
 			EDimension od = o.getDimensions();
 			if (od.endY > down) { down = od.endY; }
 		}
@@ -311,7 +314,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 	}
 	
 	public EGuiScrollList addObjectToList(IEnhancedGuiObject... objsIn) { return addObjectToList(true, objsIn); }
-	public EGuiScrollList addObjectToList(boolean addToObject, IEnhancedGuiObject... objsIn) {
+	public EGuiScrollList addObjectToList(boolean useRelativeCoords, IEnhancedGuiObject... objsIn) {
 		for (IEnhancedGuiObject o : objsIn) {
 			try {
 				if (o != null && o != this) {
@@ -324,7 +327,9 @@ public class EGuiScrollList extends EnhancedGuiObject {
 					
 					//apply offset to all added objects so their location is relative to this scrollList
 					EDimension dims = o.getDimensions();
-					o.setDimensions(startX + dims.startX, startY + dims.startY, dims.width, dims.height);
+					if (useRelativeCoords) {
+						o.setDimensions(startX + dims.startX, startY + dims.startY, dims.width, dims.height);
+					}
 					
 					try {
 						o.setParent(this).initObjects();
@@ -342,7 +347,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 					o.setInitialPosition(o.getDimensions().startX, o.getDimensions().startY);
 					
 					listObjsToBeAdded.add(o);
-					if (addToObject) { objsToBeAdded.add(o); }
+					objsToBeAdded.add(o);
 				}
 			} catch (Exception e) { e.printStackTrace(); }
 		}
@@ -418,7 +423,13 @@ public class EGuiScrollList extends EnhancedGuiObject {
 		}
 	}
 	
-	public void clearList() { listContents.forEach(o -> removeObject(o)); updateDrawnObjects(); }
+	public void clearList() {
+		drawnListObjects.clear();
+		listContents.clear();
+		listObjsToBeAdded.clear();
+		
+		reInitObjects();
+	}
 	
 	public EGuiScrollList setBackgroundColor(int colorIn) { backgroundColor = colorIn; return this; }
 	public EGuiScrollList setBorderColor(int colorIn) { borderColor = colorIn; return this; }

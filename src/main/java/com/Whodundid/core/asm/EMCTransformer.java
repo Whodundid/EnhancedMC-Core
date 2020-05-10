@@ -22,7 +22,7 @@ public class EMCTransformer implements IClassTransformer {
 	
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] basicClass) {
-		if (!isObfuscated && name.equals("net.minecraft.client.Minecraft")) { isObfuscated = !name.equals(transformedName); }
+		if (!isObfuscated) { isObfuscated = !name.equals(transformedName); }
 		for (int i = 0; i < transformers.size(); i++) {
 			IETransformer t = transformers.get(i);
 			if (t.getClassName().equals(transformedName)) { return t.start(basicClass, isObfuscated); }

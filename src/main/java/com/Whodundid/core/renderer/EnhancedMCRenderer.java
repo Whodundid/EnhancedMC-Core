@@ -1,7 +1,7 @@
 package com.Whodundid.core.renderer;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.coreSubMod.EMCMod;
+import com.Whodundid.core.coreApp.CoreApp;
 import com.Whodundid.core.enhancedGui.StaticEGuiObject;
 import com.Whodundid.core.enhancedGui.StaticTopParent;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
@@ -19,7 +19,8 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
-import com.Whodundid.core.util.renderUtil.BlockDrawer;
+import com.Whodundid.core.renderer.renderUtil.IRendererProxy;
+import com.Whodundid.core.renderer.taskView.TaskBar;
 import com.Whodundid.core.util.renderUtil.CursorHelper;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
@@ -30,7 +31,6 @@ import java.util.Deque;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import org.lwjgl.opengl.GL11;
 
@@ -71,7 +71,7 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	}
 	
 	public void onRenderTick(RenderGameOverlayEvent e) {
-		drawObject(0, 0, e.partialTicks);
+		drawObject(0, 0);
 	}
 	
 	//----------------
@@ -89,10 +89,7 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	@Override public boolean isObjectInit() { return objectInit; }
 	/** Effectively does nothing in the renderer. */
 	@Override public void completeInit() {}
-	@Override
-	public void initObjects() {
-		objectInit = true;
-	}
+	@Override public void initObjects() { objectInit = true; }
 	@Override
 	public void reInitObjects() {
 		objectInit = false;
@@ -103,19 +100,41 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	
 	//main draw
 	@Override
-	public void drawObject(int mXIn, int mYIn, float ticks) {
-		//System.out.println(PlayerTraits.getHeldItemId());
+	public void drawObject(int mXIn, int mYIn) {
 		checkForProxy();
 		updateBeforeNextDraw(mXIn, mYIn);
+		
+		//prime renderer
 		GlStateManager.pushMatrix();
 		GlStateManager.enableBlend();
+		GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
+		
 		if (visible) {
+			
+			//draw Hud Border
+			if (hasProxy && CoreApp.drawHudBorder.get()) {
+				int borderColor = 0x88ff0000;
+				if (containsObject(TaskBar.class)) {
+					drawRect(0, 24, 1, res.getScaledHeight(), borderColor); //left
+					drawRect(1, 24, res.getScaledWidth() - 1, 25, borderColor); //top
+					drawRect(res.getScaledWidth() - 1, 24, res.getScaledWidth(), res.getScaledHeight(), borderColor); //right
+					drawRect(1, res.getScaledHeight() - 2, res.getScaledWidth() - 1, res.getScaledHeight(), borderColor); //bottom
+				}
+				else {
+					drawRect(0, 0, 1, res.getScaledHeight(), borderColor); //left
+					drawRect(1, 0, res.getScaledWidth() - 1, 2, borderColor); //top
+					drawRect(res.getScaledWidth() - 1, 0, res.getScaledWidth(), res.getScaledHeight(), borderColor); //right
+					drawRect(1, res.getScaledHeight() - 2, res.getScaledWidth() - 1, res.getScaledHeight(), borderColor); //bottom
+				}
+			}
+			
+			//draw all child objects
 			guiObjects.stream().filter(o -> o.checkDraw()).forEach(o -> {
 				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 				GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
 				GL11.glDisable(GL11.GL_SCISSOR_TEST);
 				if (!o.hasFirstDraw()) { o.onFirstDraw(); }
-				o.drawObject(mX, mY, ticks);
+				o.drawObject(mX, mY);
 				if (focusLockObject != null && !o.equals(focusLockObject)) {
 					if (o.isVisible()) {
 						EDimension d = o.getDimensions();
@@ -123,24 +142,15 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 					}
 				}
 			});
-			if (getObjectWithHoveringText() != null) { getObjectWithHoveringText().onMouseHover(mX, mY); }
+			
+			//notify hover object
+			if (getHoveringObject() != null) { getHoveringObject().onMouseHover(mX, mY); }
+			
+			//draw debug stuff
 			if (EnhancedMC.isDebugMode() && !mc.gameSettings.showDebugInfo) { drawDebugInfo(); }
-			if (hasProxy && EMCMod.drawHudBorder.get()) {
-				int borderColor = 0x88ff0000;
-				drawRect(0, 0, 1, res.getScaledHeight(), borderColor); //left
-				drawRect(1, 0, res.getScaledWidth() - 1, 2, borderColor); //top
-				drawRect(res.getScaledWidth() - 1, 0, res.getScaledWidth(), res.getScaledHeight(), borderColor); //right
-				drawRect(1, res.getScaledHeight() - 2, res.getScaledWidth() - 1, res.getScaledHeight(), borderColor); //bottom
-			}
 		}
 		
 		GlStateManager.popMatrix();
-		BlockDrawer.clearBlocks();
-		for (EntityPlayer p : mc.theWorld.playerEntities) {
-			if (p.getName().equals("Shion6781")) {
-				BlockDrawer.addBlock(p.getPosition(), 0x66ff0000);
-			}
-		}
 	}
 	@Override public void onFirstDraw() {}
 	@Override public boolean hasFirstDraw() { return firstDraw; }
@@ -196,7 +206,7 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	@Override public StorageBox<Integer, Integer> getInitialPosition() { return new StorageBox<Integer, Integer>(0, 0); }
 	@Override public EnhancedMCRenderer setInitialPosition(int startXIn, int startYIn) { return this; }
 	@Override public EnhancedMCRenderer centerObjectWithSize(int widthIn, int heightIn) { return this; }
-	@Override public EDimension getDimensions() { return new EDimension(0, 0, res.getScaledWidth(), res.getScaledWidth()); }
+	@Override public EDimension getDimensions() { return new EDimension(0, 0, res.getScaledWidth(), res.getScaledHeight()); }
 	
 	//objects
 	@Override public boolean isChild(IEnhancedGuiObject objIn) { return false; }
@@ -310,8 +320,8 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	@Override public EnhancedMCRenderer sendObjectToBack(IEnhancedGuiObject objIn) { toBack = objIn; return this; }
 	
 	//hovering text
-	@Override public EnhancedMCRenderer setObjectWithHoveringText(IEnhancedGuiObject objIn) { hoveringTextObject = objIn; return this; }
-	@Override public IEnhancedGuiObject getObjectWithHoveringText() { return hoveringTextObject; }
+	@Override public EnhancedMCRenderer setHoveringObject(IEnhancedGuiObject objIn) { hoveringTextObject = objIn; return this; }
+	@Override public IEnhancedGuiObject getHoveringObject() { return hoveringTextObject; }
 	
 	//objects
 	@Override public IEnhancedGuiObject getHighestZLevelObject() { return StaticTopParent.getHighestZLevelObject(this); }
@@ -396,6 +406,10 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 		}
 	}
 	
+	public void addTaskBar() {
+		addObject(new TaskBar());
+	}
+	
 	public GuiScreen getProxyGuiScreen() { return proxy instanceof GuiScreen ? (GuiScreen) proxy : null; }
 	public IRendererProxy getProxy() { return proxy; }
 	
@@ -404,18 +418,18 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 			if (mX == oldMousePos.getObject() && mY == oldMousePos.getValue()) {
 				mouseHoverTime = (System.currentTimeMillis() - hoverRefTime);
 				if (mouseHoverTime >= 650) {
-					setObjectWithHoveringText(getHighestZObjectUnderMouse());
+					setHoveringObject(getHighestZObjectUnderMouse());
 				}
 			}
 			else {
 				mouseHoverTime = 0l;
 				hoverRefTime = System.currentTimeMillis();
-				setObjectWithHoveringText(null);
+				setHoveringObject(null);
 			}
 		}
 		else if (mouseHoverTime > 0l) {
 			mouseHoverTime = 0l;
-			if (getObjectWithHoveringText() != null) { setObjectWithHoveringText(null); }
+			if (getHoveringObject() != null) { setHoveringObject(null); }
 		}
 	}
 	
@@ -427,14 +441,24 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	
 	protected void updateZLayers() {
 		if (toFront != null) {
+			//move the 'toFront' object to the front
 			if (guiObjects.contains(toFront)) {
 				guiObjects.remove(toFront);
 				guiObjects.add(toFront);
 			}
+			
+			//move things that should always be at the top to the top
+			EArrayList<IEnhancedGuiObject> atTop = guiObjects.stream().filter(o -> o.isAlwaysOnTop()).collect(EArrayList.toEArrayList());
+			for (IEnhancedGuiObject o : atTop) {
+				guiObjects.remove(o);
+				guiObjects.add(o);
+			}
+			
 			toFront = null;
 		}
 		
 		if (toBack != null) {
+			//move the 'toBack' object to the back
 			if (guiObjects.contains(toBack)) {
 				EArrayList<IEnhancedGuiObject> objects = new EArrayList();
 				guiObjects.remove(toFront);
@@ -443,6 +467,14 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 				guiObjects.add(toFront);
 				guiObjects.addAll(objects);
 			}
+			
+			//move things that should always be at the top to the top
+			EArrayList<IEnhancedGuiObject> atTop = guiObjects.stream().filter(o -> o.isAlwaysOnTop()).collect(EArrayList.toEArrayList());
+			for (IEnhancedGuiObject o : atTop) {
+				guiObjects.remove(o);
+				guiObjects.add(o);
+			}
+			
 			toBack = null;
 		}
 	}
@@ -457,4 +489,5 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 		setObjectRequestingFocus(null);
 		reInitObjects();
 	}
+	
 }

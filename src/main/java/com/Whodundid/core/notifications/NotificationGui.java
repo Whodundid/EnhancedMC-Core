@@ -24,7 +24,7 @@ public class NotificationGui extends WindowParent {
 	}
 	
 	@Override
-	public void drawObject(int mXIn, int mYIn, float ticks) {
+	public void drawObject(int mXIn, int mYIn) {
 		
 	}
 	

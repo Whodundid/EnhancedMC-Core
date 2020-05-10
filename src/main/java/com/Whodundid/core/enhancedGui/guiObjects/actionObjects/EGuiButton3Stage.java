@@ -1,11 +1,11 @@
 package com.Whodundid.core.enhancedGui.guiObjects.actionObjects;
 
+import com.Whodundid.core.app.AppConfigSetting;
+import com.Whodundid.core.app.EMCApp;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
-import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
-import com.Whodundid.core.util.storageUtil.ModSetting;
 
 //Author: Hunter Bragg
 
@@ -22,16 +22,16 @@ public class EGuiButton3Stage extends EGuiButton {
 	public EGuiButton3Stage(IEnhancedGuiObject parentIn, int posX, int posY, int width, int height) {
 		super(parentIn, posX, posY, width, height);
 	}
-	public EGuiButton3Stage(IEnhancedGuiObject parentIn, int posX, int posY, int width, int height, ModSetting settingIn) {
+	public EGuiButton3Stage(IEnhancedGuiObject parentIn, int posX, int posY, int width, int height, AppConfigSetting settingIn) {
 		super(parentIn, posX, posY, width, height);
 		parseStages(settingIn);
 	}
-	public EGuiButton3Stage(IEnhancedGuiObject parentIn, int posX, int posY, int width, int height, ModSetting settingIn, int colorIn) {
+	public EGuiButton3Stage(IEnhancedGuiObject parentIn, int posX, int posY, int width, int height, AppConfigSetting settingIn, int colorIn) {
 		super(parentIn, posX, posY, width, height);
 		setColor(colorIn);
 		parseStages(settingIn);
 	}
-	public EGuiButton3Stage(IEnhancedGuiObject parentIn, int posX, int posY, int width, int height, ModSetting settingIn, int color0In, int color1In, int color2In) {
+	public EGuiButton3Stage(IEnhancedGuiObject parentIn, int posX, int posY, int width, int height, AppConfigSetting settingIn, int color0In, int color1In, int color2In) {
 		super(parentIn, posX, posY, width, height);
 		setColors(color0In, color1In, color2In);
 		parseStages(settingIn);
@@ -61,9 +61,9 @@ public class EGuiButton3Stage extends EGuiButton {
 		return this;
 	}
 	
-	public EGuiButton3Stage loadStage(ModSetting settingIn) {
+	public EGuiButton3Stage loadStage(AppConfigSetting settingIn) {
 		if (settingIn.get().getClass().isAssignableFrom(String.class)) {
-			String val = ((String) settingIn.get());
+			String val = EUtil.capitalFirst(((String) settingIn.get()));
 			if (stage0.equals("und") && stage1.equals("und") && stage2.equals("und")) { parseStages(settingIn); }
 			else if (val.equals(stage0)) { loadStage(0); }
 			else if (val.equals(stage1)) { loadStage(1); }
@@ -72,7 +72,7 @@ public class EGuiButton3Stage extends EGuiButton {
 		return this;
 	}
 	
-	private void parseStages(ModSetting in) {
+	private void parseStages(AppConfigSetting in) {
 		if (in.get().getClass().isAssignableFrom(String.class)) {
 			EArrayList<String> stages = in.getArgs();
 			if (stages != null) {
@@ -88,7 +88,7 @@ public class EGuiButton3Stage extends EGuiButton {
 		}
 	}
 	
-	public EGuiButton3Stage updateDislay(ModSetting settingIn, SubMod modIn, boolean saveAll) {
+	public EGuiButton3Stage updateDislay(AppConfigSetting settingIn, EMCApp modIn, boolean saveAll) {
 		if (settingIn.get().getClass().isAssignableFrom(String.class)) {
 			loadStage(curStage);
 			settingIn.set(getDisplayString());

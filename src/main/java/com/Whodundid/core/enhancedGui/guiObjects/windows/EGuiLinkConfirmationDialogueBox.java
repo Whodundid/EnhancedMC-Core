@@ -1,6 +1,5 @@
 package com.Whodundid.core.enhancedGui.guiObjects.windows;
 
-import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiLabel;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
@@ -24,10 +23,10 @@ public class EGuiLinkConfirmationDialogueBox extends EGuiDialogueBox {
 		link = linkIn;
 		
 		int longestString = 0;
-		longestString = EnhancedMC.getFontRenderer().getStringWidth(prompt);
-		int linkLength = EnhancedMC.getFontRenderer().getStringWidth(linkIn);
+		longestString = mc.fontRendererObj.getStringWidth(prompt);
+		int linkLength = mc.fontRendererObj.getStringWidth(linkIn);
 		if (linkLength > longestString) { longestString = linkLength; }
-		int copyLength = EnhancedMC.getFontRenderer().getStringWidth(I18n.format("chat.copy", new Object[0])) + 8;
+		int copyLength = mc.fontRendererObj.getStringWidth(I18n.format("chat.copy", new Object[0])) + 8;
 		int buttonLength = copyLength + 232; //length of all buttons and gaps inbetween
 		if (buttonLength > longestString) { longestString = buttonLength; }
 		

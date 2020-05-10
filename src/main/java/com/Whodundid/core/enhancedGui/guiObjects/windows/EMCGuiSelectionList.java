@@ -1,12 +1,16 @@
 package com.Whodundid.core.enhancedGui.guiObjects.windows;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.coreSubMod.EMCMod;
+import com.Whodundid.core.app.AppType;
+import com.Whodundid.core.app.EMCApp;
+import com.Whodundid.core.app.RegisteredApps;
+import com.Whodundid.core.coreApp.CoreApp;
+import com.Whodundid.core.coreApp.EMCResources;
 import com.Whodundid.core.debug.ExperimentGui;
+import com.Whodundid.core.debug.TestWindow;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.renderer.EnhancedMCRenderer;
-import com.Whodundid.core.subMod.RegisteredSubMods;
-import com.Whodundid.core.subMod.SubModType;
 import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.util.guiUtil.CommonVanillaGuis;
 import com.Whodundid.core.util.guiUtil.GuiOpener;
@@ -29,16 +33,18 @@ public class EMCGuiSelectionList extends EGuiSelectionList {
 		actionReciever = this;
 		setZLevel(10000);
 		aliases.add("guiselection", "guiselect", "guilist", "glist");
+		windowIcon = EMCResources.openGuiIcon;
 	}
 	
 	private StorageBoxHolder<String, Object> buildList() {
 		StorageBoxHolder<String, Object> list = new StorageBoxHolder();
-		if (RegisteredSubMods.getAllGuiClasses().size() > 0) {
-			boolean flag = ((EMCMod) RegisteredSubMods.getMod(SubModType.CORE)).enableTerminal.get();
+		if (RegisteredApps.getAllGuiClasses().size() > 0) {
+			boolean flag = ((CoreApp) RegisteredApps.getApp(AppType.CORE)).enableTerminal.get();
 			if (EnhancedMC.isDebugMode() || flag) {
 				list.add(EnumChatFormatting.GRAY + "EMC Debug Guis", null);
-				if (EnhancedMC.isDebugMode() || EnhancedMC.isUserDev()) {
+				if (EnhancedMC.isOpMode()) {
 					list.add(EnumChatFormatting.LIGHT_PURPLE + "Experiment Gui", new StorageBox<Class, StorageBox<Class[], Object[]>>(ExperimentGui.class, null));
+					list.add(EnumChatFormatting.LIGHT_PURPLE + "Test Window", new StorageBox<Class, StorageBox<Class[], Object[]>>(TestWindow.class, null));
 				}
 				if (flag) {
 					list.add(EnumChatFormatting.LIGHT_PURPLE + "Enhanced MC Terminal", new StorageBox<Class, StorageBox<Class[], Object[]>>(ETerminal.class, null));
@@ -46,10 +52,17 @@ public class EMCGuiSelectionList extends EGuiSelectionList {
 				list.add("", null);
 			}
 			
-			list.add(EnumChatFormatting.GRAY + "EMC SubMod Guis", null);
+			list.add(EnumChatFormatting.GRAY + "EMC App Guis", null);
 			
-			for (Class c : RegisteredSubMods.getAllGuiClasses()) {
-				list.add(EnumChatFormatting.GREEN + c.getSimpleName(), new StorageBox<Class, StorageBox<Class[], Object[]>>(c, null));
+			for (EMCApp a : RegisteredApps.getAppsList()) {
+				boolean isCore = a.getAppType() == AppType.CORE;
+				
+				for (IWindowParent p : a.getGuis()) {
+					if (!p.showInLists()) { continue; }
+					if (p.isOpWindow() && !EnhancedMC.isOpMode()) { continue; }
+					else if (p.isDebugWindow() && !EnhancedMC.isDebugMode()) { continue; }
+					list.add(EnumChatFormatting.GREEN + p.getClass().getSimpleName(), new StorageBox<Class, StorageBox<Class[], Object[]>>(p.getClass(), null));
+				}
 			}
 		}
 		

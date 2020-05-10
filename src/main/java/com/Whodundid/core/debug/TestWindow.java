@@ -1,5 +1,6 @@
 package com.Whodundid.core.debug;
 
+import com.Whodundid.core.coreApp.EMCResources;
 import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.EGuiPlayerViewer;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
@@ -15,6 +16,7 @@ public class TestWindow extends WindowParent {
 	public TestWindow() {
 		super();
 		getAliases().add("test");
+		windowIcon = EMCResources.experimentIcon;
 	}
 	
 	@Override
@@ -29,7 +31,9 @@ public class TestWindow extends WindowParent {
 	public void initObjects() {
 		defaultHeader(this);
 		
-		viewer = new EGuiPlayerViewer(this, startX + 5, startY + 5, width - 10, height - 10);
+		viewer = new EGuiPlayerViewer(this, startX + 5, startY + 5, width - 10, height - 10, mc.thePlayer);
+		viewer.setLockHead(true);
+		
 		ok = new EGuiButton(this, endX - 55, endY - 25, 50, 20, "Test");
 		
 		addObject(viewer);
@@ -37,10 +41,10 @@ public class TestWindow extends WindowParent {
 	}
 	
 	@Override
-	public void drawObject(int mXIn, int mYIn, float ticks) {
+	public void drawObject(int mXIn, int mYIn) {
 		drawDefaultBackground();
 		
-		super.drawObject(mXIn, mYIn, ticks);
+		super.drawObject(mXIn, mYIn);
 	}
 	
 	@Override
@@ -62,4 +66,8 @@ public class TestWindow extends WindowParent {
 	public void mouseReleased(int mXIn, int mYIn, int button) {
 		super.mouseReleased(mXIn, mYIn, button);
 	}
+	
+	@Override public boolean isOpWindow() { return true; }
+	@Override public boolean showInLists() { return false; }
+	
 }

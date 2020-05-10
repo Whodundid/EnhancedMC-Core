@@ -1,7 +1,10 @@
 package com.Whodundid.core.enhancedGui;
 
-import com.Whodundid.core.coreEvents.emcEvents.SubModCalloutEvent;
-import com.Whodundid.core.coreSubMod.EMCMod;
+import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.app.AppType;
+import com.Whodundid.core.app.RegisteredApps;
+import com.Whodundid.core.coreApp.CoreApp;
+import com.Whodundid.core.coreEvents.emcEvents.EMCAppCalloutEvent;
 import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
 import com.Whodundid.core.enhancedGui.guiUtil.EGui;
@@ -15,15 +18,17 @@ import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.ObjectModifyType;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
-import com.Whodundid.core.renderer.RendererRCM;
-import com.Whodundid.core.subMod.RegisteredSubMods;
-import com.Whodundid.core.subMod.SubModType;
+import com.Whodundid.core.renderer.renderUtil.RendererRCM;
+import com.Whodundid.core.renderer.taskView.TaskBar;
 import com.Whodundid.core.util.miscUtil.EMouseHelper;
+import com.Whodundid.core.util.renderUtil.CenterType;
+import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 import java.util.Deque;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
 import org.lwjgl.input.Keyboard;
@@ -54,7 +59,7 @@ public class StaticTopParent extends EGui {
 		else { //there was no lock and there was nothing under the cursor
 			objIn.clearFocusedObject();
 			if (button == 1) { //open a right click menu if the right mouse button was pressed
-				objIn.addObject(new RendererRCM());
+				EnhancedMC.displayWindow(new RendererRCM(), CenterType.cursorCorner);
 			}
 		}
 	}
@@ -85,8 +90,8 @@ public class StaticTopParent extends EGui {
 			if (p != null) { p.mouseScrolled(change); }
 			else { obj.mouseScrolled(change); }
 		} else { //if there were no objects under the mouse, scroll the chat
-			if (RegisteredSubMods.isModRegEn(SubModType.ENHANCEDCHAT) && EMCMod.drawChatOnHud.get().equals("Full")) {
-				SubModCalloutEvent callout = new SubModCalloutEvent(objIn, "EnhancedChat: has chat window"); // I AM NOT SURE IF THIS ACTUALLY ACCOMPLISHED ANYTHING!
+			if (RegisteredApps.isAppRegEn(AppType.ENHANCEDCHAT) && CoreApp.drawChatOnHud.get().equals("Full")) {
+				EMCAppCalloutEvent callout = new EMCAppCalloutEvent(objIn, "EnhancedChat: has chat window"); // I AM NOT SURE IF THIS ACTUALLY ACCOMPLISHED ANYTHING!
 				if (!MinecraftForge.EVENT_BUS.post(callout)) {
 					if (!isShiftKeyDown()) { change *= 7; }
 					mc.ingameGUI.getChatGUI().scroll(change);
@@ -104,7 +109,7 @@ public class StaticTopParent extends EGui {
 		}
 		IEnhancedGuiObject fo = objIn.getFocusedObject();
 		if (fo != null && fo != objIn) { fo.keyPressed(Keyboard.getEventCharacter(), Keyboard.getEventKey()); }
-		if (fo == null || fo == objIn) { if (RegisteredSubMods.isModRegEn(SubModType.ENHANCEDCHAT)) { RegisteredSubMods.getMod(SubModType.ENHANCEDCHAT).keyEvent(new KeyInputEvent()); } }
+		if (fo == null || fo == objIn) { if (RegisteredApps.isAppRegEn(AppType.ENHANCEDCHAT)) { RegisteredApps.getApp(AppType.ENHANCEDCHAT).keyEvent(new KeyInputEvent()); } }
 	}
 	/** Notify the focused object that the keyboard just had a key released. */
 	public static void keyReleased(IEnhancedTopParent objIn, char typedChar, int keyCode) {
@@ -116,35 +121,62 @@ public class StaticTopParent extends EGui {
 	//drawing
 	/** Debug method used to display topParent information in the top left corner of the screen. */
 	public static void drawDebugInfo(IEnhancedTopParent objIn) {
-		//draw what the topParent is
-		drawStringWithShadow("TopParent: " + objIn.getTopParent(), 2, 2, 0x70f3ff);
 		
-		//draw the currently focused object - if it's a button, show that too
-		if (objIn.getFocusedObject() instanceof EGuiButton) {
-			drawStringWithShadow("FocuedObject: " + (((EGuiButton) objIn.getFocusedObject()).getDisplayString().isEmpty() ? objIn.getFocusedObject() : "EGuiButton: " +
-													((EGuiButton) objIn.getFocusedObject()).getDisplayString()), 2, 12, 0x70f3ff);
-		}
-		else { drawStringWithShadow("FocuedObject: " + objIn.getFocusedObject(), 2, 12, 0x70f3ff); }
-		
-		//draw the current focusLockObject - if it's a button, show that too
-		if (objIn.getFocusLockObject() instanceof EGuiButton) {
-			drawStringWithShadow("FocusLockObject: " + (((EGuiButton) objIn.getFocusLockObject()).getDisplayString().isEmpty() ? objIn.getFocusedObject() : "EGuiButton: " +
-													((EGuiButton) objIn.getFocusLockObject()).getDisplayString()), 2, 22, 0x70f3ff);
-		}
-		else { drawStringWithShadow("FocusLockObject: " + objIn.getFocusLockObject(), 2, 22, 0x70f3ff); }
-		
-		//draw the topParent's current immediate children
-		drawStringWithShadow("objs: " + objIn.getObjects(), 2, 32, 0x70f3ff);
-		
-		//draw the topParent's current modifying object and type
-		drawStringWithShadow("ModifyingObject & type: (" + objIn.getModifyingObject() + " : " + objIn.getModifyType() + ")", 2, 42, 0x70f3ff);
-		
-		//draw the highest object currently under the mouse
+		int yPos = objIn.getObjects().containsInstanceOf(TaskBar.class) ? 27 : 2;
 		IEnhancedGuiObject ho = objIn.getHighestZObjectUnderMouse();
-		drawStringWithShadow("Object under mouse: " + ho + " " + (ho != null ? ho.getZLevel() : -1), 2, 52, 0xffbb00);
+		String out = "null";
 		
+		String topParent = "TopParent: " + objIn.getTopParent();
+		String focusedObject = "";
+		String focusLockObject = "";
+		String objects = "objs: " + objIn.getObjects();
+		String modifyType = "ModifyingObject & type: (" + objIn.getModifyingObject() + " : " + objIn.getModifyType() + ")";
+		String underMouse = "Object under mouse: " + out + " " + (ho != null ? ho.getZLevel() : -1);
+		String mousePos = "(" + EMouseHelper.mX + ", " + EMouseHelper.mY + ")";
+		
+		if (objIn.getFocusedObject() instanceof EGuiButton) {
+			focusedObject = "FocuedObject: " + (((EGuiButton) objIn.getFocusedObject()).getDisplayString().isEmpty() ? objIn.getFocusedObject() : "EGuiButton: " +
+					   		((EGuiButton) objIn.getFocusedObject()).getDisplayString());
+		}
+		else { focusedObject = "FocuedObject: " + objIn.getFocusedObject(); }
+		
+		if (objIn.getFocusLockObject() instanceof EGuiButton) {
+			focusLockObject = "FocusLockObject: " + (((EGuiButton) objIn.getFocusLockObject()).getDisplayString().isEmpty() ? objIn.getFocusedObject() : "EGuiButton: " +
+							  ((EGuiButton) objIn.getFocusLockObject()).getDisplayString());
+		}
+		else { focusLockObject = "FocusLockObject: " + objIn.getFocusLockObject(); }
+		
+		if (ho != null) { out = ho.getClass().getName(); }
+		
+		int longestX = mc.fontRendererObj.getStringWidth(topParent);
+		FontRenderer fr = mc.fontRendererObj;
+		
+		if (fr.getStringWidth(focusedObject) > longestX) { longestX = fr.getStringWidth(focusedObject); }
+		if (fr.getStringWidth(focusLockObject) > longestX) { longestX = fr.getStringWidth(focusLockObject); }
+		if (fr.getStringWidth(objects) > longestX) { longestX = fr.getStringWidth(objects); }
+		if (fr.getStringWidth(modifyType) > longestX) { longestX = fr.getStringWidth(modifyType); }
+		if (fr.getStringWidth(underMouse) > longestX) { longestX = fr.getStringWidth(underMouse); }
+		if (fr.getStringWidth(mousePos) > longestX) { longestX = fr.getStringWidth(mousePos); }
+		
+		longestX += 3;
+		
+		drawRect(0, yPos - 3, longestX + 1, yPos + 71, EColors.seafoam);
+		drawRect(1, yPos - 2, longestX, yPos + 70, EColors.dgray);
+		
+		//draw what the topParent is
+		drawStringWithShadow(topParent, 2, yPos, 0x70f3ff);
+		//draw the currently focused object - if it's a button, show that too
+		drawStringWithShadow(focusedObject, 2, yPos + 10, 0x70f3ff);
+		//draw the current focusLockObject - if it's a button, show that too
+		drawStringWithShadow(focusLockObject, 2, yPos + 20, 0x70f3ff);
+		//draw the topParent's current immediate children
+		drawStringWithShadow(objects, 2, yPos + 30, 0x70f3ff);
+		//draw the topParent's current modifying object and type
+		drawStringWithShadow(modifyType, 2, yPos + 40, 0x70f3ff);
+		//draw the highest object currently under the mouse
+		drawStringWithShadow(underMouse, 2, yPos + 50, 0xffbb00);
 		//draw the current mouse position
-		drawStringWithShadow("(" + EMouseHelper.mX + ", " + EMouseHelper.mY + ")", 2, 62, 0xffbb00);
+		drawStringWithShadow(mousePos, 2, yPos + 60, 0xffbb00);
 		
 		//draw escape stopper
 		//drawStringWithShadow("EscapeStopper: " + objIn.getEscapeStopper(), 2, 72, 0x70f3ff);
@@ -167,12 +199,31 @@ public class StaticTopParent extends EGui {
 	/** Removes all windows from the topParent that are not pinned. */
 	public static IEnhancedTopParent removeUnpinnedWindows(IEnhancedTopParent objIn) {
 		//check in both the current objects and the objects that will be added
+		
+		EArrayList<IWindowParent> windows = new EArrayList();
+		
 		for (IEnhancedGuiObject o : EArrayList.combineLists(objIn.getObjects(), objIn.getAddingObjects())) {
 			if (o instanceof IWindowParent) { //only windows can be pinned
-				if (!((IWindowParent) o).isPinned()) { objIn.removeObject(o); }
+				if (!((IWindowParent) o).isPinned()) {
+					windows.add((IWindowParent) o);
+				}
 			}
-			else { objIn.removeObject(o); }
+			else {
+				EArrayList<IEnhancedGuiObject> childObjects = objIn.getAllChildren();
+				for (int i = childObjects.size() - 1; i >= 0; i--) {
+					childObjects.get(i).close();
+				}
+			}
 		}
+		
+		for (IWindowParent p : windows) {
+			EArrayList<IEnhancedGuiObject> childObjects = p.getAllChildren();
+			for (int i = childObjects.size() - 1; i >= 0; i--) {
+				childObjects.get(i).close();
+			}
+			p.close();
+		}
+		
 		return objIn;
 	}
 	/** Returns true if there are any pinned windows within the specified topParent. */
@@ -273,6 +324,10 @@ public class StaticTopParent extends EGui {
 	public static boolean isMouseInsideHeader(IEnhancedTopParent objIn, int mX, int mY) {
 		for (IEnhancedGuiObject o : objIn.getAllChildrenUnderMouse()) { if (o instanceof EGuiHeader) { return true; } }
 		return false;
+	}
+	public static EGuiHeader getHeaderUnderMouse(IEnhancedTopParent objIn, int mX, int mY) {
+		for (IEnhancedGuiObject o : objIn.getAllChildrenUnderMouse()) { if (o instanceof EGuiHeader) { return (EGuiHeader) o; } }
+		return null;
 	}
 	/** Returns the object that has the highest z level under the cursor. */
 	public static IEnhancedGuiObject getHighestZObjectUnderMouse(IEnhancedTopParent objIn) {

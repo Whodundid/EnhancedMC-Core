@@ -9,7 +9,8 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 public abstract class EnhancedActionObject extends EnhancedGuiObject implements IEnhancedActionObject {
 
 	protected boolean runActionOnPress = false;
-	protected Object storedObject = null;
+	protected Object selectedObject = null;
+	protected Object storredObject = null;
 	protected IEnhancedGuiObject actionReciever;
 	
 	protected EnhancedActionObject() {}
@@ -51,6 +52,8 @@ public abstract class EnhancedActionObject extends EnhancedGuiObject implements 
 	@Override public IEnhancedGuiObject getActionReciever() { return actionReciever; }
 		
 	//objects
-	@Override public IEnhancedActionObject setSelectedObject(Object objIn) { storedObject = objIn; return this; }
-	@Override public Object getSelectedObject() { return storedObject; }
+	@Override public IEnhancedActionObject setStorredObject(Object objIn) { storredObject = objIn; return this; }
+	@Override public Object getStorredObject() { return storredObject; }
+	@Override public IEnhancedActionObject setSelectedObject(Object objIn) { selectedObject = objIn; return this; }
+	@Override public Object getSelectedObject() { return selectedObject; }
 }

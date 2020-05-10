@@ -24,7 +24,7 @@ public abstract class NotificationObject extends WindowParent {
 	double time = -1;
 
 	@Override
-	public void drawObject(int mXIn, int mYIn, float ticks) {
+	public void drawObject(int mXIn, int mYIn) {
 		drawRect(startX, startY, startX + 1, endY, 0xff000000); //left border
 		drawRect(startX + 1, endY - 1, endX - 1, endY, 0xff000000); //bottom border
 		drawRect(endX - 1, startY, endX, endY, 0xff000000); //right border
@@ -35,7 +35,7 @@ public abstract class NotificationObject extends WindowParent {
 		
 		if (!isMouseInside(mXIn, mYIn)) { checkTime(); }
 		calcPos();
-		super.drawObject(mXIn, mYIn, ticks);
+		super.drawObject(mXIn, mYIn);
 	}
 	
 	protected void calcPos() {
@@ -82,7 +82,7 @@ public abstract class NotificationObject extends WindowParent {
 	public void mousePressed(int mXIn, int mYIn, int button) {
 		super.mousePressed(mXIn, mYIn, button);
 		if (button == 1) {
-			EnhancedMC.displayEGui(new NotificationRCM(), CenterType.cursorCorner);
+			EnhancedMC.displayWindow(new NotificationRCM(), CenterType.cursorCorner);
 		}
 	}
 

@@ -19,7 +19,6 @@ import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.FocusType;
 import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.MouseType;
 import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.ObjectEventType;
 import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.ObjectModifyType;
-import com.Whodundid.core.enhancedGui.objectExceptions.ObjectInitException;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
@@ -61,6 +60,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	protected boolean hasFocus = false;
 	protected boolean focusLock = false;
 	protected boolean persistent = false;
+	protected boolean alwaysOnTop = false;
 	protected boolean resizeable = false;
 	protected boolean clickable = true;
 	protected boolean firstDraw = false;
@@ -69,6 +69,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	protected int hoverTextColor = 0xff00d1ff;
 	private boolean hasBeenInitialized = false;
 	private boolean objectInit = false;
+	private boolean beingRemoved = false;
 	
 	public void init(IEnhancedGuiObject objIn) {
 		parent = objIn;
@@ -140,9 +141,9 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	@Override public boolean isInit() { return hasBeenInitialized; }
 	@Override public boolean isObjectInit() { return objectInit; }
 	@Override public void completeInit() { hasBeenInitialized = true; objectInit = true; }
-	@Override public void initObjects() throws ObjectInitException {}
+	@Override public void initObjects() {}
 	@Override
-	public void reInitObjects() throws ObjectInitException {
+	public void reInitObjects() {
 		objectInit = false;
 		IEnhancedTopParent p = getTopParent();
 		EArrayList<IEnhancedGuiObject> children = getAllChildren();
@@ -152,6 +153,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 			if (children.contains(p.getModifyingObject())) { p.clearModifyingObject(); }
 		}
 		guiObjects.clear();
+		objsToBeAdded.clear();
 		
 		initObjects();
 		objectInit = true;
@@ -160,7 +162,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	
 	//main draw
 	@Override
-	public void drawObject(int mXIn, int mYIn, float ticks) {
+	public void drawObject(int mXIn, int mYIn) {
 		updateBeforeNextDraw(mXIn, mYIn);
 		try {
 			if (checkDraw()) {
@@ -168,7 +170,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 				GlStateManager.enableBlend();
 				guiObjects.stream().filter(o -> o.checkDraw()).forEach(o -> {
 					if (!o.hasFirstDraw()) { o.onFirstDraw(); o.onFirstDraw(); }
-					o.drawObject(mX, mY, ticks);
+					o.drawObject(mX, mY);
 					IEnhancedGuiObject f = getTopParent().getFocusLockObject();
 					if (f != null && o instanceof EGuiHeader && (!o.equals(f) && !f.getAllChildren().contains(o))) {
 						if (o.isVisible()) {
@@ -184,7 +186,8 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	@Override public void onFirstDraw() { postEvent(new EventFirstDraw(this)); firstDraw = true; }
 	@Override public boolean hasFirstDraw() { return firstDraw; }
 	@Override public void updateCursorImage() { StaticEGuiObject.updateCursorImage(this); }
-	@Override public void onMouseHover(int mX, int mY) { StaticEGuiObject.onMouseHover(this, mX, mY, hoverText, hoverTextColor);}
+	@Override public void onMouseHover(int mX, int mY) { StaticEGuiObject.onMouseHover(this, mX, mY, hoverText, hoverTextColor); }
+	@Override public boolean isDrawingHover() { return getTopParent() != null && this.equals(getTopParent().getHoveringObject()); }
 	@Override public IEnhancedGuiObject setHoverText(String textIn) { hoverText = textIn; return this; }
 	@Override public IEnhancedGuiObject setHoverTextColor(int colorIn) { hoverTextColor = colorIn; return this; }
 	
@@ -202,9 +205,11 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	@Override public boolean isBoundaryEnforced() { return boundaryDimension != null; }
 	@Override public boolean isResizing() { return getTopParent().getModifyingObject() == this && getTopParent().getModifyType() == ObjectModifyType.Resize; }
 	@Override public boolean isMoving() { return getTopParent().getModifyingObject() == this && getTopParent().getModifyType() == ObjectModifyType.Move; }
+	@Override public boolean isAlwaysOnTop() { return alwaysOnTop; }
 	@Override public IEnhancedGuiObject setEnabled(boolean val) { enabled = val; return this; }
 	@Override public IEnhancedGuiObject setVisible(boolean val) { visible = val; return this; }
 	@Override public IEnhancedGuiObject setPersistent(boolean val) { persistent = val; return this; }
+	@Override public IEnhancedGuiObject setAlwaysOnTop(boolean val) { alwaysOnTop = val; return this; }
 	
 	//size
 	@Override public boolean hasHeader() { return StaticEGuiObject.hasHeader(this); }
@@ -265,6 +270,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	@Override public EArrayList<IEnhancedGuiObject> getAllChildren() { return StaticEGuiObject.getAllChildren(this); }
 	@Override public EArrayList<IEnhancedGuiObject> getAllChildrenUnderMouse() { return StaticEGuiObject.getAllChildrenUnderMouse(this, mX, mY); }
 	@Override public boolean containsObject(IEnhancedGuiObject object) { return getCombinedChildren().contains(object); }
+	@Override public <T> boolean containsObject(Class<T> objIn) { return objIn != null ? getAllChildren().stream().anyMatch(o -> objIn.isInstance(o)) : false; }
 	@Override public EArrayList<IEnhancedGuiObject> getCombinedChildren() { return EArrayList.combineLists(guiObjects, objsToBeAdded); }
 	
 	//parents
@@ -347,6 +353,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	@Override public void keyReleased(char typedChar, int keyCode) { StaticEGuiObject.keyReleased(this, typedChar, keyCode); }
 	
 	//events
+	@Override public void sendArgs(Object... args) {}
 	@Override public ObjectEventHandler getEventHandler() { return eventHandler; }
 	@Override public IEnhancedGuiObject registerListener(IEnhancedGuiObject objIn) { if (eventHandler != null) { eventHandler.registerObject(objIn); } return this; }
 	@Override public IEnhancedGuiObject unregisterListener(IEnhancedGuiObject objIn) { if (eventHandler != null) { eventHandler.unregisterObject(objIn); } return this; }
@@ -372,6 +379,8 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	@Override public IEnhancedGuiObject setCloseable(boolean val) { closeable = val; return this; }
 	@Override public void onClosed() {}
 	@Override public IEnhancedGuiObject setFocusedObjectOnClose(IEnhancedGuiObject objIn) { focusObjectOnClose = objIn; return this; }
+	@Override public void setBeingRemoved() { beingRemoved = true; }
+	@Override public boolean isBeingRemoved() { return beingRemoved; }
 	
 	//-------------------------
 	//EnhancedGuiObject methods

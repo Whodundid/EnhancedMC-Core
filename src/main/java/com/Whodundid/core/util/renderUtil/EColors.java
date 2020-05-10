@@ -1,11 +1,13 @@
 package com.Whodundid.core.util.renderUtil;
 
+import java.awt.Color;
+
 //Author: Hunter Bragg
 
 public enum EColors {
 	
 	red(0xffff0000, "Red"),
-	lightRed(0xffff5555, "Light Red"),
+	lred(0xffff5555, "Light Red"),
 	orange(0xffffaa00, "Orange"),
 	yellow(0xffffff00, "Yellow"),
 	lime(0xffaaff00, "Lime"),
@@ -43,7 +45,7 @@ public enum EColors {
 	public static EColors getEColor(int colorIn) {
 		switch (colorIn) {
 		case 0xffff0000: return red;
-		case 0xffff5555: return lightRed;
+		case 0xffff5555: return lred;
 		case 0xffffaa00: return orange;
 		case 0xffffff00: return yellow;
 		case 0xffaaff00: return lime;
@@ -72,7 +74,7 @@ public enum EColors {
 		if (colorNameIn != null) {
 			switch (colorNameIn.toLowerCase()) {
 			case "red": return red;
-			case "lred": case "lightred": case "light red": return lightRed;
+			case "lred": case "lightred": case "light red": return lred;
 			case "orange": return orange;
 			case "yellow": return yellow;
 			case "lime": return lime;
@@ -91,9 +93,14 @@ public enum EColors {
 			case "dgray": case "darkgray": case "dark gray": return dgray;
 			case "vdgray": case "verydarkgray": case "very dark gray": return vdgray;
 			case "steel": return steel;
-			case "black": return lightRed;
+			case "black": return lred;
 			}
 		}
 		return null;
+	}
+	
+	/** Needs to be consistently called in order for any color change to occur. */
+	public static int rainbow() {
+		return Color.HSBtoRGB(System.currentTimeMillis() % 10000L / 10000.0f, 0.8f, 1f);
 	}
 }

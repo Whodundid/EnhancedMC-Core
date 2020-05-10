@@ -95,4 +95,13 @@ public class NumberUtil {
 		}
 		return Double.NaN;
 	}
+	
+	public static boolean roll(int check, int min, int max) {
+		return ((int) (Math.random() * (max + 1) + min)) == check;
+	}
+	
+	public static int getRoll(int min, int max) {
+		return (int) (Math.random() * (max + 1) + min);
+	}
+	
 }

@@ -63,7 +63,7 @@ public class EGuiSlider extends EnhancedActionObject implements IEnhancedActionO
 	}
 	
 	@Override
-	public void drawObject(int mX, int mY, float ticks) {
+	public void drawObject(int mX, int mY) {
 		if (isSliding && mousePos != null && mousePos.getObject() != null && mousePos.getValue() != null) {
 			if (vertical) { moveThumb(0, mY - mousePos.getValue()); }
 			else { moveThumb(mX - mousePos.getObject(), 0); }
@@ -85,13 +85,13 @@ public class EGuiSlider extends EnhancedActionObject implements IEnhancedActionO
 			GlStateManager.rotate(90f, 0f, 0f, 45f);
 			GlStateManager.translate(-xPos, -yPos, 0);
 			
-			if (drawDisplayString) { drawCenteredString(displayValue, midX, midY - fontRenderer.FONT_HEIGHT / 2 + 1, displayValueColor); }
+			if (drawDisplayString) { drawCenteredString(displayValue, midX, midY - mc.fontRendererObj.FONT_HEIGHT / 2 + 1, displayValueColor); }
 			GlStateManager.popMatrix();
 		} else {
-			if (drawDisplayString) { drawCenteredString(displayValue, midX, midY - fontRenderer.FONT_HEIGHT / 2 + 1, displayValueColor); }
+			if (drawDisplayString) { drawCenteredString(displayValue, midX, midY - mc.fontRendererObj.FONT_HEIGHT / 2 + 1, displayValueColor); }
 		}
 		
-		super.drawObject(mX, mY, ticks);
+		super.drawObject(mX, mY);
 	}
 	
 	@Override

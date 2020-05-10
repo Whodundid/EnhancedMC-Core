@@ -1,17 +1,23 @@
 package com.Whodundid.core.util;
 
+import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.util.guiUtil.GuiOpener;
 import com.Whodundid.core.util.storageUtil.EArrayList;
-import java.awt.image.BufferedImage;
-import java.io.InputStream;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
 import java.util.List;
-import javax.imageio.ImageIO;
+import java.util.Objects;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.resources.IResource;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
+import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 
 //Author: Hunter Bragg
@@ -49,6 +55,47 @@ public class EUtil {
 	public static void setScreenToLoad(GuiScreen in) { screenToLoad = in; }
 	public static void setScreenToLoad(Class in) { screenClass = in; }
 	
+	public static void openFile(File file) {
+		String s = file.getAbsolutePath();
+		if (Util.getOSType() == Util.EnumOS.OSX) {
+			try {
+				EnhancedMC.info(s);
+				Runtime.getRuntime().exec(new String[] {"/usr/bin/open", s});
+				return;
+			}
+			catch (IOException e) {
+				EnhancedMC.error("Couldn\'t open file", e);
+			}
+		}
+		else if (Util.getOSType() == Util.EnumOS.WINDOWS) {
+			String s1 = String.format("cmd.exe /C start \"Open file\" \"%s\"", new Object[] {s});
+
+			try {
+				Runtime.getRuntime().exec(s1);
+				return;
+			}
+			catch (IOException e) {
+				EnhancedMC.error("Couldn\'t open file", e);
+			}
+		}
+
+		boolean stillCantOpen = false;
+
+		try {
+			Class<?> oclass = Class.forName("java.awt.Desktop");
+			Object object = oclass.getMethod("getDesktop", new Class[0]).invoke((Object)null, new Object[0]);
+			oclass.getMethod("browse", new Class[] {URI.class}).invoke(object, new Object[] {file.toURI()});
+		}
+		catch (Throwable e) {
+			EnhancedMC.error("Couldn\'t open link", e);
+			stillCantOpen = true;
+		}
+
+		if (stillCantOpen) {
+			EnhancedMC.info("Opening via system class!");
+			Sys.openURL("file://" + s);
+		}
+	}
 	
 	/** Returns false if any of the provided objects are null. */
 	public static boolean nullCheck(Object... objsIn) {
@@ -80,13 +127,14 @@ public class EUtil {
 	public static EArrayList<String> createWordWrapString(String stringIn, int widthMax) {
 		EArrayList<String> lines = new EArrayList();
 		try {
-			if (stringIn != null && !stringIn.isEmpty() && fr.getStringWidth(stringIn) > widthMax) {
+			if (stringIn != null && !stringIn.isEmpty() && widthMax > 5 && fr.getStringWidth(stringIn) > widthMax) {
 				String restOfString = stringIn;
 				while (fr.getStringWidth(restOfString) > widthMax) {
 					int i = 0;
 					int iPos = 0;
 					char end = Character.MIN_VALUE;
 					String buildString = "";
+					
 					while (!(fr.getStringWidth(buildString) >= widthMax) && i < restOfString.length() - 1) {
 						buildString += restOfString.charAt(i);
 						i++;
@@ -95,13 +143,16 @@ public class EUtil {
 						iPos = i;
 						end = restOfString.charAt(i--);
 					}
+					
 					if (i <= 0) {
 						lines.add(restOfString.substring(0, buildString.length() - 1));
 						restOfString = restOfString.substring(buildString.length() - 1, restOfString.length());
-					} else {
+					}
+					else {
 						lines.add(restOfString.substring(0, iPos));
 						restOfString = restOfString.substring(iPos + 1, restOfString.length());
 					}
+					
 				}
 				lines.add(restOfString);
 			} else { lines.add(stringIn); }
@@ -142,6 +193,10 @@ public class EUtil {
 		return newText;
 	}
 	
+	public static <E> E[] asArray(E... vals) {
+		return EArrayList.of(vals).toArray(vals);
+	}
+	
 	/** Utility function to check if the values in one array match the values from another. */
 	public static boolean validateArrayContents(List list1, List list2) {
 		if (list1.size() != list2.size()) { return false; } //if the sizes differ, they're not the same.
@@ -168,6 +223,55 @@ public class EUtil {
 				val += Character.toUpperCase(in.charAt(0));
 				val += in.substring(1, in.length());
 				return val;
+			}
+		}
+		return in;
+	}
+	
+	/** Returns a string made from the given char repeated num times. */
+	public static String repeatString(String in, int num) {
+		return new String(new char[num]).replace("\0", in);
+	}
+	
+	public static int countSpaces(String in) {
+		int spaces = 0;
+		for (int i = 0; i < in.length(); i++) {
+			if (in.charAt(i) == ' ') { spaces++; }
+		}
+		return spaces;
+	}
+	
+	public static String combineAll(String[] in) { return combineAll(in, ""); }
+	public static String combineAll(String[] in, String spacer) {
+		String r = "";
+		if (in != null) {
+			if (in.length > 1) {
+				for (String s : in) { r += s + spacer; }
+			}
+			else if (in.length == 1) { r += in[0]; }
+		}
+		return r;
+	}
+	
+	/** Returns a string made from the combination of each string in a list concatenated together. */
+	public static String combineAll(EArrayList<String> in) { return combineAll(in, ""); }
+	public static String combineAll(EArrayList<String> in, String spacer) {
+		String r = "";
+		if (in != null) {
+			if (in.size() > 1) {
+				for (String s : in) { r += s + spacer; }
+			}
+			else if (in.size() == 1) { r += in.get(0); }
+		}
+		return r;
+	}
+	
+	public static String subStringToString(String in, int startPos, String toFind) {
+		if (in != null) {
+			if (startPos <= in.length()) {
+				String from = in.substring(startPos);
+				int index = findStartingIndex(from, toFind);
+				return (index >= -1) ? from.substring(0, index) : from;
 			}
 		}
 		return in;
@@ -228,25 +332,79 @@ public class EUtil {
 		return p;
 	}
 	
-	/** Returns the actual width in pixels for the given RescoureLocation. */
-	public static int getImageWidth(ResourceLocation locIn) {
-		try {
-			IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(locIn);
-			InputStream stream = resource.getInputStream();
-			BufferedImage image = ImageIO.read(stream);
-			return image.getWidth();
-		} catch (Exception e) { e.printStackTrace(); }
-		return -1;
+	public static <E> void doForEach(Consumer<? super E> action, E... vals) {
+		forEach(vals, action);
 	}
 	
-	/** Returns the actual height in pixels for the given RescoureLocation. */
-	public static int getImageHeight(ResourceLocation locIn) {
-		try {
-			IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(locIn);
-			InputStream stream = resource.getInputStream();
-			BufferedImage image = ImageIO.read(stream);
-			return image.getHeight();
-		} catch (Exception e) { e.printStackTrace(); }
-		return -1;
+	public static <E> void ifForEach(boolean check, List<E> list, Consumer<? super E> action) {
+		if (check) {
+			if (list != null) { list.forEach(action); }
+		}
 	}
+	
+	public static <E> void forEach(E[] arr, Consumer<? super E> action) {
+		Objects.requireNonNull(action);
+		for (E e : arr) {
+			action.accept(e);
+		}
+	}
+	
+	public static <E, R> R forEachReturn(E[] arr, Consumer<? super E> action, R returnVal) {
+		forEach(arr, action);
+		return returnVal;
+	}
+	
+	public static <E, R> R ifDoAndReturn(boolean check, Runnable ifTrue, Runnable ifFalse, R returnVal) {
+		if (check && ifTrue != null) { ifTrue.run(); }
+		else if (ifFalse != null) { ifFalse.run(); }
+		return returnVal;
+	}
+	
+	public static <E, R> R nullDoReturn(E object, Consumer<? super E> action, R returnVal) {
+		Objects.requireNonNull(action);
+		if (object != null) { action.accept(object); }
+		return returnVal;
+	}
+	
+	public static <E, A, R> R nullDoReturn(E object1, A object2, BiConsumer<? super E, ? super A> action, R returnVal) {
+		Objects.requireNonNull(action);
+		if (object1 != null && object2 != null) { action.accept(object1, object2); }
+		return returnVal;
+	}
+	
+	/** A statement that performs the following action on the given object if the object is not null. */
+	public static <E> void ifNotNullDo(E object, Consumer<? super E> action) {
+		Objects.requireNonNull(action);
+		if (object != null) { action.accept(object); }
+	}
+	
+	public static <E, A> void ifNotNullDo(E object1, A object2, BiConsumer<? super E, ? super A> action) {
+		Objects.requireNonNull(action);
+		if (object1 != null && object2 != null) { action.accept(object1, object2); }
+	}
+	
+	/** A statemnt that returns the result of a given function if the given object is not null. */
+	public static <E, R> R ifNotNullReturn(E object, Function<? super E, R> function, R defaultVal) {
+		Objects.requireNonNull(function);
+		return object != null ? function.apply(object) : defaultVal;
+	}
+	
+	public static <E, A, R> R ifNotNullReturn(E object1, A object2, BiFunction<? super E, ? super A, R> function, R defaultVal) {
+		Objects.requireNonNull(function);
+		return (object1 != null && object2 != null) ? function.apply(object1, object2) : defaultVal;
+	}
+	
+	/** A statement that returns the specified ifTrue value if any member within the given list matches the given predicate.
+	 *  If no member of the list matches the predicate then the ifFalse value is returned instead. */
+	public static <A, R> R forEachTest(List<A> list, Predicate<? super A> predicate, R ifTrue, R ifFalse) {
+		Objects.requireNonNull(list);
+		Objects.requireNonNull(predicate);
+		
+		for (A a : list) {
+			if (predicate.test(a)) { return ifTrue; }
+		}
+		
+		return ifFalse;
+	}
+	
 }

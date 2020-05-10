@@ -13,5 +13,6 @@ public enum CenterType {
 	object,
 	objectCorner,
 	objectIndent,
+	existingObjectIndent,
 	none;
 }

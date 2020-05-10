@@ -1,23 +1,23 @@
 package com.Whodundid.core.enhancedGui.guiObjects.utilityObjects;
 
+import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiLabel;
 import com.Whodundid.core.enhancedGui.objectEvents.EventMouse;
 import com.Whodundid.core.enhancedGui.objectEvents.ObjectEvent;
 import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.MouseType;
-import com.Whodundid.core.enhancedGui.types.WindowParent;
-import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
+import com.Whodundid.core.enhancedGui.types.ActionWindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.miscUtil.EMouseHelper;
+import com.Whodundid.core.util.resourceUtil.EResource;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 import java.util.List;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ResourceLocation;
 
 //Author: Hunter Bragg
 
-public class EGuiRightClickMenu extends WindowParent implements IEnhancedActionObject {
+public class EGuiRightClickMenu extends ActionWindowParent {
 	
 	EGuiRightClickMenu instance = null;
 	protected StorageBoxHolder<String, EGuiButton> options = new StorageBoxHolder();
@@ -34,6 +34,7 @@ public class EGuiRightClickMenu extends WindowParent implements IEnhancedActionO
 	protected boolean runActionOnPress = false;
 	
 	public EGuiRightClickMenu() {
+		super(EnhancedMC.getRenderer());
 		setDimensions(EMouseHelper.getMx(), EMouseHelper.getMy(), 125, 15);
 		setZLevel(1000);
 		instance = this;
@@ -47,28 +48,30 @@ public class EGuiRightClickMenu extends WindowParent implements IEnhancedActionO
 		addObject(title);
 		
 		setUseTitle(true);
+		showInTaskBar = false;
 	}
 	
 	public void addOption(String... optionNames) { for (String s : optionNames) { addOption(s); } }
 	public void addOption(String optionName) { addOption(optionName, null); }
 	public void removeOption(String... optionNames) { for (String s : optionNames) { removeOption(s); } }
 	
-	public void addOption(String optionName, ResourceLocation optionIcon) {
+	public void addOption(String optionName, EResource optionIcon) {
 		if (optionName != null && !options.contains(optionName)) {
 			EGuiButton b = new EGuiButton(this, 0, 0, 0, 0, optionName) {
 				@Override
-				public void drawObject(int mX, int mY, float ticks) {
+				public void drawObject(int mX, int mY) {
 					if (isMouseInside(mX, mY)) {
 						drawRect(startX + textOffset - 1, startY, endX, endY + 1, 0x99adadad);
 					}
 					if (optionIcon != null) {
-						mc.renderEngine.bindTexture(optionIcon);
+						bindTexture(optionIcon);
 						GlStateManager.enableBlend();
 						if (isMouseInside(mX, mY)) { GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F); }
 						else { GlStateManager.color(0.75F, 0.75F, 0.75F, 0.75F); }
+						//GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
 						drawTexture(startX + 1, startY + 1, 16, 16, 16, 16, 16, 16);
 					}
-					super.drawObject(mX, mY, ticks);
+					super.drawObject(mX, mY);
 				}
 				@Override
 				public void onPress() {
@@ -79,6 +82,7 @@ public class EGuiRightClickMenu extends WindowParent implements IEnhancedActionO
 						getTopParent().unregisterListener(instance);
 						instance.close();
 					}
+					else { instance.close(); }
 				}
 			};
 			b.setDrawStringCentered(false);
@@ -89,6 +93,44 @@ public class EGuiRightClickMenu extends WindowParent implements IEnhancedActionO
 			addObject(b);
 			resize();
 		}
+	}
+	
+	public void addOptionAtPos(String optionName, EResource optionIcon, int posIn) {
+		EGuiButton b = new EGuiButton(this, 0, 0, 0, 0, optionName) {
+			@Override
+			public void drawObject(int mX, int mY) {
+				if (isMouseInside(mX, mY)) {
+					drawRect(startX + textOffset - 1, startY, endX, endY + 1, 0x99adadad);
+				}
+				if (optionIcon != null) {
+					bindTexture(optionIcon);
+					GlStateManager.enableBlend();
+					if (isMouseInside(mX, mY)) { GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F); }
+					else { GlStateManager.color(0.75F, 0.75F, 0.75F, 0.75F); }
+					//GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+					drawTexture(startX + 1, startY + 1, 16, 16, 16, 16, 16, 16);
+				}
+				super.drawObject(mX, mY);
+			}
+			@Override
+			public void onPress() {
+				if (getPressedButton() == 0 && isEnabled()) {
+					playPressSound();
+					instance.setSelectedObject(getDisplayString());
+					instance.performAction(null, null);
+					getTopParent().unregisterListener(instance);
+					instance.close();
+				}
+				else { instance.close(); }
+			}
+		};
+		b.setDrawStringCentered(false);
+		b.setDisplayStringOffset(22);
+		b.setDrawTextures(false);
+		b.setRunActionOnPress(true);
+		options.add(posIn, optionName, b);
+		addObject(b);
+		resize();
 	}
 	
 	public void removeOption(String optionName) {
@@ -123,12 +165,12 @@ public class EGuiRightClickMenu extends WindowParent implements IEnhancedActionO
 		int sY = startY;
 		
 		for (String s : options.getObjects()) {
-			int w = fontRenderer.getStringWidth(s);
+			int w = mc.fontRendererObj.getStringWidth(s);
 			if (w > longestOption) { longestOption = w; }
 		}
 		
 		if (useTitle) {
-			int len = fontRenderer.getStringWidth(title.getDisplayString());
+			int len = mc.fontRendererObj.getStringWidth(title.getDisplayString());
 			if (len > longestOption) { longestOption = len; }
 		}
 		
@@ -151,7 +193,7 @@ public class EGuiRightClickMenu extends WindowParent implements IEnhancedActionO
 	}
 	
 	@Override
-	public void drawObject(int mX, int mY, float ticks) {
+	public void drawObject(int mX, int mY) {
 		drawRect(startX + 1, useTitle ? startY + titleHeight : startY + 1, endX - 1, endY, backgroundColor); //background
 		drawRect(startX, startY, startX + 1, endY, borderColor); //left
 		drawRect(startX, startY, endX, startY + 1, borderColor); //top
@@ -164,11 +206,12 @@ public class EGuiRightClickMenu extends WindowParent implements IEnhancedActionO
 			drawRect(startX + 1, startY + titleHeight, endX - 1, startY + titleHeight + 1, separatorLineColor);
 		}
 		
-		super.drawObject(mX, mY, ticks);
+		super.drawObject(mX, mY);
 	}
 	
 	@Override
 	public void mousePressed(int mXIn, int mYIn, int button) {
+		if (button == 1) { close(); }
 		if (runActionOnPress) { onPress(); }
 		super.mousePressed(mXIn, mYIn, button);
 	}

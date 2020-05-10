@@ -1,14 +1,18 @@
 package com.Whodundid.core.settings;
 
+import com.Whodundid.core.coreApp.CoreApp;
+import com.Whodundid.core.coreApp.EMCResources;
 import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.textArea.EGuiTextArea;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.textArea.TextAreaLine;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
+import com.Whodundid.core.renderer.taskView.TaskBar;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
+import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 import net.minecraft.client.resources.I18n;
@@ -37,6 +41,7 @@ public class KeyBindGui extends WindowParent {
 	public KeyBindGui() {
 		super();
 		aliases.add("keybinds", "keybind", "controls");
+		windowIcon = EMCResources.keyboardIcon;
 	}
 	
 	@Override
@@ -45,6 +50,7 @@ public class KeyBindGui extends WindowParent {
 		setDimensions(400, 254);
 		super.initGui();
 		setResizeable(true);
+		setMaximizable(true);
 		setMinDims(361, 178);
 	}
 	
@@ -55,12 +61,13 @@ public class KeyBindGui extends WindowParent {
 		keyList = new EGuiTextArea(this, startX + 10, startY + 20, width - (width / 2 + 10), height - 30) {
 			@Override
 			public void mousePressed(int mX, int mY, int button) {
+				super.mousePressed(mX, mY, button);
+				System.out.println(this.getCurrentLine());
 				if (getCurrentLine() != null && getCurrentLine().getStoredObj() != null) {
 					KeyBinding k = (KeyBinding) getCurrentLine().getStoredObj();
 					loadKeyValues(k);
 				}
 				else { resetValues(); }
-				super.mousePressed(mX, mY, button);
 			}
 			@Override
 			public void keyPressed(char typedChar, int keyCode) {
@@ -116,7 +123,7 @@ public class KeyBindGui extends WindowParent {
 	}
 	
 	@Override
-	public void drawObject(int mXIn, int mYIn, float ticks) {
+	public void drawObject(int mXIn, int mYIn) {
 		drawDefaultBackground();
 		
 		drawCenteredStringWithShadow("Minecraft Key Bindings", startX + 9 + keyList.width / 2, startY + 7, 0xb2b2b2);
@@ -140,7 +147,7 @@ public class KeyBindGui extends WindowParent {
 		}
 		endScissor();
 		
-		super.drawObject(mXIn, mYIn, ticks);
+		super.drawObject(mXIn, mYIn);
 	}
 	
 	@Override
@@ -166,6 +173,39 @@ public class KeyBindGui extends WindowParent {
 		return this;
 	}
 	
+	@Override
+	public void maximize() {
+		try {
+			EDimension screen = getTopParent().getDimensions();
+			
+			if (getTopParent().containsObject(TaskBar.class)) {
+				switch (CoreApp.taskBarSide.get()) {
+				case "top": setDimensions(0, header.height + TaskBar.drawSize, screen.width, screen.height - (header.height + TaskBar.drawSize)); break;
+				case "bottom": setDimensions(0, header.height, screen.width, screen.height - (header.height + TaskBar.drawSize)); break;
+				case "left": setDimensions(TaskBar.drawSize, header.height, screen.width - TaskBar.drawSize, screen.height - header.height); break;
+				case "right": setDimensions(0, 0, screen.width - TaskBar.drawSize, screen.height - header.height); break;
+				}
+			}
+			else {
+				setDimensions(0, header.height, screen.width, screen.height - header.height);
+			}
+			
+			int pos = keyList.getVScrollBar().getScrollPos();
+			reInitObjects();
+			keyList.getVScrollBar().setScrollBarPos(pos);
+		}
+		catch (Exception e) { e.printStackTrace(); }
+	}
+	
+	@Override
+	public void miniturize() {
+		setDimensions(getPreMax());
+		
+		int pos = keyList.getVScrollBar().getScrollPos();
+		reInitObjects();
+		keyList.getVScrollBar().setScrollBarPos(pos);
+	}
+	
 	protected boolean updateLists() { return updateLists(null); }
 	protected boolean updateLists(KeyBinding test) {
 		try {
@@ -188,10 +228,10 @@ public class KeyBindGui extends WindowParent {
 					}
 					used.put(k.getKeyCode(), val); //update the existing value
 				}
-			}
-			
-			if (!categories.contains(category)) {
-				categories.add(category);
+				
+				if (!categories.contains(category)) {
+					categories.add(category);
+				}
 			}
 				
 			if (test != null) {
@@ -216,7 +256,7 @@ public class KeyBindGui extends WindowParent {
 			for (StorageBox<String, KeyBinding> b : keys.getAllBoxesWithObj(s)) {
 				KeyBinding k = b.getValue();
 				
-				int color = k.getKeyCode() != 0 ? used.getValueInBox(k.getKeyCode()) > 1 ? EColors.lightRed.c() : (k.getKeyCodeDefault() != k.getKeyCode() ? 0x55ff55 : 0xb2b2b2) : 0x606060;
+				int color = k.getKeyCode() != 0 ? used.getValueInBox(k.getKeyCode()) > 1 ? EColors.lred.c() : (k.getKeyCodeDefault() != k.getKeyCode() ? 0x55ff55 : 0xb2b2b2) : 0x606060;
 				keyList.addTextLine("   " +	I18n.format(k.getKeyDescription(), new Object[0]), color, k).setLineNumberColor(0xb2b2b2);
 			}
 			if (i < categories.size() - 1) { keyList.addTextLine(); }
@@ -226,6 +266,7 @@ public class KeyBindGui extends WindowParent {
 	}
 	
 	protected void drawKeyValues() {
+		
 		if (selectedKey != null) {
 			drawStringWithShadow("Key Name:", keyList.endX + 20, startY + 29, 0xffbb00);
 			drawStringWithShadow("Default key:", keyList.endX + 20, startY + 71, 0xffbb00);
@@ -325,4 +366,5 @@ public class KeyBindGui extends WindowParent {
 		getTopParent().setEscapeStopper(null);
 		super.close();
 	}
+	
 }

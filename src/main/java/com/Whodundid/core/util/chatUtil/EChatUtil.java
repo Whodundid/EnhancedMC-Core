@@ -17,12 +17,18 @@ public class EChatUtil {
 	private static String lastTypedMessage = "";
 	private static ITabCompleteListener tabListener = null;
 	
+	public static void show(String msgIn) {
+		if (mc.thePlayer != null && msgIn != null) {
+			mc.thePlayer.addChatMessage(ChatBuilder.of(msgIn).build());
+		}
+	}
+	
 	/** Removes all lingering minecraft FontRenderer chat formatting codes from EnumChatFormatting. */
 	public static String removeFormattingCodes(String chatIn) {
 		String s = "";
 		for (int i = 0; i < chatIn.length(); i++) {
 			char c = chatIn.charAt(i);
-			if (c != '\u00A7') { // this symbol: §
+			if (c != getFormattingChar()) { // this symbol: §
 				s += c;
 			} else {
 				i += 1; //remove the following code
@@ -30,6 +36,8 @@ public class EChatUtil {
 		}
 		return s;
 	}
+	
+	public static char getFormattingChar() { return '\u00A7'; }
 	
 	public static void registerTabListener(ITabCompleteListener objectIn, String checkWord, String upToCursor) {
 		if (EUtil.nullCheck(objectIn, checkWord, upToCursor)) {

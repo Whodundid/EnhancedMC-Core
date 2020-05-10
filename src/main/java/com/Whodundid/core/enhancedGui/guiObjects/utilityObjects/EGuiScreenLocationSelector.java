@@ -1,12 +1,12 @@
 package com.Whodundid.core.enhancedGui.guiObjects.utilityObjects;
 
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.app.IUseScreenLocation;
 import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.types.EnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
-import com.Whodundid.core.subMod.IUseScreenLocation;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 
 //Author: Hunter Bragg
@@ -39,13 +39,13 @@ public class EGuiScreenLocationSelector extends EnhancedActionObject {
 	}
 	
 	@Override
-	public void drawObject(int mX, int mY, float ticks) {
+	public void drawObject(int mX, int mY) {
 		drawRect(startX, startY, endX, startY + heightRatio, -0x00ffffff);
 		drawRect(startX + widthRatio - (widthRatio / 16), startY + heightRatio, startX + widthRatio + (widthRatio / 16), endY - (heightRatio / 8), -0x00ffffff);
 		drawRect(startX + widthRatio - (widthRatio / 2), endY - (heightRatio / 8), startX + widthRatio + (widthRatio / 2), endY - (heightRatio / 8) + 3, -0x00ffffff);
 		drawRect(startX + 3, startY + 3, endX - 3, startY + heightRatio - 3, 0xffC9FFFF);
 		
-		drawStringWithShadow("Select a location to draw " + drawName + ".", midX - fontRenderer.getStringWidth("Select a location to draw " + drawName + ".") / 2, startY - heightRatio / 5 - 12, 0xb2b2b2);
+		drawStringWithShadow("Select a location to draw " + drawName + ".", midX - mc.fontRendererObj.getStringWidth("Select a location to draw " + drawName + ".") / 2, startY - heightRatio / 5 - 12, 0xb2b2b2);
 		String msg = "";
 		switch (obj.getScreenLocation()) {
 		case botLeft: msg = "Bottom Left"; break;
@@ -56,10 +56,10 @@ public class EGuiScreenLocationSelector extends EnhancedActionObject {
 		case custom: msg = "Custom (" + obj.getLocation().getObject() + ", " + obj.getLocation().getValue() + ")"; break;
 		default: msg = "Center"; break;
 		}
-		drawStringWithShadow("Current Location: ", midX - fontRenderer.getStringWidth("Current Location: " + msg) / 2, startY - heightRatio / 5, 0xffd800);
-		drawStringWithShadow(msg, midX - fontRenderer.getStringWidth("Current Location: " + msg) / 2 + fontRenderer.getStringWidth("Current Location: "), startY - heightRatio / 5, 0x00ff00);
+		drawStringWithShadow("Current Location: ", midX - mc.fontRendererObj.getStringWidth("Current Location: " + msg) / 2, startY - heightRatio / 5, 0xffd800);
+		drawStringWithShadow(msg, midX - mc.fontRendererObj.getStringWidth("Current Location: " + msg) / 2 + mc.fontRendererObj.getStringWidth("Current Location: "), startY - heightRatio / 5, 0x00ff00);
 		
-		super.drawObject(mX, mY, ticks);
+		super.drawObject(mX, mY);
 	}
 	
 	@Override
@@ -75,7 +75,7 @@ public class EGuiScreenLocationSelector extends EnhancedActionObject {
 			//if (mc.currentScreen instanceof EnhancedGui) { history.push((EnhancedGui) mc.currentScreen); }
 			//if (history != null) { newGui.sendGuiHistory(history); }
 			//mc.displayGuiScreen(newGui);
-			EnhancedMC.displayEGui(newGui, this);
+			EnhancedMC.displayWindow(newGui, this);
 		}
 		performAction(null, null);
 	}

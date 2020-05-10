@@ -7,9 +7,10 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.renderUtil.PlayerDrawer;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
+import com.Whodundid.core.util.resourceUtil.EResource;
+import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.GlStateManager;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
+import net.minecraft.util.MathHelper;
 
 //Author: Hunter Bragg
 
@@ -21,15 +22,22 @@ public class EGuiPlayerViewer extends EnhancedGuiObject {
 	EGuiSlider hSlider, vSlider;
 	EGuiButton reset;
 	int xs, xe, ys, ye;
+	int zoom = -9;
+	private AbstractClientPlayer player;
+	private boolean lockHead = false;
+	private boolean lockZoom = false;
+	private boolean drawBackground = false;
+	private EResource background = null;
 	
-	public EGuiPlayerViewer(IEnhancedGuiObject parentIn, int posX, int posY, int widthIn, int heightIn) {
+	public EGuiPlayerViewer(IEnhancedGuiObject parentIn, int posX, int posY, int widthIn, int heightIn, AbstractClientPlayer playerIn) {
 		init(parentIn, posX, posY, widthIn, heightIn);
+		player = playerIn;
 	}
 	
 	@Override
 	public void initObjects() {
-		hSlider = new EGuiSlider(this, startX, startY, width, 12, 0, 1440, 720, false).setDrawDefault(false).setDisplayString("");
-		vSlider = new EGuiSlider(this, startX, startY, 12, height, -300, 300, 0, true).setDrawDefault(false).setDisplayString("");
+		hSlider = new EGuiSlider(this, startX, startY, width, 12, 0, 1440, 660, false).setDrawDefault(false).setDisplayString("");
+		vSlider = new EGuiSlider(this, startX, startY, 12, height, -300, 300, -30, true).setDrawDefault(false).setDisplayString("");
 		
 		reset = new EGuiButton(this, startX, startY, 16, 16);
 		
@@ -39,11 +47,13 @@ public class EGuiPlayerViewer extends EnhancedGuiObject {
 	}
 	
 	@Override
-	public void drawObject(int mXIn, int mYIn, float ticks) {
+	public void drawObject(int mXIn, int mYIn) {
+		
 		//draw backgrounds
 		GlStateManager.color(2.0f, 2.0f, 2.0f, 2.0f);
 		drawRect(startX, startY, endX, endY, 0xff000000); //black border
 		drawRect(xs, ys, xe, ye, 0xff1b1b1b); //gray inner
+		
 		drawRect(xs + 1, ys + 1, xe - 1, ye - 1, 0xff232323); //gray inner
 		drawRect(xs + 2, ys + 2, xe - 2, ye - 2, 0xff2b2b2b); //gray inner
 		drawRect(xs + 3, ys + 3, xe - 3, ye - 3, 0xff303030); //gray inner
@@ -69,11 +79,15 @@ public class EGuiPlayerViewer extends EnhancedGuiObject {
 			
 			//draw player model
 			GlStateManager.color(2.0f, 2.0f, 2.0f, 2.0f);
-			PlayerDrawer.drawPlayer(mc.thePlayer, xm, ys + yStart + magicH, hS, vS, val);
+			PlayerDrawer.drawPlayer(player, xm, ys + yStart + magicH, hS, vS, val + zoom, lockHead);
 		}
 		endScissor();
 		
-		super.drawObject(mXIn, mYIn, ticks);
+		if (drawBackground && background != null && background.getResource() != null) {
+			drawTexture(xs - 1, startY, endX - (xs - 1), (ye + 1) - startY, background.getResource());
+		}
+		
+		super.drawObject(mXIn, mYIn);
 	}
 	
 	@Override
@@ -107,6 +121,12 @@ public class EGuiPlayerViewer extends EnhancedGuiObject {
 		xe = newX + oldXE;
 		ye = newY + oldYE;
 		return this;
+	}
+	
+	@Override
+	public void mouseScrolled(int change) {
+		if (!lockZoom) { zoom = MathHelper.clamp_int(zoom + change, -50, 2); }
+		super.mouseScrolled(change);
 	}
 	
 	private void reorient() {
@@ -152,6 +172,10 @@ public class EGuiPlayerViewer extends EnhancedGuiObject {
 		hSlider.setSliderValue(hSlider.getSliderValue());
 	}
 	
+	public EGuiPlayerViewer setLockHead(boolean val) { lockHead = val; return this; }
+	public EGuiPlayerViewer setLockZoom(boolean val) { lockZoom = val; return this; }
+	public EGuiPlayerViewer setDrawBackground(boolean val) { drawBackground = val; return this; }
+	public EGuiPlayerViewer setBackground(EResource in) { background = in; return this; }
 	public EGuiPlayerViewer setHSliderOrientation(ScreenLocation locIn) { hLoc = locIn; if (isInit()) { reorient(); } return this; }
 	public EGuiPlayerViewer setVSliderOrientation(ScreenLocation locIn) { vLoc = locIn; if (isInit()) { reorient(); } return this; }
 	public EGuiPlayerViewer setResetButtonOrientation(ScreenLocation locIn) { rLoc = locIn; if (isInit()) { reorient(); } return this; }

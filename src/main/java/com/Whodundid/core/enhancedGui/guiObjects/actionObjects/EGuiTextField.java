@@ -46,7 +46,7 @@ public class EGuiTextField extends EnhancedActionObject {
 	}
 	
 	@Override
-	public void drawObject(int mX, int mY, float ticks) {
+	public void drawObject(int mX, int mY) {
 		if (getEnableBackgroundDrawing()) {
 			drawRect(startX - 1, startY - 1, endX + 3, endY + 1, borderColor);
 			drawRect(startX, startY, endX + 2, endY, backgroundColor);
@@ -56,7 +56,7 @@ public class EGuiTextField extends EnhancedActionObject {
 		//System.out.println(this + " " + drawColor);
 		int j = cursorPosition - lineScrollOffset;
 		int k = selectionEnd - lineScrollOffset;
-		String s = fontRenderer.trimStringToWidth(text.substring(lineScrollOffset), getWidth());
+		String s = mc.fontRendererObj.trimStringToWidth(text.substring(lineScrollOffset), getWidth());
 		
 		boolean flag = j >= 0 && j <= s.length();
 		boolean drawCursorFlag = false;
@@ -83,11 +83,15 @@ public class EGuiTextField extends EnhancedActionObject {
 		boolean flag2 = cursorPosition < text.length() || text.length() >= getMaxStringLength();
 		int k1 = j1;
 		
+		//System.out.println("textField k1: " + k1);
+		
 		if (!flag) { k1 = j > 0 ? l + width : l; } 
 		else if (flag2) {
 			k1 = j1 - 1;
 			j1--;
 		}
+		
+		j1++;
 		
 		if (s.length() > 0 && flag && j < s.length()) {
 			if (drawShadowed) { j1 = drawStringWithShadow(s.substring(j), j1, i1, drawColor); }
@@ -95,18 +99,20 @@ public class EGuiTextField extends EnhancedActionObject {
 		}
 		
 		if (drawCursorFlag) {
-			if (flag2) { drawRect(k1, i1 - 1, k1 + 1, i1 + 1 + fontRenderer.FONT_HEIGHT, -3092272); }
+			if (flag2) { drawRect(k1, i1 - 1, k1 + 1, i1 + 1 + mc.fontRendererObj.FONT_HEIGHT, -3092272); }
 			else {
 				if (drawShadowed) { drawStringWithShadow("_", k1, i1, drawColor); }
 				else { drawString("_", k1, i1, drawColor); }
 			}
 		}
 		
+		
+		
 		if (k != j) {
-			int l1 = l + fontRenderer.getStringWidth(s.substring(0, k));
-			drawCursorVertical(k1, i1 - 1, l1 - 1, i1 + 1 + fontRenderer.FONT_HEIGHT);
+			int l1 = l + mc.fontRendererObj.getStringWidth(s.substring(0, k));
+			drawCursorVertical(k1, i1 - 1, l1 - 1, i1 + 1 + mc.fontRendererObj.FONT_HEIGHT);
 		}
-		super.drawObject(mX, mY, ticks);
+		super.drawObject(mX, mY);
 	}
 	
 	@Override 
@@ -115,8 +121,8 @@ public class EGuiTextField extends EnhancedActionObject {
 		if (hasFocus() && button == 0) {
 			int i = mX - startX;
 			if (enableBackgroundDrawing) { i -= 4; }
-			String s = fontRenderer.trimStringToWidth(text.substring(lineScrollOffset), getWidth());
-			setCursorPosition(fontRenderer.trimStringToWidth(s, i).length() + lineScrollOffset);
+			String s = mc.fontRendererObj.trimStringToWidth(text.substring(lineScrollOffset), getWidth());
+			setCursorPosition(mc.fontRendererObj.trimStringToWidth(s, i).length() + lineScrollOffset);
 		}
 	}
 	
@@ -338,12 +344,12 @@ public class EGuiTextField extends EnhancedActionObject {
 		if (posIn < 0) { posIn = 0; }
 		selectionEnd = posIn;
 		
-		if (fontRenderer != null) {
+		if (mc.fontRendererObj != null) {
 			if (lineScrollOffset > i) { lineScrollOffset = i; }
 			int j = getWidth();
-			String s = fontRenderer.trimStringToWidth(text.substring(lineScrollOffset), j);
+			String s = mc.fontRendererObj.trimStringToWidth(text.substring(lineScrollOffset), j);
 			int k = s.length() + lineScrollOffset;
-			if (posIn == lineScrollOffset) { lineScrollOffset -= fontRenderer.trimStringToWidth(text, j, true).length(); }
+			if (posIn == lineScrollOffset) { lineScrollOffset -= mc.fontRendererObj.trimStringToWidth(text, j, true).length(); }
 			if (posIn > k) { lineScrollOffset += posIn - k; } 
 			else if (posIn <= lineScrollOffset) { lineScrollOffset -= lineScrollOffset - posIn; }
 			lineScrollOffset = MathHelper.clamp_int(lineScrollOffset, 0, i);

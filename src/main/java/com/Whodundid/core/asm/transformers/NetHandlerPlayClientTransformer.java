@@ -23,8 +23,15 @@ public class NetHandlerPlayClientTransformer extends IETransformer {
 	
 	@Override
 	protected void transform(ClassNode classIn) {
+		if (handleTabComplete(classIn)) { System.out.println("EMC: NetHandlerPlayClient transform successful!"); }
+		else { System.err.println("EMC: NETHANDLERPLAYCLIENT ASM TRANSFORM FAILED!"); }
+	}
+	
+	private boolean handleTabComplete(ClassNode classIn) {
 		final String METHOD = isObfuscated ? "a" : "handleTabComplete";
 		final String METHOD_DESC = isObfuscated ? "(Lfx;)V" : "(Lnet/minecraft/network/play/server/S3APacketTabComplete;)V";
+		
+		System.out.println("EMC: Starting HandleTabComplete ASM");
 		
 		for (MethodNode method : classIn.methods) {
 			if (method.name.equals(METHOD) && method.desc.equals(METHOD_DESC)) {
@@ -53,10 +60,12 @@ public class NetHandlerPlayClientTransformer extends IETransformer {
 					
 					method.instructions.insert(targetNode, toInsert);
 					
-					System.out.println("EMC: NetHandlerPlayClient transform successful!");
+					return true;
 				}
-				else { System.out.println("EMC: NETHANDLERPLAYCLIENT ASM TRANSFORM FAILED!"); }
 			}
 		}
+		
+		System.err.println("EMC: HandleTabComplete FAILED!");
+		return false;
 	}
 }

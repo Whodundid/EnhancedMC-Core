@@ -33,7 +33,7 @@ public class EGuiContainer extends EnhancedGuiObject {
 	}
 	
 	@Override
-	public void drawObject(int mXIn, int mYIn, float ticks) {
+	public void drawObject(int mXIn, int mYIn) {
 		if (drawBorder) { drawRect(startX, startY, endX, endY, borderColor); } //border
 		if (drawBackground) { drawRect(startX + 1, startY + 1, endX - 1, endY - 1, backgroundColor); } //inner
 		if (drawTitle) {
@@ -48,12 +48,12 @@ public class EGuiContainer extends EnhancedGuiObject {
 		
 		scissor(startX + 1, startY + titleAreaHeight + 1, endX - 1, endY - 1);
 		{
-			super.drawObject(mXIn, mYIn, ticks);
+			super.drawObject(mXIn, mYIn);
 		}
 		endScissor();
 	}
 	
-	public EGuiContainer setTitle(String stringIn) { title = stringIn; titleWidth = fontRenderer.getStringWidth(stringIn); return this; }
+	public EGuiContainer setTitle(String stringIn) { title = stringIn; titleWidth = mc.fontRendererObj.getStringWidth(stringIn); return this; }
 	public EGuiContainer setTitleColor(int colorIn) { titleColor = colorIn; return this; }
 	public EGuiContainer setBorderColor(int colorIn) { borderColor = colorIn; return this; }
 	public EGuiContainer setBackgroundColor(int colorIn) { backgroundColor = colorIn; return this; }

@@ -32,7 +32,7 @@ public class EGuiContainerList extends EGuiContainer {
 	}
 	
 	@Override
-	public void drawObject(int mXIn, int mYIn, float ticks) {
+	public void drawObject(int mXIn, int mYIn) {
 		if (drawBorder) { drawRect(startX, startY, endX, endY, borderColor); } //border
 		if (drawBackground) { drawRect(startX + 1, startY + 1, endX - 1, endY - 1, backgroundColor); } //inner
 		if (drawTitle) {
@@ -44,7 +44,7 @@ public class EGuiContainerList extends EGuiContainer {
 			drawRect(startX + 1, startY + 1, startX + drawWidth, startY + titleAreaHeight - 1, titleBackgroundColor);
 			drawStringWithShadow(title, startX + 4, startY + 5, titleColor);
 		}
-		super.drawObject(mXIn, mYIn, ticks);
+		super.drawObject(mXIn, mYIn);
 	}
 	
 	@Override

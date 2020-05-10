@@ -8,7 +8,8 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 public abstract class ActionWindowParent extends WindowParent implements IEnhancedActionObject {
 
 	protected boolean runActionOnPress = false;
-	protected Object storedObject = null;
+	protected Object storredObject = null;
+	protected Object selectedObject = null;
 	protected IEnhancedGuiObject actionReciever;
 	
 	protected ActionWindowParent(IEnhancedGuiObject parentIn) {
@@ -30,6 +31,8 @@ public abstract class ActionWindowParent extends WindowParent implements IEnhanc
 	@Override public IEnhancedGuiObject getActionReciever() { return actionReciever; }
 			
 	//objects
-	@Override public IEnhancedActionObject setSelectedObject(Object objIn) { storedObject = objIn; return this; }
-	@Override public Object getSelectedObject() { return storedObject; }
+	@Override public IEnhancedActionObject setStorredObject(Object objIn) { storredObject = objIn; return this; }
+	@Override public Object getStorredObject() { return storredObject; }
+	@Override public IEnhancedActionObject setSelectedObject(Object objIn) { selectedObject = objIn; return this; }
+	@Override public Object getSelectedObject() { return selectedObject; }
 }

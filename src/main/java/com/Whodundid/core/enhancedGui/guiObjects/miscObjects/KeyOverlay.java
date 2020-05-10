@@ -31,12 +31,12 @@ public class KeyOverlay extends WindowParent {
 				drawHeader = false;
 			}
 			@Override
-			public void drawObject(int mXIn, int mYIn, float ticks) {
+			public void drawObject(int mXIn, int mYIn) {
 				drawRect(startX, startY, startX + 1, startY + height, 0x66000000); //left
 				drawRect(startX + 1, startY, endX - 1, startY + 1, 0x66000000); //top
 				drawRect(endX - 1, startY, endX, startY + height, 0x66000000); //right
 				drawRect(startX + 1, startY + 1, endX - 1, startY + height, 0x22000000); //mid
-				super.drawObject(mXIn, mYIn, ticks);
+				super.drawObject(mXIn, mYIn);
 			}
 			@Override
 			public void onAdded() {
@@ -49,7 +49,7 @@ public class KeyOverlay extends WindowParent {
 	}
 	
 	@Override
-	public void drawObject(int mXIn, int mYIn, float ticks) {
+	public void drawObject(int mXIn, int mYIn) {
 		//background
 		drawRect(startX, startY, startX + 1, startY + height - 1, 0x66000000); //left
 		drawRect(startX + 1, startY, endX - 1, startY + 1, 0x66000000); //top
@@ -65,7 +65,7 @@ public class KeyOverlay extends WindowParent {
 		//button strings
 		drawString("A", startX + 3 + (width / 3 - 2) / 3 + 1, startY + (height / 3) + ((height / 3) / 2) - 3, 0xffffffff);
 		
-		super.drawObject(mXIn, mYIn, ticks);
+		super.drawObject(mXIn, mYIn);
 	}
 	
 	@Override

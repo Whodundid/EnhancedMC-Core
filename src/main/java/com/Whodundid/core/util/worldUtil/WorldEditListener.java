@@ -1,8 +1,9 @@
 package com.Whodundid.core.util.worldUtil;
 
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.coreApp.CoreApp;
+import com.Whodundid.core.renderer.BlockDrawer;
 import com.Whodundid.core.util.chatUtil.EChatUtil;
-import com.Whodundid.core.util.renderUtil.BlockDrawer;
 import com.Whodundid.core.util.storageUtil.Vector3D;
 import com.Whodundid.core.util.storageUtil.WorldRegion;
 
@@ -19,25 +20,27 @@ public class WorldEditListener {
 	public static void reset() { pos1.clear(); pos2.clear(); pos1Set = false; pos2Set = false; }
 	
 	public static void checkForPositions() {
-		if (EnhancedMC.isOpMode() && EnhancedMC.isUserDev()) {
-			try {
-				parse(EChatUtil.checkMsgUnfContains("First position set to ("), EChatUtil.getLMsgUnf());
-			} catch (Exception e) { e.printStackTrace(); }
-			
-			if (EChatUtil.checkMsgUnfContains("First position set to (") || EChatUtil.checkMsgUnfContains("Second position set to (")) {
-				if (getPos1() != null && getPos2() != null) {
-					BlockDrawer.clearBlocks();
-					
-					double startX = Math.min(pos1.x, pos2.x);
-					double startY = Math.min(pos1.y, pos2.y);
-					double startZ = Math.min(pos1.z, pos2.z);
-					double endX = Math.max(pos1.x, pos2.x);
-					double endY = Math.max(pos1.y, pos2.y);
-					double endZ = Math.max(pos1.z, pos2.z);
-					
-					BlockDrawer.addBlock(new WorldRegion(startX, startY, startZ, endX + 1, endY + 1, endZ + 1), 0xffffff55);
-					BlockDrawer.addBlock(getPos1(), 0xff55ff55);
-					BlockDrawer.addBlock(getPos2(), 0xff5555ff);
+		if (CoreApp.worldEditVisual.get()) {
+			if (EnhancedMC.isOpMode() && EnhancedMC.isUserDev()) {
+				try {
+					parse(EChatUtil.checkMsgUnfContains("First position set to ("), EChatUtil.getLMsgUnf());
+				} catch (Exception e) { e.printStackTrace(); }
+				
+				if (EChatUtil.checkMsgUnfContains("First position set to (") || EChatUtil.checkMsgUnfContains("Second position set to (")) {
+					if (getPos1() != null && getPos2() != null) {
+						BlockDrawer.clearBlocks();
+						
+						double startX = Math.min(pos1.x, pos2.x);
+						double startY = Math.min(pos1.y, pos2.y);
+						double startZ = Math.min(pos1.z, pos2.z);
+						double endX = Math.max(pos1.x, pos2.x);
+						double endY = Math.max(pos1.y, pos2.y);
+						double endZ = Math.max(pos1.z, pos2.z);
+						
+						BlockDrawer.addBlock(new WorldRegion(startX, startY, startZ, endX + 1, endY + 1, endZ + 1), 0xffffff55);
+						BlockDrawer.addBlock(getPos1(), 0xff55ff55);
+						BlockDrawer.addBlock(getPos2(), 0xff5555ff);
+					}
 				}
 			}
 		}

@@ -1,6 +1,5 @@
 package com.Whodundid.core.enhancedGui.guiObjects.basicObjects;
 
-import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.renderUtil.EColors;
 
@@ -20,12 +19,12 @@ public class EGuiRect extends EGuiShape {
 	}
 	
 	@Override
-	public void drawObject(int mXIn, int mYIn, float ticks) {
+	public void drawObject(int mXIn, int mYIn) {
 		
 		if (filled) { drawRect(startX, startY, endX, endY, color); }
 		else { drawHRect(startX, startY, endX, endY, 1, color); }
 		
-		super.drawObject(mXIn, mYIn, ticks);
+		super.drawObject(mXIn, mYIn);
 	}
 	
 	//----------------

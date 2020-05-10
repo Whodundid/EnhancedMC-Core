@@ -4,6 +4,9 @@ package com.Whodundid.core.coreEvents.eventUtil;
 
 public enum EMCEvents {
 	
+	//init
+	postInit,
+	
 	//ticks
 	tick,
 	cTick,
@@ -40,7 +43,10 @@ public enum EMCEvents {
 	serverJoin,
 	
 	//emc specific
+	rendererRCM,
 	tabComplete,
 	chatLine,
-	modCallout;
+	appCallout,
+	windowOpened,
+	windowClosed;
 }

@@ -1,8 +1,13 @@
 package com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.textArea;
 
+import com.Whodundid.core.coreApp.EMCResources;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.scrollList.EGuiScrollList;
 import com.Whodundid.core.enhancedGui.objectEvents.EventFocus;
+import com.Whodundid.core.enhancedGui.objectEvents.EventMouse;
+import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.MouseType;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.util.EUtil;
+import com.Whodundid.core.util.renderUtil.CursorHelper;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import java.util.Iterator;
@@ -17,6 +22,7 @@ public class EGuiTextArea<obj> extends EGuiScrollList {
 	protected boolean editable = true;
 	protected boolean drawLineNumbers = false;
 	protected int maxWidth = Integer.MAX_VALUE;
+	protected int lineHeight = 10;
 	
 	public EGuiTextArea(IEnhancedGuiObject parentIn, int x, int y, int widthIn, int heightIn) {
 		this(parentIn, x, y, widthIn, heightIn, false);
@@ -34,29 +40,30 @@ public class EGuiTextArea<obj> extends EGuiScrollList {
 	}
 	
 	@Override
-	public void drawObject(int mXIn, int mYIn, float ticks) {
-		super.drawObject(mXIn, mYIn, ticks);
+	public void drawObject(int mXIn, int mYIn) {
+		super.drawObject(mXIn, mYIn);
 	}
 	
 	@Override
 	public void mousePressed(int mXIn, int mYIn, int button) {
+		postEvent(new EventMouse(this, mX, mY, button, MouseType.Pressed));
 		if (button == 0) {
+			EUtil.ifNotNullDo(getWindowParent(), w -> w.bringToFront());
+			
 			if (isEditable() && textDocument.isEmpty()) {
-				setSelectedLine(addTextLine());
+				TextAreaLine l = addTextLine();
+				setSelectedLine(l);
+				l.requestFocus();
 			}
 			else if (textDocument.isNotEmpty()) {
-				TextAreaLine first = getTextLine(0);
-				if (first != null) {
-					int fy = first.getDimensions().startY;
-					int va = verticalScroll.getVisibleAmount();
-					int hv = verticalScroll.getHighVal() - va;
-					int s = verticalScroll.getScrollPos() - va;
-					int sl = getListDimensions().startY;
+				if (button != 1) {
+					TextAreaLine l = getLineMouseIsOver();
 					
+					if (l != null) {
+						setSelectedLine(l);
+						l.requestFocus();
+					}
 					
-					//System.out.println("the pos: " + (((double) s / (double) hv) * 100));
-					
-					//System.out.println(verticalScroll.getVisibleAmount() + " " + verticalScroll.getHighVal() + " " + s);
 				}
 			}
 		}
@@ -75,15 +82,14 @@ public class EGuiTextArea<obj> extends EGuiScrollList {
 	
 	@Override
 	public void mouseEntered(int mX, int mY) {
-		//if (isEditable()) {
-		//	System.out.println("entered");
-		//	CursorHelper.setCursor(EMCResources.iBeam);
-		//}
+		if (isEditable()) {
+			CursorHelper.setCursor(EMCResources.cursorIBeam);
+		}
 	}
 	
 	@Override
 	public void mouseExited(int mX, int mY) {
-		//CursorHelper.reset();
+		CursorHelper.reset();
 	}
 	
 	@Override
@@ -98,38 +104,40 @@ public class EGuiTextArea<obj> extends EGuiScrollList {
 	public TextAreaLine addTextLine(String textIn, obj objectIn) { return addTextLine(textIn, 0xffffff, objectIn, false); }
 	public TextAreaLine addTextLine(String textIn, int colorIn, obj objectIn) { return addTextLine(textIn, colorIn, objectIn, false); }
 	public TextAreaLine addTextLine(String textIn, int colorIn, obj objectIn, boolean moveDown) {
-		return addTextLine(new TextAreaLine(this, textIn, colorIn, objectIn, textDocument.size()), moveDown);
+		return addTextLine(new TextAreaLine(this, textIn, colorIn, objectIn, textDocument.size()), 0, moveDown);
 	}
 	
-	public TextAreaLine addTextLine(TextAreaLine lineIn) { return addTextLine(lineIn, false); }
-	public TextAreaLine addTextLine(TextAreaLine lineIn, boolean moveDown) {
+	public TextAreaLine addTextLine(TextAreaLine lineIn) { return addTextLine(lineIn, 0, false); }
+	public TextAreaLine addTextLine(TextAreaLine lineIn, int offset) { return addTextLine(lineIn, offset, false); }
+	public TextAreaLine addTextLine(TextAreaLine lineIn, int offset, boolean moveDown) {
 		int moveArg = moveDown ? 1 : 0;
-		EDimension ld = this.getListDimensions();
-		lineIn.setDimensions(3, 1 + (textDocument.size() * 10), fontRenderer.getStringWidth(lineIn.getText()), 10);
-		//lineIn.setDimensions(3, 1 + (textDocument.size() * 10), ld.width, 10);
-		//if (textDocument.size() % 2 == 1) {
-		//	EGuiRect back = new EGuiRect(this, 0, 2 + (textDocument.size() * 10), ld.width, 12 + (textDocument.size() * 10), 0x1a000000);
-		//	addObjectToList(back.setClickable(false));
-		//}
+		EDimension ld = getListDimensions();
+		lineIn.setDimensions(3, 1 + (textDocument.size() * 10) + offset, mc.fontRendererObj.getStringWidth(lineIn.getText()), 10);
 		textDocument.add(lineIn);
 		addObjectToList(lineIn);
-		fitItemsInList(5, 8);
-		//fitDocumentInDims();
+		fitItemsInList(3, 8);
+		lineIn.setLineNumber(textDocument.size() - 1);
 		return lineIn;
 	}
 	
-	public EGuiTextArea insertTextLine() { return insertTextLine("", 0xffffff, -1); }
-	public EGuiTextArea insertTextLine(int atPos) { return insertTextLine("", 0xffffff, atPos); }
-	public EGuiTextArea insertTextLine(String textIn) { return insertTextLine(textIn, 0xffffff, -1); }
-	public EGuiTextArea insertTextLine(String textIn, int atPos) { return insertTextLine(textIn, 0xffffff, atPos); }
-	public EGuiTextArea insertTextLine(String textIn, int colorIn, int atPos) {
+	public TextAreaLine insertTextLine() { return insertTextLine("", 0xffffff, -1); }
+	public TextAreaLine insertTextLine(int atPos) { return insertTextLine("", 0xffffff, atPos); }
+	public TextAreaLine insertTextLine(String textIn) { return insertTextLine(textIn, 0xffffff, -1); }
+	public TextAreaLine insertTextLine(String textIn, int atPos) { return insertTextLine(textIn, 0xffffff, atPos); }
+	public TextAreaLine insertTextLine(String textIn, int colorIn, int atPos) {
 		if (atPos == -1) {
 			if (currentLine == null) {
+				System.out.println("pos: " + atPos);
 				atPos = textDocument.size();
 				
 			}
 		}
-		return this;
+		return null;
+	}
+	
+	public TextAreaLine insertTextLine(TextAreaLine lineIn, int atPos) {
+		
+		return lineIn;
 	}
 	
 	public EGuiTextArea deleteLine() { return deleteLine(getCurrentLine()); }
@@ -245,7 +253,7 @@ public class EGuiTextArea<obj> extends EGuiScrollList {
 		TextAreaLine longest = null;
 		int longestLen = 0;
 		for (TextAreaLine l : textDocument) {
-			int len = fontRenderer.getStringWidth(l.getText());
+			int len = mc.fontRendererObj.getStringWidth(l.getText());
 			if (len > longestLen) { longest = l; longestLen = len; }
 		}
 		return longest;
@@ -253,7 +261,7 @@ public class EGuiTextArea<obj> extends EGuiScrollList {
 	
 	public int getLongestLineLength() {
 		longestLine = getLongestTextLine();
-		return longestLine != null ? fontRenderer.getStringWidth(longestLine.getText()) : - 1;
+		return longestLine != null ? mc.fontRendererObj.getStringWidth(longestLine.getText()) : - 1;
 	}
 	
 	public EGuiTextArea clear() {
@@ -276,12 +284,25 @@ public class EGuiTextArea<obj> extends EGuiScrollList {
 		return this;
 	}
 	
+	public EGuiTextArea setLineHeight(int in) { lineHeight = in; return this; }
 	public EGuiTextArea setDrawLineNumbers(boolean valIn) { drawLineNumbers = valIn; return this; }
 	public EGuiTextArea setEditable(boolean valIn) { editable = valIn; return this; }
 	
+	public TextAreaLine getLineMouseIsOver() {
+		int mPosY = mY - startY - 1;
+		int scrollOffset = verticalScroll.getScrollPos() - verticalScroll.getVisibleAmount();
+		int posY = mPosY + scrollOffset;
+		
+		TextAreaLine l = getTextLine(posY / lineHeight);
+		
+		return l;
+	}
+	
+	public int getLineHeight() { return lineHeight; }
 	public int getLineCount() { return (height - 2) / 10; }
 	public boolean hasLineNumbers() { return drawLineNumbers; }
 	public boolean isEditable() { return editable; }
 	public TextAreaLine getCurrentLine() { return currentLine; }
-	public EArrayList<TextAreaLine> getTextDocument() { return textDocument; }
+	public EArrayList<TextAreaLine> getTextDocument() { return (EArrayList<TextAreaLine>) textDocument; }
+	
 }

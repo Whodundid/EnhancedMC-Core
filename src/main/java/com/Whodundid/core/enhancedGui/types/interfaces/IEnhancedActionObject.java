@@ -16,6 +16,8 @@ public interface IEnhancedActionObject {
 	
 	//objects
 	
+	public IEnhancedActionObject setStorredObject(Object objIn);
+	public Object getStorredObject();
 	public IEnhancedActionObject setSelectedObject(Object objIn);
 	public Object getSelectedObject();
 }

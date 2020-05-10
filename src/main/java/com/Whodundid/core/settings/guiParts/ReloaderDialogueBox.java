@@ -1,11 +1,11 @@
 package com.Whodundid.core.settings.guiParts;
 
+import com.Whodundid.core.app.AppSettings;
+import com.Whodundid.core.app.EMCApp;
 import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.textArea.EGuiTextArea;
 import com.Whodundid.core.enhancedGui.guiObjects.windows.EGuiDialogueBox;
 import com.Whodundid.core.renderer.EnhancedMCRenderer;
-import com.Whodundid.core.subMod.SubMod;
-import com.Whodundid.core.subMod.SubModSettings;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
@@ -15,11 +15,11 @@ import net.minecraft.util.EnumChatFormatting;
 
 public class ReloaderDialogueBox extends EGuiDialogueBox {
 
-	EArrayList<SubMod> reloadedMods = new EArrayList();
-	StorageBoxHolder<SubMod, Reason> failedMods = new StorageBoxHolder();
+	EArrayList<EMCApp> reloadedMods = new EArrayList();
+	StorageBoxHolder<EMCApp, Reason> failedMods = new StorageBoxHolder();
 	EGuiTextArea display;
 	
-	public ReloaderDialogueBox(EArrayList<SubMod> modsIn) {
+	public ReloaderDialogueBox(EArrayList<EMCApp> modsIn) {
 		init(EnhancedMCRenderer.getInstance(), -1, -1, 200, 242);
 		
 		requestFocus();
@@ -28,9 +28,9 @@ public class ReloaderDialogueBox extends EGuiDialogueBox {
 		setResizeable(true);
 		setMinDims(150, 49);
 		
-		SubModSettings.loadConfig();
+		AppSettings.loadConfig();
 		
-		for (SubMod m : modsIn) {
+		for (EMCApp m : modsIn) {
 			boolean load = m.getConfig().loadAllConfigs();
 			boolean save = m.getConfig().saveAllConfigs();
 			if (load && save) { reloadedMods.add(m); }
@@ -43,7 +43,7 @@ public class ReloaderDialogueBox extends EGuiDialogueBox {
 	@Override
 	public void initObjects() {
 		defaultHeader(this);
-		getHeader().setTitle("Reloading SubMods").setTitleColor(0xb2b2b2);
+		getHeader().setTitle("Reloading EMC Apps").setTitleColor(0xb2b2b2);
 		
 		display = new EGuiTextArea(this, startX + 5, startY + 5, width - 10, height - 35);
 		display.setResetDrawn(false);
@@ -52,17 +52,17 @@ public class ReloaderDialogueBox extends EGuiDialogueBox {
 		display.addTextLine();
 		
 		if (reloadedMods.isNotEmpty()) {
-			display.addTextLine("Successfully reloaded mods:", 0x55ff55);
-			for (SubMod m : reloadedMods) {
+			display.addTextLine("Successfully reloaded apps:", 0x55ff55);
+			for (EMCApp m : reloadedMods) {
 				display.addTextLine(EnumChatFormatting.GRAY + "    " + m.getName());
 			}
 			if (failedMods.isNotEmpty()) { display.addTextLine(); }
 		}
 		
 		if (failedMods.isNotEmpty()) {
-			display.addTextLine("Failed to fully reload mods:", 0xff5555);
-			for (StorageBox<SubMod, Reason> box : failedMods) {
-				display.addTextLine(EnumChatFormatting.GRAY + "    " + box.getObject().getName() + " : " + EnumChatFormatting.DARK_PURPLE + EnumChatFormatting.ITALIC + box.getValue().msg);
+			display.addTextLine("Failed to fully reload apps:", 0xff5555);
+			for (StorageBox<EMCApp, Reason> box : failedMods) {
+				display.addTextLine(EnumChatFormatting.GRAY + "    " + box.getObject().getName() + " " + EnumChatFormatting.DARK_PURPLE + EnumChatFormatting.ITALIC + box.getValue().msg);
 			}
 		}
 		
@@ -79,9 +79,10 @@ public class ReloaderDialogueBox extends EGuiDialogueBox {
 		addObject(display);
 	}
 		
-	private enum Reason {
+	public enum Reason {
 		Saving("Saving Config"),
 		Loading("Loading Config"),
+		Resetting("Resetting Config"),
 		In_General("Unknown Error!");
 		
 		public String msg = "";

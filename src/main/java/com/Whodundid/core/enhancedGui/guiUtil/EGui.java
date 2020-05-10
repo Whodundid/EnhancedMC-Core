@@ -2,6 +2,7 @@ package com.Whodundid.core.enhancedGui.guiUtil;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.util.chatUtil.EChatUtil;
+import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.renderUtil.GLObject;
 import com.google.common.collect.Lists;
 import java.net.URI;
@@ -40,6 +41,22 @@ public class EGui extends GLObject {
 	public int minHeight = 0;
 	public int maxWidth = Integer.MAX_VALUE;
 	public int maxHeight = Integer.MAX_VALUE;
+	
+	//---------------
+	//Drawing Helpers
+	//---------------
+	
+	public void drawRect(EColors color) { drawRect(color.c()); }
+	public void drawRect(int color) { drawRect(startX, startY, endX, endY, color); }
+	
+	public void drawHRect(EColors color) { drawHRect(color.c()); }
+	public void drawHRect(int color) { drawHRect(startX, startY, endX, endY, 1, color); }
+	
+	public void drawRect(EColors color, int offset) { drawRect(color.c(), offset); }
+	public void drawRect(int color, int offset) { drawRect(startX + offset, startY + offset, endX - offset, endY - offset, color); }
+	
+	public void drawHRect(EColors color, int offset) { drawHRect(color.c(), offset); }
+	public void drawHRect(int color, int offset) { drawHRect(startX, + offset, startY + offset, endX - offset, endY - offset, color); }
 	
 	//---------------
 	//keyboard checks
@@ -169,7 +186,7 @@ public class EGui extends GLObject {
 			String s1 = statbase instanceof Achievement ? ((Achievement)statbase).getDescription() : null;
 			List<String> list = Lists.newArrayList(new String[] {ichatcomponent.getFormattedText(), ichatcomponent1.getFormattedText()});
 			
-			if (s1 != null) { list.addAll(fontRenderer.listFormattedStringToWidth(s1, 150)); }
+			if (s1 != null) { list.addAll(mc.fontRendererObj.listFormattedStringToWidth(s1, 150)); }
 			
 			drawHoveringText(list, mX, mY);
 		}

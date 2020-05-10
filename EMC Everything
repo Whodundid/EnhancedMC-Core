@@ -4,21 +4,21 @@ Needed Assets
 
 Images:
     RendererRCM
-        1. Opening new chat window - renderer RCM
-        2. Opening any gui - renderer RCM
+D       1. Opening new chat window - renderer RCM
+D       2. Opening any gui - renderer RCM
     SettingsRCM
-        1. Open gui
-        2. Open in new window
-        3. For toggling enabled state
+D       1. Open gui
+D       2. Open in new window
+D       3. For toggling enabled state
     SubMods (general)
-        1. Logo/Image for each
+D       1. Logo/Image for each
     
 Sounds:
     Notifications:
         1. Name mention
         2. EMC Info
         3. Error
-        (total of around 5 -- player can select which one they want for each)
+           (total of around 5 -- player can select which one they want for each)
 
 
 --------------------------
@@ -121,9 +121,9 @@ F   32. When action objects are fired the parent window is not brought to the fr
 F   33. Chat history is always fully drawn while the proxy gui is open.
         --Added 3 different drawing modes for chat history with proxies - full, partial, and off.
     
-    34. TextAreaLines are not highlighted when clicking the white space of the line they are on.
+F   34. TextAreaLines are not highlighted when clicking the white space of the line they are on.
     
-    35. When using the arrow keys to traverse through an EGuiTextField's text, the letters appear to shift horizontally.
+F   35. When using the arrow keys to traverse through an EGuiTextField's text, the letters appear to shift horizontally.
     
 F   36. The KeyBindGui does not show same key assignment conflicts.
         --Added logic to check if the keycode has been assigned more than once.
@@ -136,13 +136,13 @@ F   38. When pressing escape to clear a keybind in the KeyBindGui, the whole gui
     
 F   39. When attempting to assign a mouse button to a KeyBinding in the KeyBindGui, either nothing happens or many many arrows are continually added to the button.
 
-    40. When a textArea is resized, textLines can no longer be clicked on.
+F   40. When a textArea is resized, textLines can no longer be clicked on.
     
-    41. Certain textures are not being drawn.
+F   41. Certain textures are not being drawn.
     
-    42. When resizing a window while the window is at one of it's maximum or minimum widths/heights, any resizing scrollBar thumb will move even though the window doesn't.
+F   42. When resizing a window while the window is at one of it's maximum or minimum widths/heights, any resizing scrollBar thumb will move even though the window doesn't.
     
-    43. TextAreas don't fully show the entire horizontal scroll width, it's cut short by like 10 pixels.
+F   43. TextAreas don't fully show the entire horizontal scroll width, it's cut short by like 10 pixels.
     
     44. GLObject draws (ie. rects, ellipses, etc.) do not seem to accept being scissoring.
 
@@ -206,12 +206,12 @@ Missing/Broken Quality of Life Issues
     1. When using the FileUpButton to return to the main settings gui, the scroll position is not remembered.
 
 F   2. When a vanilla gui is opened, the renderer proxy is effectively closed - breaking the control bridge.
-     This would be fine if it weren't for the fact that the EGuiObjects remain on screen.
+       This would be fine if it weren't for the fact that the EGuiObjects remain on screen.
    
-    3. RCM does not appear for 'MC KeyBinds' button in SettingsGuiMain.
+F   3. RCM does not appear for 'MC KeyBinds' button in SettingsGuiMain.
 
     4. While the scale of everything does change with Minecraft's gui scaling, some objects really do not
-     fit well in the larger scales. (ie. InGameChatWindow, MiniMapGui, etc.)
+       fit well in the larger scales. (ie. InGameChatWindow, MiniMapGui, etc.)
    
      On the largest scaling mode, nothing actually fits well..
      
@@ -221,23 +221,24 @@ F   5. When switching worlds, if a proxy gui was open prior to switching, it is 
 Unfinished/Planned Core Features
 --------------------------------
 
-D 1. Hovering Events
-  2. Notification System
-  3. Quick Bar for Frequently Used Mods
-D 4. EMC Console
-  5. Display SubMod Picture/Icon when hovering over mod in SettingsGuiMain and in SubModInfoDialogueBox
-  6. Customize-able color palletes/themes for EMC
-  7. Resizeable Settings Menu
-  8. SubMod Categories -- Organize and display each mod categorically in the SettingsGuiMain
-  9. Animated windows and notifications
- 10. EMC In-Game Server Browser
- 11. System to check for updates in background
- 12. Finish PlayerFacing API
- 13. Toggle sounds from the EMC Core SubMod gui
- 14. Select sounds for each notification from the EMC Core SubMod gui
- 15. Finish EGuiColorPicker
- 16. Redo EGuiDropDownList
- 17. Achievement Notifications
+D  1. Hovering Events
+   2. Notification System
+   3. Quick Bar for Frequently Used Mods
+D  4. EMC Console
+D  5. Display SubMod Picture/Icon when hovering over mod in SettingsGuiMain and in SubModInfoDialogueBox
+   6. Customize-able color palletes/themes for EMC
+   7. Resizeable Settings Menu
+   8. SubMod Categories -- Organize and display each mod categorically in the SettingsGuiMain
+   9. Animated windows and notifications
+  10. EMC In-Game Server Browser
+  11. System to check for updates in background
+  12. Finish PlayerFacing API
+  13. Toggle sounds from the EMC Core SubMod gui
+  14. Select sounds for each notification from the EMC Core SubMod gui
+  15. Finish EGuiColorPicker
+  16. Redo EGuiDropDownList
+  17. Achievement Notifications
+D 18. Window Taskbar
  
  hyp ip: 172.65.209.87
          172.65.230.98

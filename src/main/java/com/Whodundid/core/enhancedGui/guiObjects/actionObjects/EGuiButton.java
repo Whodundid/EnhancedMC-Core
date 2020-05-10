@@ -1,17 +1,17 @@
 package com.Whodundid.core.enhancedGui.guiObjects.actionObjects;
 
-import com.Whodundid.core.coreSubMod.EMCResources;
+import com.Whodundid.core.app.AppConfigSetting;
+import com.Whodundid.core.app.EMCApp;
+import com.Whodundid.core.coreApp.EMCResources;
 import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiLabel;
 import com.Whodundid.core.enhancedGui.types.EnhancedActionObject;
-import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
-import com.Whodundid.core.subMod.SubMod;
+import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.renderUtil.EColors;
+import com.Whodundid.core.util.resourceUtil.EResource;
 import com.Whodundid.core.util.storageUtil.EDimension;
-import com.Whodundid.core.util.storageUtil.ModSetting;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 
 //Author: Hunter Bragg
@@ -32,11 +32,11 @@ public class EGuiButton extends EnhancedActionObject {
 	protected boolean trueFalseButton = false;
 	protected boolean drawString = true;
 	protected boolean drawCentered = true;
-	protected ResourceLocation btnTexture = EMCResources.guiButtonBase;
-	protected ResourceLocation btnSelTexture = null;
+	protected EResource btnTexture = EMCResources.guiButtonBase;
+	protected EResource btnSelTexture = null;
 	
 	protected EGuiButton(IEnhancedGuiObject parentIn) { super(parentIn); }
-	public EGuiButton(IEnhancedGuiObject parentIn, int posX, int posY, int width, int height, ModSetting<Boolean> settingIn) {
+	public EGuiButton(IEnhancedGuiObject parentIn, int posX, int posY, int width, int height, AppConfigSetting<Boolean> settingIn) {
 		this(parentIn, posX, posY, width, height);
 		setTrueFalseButton(true, settingIn);
 	}
@@ -45,8 +45,8 @@ public class EGuiButton extends EnhancedActionObject {
 		init(parentIn, posX, posY, width, height);
 		displayLabel = new EGuiLabel(this, (drawCentered ? midX : startX + 3) + textOffset, startY + (height - 7) / 2, displayStringIn) {
 			@Override
-			public void drawObject(int mX, int mY, float ticks) {
-				if (drawString) { super.drawObject(mX, mY, ticks); }
+			public void drawObject(int mX, int mY) {
+				if (drawString) { super.drawObject(mX, mY); }
 			}
 		};
 		displayLabel.setDrawCentered(drawCentered).setClickable(false);
@@ -54,7 +54,7 @@ public class EGuiButton extends EnhancedActionObject {
 	}
 
 	@Override
-	public void drawObject(int mX, int mY, float ticks) {
+	public void drawObject(int mX, int mY) {
 		if (drawBackground) { drawRect(startX, startY, endX, endY, backgroundColor); }
 		
 		boolean mouseHover = isMouseOver(mX, mY);
@@ -106,7 +106,7 @@ public class EGuiButton extends EnhancedActionObject {
 		//draw disabled overlay
 		if (!isEnabled()) { drawRect(startX, startY, endX, endY, 0x77000000); }
 		
-		super.drawObject(mX, mY, ticks);
+		super.drawObject(mX, mY);
 	}
 	
 	@Override
@@ -126,6 +126,7 @@ public class EGuiButton extends EnhancedActionObject {
 	
 	@Override
 	public void mousePressed(int mX, int mY, int button) {
+		EUtil.ifNotNullDo(getWindowParent(), w -> w.bringToFront());
 		pressButton(button);
     }
 	
@@ -152,13 +153,13 @@ public class EGuiButton extends EnhancedActionObject {
 		}
 	}
 	
-	public EGuiButton updateTrueFalseDisplay(ModSetting<Boolean> setting) { return updateTrueFalseDisplay(setting.get()); }
+	public EGuiButton updateTrueFalseDisplay(AppConfigSetting<Boolean> setting) { return updateTrueFalseDisplay(setting.get()); }
 	public EGuiButton updateTrueFalseDisplay(boolean val) {
 		if (trueFalseButton) { setDisplayString(val ? "True" : "False").setDisplayStringColor(val ? 0x55ff55 : 0xff5555); }
 		return this;
 	}
 	
-	public EGuiButton toggleTrueFalse(ModSetting<Boolean> setting, SubMod m, boolean saveAll) {
+	public EGuiButton toggleTrueFalse(AppConfigSetting<Boolean> setting, EMCApp m, boolean saveAll) {
 		if (trueFalseButton) {
 			boolean val = setting.get();
 			setting.set(!val);
@@ -189,24 +190,24 @@ public class EGuiButton extends EnhancedActionObject {
 	//----------------------
 	
 	//texture binding methods
-	private void bindBase() { if (btnTexture != null) { mc.renderEngine.bindTexture(btnTexture); } }
-	private void bindSel() { if (btnSelTexture != null ) { mc.renderEngine.bindTexture(btnSelTexture); } }
+	private void bindBase() { if (btnTexture != null) { bindTexture(btnTexture); } }
+	private void bindSel() { if (btnSelTexture != null ) { bindTexture(btnSelTexture); } }
 	
 	//draw method
 	private void drawBaseTexture(boolean mouseHover) {
-		mc.renderEngine.bindTexture(EMCResources.guiButtons);
+		bindTexture(EMCResources.mcWidgets);
 		int i = height > 20 ? 20 : height;
 		int offset = mouseHover ? 20 : 0;
 		if (!isEnabled()) { offset = 0; }
 		if (height < 20) {
 			i = i >= 3 ? i - 2 : i;
-			drawTexturedModalRect(startX, startY, 0, 0 + offset, width - 2, i);
-    		drawTexturedModalRect(startX + width - 2, startY, 198, 0 + offset, 2, i);
-    		drawTexturedModalRect(startX, startY + height - 2, 0, 18 + offset, width - 2, 2);
-    		drawTexturedModalRect(startX + width - 2, startY + height - 2, 198, 18 + offset, 2, 2);
+			drawTexturedModalRect(startX, startY, 0, 66 + offset, width - 2, i);
+    		drawTexturedModalRect(startX + width - 2, startY, 198, 66 + offset, 2, i);
+    		drawTexturedModalRect(startX, startY + height - 2, 0, 84 + offset, width - 2, 2);
+    		drawTexturedModalRect(startX + width - 2, startY + height - 2, 198, 84 + offset, 2, 2);
 		} else {
-			drawTexturedModalRect(startX, startY, 0, 0 + offset, width - 2, i);
-    		drawTexturedModalRect(startX + width - 2, startY, 198, 0 + offset, 2, i);
+			drawTexturedModalRect(startX, startY, 0, 66 + offset, width - 2, i);
+    		drawTexturedModalRect(startX + width - 2, startY, 198, 66 + offset, 2, i);
 		}
 	}
 	
@@ -219,9 +220,9 @@ public class EGuiButton extends EnhancedActionObject {
 	//EGuiButton Setters
 	//------------------
 	
-	public EGuiButton setTextures(ResourceLocation base, ResourceLocation sel) { setButtonTexture(base); setButtonSelTexture(sel); return this; }
-	public EGuiButton setButtonTexture(ResourceLocation loc) { btnTexture = loc; checkForBaseTextures(); return this; }
-	public EGuiButton setButtonSelTexture(ResourceLocation loc) { btnSelTexture = loc; checkForBaseTextures(); return this; }
+	public EGuiButton setTextures(EResource base, EResource sel) { setButtonTexture(base); setButtonSelTexture(sel); return this; }
+	public EGuiButton setButtonTexture(EResource loc) { btnTexture = loc; checkForBaseTextures(); return this; }
+	public EGuiButton setButtonSelTexture(EResource loc) { btnSelTexture = loc; checkForBaseTextures(); return this; }
 	public EGuiButton setDrawTextures(boolean val) { drawTextures = val; return this; }
 	public EGuiButton setDisplayString(String stringIn) { displayLabel.setDisplayString(stringIn); return this; }
 	public EGuiButton setDisplayStringColor(int colorIn) { color = colorIn; return this; }
@@ -232,7 +233,7 @@ public class EGuiButton extends EnhancedActionObject {
 	public EGuiButton setBackgroundColor(int colorIn) { backgroundColor = colorIn; return this; }
 	public EGuiButton setBackgroundColor(EColors colorIn) { if (colorIn != null) { backgroundColor = colorIn.c(); } return this; }
 	public EGuiButton setTrueFalseButton(boolean val) { return setTrueFalseButton(val, false); }
-	public EGuiButton setTrueFalseButton(boolean val, ModSetting<Boolean> settingIn) { return setTrueFalseButton(val, settingIn != null ? settingIn.get() : false); }
+	public EGuiButton setTrueFalseButton(boolean val, AppConfigSetting<Boolean> settingIn) { return setTrueFalseButton(val, settingIn != null ? settingIn.get() : false); }
 	public EGuiButton setTrueFalseButton(boolean val, boolean initial) { trueFalseButton = val; updateTrueFalseDisplay(initial); return this; }
 	public EGuiButton setDrawString(boolean val) { drawString = val; return this; }
 	public EGuiButton setDrawStretched(boolean val) { stretchBaseTextures = val; return this; }

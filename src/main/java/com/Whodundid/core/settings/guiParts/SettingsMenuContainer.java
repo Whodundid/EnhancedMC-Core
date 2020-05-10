@@ -1,7 +1,12 @@
 package com.Whodundid.core.settings.guiParts;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.coreSubMod.EMCResources;
+import com.Whodundid.core.app.EMCApp;
+import com.Whodundid.core.app.gui.AppErrorType;
+import com.Whodundid.core.app.gui.AppInfoDialogueBox;
+import com.Whodundid.core.app.util.AppEnabler;
+import com.Whodundid.core.app.util.AppErrorDisplay;
+import com.Whodundid.core.coreApp.EMCResources;
 import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.scrollList.EGuiScrollList;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
@@ -9,11 +14,6 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.settings.SettingsGuiMain;
-import com.Whodundid.core.subMod.SubMod;
-import com.Whodundid.core.subMod.gui.SubModErrorType;
-import com.Whodundid.core.subMod.gui.SubModInfoDialogueBox;
-import com.Whodundid.core.subMod.util.SubModEnabler;
-import com.Whodundid.core.subMod.util.SubModErrorDisplay;
 import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import org.lwjgl.input.Keyboard;
@@ -22,14 +22,14 @@ import org.lwjgl.input.Keyboard;
 
 public class SettingsMenuContainer extends EnhancedGuiObject {
 	
-	SubMod mod = null;
+	EMCApp mod = null;
 	SettingsGuiMain window;
 	IEnhancedTopParent topParent;
 	EGuiButton enable, info, settings;
 	int pos = 0;
 	
-	public SettingsMenuContainer(EGuiScrollList parentIn, SubMod modIn, int posIn, SettingsGuiMain windowIn) { this(parentIn, modIn, posIn, 0, windowIn); }
-	public SettingsMenuContainer(EGuiScrollList parentIn, SubMod modIn, int posIn, int offset, SettingsGuiMain windowIn) {
+	public SettingsMenuContainer(EGuiScrollList parentIn, EMCApp modIn, int posIn, boolean drawn, SettingsGuiMain windowIn) { this(parentIn, modIn, posIn, 0, drawn, windowIn); }
+	public SettingsMenuContainer(EGuiScrollList parentIn, EMCApp modIn, int posIn, int offset, boolean drawn, SettingsGuiMain windowIn) {
 		init(parentIn);
 		mod = modIn;
 		pos = posIn;
@@ -51,7 +51,9 @@ public class SettingsMenuContainer extends EnhancedGuiObject {
 			}
 		};
 		
-		enable = new EGuiButton(this, settings.endX + 11, d.startY + 3 + (pos * dist) + offset, 50, 20, mod != null ? mod.isDisableable() ? (mod.isEnabled() ? "Enabled" : "Disabled") : "Enabled" : "ERROR");
+		int enW = drawn ? 50 : 53;
+		
+		enable = new EGuiButton(this, settings.endX + 11, d.startY + 3 + (pos * dist) + offset, enW, 20, mod != null ? mod.isDisableable() ? (mod.isEnabled() ? "Enabled" : "Disabled") : "Enabled" : "ERROR");
 		info = new EGuiButton(this, enable.endX + 4, d.startY + 3 + (pos * dist) + offset, 20, 20);
 		
 		info.setTextures(EMCResources.guiInfo, EMCResources.guiInfoSel);
@@ -78,15 +80,15 @@ public class SettingsMenuContainer extends EnhancedGuiObject {
 			IWindowParent gui = mod.getMainGui();
 			IWindowParent windowObj = getWindowParent();
 			if (gui != null) {
-				if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) { EnhancedMC.displayEGui(gui); }
-				else { EnhancedMC.displayEGui(gui, windowObj, CenterType.object); }
+				if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) { EnhancedMC.displayWindow(gui); }
+				else { EnhancedMC.displayWindow(gui, windowObj, CenterType.object); }
 			}
-			else { SubModErrorDisplay.displayError(SubModErrorType.NOGUI, mod); }
-		} catch (Exception e) { e.printStackTrace(); System.out.println("Unable to open: " + mod.getName() + "'s main gui!"); SubModErrorDisplay.displayError(SubModErrorType.NOGUI, mod, e); }
+			else { AppErrorDisplay.displayError(AppErrorType.NOGUI, mod); }
+		} catch (Exception e) { e.printStackTrace(); System.out.println("Unable to open: " + mod.getName() + "'s main window!"); AppErrorDisplay.displayError(AppErrorType.NOGUI, mod, e); }
 	}
 	
 	private void toggleEnable() {
-		if (SubModEnabler.toggleEnabled(mod)) {
+		if (AppEnabler.toggleEnabled(mod)) {
 			enable.setDisplayString(mod.isEnabled() ? "Enabled" : "Disabled");
 			enable.setDisplayStringColor(mod.isEnabled() ? 0x55ff55 : 0xff5555);
 		}
@@ -94,8 +96,8 @@ public class SettingsMenuContainer extends EnhancedGuiObject {
 	
 	private void openInfo() {
 		EDimension d = topParent.getDimensions();
-		SubModInfoDialogueBox infoBox = new SubModInfoDialogueBox(mod);
-		topParent.addObject(infoBox);
+		AppInfoDialogueBox infoBox = new AppInfoDialogueBox(mod);
+		EnhancedMC.displayWindow(infoBox, CenterType.screen);
 	}
 	
 	public int getHeight() { return settings.height; }

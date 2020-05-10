@@ -8,7 +8,14 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.coreSubMod.EMCResources;
+import com.Whodundid.core.app.AppSettings;
+import com.Whodundid.core.app.AppType;
+import com.Whodundid.core.app.EMCApp;
+import com.Whodundid.core.app.RegisteredApps;
+import com.Whodundid.core.app.gui.AppErrorDialogueBox;
+import com.Whodundid.core.app.gui.AppErrorType;
+import com.Whodundid.core.app.gui.AppInfoDialogueBox;
+import com.Whodundid.core.coreApp.EMCResources;
 import com.Whodundid.core.enhancedGui.StaticEGuiObject;
 import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiCheckBox;
@@ -33,13 +40,6 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.settings.KeyBindGui;
 import com.Whodundid.core.settings.SettingsGuiMain;
-import com.Whodundid.core.subMod.RegisteredSubMods;
-import com.Whodundid.core.subMod.SubMod;
-import com.Whodundid.core.subMod.SubModSettings;
-import com.Whodundid.core.subMod.SubModType;
-import com.Whodundid.core.subMod.gui.SubModErrorDialogueBox;
-import com.Whodundid.core.subMod.gui.SubModErrorType;
-import com.Whodundid.core.subMod.gui.SubModInfoDialogueBox;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.renderUtil.PlayerDrawer;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
@@ -91,6 +91,7 @@ public class ExperimentGui extends WindowParent {
 		//centerObjectWithSize(defaultWidth, defaultHeight);
 		setObjectName("Experiment Gui");
 		setResizeable(true);
+		windowIcon = EMCResources.experimentIcon;
 	}
 	
 	@Override
@@ -105,6 +106,21 @@ public class ExperimentGui extends WindowParent {
 		textArea = new EGuiTextArea(this, startX + 5, startY + 5, width - 10, height - 10, true, false).setDrawLineNumbers(true);
 		addObject(textArea);
 		
+		//textArea.addTextLine("Doggy");
+		
+		textArea.addTextLine("Did you ever hear the tragedy of Darth Plagueis the Wise?");
+		textArea.addTextLine("I thought not. It's not a story the Jedi would tell you. It's a Sith legend.");
+		textArea.addTextLine("Darth Plagueis was a Dark Lord of the Sith, so powerful and so wise he");
+		textArea.addTextLine("could use the Force to influence the midichlorians to create life... He had");
+		textArea.addTextLine("such a knowledge of the dark side that he could even keep the ones he");
+		textArea.addTextLine("cared about from dying. The dark side of the Force is a pathway to many");
+		textArea.addTextLine("abilities some consider to be unnatural. He became so powerful... the only");
+		textArea.addTextLine("thing he was afraid of was losing his power, which eventually, of course, he");
+		textArea.addTextLine("did. Unfortunately, he taught his apprentice everything he knew, then his");
+		textArea.addTextLine("apprentice killed him in his sleep. It's ironic he could save others from");
+		textArea.addTextLine("death, but not himself.");
+		
+		/*
 		for (int i = 0; i < 50; i++) {
 			String s = i + "";
 			if (s.length() == 1) { s += " :"; }
@@ -117,6 +133,8 @@ public class ExperimentGui extends WindowParent {
 			}
 			textArea.addTextLine(s, EColors.white.c());
 		}
+		*/
+		
 		/*
 		//textArea.addTextLine("this is an intentionally very long line of text to test horizontal scrolling!");
 		
@@ -150,7 +168,7 @@ public class ExperimentGui extends WindowParent {
 	}
 	
 	@Override
-	public void drawObject(int mXIn, int mYIn, float ticks) {
+	public void drawObject(int mXIn, int mYIn) {
 		updateBeforeNextDraw(mXIn, mYIn);
 		drawDefaultBackground();
 		
@@ -164,11 +182,11 @@ public class ExperimentGui extends WindowParent {
 					
 					if (!o.hasFirstDraw()) { o.onFirstDraw(); o.onFirstDraw(); }
 					if (o instanceof EGuiHeader) { 
-						o.drawObject(mX, mY, ticks);
+						o.drawObject(mX, mY);
 					}
 					else {
 						//scissor(startX + 1, startY + 1, endX - 1, endY - 1);
-						o.drawObject(mX, mY, ticks);
+						o.drawObject(mX, mY);
 						//endScissor();
 					}
 					
@@ -289,4 +307,8 @@ public class ExperimentGui extends WindowParent {
 	public boolean testMethodBoolean(String[] args) {
 		return false;
 	}
+	
+	@Override public boolean isOpWindow() { return true; }
+	@Override public boolean showInLists() { return false; }
+	
  }

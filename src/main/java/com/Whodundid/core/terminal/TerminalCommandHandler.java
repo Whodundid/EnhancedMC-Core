@@ -1,14 +1,19 @@
 package com.Whodundid.core.terminal;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.subMod.RegisteredSubMods;
-import com.Whodundid.core.subMod.SubMod;
+import com.Whodundid.core.app.EMCApp;
+import com.Whodundid.core.app.RegisteredApps;
 import com.Whodundid.core.terminal.gui.ETerminal;
-import com.Whodundid.core.terminal.terminalCommand.ITerminalCommand;
-import com.Whodundid.core.terminal.terminalCommand.commands.*;
+import com.Whodundid.core.terminal.terminalCommand.CommandType;
+import com.Whodundid.core.terminal.terminalCommand.TerminalCommand;
+import com.Whodundid.core.terminal.terminalCommand.commands.apps.*;
+import com.Whodundid.core.terminal.terminalCommand.commands.fileSystem.*;
+import com.Whodundid.core.terminal.terminalCommand.commands.system.*;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -18,9 +23,9 @@ public class TerminalCommandHandler {
 
 	public static final String version = "1.0";
 	private static TerminalCommandHandler instance;
-	protected StorageBoxHolder<String, ITerminalCommand> commands;
-	protected EArrayList<ITerminalCommand> commandList;
-	protected EArrayList<ITerminalCommand> customCommandList;
+	protected StorageBoxHolder<String, TerminalCommand> commands;
+	protected EArrayList<TerminalCommand> commandList;
+	protected EArrayList<TerminalCommand> customCommandList;
 	public static boolean drawSpace = true;
 	public static EArrayList<String> cmdHistory = new EArrayList();
 	
@@ -40,71 +45,94 @@ public class TerminalCommandHandler {
 	}
 	
 	private void registerBaseCommands(boolean runVisually) { registerBaseCommands(null, runVisually); }
-	private void registerBaseCommands(ETerminal conIn, boolean runVisually) {
+	private void registerBaseCommands(ETerminal termIn, boolean runVisually) {
+		//system
+		registerCommand(new BlockDrawerCommands(), termIn, runVisually);
+		registerCommand(new ClearObjects(), termIn, runVisually);
+		registerCommand(new ClearTerminal(), termIn, runVisually);
+		registerCommand(new ClearTerminalHistory(), termIn, runVisually);
+		registerCommand(new DebugControl(), termIn, runVisually);
+		registerCommand(new Exit(), termIn, runVisually);
+		registerCommand(new Help(), termIn, runVisually);
+		registerCommand(new ListCMD(), termIn, runVisually);
+		registerCommand(new OpenGui(), termIn, runVisually);
+		registerCommand(new ReregisterCommands(), termIn, runVisually);
+		registerCommand(new Say(), termIn, runVisually);
+		registerCommand(new Version(), termIn, runVisually);
+		registerCommand(new WhoAmI(), termIn, runVisually);
+		registerCommand(new OpControl(), termIn, EnhancedMC.isOpMode() && runVisually);
+		registerCommand(new RuntimeCMD(), termIn, runVisually);
+		registerCommand(new ViewTexture(), termIn, runVisually);
+		if (EnhancedMC.isOpMode()) { registerCommand(new ForLoop(), termIn, runVisually); }
+		if (EnhancedMC.isOpMode()) { registerCommand(new Server(), termIn, runVisually); }
 		
-		registerCommand(new ClearObjects(), conIn, runVisually);
-		registerCommand(new ClearTerminal(), conIn, runVisually);
-		registerCommand(new ClearTerminalHistory(), conIn, runVisually);
-		registerCommand(new Config(), conIn, runVisually);
-		registerCommand(new DebugControl(), conIn, runVisually);
-		registerCommand(new DisableMod(), conIn, runVisually);
-		registerCommand(new EnableMod(), conIn, runVisually);
-		registerCommand(new Exit(), conIn, runVisually);
-		if (EnhancedMC.isOpMode()) { registerCommand(new ForLoop(), conIn, runVisually); }
-		registerCommand(new Help(), conIn, runVisually);
-		registerCommand(new ListCMD(), conIn, runVisually);
-		registerCommand(new ModInfo(), conIn, runVisually);
-		registerCommand(new OpenGui(), conIn, runVisually);
-		registerCommand(new ReregisterCommands(), conIn, runVisually);
+		//apps
+		registerCommand(new AppInfo(), termIn, runVisually);
+		registerCommand(new Config(), termIn, runVisually);
+		registerCommand(new DisableApp(), termIn, runVisually);
+		registerCommand(new EnableApp(), termIn, runVisually);
+		registerCommand(new ReloadApps(), termIn, runVisually);
+		registerCommand(new ReloadApp(), termIn, runVisually);
 		//registerCommand(conIn, new ResetMod(), runVisually);
-		registerCommand(new Say(), conIn, runVisually);
-		if (EnhancedMC.isOpMode()) { registerCommand(new Server(), conIn, runVisually); }
-		if (EnhancedMC.isOpMode()) { registerCommand(new ToggleSafeRM(), conIn, runVisually); }
-		registerCommand(new Version(), conIn, runVisually);
-		registerCommand(new WhoAmI(), conIn, runVisually);
 		
-		registerCommand(new OpControl(), conIn, false);
-		
+		//file system
+		registerCommand(new Ls(), termIn, runVisually);
+		registerCommand(new Cd(), termIn, runVisually);
+		registerCommand(new Pwd(), termIn, runVisually);
+		registerCommand(new Rm(), termIn, runVisually);
+		registerCommand(new RmDir(), termIn, runVisually);
+		registerCommand(new MkDir(), termIn, runVisually);
+		registerCommand(new Mv(), termIn, runVisually);
+		registerCommand(new Cp(), termIn, runVisually);
+		registerCommand(new Lsblk(), termIn, runVisually);
+		registerCommand(new Cat(), termIn, runVisually);
+		registerCommand(new Edit(), termIn, runVisually);
 	}
 	
 	private void registerSubModCommands(boolean runVisually) { registerSubModCommands(null, runVisually); }
-	private void registerSubModCommands(ETerminal conIn, boolean runVisually) {
-		for (SubMod m : RegisteredSubMods.getModsList()) {
-			registerCommand(new SubModTerminalCommands(m), conIn, runVisually);
-			m.terminalRegisterCommandEvent(conIn, runVisually);
+	private void registerSubModCommands(ETerminal termIn, boolean runVisually) {
+		for (EMCApp m : RegisteredApps.getAppsList()) {
+			registerCommand(new EMCAppTerminalCommands(m), termIn, runVisually);
+			m.terminalRegisterCommandEvent(termIn, runVisually);
 		}
 	}
 	
-	public void registerCommand(ITerminalCommand command, boolean runVisually) { registerCommand(command, null, runVisually); }
-	public void registerCommand(ITerminalCommand command, ETerminal conIn, boolean runVisually) {
+	public void registerCommand(TerminalCommand command, boolean runVisually) { registerCommand(command, null, runVisually); }
+	public void registerCommand(TerminalCommand command, ETerminal termIn, boolean runVisually) {
 		commandList.add(command);
 		commands.put(command.getName(), command);
-		if (conIn != null & runVisually) { conIn.writeln("Registering command call: " + command.getName(), 0xffff00); }
+		if (termIn != null & runVisually) { termIn.writeln("Registering command call: " + command.getName(), 0xffff00); }
 		if (command.getAliases() != null) {
 			for (int i = 0; i < command.getAliases().size(); i++) {
 				commands.put(command.getAliases().get(i), command);
-				if (conIn != null & runVisually) { conIn.writeln("Registering command alias: " + command.getAliases().get(i), 0x55ff55); }
+				if (termIn != null & runVisually) { termIn.writeln("Registering command alias: " + command.getAliases().get(i), 0x55ff55); }
 			}
 		}
 	}
 	
-	public void executeCommand(ETerminal conIn, String cmd) { executeCommand(conIn, cmd, true); }
-	public void executeCommand(ETerminal conIn, String cmd, boolean addSpace) {
+	public void executeCommand(ETerminal termIn, String cmd) { executeCommand(termIn, cmd, false, true); }
+	public void executeCommand(ETerminal termIn, String cmd, boolean tab) { executeCommand(termIn, cmd, tab, true); }
+	public void executeCommand(ETerminal termIn, String cmd, boolean tab, boolean addSpace) {
+		boolean emptyEnd = cmd.endsWith(" ");
+		
 		cmd = cmd.trim().toLowerCase();
 		String[] commandParts = cmd.split(" ");
 		EArrayList<String> commandArguments = new EArrayList();
 		String baseCommand = "";
+		
 		if (commandParts.length > 0) {
 			baseCommand = commandParts[0];
 			for (int i = 1; i < commandParts.length; i++) {
 				commandArguments.add(commandParts[i]);
 			}
+			if (emptyEnd) { commandArguments.add(""); }
+			
 			if (commands.getBoxWithObj(baseCommand) != null) {
-				ITerminalCommand command = commands.getBoxWithObj(baseCommand).getValue();
+				TerminalCommand command = commands.getBoxWithObj(baseCommand).getValue();
 				
 				if (command == null) {
-					conIn.error("Unrecognized command.");
-					conIn.writeln();
+					termIn.error("Unrecognized command.");
+					termIn.writeln();
 					return;
 				}
 				
@@ -119,50 +147,112 @@ public class TerminalCommandHandler {
 					}
 				}
 				
-				command.runCommand(conIn, commandArguments, runVisually);
+				if (tab) { command.handleTabComplete(termIn, commandArguments); }
+				else {
+					command.runCommand(termIn, commandArguments, runVisually);
 				
-				if (addSpace && (drawSpace && !command.getName().equals("clear"))) {
-					conIn.writeln();
-					drawSpace = true;
+					if (addSpace && (drawSpace && !command.getName().equals("clear"))) {
+						termIn.writeln();
+						drawSpace = true;
+					}
 				}
+				
 				return;
 			}
 		}
-		conIn.writeln("Unrecognized command.", 0xff5555);
+		termIn.writeln("Unrecognized command.\n", 0xff5555);
 	}
 	
 	public synchronized void reregisterAllCommands(boolean runVisually) { reregisterAllCommands(null, runVisually); }
-	public synchronized void reregisterAllCommands(ETerminal conIn, boolean runVisually) {
-		Iterator<ITerminalCommand> a = commandList.iterator();
+	public synchronized void reregisterAllCommands(ETerminal termIn, boolean runVisually) {
+		Iterator<TerminalCommand> a = commandList.iterator();
 		while (a.hasNext()) {
 			String commandName = a.next().getName();
-			if (conIn != null & runVisually) { conIn.writeln("Unregistering command: " + commandName, 0xb2b2b2); }
+			if (termIn != null && runVisually) { termIn.writeln("Unregistering command: " + commandName, 0xb2b2b2); }
 			a.remove();
 		}
 		
-		Iterator<StorageBox<String, ITerminalCommand>> b = commands.iterator();
+		Iterator<StorageBox<String, TerminalCommand>> b = commands.iterator();
 		while (b.hasNext()) {
 			String commandName = b.next().getObject();
-			if (conIn != null & runVisually) { conIn.writeln("Unregistering command alias: " + commandName, 0xb2b2b2); }
+			if (termIn != null && runVisually) { termIn.writeln("Unregistering command alias: " + commandName, 0xb2b2b2); }
 			b.remove();
 		}
 		
-		registerBaseCommands(conIn, runVisually);
+		registerBaseCommands(termIn, runVisually);
 		
-		customCommandList.forEach(c -> registerCommand(c, conIn, runVisually));
+		customCommandList.forEach(c -> registerCommand(c, termIn, runVisually));
 		
-		registerSubModCommands(conIn, runVisually);
+		registerSubModCommands(termIn, runVisually);
 	}
 	
-	public ITerminalCommand getCommand(String commandName) {
-		StorageBox<String, ITerminalCommand> box = commands.getBoxWithObj(commandName);
+	public TerminalCommand getCommand(String commandName) {
+		StorageBox<String, TerminalCommand> box = commands.getBoxWithObj(commandName);
 		if (box != null) {
 			return commands.getBoxWithObj(commandName).getValue();
 		}
 		return null;
 	}
 	
-	public EArrayList<ITerminalCommand> getCommandList() { return commandList; }
+	public static EArrayList<String> getSortedCommandNames() {
+		EArrayList<String> cmds = new EArrayList();
+		StorageBoxHolder<CommandType, EArrayList<TerminalCommand>> sortedAll = getSortedCommands();
+		
+		for (StorageBox<CommandType, EArrayList<TerminalCommand>> box : sortedAll) {
+			for (TerminalCommand command : box.getValue()) {
+				if (EnhancedMC.isOpMode() || command.showInHelp()) {
+					cmds.add(command.getName());
+				}
+			}
+		}
+		
+		return cmds;
+	}
+	
+	public static StorageBoxHolder<CommandType, EArrayList<TerminalCommand>> getSortedCommands() {
+		StorageBoxHolder<CommandType, EArrayList<TerminalCommand>> commands = new StorageBoxHolder();
+		
+		//separate all commands into their own types
+		for (TerminalCommand command : TerminalCommandHandler.getInstance().getCommandList()) {
+			if (EnhancedMC.isOpMode() || command.showInHelp()) {
+				CommandType type = command.getType();
+				
+				EArrayList<TerminalCommand> list = commands.getValueInBox(type);
+				
+				if (list != null) { list.add(command); }
+				else { commands.add(type, new EArrayList(command)); }
+				
+			}
+		}
+		
+		//alphabetically sort each
+		for (StorageBox<CommandType, EArrayList<TerminalCommand>> box : commands) {
+			EArrayList<TerminalCommand> list = box.getValue();
+			
+			if (list != null) { Collections.sort(list, new Sorter()); }
+		}
+		
+		return commands;
+	}
+	
+	private static class Sorter implements Comparator {
+
+		@Override
+		public int compare(Object a, Object b) {
+			
+			if (a instanceof TerminalCommand && b instanceof TerminalCommand) {
+				String name1 = ((TerminalCommand) a).getName();
+				String name2 = ((TerminalCommand) b).getName();
+				
+				return name1.compareToIgnoreCase(name2);
+			}
+			
+			return 0;
+		}
+		
+	}
+	
+	public EArrayList<TerminalCommand> getCommandList() { return commandList; }
 	public List<String> getCommandNames() { return commands.getObjects(); }
 	public EArrayList<String> getHistory() { return cmdHistory; }
 	public TerminalCommandHandler clearHistory() { cmdHistory.clear(); return this; }

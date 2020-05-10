@@ -34,10 +34,10 @@ public class EGuiLine extends EnhancedGuiObject {
 	}
 	
 	@Override
-	public void drawObject(int mXIn, int mYIn, float ticks) {
+	public void drawObject(int mXIn, int mYIn) {
 		drawLine(startX, startY, endX, endY, color);
 		
-		super.drawObject(mXIn, mYIn, ticks);
+		super.drawObject(mXIn, mYIn);
 	}
 	
 }

@@ -1,11 +1,11 @@
 package com.Whodundid.core.enhancedGui.guiObjects.actionObjects;
 
-import com.Whodundid.core.coreSubMod.EMCResources;
+import com.Whodundid.core.app.AppConfigSetting;
+import com.Whodundid.core.app.EMCApp;
+import com.Whodundid.core.coreApp.EMCResources;
 import com.Whodundid.core.enhancedGui.types.EnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
-import com.Whodundid.core.subMod.SubMod;
 import com.Whodundid.core.util.renderUtil.EColors;
-import com.Whodundid.core.util.storageUtil.ModSetting;
 
 //Author: Hunter Bragg
 
@@ -14,14 +14,14 @@ public class EGuiCheckBox extends EnhancedActionObject {
 	boolean checked = false;
 	
 	public EGuiCheckBox(IEnhancedGuiObject objIn, int xIn, int yIn, int widthIn, int heightIn) { this(objIn, xIn, yIn, widthIn, heightIn, false); }
-	public EGuiCheckBox(IEnhancedGuiObject objIn, int xIn, int yIn, int widthIn, int heightIn, ModSetting<Boolean> settingIn) { this(objIn, xIn, yIn, widthIn, heightIn, settingIn.get()); }
+	public EGuiCheckBox(IEnhancedGuiObject objIn, int xIn, int yIn, int widthIn, int heightIn, AppConfigSetting<Boolean> settingIn) { this(objIn, xIn, yIn, widthIn, heightIn, settingIn.get()); }
 	public EGuiCheckBox(IEnhancedGuiObject objIn, int xIn, int yIn, int widthIn, int heightIn, boolean checkedIn) {
 		init(objIn, xIn, yIn, widthIn, heightIn);
 		checked = checkedIn;
 	}
 	
 	@Override
-	public void drawObject(int mXIn, int mYIn, float ticks) {
+	public void drawObject(int mXIn, int mYIn) {
 		drawRect(startX, startY, endX, endY, EColors.black);
 		drawRect(startX + 1, startY + 1, endX - 1, endY - 1, EColors.steel);
 		
@@ -39,7 +39,7 @@ public class EGuiCheckBox extends EnhancedActionObject {
 		}
 	}
 	
-	public EGuiCheckBox updateCheck(ModSetting<Boolean> settingIn, SubMod m, boolean saveAll) {
+	public EGuiCheckBox updateCheck(AppConfigSetting<Boolean> settingIn, EMCApp m, boolean saveAll) {
 		boolean val = settingIn.get();
 		if (m != null) {
 			if (saveAll) { m.getConfig().saveAllConfigs(); }

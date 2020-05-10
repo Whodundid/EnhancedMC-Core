@@ -1,7 +1,10 @@
 package com.Whodundid.core;
 
+import com.Whodundid.core.app.AppLoader;
+import com.Whodundid.core.coreApp.CoreApp;
 import com.Whodundid.core.coreEvents.EventListener;
-import com.Whodundid.core.coreSubMod.EMCMod;
+import com.Whodundid.core.coreEvents.emcEvents.RendererRCMOpenEvent;
+import com.Whodundid.core.coreEvents.emcEvents.WindowOpenedEvent;
 import com.Whodundid.core.enhancedGui.types.EnhancedGui;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
@@ -9,58 +12,50 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.notifications.NotificationHandler;
 import com.Whodundid.core.notifications.NotificationObject;
 import com.Whodundid.core.renderer.EnhancedMCRenderer;
-import com.Whodundid.core.renderer.RendererProxyGui;
+import com.Whodundid.core.renderer.renderUtil.RendererProxyGui;
+import com.Whodundid.core.renderer.renderUtil.RendererRCM;
 import com.Whodundid.core.settings.SettingsGuiMain;
-import com.Whodundid.core.subMod.RegisteredSubMods;
-import com.Whodundid.core.subMod.SubMod;
-import com.Whodundid.core.subMod.SubModSettings;
-import com.Whodundid.core.subMod.SubModType;
 import com.Whodundid.core.terminal.TerminalCommandHandler;
 import com.Whodundid.core.util.miscUtil.EMouseHelper;
 import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.renderUtil.CursorHelper;
-import com.Whodundid.core.util.renderUtil.EFontRenderer;
 import com.Whodundid.core.util.renderUtil.EItemDrawer;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
-import com.Whodundid.core.util.storageUtil.StorageBox;
-import java.io.File;
-import java.util.Scanner;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+import java.util.Arrays;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.common.DummyModContainer;
+import net.minecraftforge.fml.common.LoadController;
+import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.Display;
 
 //Project Started: April 14, 2017
 //Author: Hunter Bragg
 
-@Mod(modid = EnhancedMC.MODID, version = EnhancedMC.VERSION, name = EnhancedMC.NAME)
-public final class EnhancedMC {
+//@Mod(modid = EnhancedMC.MODID, version = EnhancedMC.VERSION, name = EnhancedMC.NAME)
+public class EnhancedMC extends DummyModContainer {
 	
-	public static final String MODID = "enhancedmccore";
+	public static final String MODID = "enhancedmc";
 	public static final String VERSION = "1.0";
 	public static final String NAME = "EnhancedMC";
 	public static final Minecraft mc = Minecraft.getMinecraft();
 	public static final KeyBinding openSettingsGui = new KeyBinding("Settings", Keyboard.KEY_P, "EnhancedMC");
-	public static final KeyBinding openHud = new KeyBinding("Open Hud", Keyboard.KEY_F, "EnhancedMC");
+	public static final KeyBinding openHud = new KeyBinding("Open Hud", 0, "EnhancedMC");
 	public static final Logger EMCLogger = LogManager.getLogger("EnhancedMC");
-	public static EFontRenderer fontRenderer;
 	private static final EnhancedMCRenderer renderer = EnhancedMCRenderer.getInstance();
 	private static final TerminalCommandHandler terminal = TerminalCommandHandler.getInstance();
 	private static final NotificationHandler notifications = NotificationHandler.getHandler();
@@ -69,24 +64,49 @@ public final class EnhancedMC {
 	private static boolean isInitialized = false;
 	public static int updateCounter = 0;
 	public static boolean enableDebugFunctions = false;
-	public static final EMCMod modInstance = new EMCMod();
+	public static final CoreApp appInstance = new CoreApp();
 	public static boolean safeRemoteDesktopMode = false;
 	public static boolean enableOpFunctions = false;
 	private static boolean isDev = false;
+	private static boolean deobf = false;
 	
-	@EventHandler
-	private void init(FMLInitializationEvent event) {
+	public EnhancedMC() {
+		super(new ModMetadata());
+		ModMetadata meta = getMetadata();
+		//meta.modId = "enhancedmccore";
+		//meta.name = "EnhancedMC Core";
+		
+		//System.out.println("FILES: " + this.getClass().getResourceAsStream("/assets));
+		
+		meta.modId = MODID;
+		meta.version = VERSION;
+		meta.name = NAME;
+		
+		meta.credits = "EMC backend containing library functions, window-based environment kit, hud interaction, and primary event distribution."
+					 + "\nASM Modifications: Minor fixes for MC and implementation of additional event hooks.";
+		meta.description = "The core mod of EnhancedMC";
+		meta.authorList = Arrays.asList("Whodundid");
+		meta.url = "https://github.com/Whodundid/EnhancedMC-Core";
+	}
+	
+	@Override
+	public boolean registerBus(EventBus bus, LoadController controller) {
+		bus.register(this);
+		
+		try {
+			deobf = Launch.classLoader.getClassBytes("net.minecraft.world.World") != null;
+		}
+		catch (Exception e) { e.printStackTrace(); }
+		
+		return true;
+	}
+	
+	@Subscribe
+	public void init(FMLInitializationEvent event) {
+		info("Initializing EMC");
+		
 		//register EventListener
 		MinecraftForge.EVENT_BUS.register(eventListener = new EventListener());
-		
-		//safe rm check
-		File checkRM = new File("checkRM");
-		if (checkRM.exists()) {
-			Scanner reader = null;
-			try { reader = new Scanner(checkRM); if (reader.hasNext()) { safeRemoteDesktopMode = Boolean.parseBoolean(reader.next()); } }
-			catch (Exception e) { e.printStackTrace(); }
-			finally { if (reader != null) { reader.close(); } checkRM.delete(); }
-		}
 		
 		//register keybinds
 		ClientRegistry.registerKeyBinding(openSettingsGui);
@@ -94,121 +114,23 @@ public final class EnhancedMC {
 		
 		//initialize client resources
 		CursorHelper.init();
-		fontRenderer = new EFontRenderer(mc.gameSettings, new ResourceLocation("textures/font/ascii.png"), mc.renderEngine, false);
-		if (mc.gameSettings.language != null) {
-			fontRenderer.setUnicodeFlag(mc.isUnicode());
-			fontRenderer.setBidiFlag(mc.getLanguageManager().isCurrentLanguageBidirectional());
-		}
-		((IReloadableResourceManager) mc.getResourceManager()).registerReloadListener(fontRenderer);
 		itemDrawer = new EItemDrawer();
 		
 		//register commands
 		ClientCommandHandler h = ClientCommandHandler.instance;
 	}
 	
-	@EventHandler
-	private void postInit(FMLPostInitializationEvent e) {
+	@Subscribe
+	public void postInit(FMLPostInitializationEvent e) {
+		
 		String id = mc.getSession() != null ? mc.getSession().getProfile().getId().toString() : "";
 		
 		isDev = id.equals("be8ba059-2644-4f4c-a5e7-88a38e555b1e") || id.equals("e8f9070f-74f0-4229-8134-5857c794e44d");
 		if (enableOpFunctions = isDev) { log(Level.INFO, "Dev detected -- Running EMC in Op mode"); }
-		if (id.equals("e8f9070f-74f0-4229-8134-5857c794e44d")) { Display.setTitle("Alt Acc"); }
+		//if (id.equals("e8f9070f-74f0-4229-8134-5857c794e44d")) { Display.setTitle("Alt Acc"); }
 		
-		EArrayList<SubMod> foundMods = new EArrayList();
-		EArrayList<SubMod> coreCheck = new EArrayList();
-		EArrayList<SubMod> depCheck = new EArrayList();
-		foundMods.add(modInstance);
-		
-		//find any EMC SubMods in forge loaded mods
-		for (ModContainer c : Loader.instance().getModList()) {
-			Object m = c.getMod();
-			if (m instanceof SubMod) {
-				c.getMetadata().parent = MODID; //assign the subMod as a child of EMC to fore
-				foundMods.add((SubMod) m);
-			}
-		}
-		
-		//process found mods
-		for (SubMod m : foundMods) {
-			try {
-				//check for incompatibility
-				boolean incompatible = false;
-				
-				int numDeps = m.getDependencies().size();
-				boolean incompatDep = false;
-				int foundDepMods = 0;
-				int matchingVers = 0;
-				
-				for (StorageBox<String, String> box : m.getDependencies()) {
-					String modName = box.getObject();
-					String modVer = box.getValue();
-					
-					SubMod dep = getMod(modName, foundMods);
-					if (dep != null) {
-						foundDepMods += 1;
-						if (modVer.equals(dep.getVersion())) { matchingVers += 1; }
-					}
-				}
-				
-				if (foundDepMods != numDeps || matchingVers != numDeps) { incompatible = true; }
-				
-				//set incompatibility state
-				m.setIncompatible(incompatible);
-				
-				//register the subMod into core
-				coreCheck.add(m);
-			}
-			catch (Exception q) {
-				log(Level.INFO, "Error trying to read submod: " + m + "!");
-				q.printStackTrace();
-			}
-		}
-		
-		//check processed mods for subMod incompatibilities
-		for (SubMod m : coreCheck) {
-			//check if the processed mod was found incompatible with the core
-			for (StorageBox<String, String> box : m.getDependencies()) {
-				SubMod dep = getMod(box.getObject(), coreCheck);
-				if (dep != null) {
-					//set the mod incompat if one of it's dependencies was incompat too
-					if (dep.isIncompatible()) { m.setIncompatible(true); }
-				}
-			}
-			
-			depCheck.add(m);
-		}
-		
-		//finally register each processed mod
-		for (SubMod m : depCheck) {
-			RegisteredSubMods.registerSubMod(m);
-		}
-		
-		//attempt to load each of the found subMod's config files (if they exist)
-		for (SubMod m : RegisteredSubMods.getRegisteredModsList()) {
-			try {
-				if (m.hasConfig()) { m.getConfig().loadAllConfigs(); m.getConfig().saveAllConfigs(); }
-			} catch (NullPointerException q) {
-				log(Level.INFO, "Error tying to load subMod: " + m + " config!");
-				q.printStackTrace();
-			}
-		}
-		
-		//send postInit update to each loaded subMod
-		for (SubMod m : RegisteredSubMods.getRegisteredModsList()) {
-			try {
-				m.onPostInit();
-			} catch (Exception q) {
-				log(Level.INFO, "Error trying to run postInit on submod: " + m + "!");
-				q.printStackTrace();
-			}
-		}
-		
-		try {
-			//attempt to load the subMod settings file
-			SubModSettings.loadConfig();
-		} catch (Exception q) {
-			log(Level.INFO, "Error trying to load global config!");
-		}
+		//load EMC apps
+		AppLoader.loadApps();
 		
 		//register all commands within the terminal
 		terminal.initCommands();
@@ -223,51 +145,66 @@ public final class EnhancedMC {
 		}
 	}
 	
-	public static <T extends WindowParent> boolean isEGuiOpen(Class<T> guiIn) {
-		return guiIn != null ? renderer.getAllChildren().stream().anyMatch(o -> guiIn.isInstance(o)) : false;
+	public static <T extends WindowParent> boolean isEGuiOpen(Class<T> windowIn) {
+		return windowIn != null ? renderer.getAllChildren().stream().anyMatch(o -> o.getClass() == windowIn) : false;
 	}
 	
-	public static <T extends WindowParent> WindowParent getWindowInstance(Class<T> guiIn) {
-		return guiIn != null ? (WindowParent) renderer.getAllChildren().stream().filter(o -> guiIn.isInstance(o)).findFirst().get() : null;
+	public static EArrayList<WindowParent> getAllActiveWindows() { return getAllWindowInstances(WindowParent.class); }
+	
+	public static <T extends WindowParent> WindowParent getWindowInstance(Class<T> windowIn) {
+		return windowIn != null ? (WindowParent) renderer.getAllChildren().stream().filter(o -> o.getClass() == windowIn).findFirst().get() : null;
 	}
 	
-	public static IWindowParent displayEGui(IWindowParent guiIn) { return displayEGui(guiIn, null, true, false, false, CenterType.screen); }
-	public static IWindowParent displayEGui(IWindowParent guiIn, CenterType loc) { return displayEGui(guiIn, null, true, false, false, loc); }
-	public static IWindowParent displayEGui(IWindowParent guiIn, boolean transferFocus) { return displayEGui(guiIn, null, transferFocus, false, false, CenterType.screen); }
-	public static IWindowParent displayEGui(IWindowParent guiIn, boolean transferFocus, CenterType loc) { return displayEGui(guiIn, null, transferFocus, false, false, loc); }
-	public static IWindowParent displayEGui(IWindowParent guiIn, Object oldObject) { return displayEGui(guiIn, oldObject, true, true, true, CenterType.object); }
-	public static IWindowParent displayEGui(IWindowParent guiIn, Object oldObject, CenterType loc) { return displayEGui(guiIn, oldObject, true, true, true, loc); }
-	public static IWindowParent displayEGui(IWindowParent guiIn, Object oldObject, boolean transferFocus) { return displayEGui(guiIn, oldObject, transferFocus, true, true, CenterType.object); }
-	public static IWindowParent displayEGui(IWindowParent guiIn, Object oldObject, boolean transferFocus, CenterType loc) { return displayEGui(guiIn, oldObject, transferFocus, true, true, loc); }
-	public static IWindowParent displayEGui(IWindowParent guiIn, Object oldObject, boolean transferFocus, boolean closeOld) { return displayEGui(guiIn, oldObject, transferFocus, closeOld, true, CenterType.object); }
-	public static IWindowParent displayEGui(IWindowParent guiIn, Object oldObject, boolean transferFocus, boolean closeOld, boolean transferHistory) { return displayEGui(guiIn, oldObject, transferFocus, closeOld, transferHistory, CenterType.object); }
-	public static IWindowParent displayEGui(IWindowParent guiIn, Object oldObject, boolean transferFocus, boolean closeOld, boolean transferHistory, CenterType loc) {
-		if (guiIn == null) { mc.displayGuiScreen(null); }
+	public static <T extends WindowParent> EArrayList<T> getAllWindowInstances(Class<T> windowIn) {
+		EArrayList<T> windows = new EArrayList();
+		try {
+			renderer.getAllChildren().stream().filter(o -> o.getClass() == windowIn).filter(o -> !o.isBeingRemoved()).forEach(w -> windows.add((T) w));
+		}
+		catch (Exception e) { e.printStackTrace(); }
+		return windows;
+	}
+	
+	public static IWindowParent displayWindow(IWindowParent windowIn) { return displayWindow(windowIn, null, true, false, false, CenterType.screen); }
+	public static IWindowParent displayWindow(IWindowParent windowIn, CenterType loc) { return displayWindow(windowIn, null, true, false, false, loc); }
+	public static IWindowParent displayWindow(IWindowParent windowIn, boolean transferFocus) { return displayWindow(windowIn, null, transferFocus, false, false, CenterType.screen); }
+	public static IWindowParent displayWindow(IWindowParent windowIn, boolean transferFocus, CenterType loc) { return displayWindow(windowIn, null, transferFocus, false, false, loc); }
+	public static IWindowParent displayWindow(IWindowParent windowIn, Object oldObject) { return displayWindow(windowIn, oldObject, true, true, true, CenterType.object); }
+	public static IWindowParent displayWindow(IWindowParent windowIn, Object oldObject, CenterType loc) { return displayWindow(windowIn, oldObject, true, true, true, loc); }
+	public static IWindowParent displayWindow(IWindowParent windowIn, Object oldObject, boolean transferFocus) { return displayWindow(windowIn, oldObject, transferFocus, true, true, CenterType.object); }
+	public static IWindowParent displayWindow(IWindowParent windowIn, Object oldObject, boolean transferFocus, CenterType loc) { return displayWindow(windowIn, oldObject, transferFocus, true, true, loc); }
+	public static IWindowParent displayWindow(IWindowParent windowIn, Object oldObject, boolean transferFocus, boolean closeOld) { return displayWindow(windowIn, oldObject, transferFocus, closeOld, true, CenterType.object); }
+	public static IWindowParent displayWindow(IWindowParent windowIn, Object oldObject, boolean transferFocus, boolean closeOld, boolean transferHistory) { return displayWindow(windowIn, oldObject, transferFocus, closeOld, transferHistory, CenterType.object); }
+	public static IWindowParent displayWindow(IWindowParent windowIn, Object oldObject, boolean transferFocus, boolean closeOld, boolean transferHistory, CenterType loc) {
+		if (windowIn == null) { mc.displayGuiScreen(null); }
 		if (mc.currentScreen == null || !(mc.currentScreen instanceof RendererProxyGui)) { mc.displayGuiScreen(new RendererProxyGui()); }
-		if (guiIn != null) {
-			if (guiIn instanceof EnhancedGui) { mc.displayGuiScreen((EnhancedGui) guiIn); }
+		if (windowIn != null) {
+			if (windowIn instanceof EnhancedGui) { mc.displayGuiScreen((EnhancedGui) windowIn); }
 			else {
-				renderer.addObject(guiIn);
+				if (windowIn instanceof WindowParent) { MinecraftForge.EVENT_BUS.post(new WindowOpenedEvent((WindowParent) windowIn)); }
+				if (windowIn instanceof RendererRCM) {
+					if (MinecraftForge.EVENT_BUS.post(new RendererRCMOpenEvent((RendererRCM) windowIn))) { return null; }
+				}
 				if (oldObject instanceof GuiScreen) { mc.displayGuiScreen(null); }
 				else if (oldObject instanceof IWindowParent && closeOld) { ((IWindowParent) oldObject).close(); }
+				renderer.addObject(windowIn);
 			}
-			if (transferHistory && oldObject instanceof IWindowParent && !(guiIn instanceof EnhancedGui)) {
+			if (transferHistory && oldObject instanceof IWindowParent && !(windowIn instanceof EnhancedGui)) {
 				IWindowParent old = (IWindowParent) oldObject;
 				old.getGuiHistory().add(old);
-				guiIn.setGuiHistory(old.getGuiHistory());
-				guiIn.setPinned(old.isPinned());
+				windowIn.setGuiHistory(old.getGuiHistory());
+				windowIn.setPinned(old.isPinned());
 			}
-			setPos(guiIn, oldObject instanceof IEnhancedGuiObject ? (IEnhancedGuiObject) oldObject : null, loc);
-			guiIn.bringToFront();
-			if (transferFocus) { guiIn.requestFocus(); }
+			setPos(windowIn, oldObject instanceof IEnhancedGuiObject ? (IEnhancedGuiObject) oldObject : null, loc);
+			windowIn.bringToFront();
+			if (transferFocus) { windowIn.requestFocus(); }
 		}
-		return guiIn;
+		return windowIn;
 	}
 	
-	private static void setPos(IWindowParent guiIn, IEnhancedGuiObject objectIn, CenterType typeIn) {
+	private static void setPos(IWindowParent windowIn, IEnhancedGuiObject objectIn, CenterType typeIn) {
 		ScaledResolution res = new ScaledResolution(mc);
-		EDimension gDim = guiIn.getDimensions();
-		int headerHeight = guiIn.hasHeader() ? guiIn.getHeader().height : 0;
+		EDimension gDim = windowIn.getDimensions();
+		int headerHeight = windowIn.hasHeader() ? windowIn.getHeader().height : 0;
 		
 		int sX = 0;
 		int sY = 0;
@@ -306,22 +243,35 @@ public final class EnhancedMC {
 				EDimension objDim = objectIn.getDimensions();
 				sX = objDim.midX - (gDim.width / 2);
 				sY = objDim.midY - (gDim.height / 2);
-				break;
 			}
+			break;
 		case objectCorner:
 			if (objectIn != null) {
 				EDimension objDim = objectIn.getDimensions();
 				sX = objDim.startX;
 				sY = objDim.startY;
-				break;
 			}
+			break;
 		case objectIndent:
 			if (objectIn != null) {
 				EDimension objDim = objectIn.getDimensions();
 				sX = objDim.startX + 25;
 				sY = objDim.startY + 25;
-				break;
 			}
+			break;
+		case existingObjectIndent:
+			EArrayList<WindowParent> windows = new EArrayList();
+			renderer.getAllChildren().stream().filter(o -> windowIn.getClass().isInstance(o)).filter(o -> !o.isBeingRemoved()).forEach(w -> windows.add((WindowParent) w));
+			
+			if (windows.isNotEmpty()) {
+				if (windows.get(0) != null) {
+					EDimension objDim = windows.get(0).getDimensions();
+					sX = objDim.startX + 25;
+					sY = objDim.startY + 25;
+				}
+			}
+			
+			break;
 		default: break;
 		}
 		
@@ -329,29 +279,12 @@ public final class EnhancedMC {
 		sY = (sY - headerHeight) < 2 ? 2 + headerHeight : sY;
 		sX = sX + gDim.width > res.getScaledWidth() ? -1 + sX - (sX + gDim.width - res.getScaledWidth()) : sX;
 		sY = sY + gDim.height > res.getScaledHeight() ? -2 + sY - (sY + gDim.height - res.getScaledHeight()) : sY;
-		guiIn.setPosition(sX, sY);
+		windowIn.setPosition(sX, sY);
 	}
-	
-	private static SubMod getMod(String modNameIn, EArrayList<SubMod> checkList) {
-		for (SubMod m : checkList) { if (m.getName().equals(modNameIn)) { return m; } }
-		return null;
-	}
-	
-	public boolean isModRegistered(SubMod modIn) { return RegisteredSubMods.isModRegistered(modIn); }
-	public boolean isModRegistered(SubModType typeIn) { return RegisteredSubMods.isModRegistered(typeIn); }
-	public boolean isModRegistered(String modName) { return RegisteredSubMods.isModRegEn(modName); }
-	
-	public static boolean isDebugMode() { return enableDebugFunctions; }
-	public static boolean isOpMode() { return enableOpFunctions; }
-	public static boolean isUserDev() { return isDev; }
-	public static void setDebugMode(boolean val) { enableDebugFunctions = val; }
-	public static void setOpMode(boolean val) { enableOpFunctions = val; }
 	
 	public static void openSettingsGui() {
 		mc.displayGuiScreen(new RendererProxyGui());
-		if (!isEGuiOpen(SettingsGuiMain.class)) {
-			displayEGui(new SettingsGuiMain());
-		}
+		if (!isEGuiOpen(SettingsGuiMain.class)) { displayWindow(new SettingsGuiMain()); }
 		else {
 			WindowParent s = getWindowInstance(SettingsGuiMain.class);
 			if (s != null) { s.requestFocus(); }
@@ -359,17 +292,24 @@ public final class EnhancedMC {
 	}
 	
 	public static void postNotification(String messageIn) { postNotification(messageIn, null); }
-	public static void postNotification(String messageIn, WindowParent guiIn) { notifications.post(messageIn, guiIn); }
+	public static void postNotification(String messageIn, WindowParent windowIn) { notifications.post(messageIn, windowIn); }
 	public static void postNotification(NotificationObject obj) { notifications.post(obj); }
 	
-	public static EMCMod getEMCMod() { return modInstance; }
+	public static boolean isInitialized() { return isInitialized; }
+	public static boolean isDebugMode() { return enableDebugFunctions; }
+	public static boolean isOpMode() { return enableOpFunctions; }
+	public static boolean isUserDev() { return isDev; }
+	public static boolean isObfus() { return !deobf; }
+	public static void setDebugMode(boolean val) { enableDebugFunctions = val; }
+	public static void setOpMode(boolean val) { enableOpFunctions = val; }
+	
+	public static CoreApp getEMCApp() { return appInstance; }
 	public static EventListener getEventListener() { return eventListener; }
-	public static EFontRenderer getFontRenderer() { return fontRenderer; }
 	public static EnhancedMCRenderer getRenderer() { return renderer; }
 	public static EItemDrawer getItemDrawer() { return itemDrawer; }
 	public static TerminalCommandHandler getTerminalHandler() { return terminal; }
 	public static NotificationHandler getNotificationHandler() { return notifications; }
-	public static boolean isInitialized() { return isInitialized; }
+	
 	public static void log(Level levelIn, String msg) { EMCLogger.log(levelIn, msg); }
 	public static void info(String msg) { EMCLogger.log(Level.INFO, msg); }
 	public static void error(String msg) { EMCLogger.log(Level.ERROR, msg); }

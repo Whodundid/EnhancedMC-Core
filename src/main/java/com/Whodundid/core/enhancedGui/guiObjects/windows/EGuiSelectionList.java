@@ -1,10 +1,11 @@
 package com.Whodundid.core.enhancedGui.guiObjects.windows;
 
+import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.textArea.EGuiTextArea;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.textArea.TextAreaLine;
-import com.Whodundid.core.enhancedGui.types.WindowParent;
+import com.Whodundid.core.enhancedGui.types.ActionWindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
@@ -15,7 +16,7 @@ import net.minecraft.client.gui.ScaledResolution;
 
 //Author: Hunter Bragg
 
-public class EGuiSelectionList extends WindowParent implements IEnhancedActionObject {
+public class EGuiSelectionList extends ActionWindowParent {
 	
 	protected EGuiButton select, cancelSel;
 	protected EGuiTextArea selectionList;
@@ -28,19 +29,21 @@ public class EGuiSelectionList extends WindowParent implements IEnhancedActionOb
 	protected IEnhancedGuiObject actionReciever;
 	protected int headerStringColor = 0xb2b2b2;
 	
-	protected EGuiSelectionList() {}
+	protected EGuiSelectionList() { super(EnhancedMC.getRenderer()); }
 	public EGuiSelectionList(IEnhancedGuiObject parentIn, StorageBoxHolder<String, ?> objectListIn) { this(parentIn, true, objectListIn, null); }
 	public EGuiSelectionList(IEnhancedGuiObject parentIn, StorageBoxHolder<String, ?> objectListIn, Object selObjIn) { this(parentIn, true, objectListIn, selObjIn); }
 	public EGuiSelectionList(IEnhancedGuiObject parentIn, int xPos, int yPos, StorageBoxHolder<String, ?> objectListIn) { this(parentIn, xPos, yPos, 200, 230, objectListIn, null); }
 	public EGuiSelectionList(IEnhancedGuiObject parentIn, int xPos, int yPos, StorageBoxHolder<String, ?> objectListIn, Object selObjIn) { this(parentIn, xPos, yPos, 200, 230, objectListIn, selObjIn); }
 	public EGuiSelectionList(IEnhancedGuiObject parentIn, int xPos, int yPos, int widthIn, int heightIn, StorageBoxHolder<String, ?> objectListIn) { this(parentIn, xPos, yPos, widthIn, heightIn, objectListIn, null); }
 	public EGuiSelectionList(IEnhancedGuiObject parentIn, int xPos, int yPos, int widthIn, int heightIn, StorageBoxHolder<String, ?> objectListIn, Object selObjIn) {
+		super(parentIn);
 		init(parentIn, xPos, yPos, widthIn, heightIn);
 		listContents = objectListIn;
 		defaultSelectionObject = selObjIn;
 		actionReciever = getParent();
 	}
 	protected EGuiSelectionList(IEnhancedGuiObject parentIn, boolean noPos, StorageBoxHolder<String, ?> objectListIn, Object selObjIn) {
+		super(parentIn);
 		ScaledResolution res = new ScaledResolution(mc);
 		init(parentIn, (res.getScaledWidth() - 200) / 2, (res.getScaledHeight() - 230) / 2, 200, 230);
 		listContents = objectListIn;
@@ -53,12 +56,14 @@ public class EGuiSelectionList extends WindowParent implements IEnhancedActionOb
 	
 	@Override
 	public void initGui() {	
+		setObjectName("Gui Selection List");
+		
 		setHeader(new EGuiHeader(this));
 		header.setTitle(headerString);
 		header.setTitleColor(headerStringColor);
 		
-		select = new EGuiButton(this, startX + 5, endY - 25, 80, 20, "Select");
-		cancelSel = new EGuiButton(this, endX - 85, endY - 25, 80, 20, "Cancel");
+		select = new EGuiButton(this, endX - 85, endY - 25, 80, 20, "Select");
+		cancelSel = new EGuiButton(this, startX + 5, endY - 25, 80, 20, "Cancel");
 		
 		selectionList = new EGuiTextArea(this, startX + 5, startY + 5, width - 10, height - 35, false) {
 			@Override
@@ -109,10 +114,10 @@ public class EGuiSelectionList extends WindowParent implements IEnhancedActionOb
 	}
 	
 	@Override
-	public void drawObject(int mXIn, int mYIn, float ticks) {
+	public void drawObject(int mXIn, int mYIn) {
 		drawDefaultBackground();
 		select.setEnabled(selectionList.getCurrentLine() != null && selectionList.getCurrentLine().getStoredObj() != null);
-		super.drawObject(mXIn, mYIn, ticks);
+		super.drawObject(mXIn, mYIn);
 	}
 	
 	@Override

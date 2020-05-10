@@ -21,14 +21,15 @@ public class EGuiLabel extends EnhancedGuiObject {
 	
 	public EGuiLabel(IEnhancedGuiObject parentIn, int xPos, int yPos) { this(parentIn, xPos, yPos, "", 0xffffff); }
 	public EGuiLabel(IEnhancedGuiObject parentIn, int xPos, int yPos, String stringIn) { this(parentIn, xPos, yPos, stringIn, 0xffffff); }
+	public EGuiLabel(IEnhancedGuiObject parentIn, int xPos, int yPos, String stringIn, EColors colorIn) { this(parentIn, xPos, yPos, stringIn, colorIn.c()); }
 	public EGuiLabel(IEnhancedGuiObject parentIn, int xPos, int yPos, String stringIn, int colorIn) {
-		init(parentIn, xPos, yPos, fontRenderer.getStringWidth(stringIn), fontRenderer.FONT_HEIGHT);
+		init(parentIn, xPos, yPos, mc.fontRendererObj.getStringWidth(stringIn), mc.fontRendererObj.FONT_HEIGHT);
 		displayString = stringIn;
 		displayStringColor = colorIn;
 	}
 	
 	@Override
-	public void drawObject(int mX, int mY, float ticks) {
+	public void drawObject(int mX, int mY) {
 		if (wordWrap && wordWrappedLines != null) {
 			int i = 0;
 			for (String s : wordWrappedLines) {
@@ -50,13 +51,13 @@ public class EGuiLabel extends EnhancedGuiObject {
 				else { drawString(displayString, startX, startY, displayStringColor); }
 			}
 		}
-		super.drawObject(mX, mY, ticks);
+		super.drawObject(mX, mY);
 	}
 	
 	public EGuiLabel setDisplayString(String stringIn) {
 		displayString = stringIn;
 		if (wordWrap) { wordWrappedLines = EUtil.createWordWrapString(displayString, widthMax); }
-		setDimensions(fontRenderer.getStringWidth(stringIn), fontRenderer.FONT_HEIGHT);
+		setDimensions(mc.fontRendererObj.getStringWidth(stringIn), mc.fontRendererObj.FONT_HEIGHT);
 		return this;
 	}
 	
@@ -74,7 +75,7 @@ public class EGuiLabel extends EnhancedGuiObject {
 	public EGuiLabel enableShadow(boolean val) { shadow = val; return this; }
 	public EGuiLabel setDrawCentered(boolean val) { centered = val; return this; }
 	
-	public int getTextHeight() { return wordWrap ? (wordWrappedLines.size() * 9 + wordWrappedLines.size() * gapSize) : fontRenderer.FONT_HEIGHT; }
+	public int getTextHeight() { return wordWrap ? (wordWrappedLines.size() * 9 + wordWrappedLines.size() * gapSize) : mc.fontRendererObj.FONT_HEIGHT; }
 	public String getDisplayString() { return displayString; }
 	public int getDisplayStringColor() { return displayStringColor; }
 }

@@ -24,7 +24,7 @@ public class EObjectGroup {
 	public EObjectGroup addObject(IEnhancedGuiObject... objectIn) {
 		if (objectIn != null) {
 			for (IEnhancedGuiObject o : objectIn) {
-				objects.addIfNotContains(o);
+				objects.addIfNotNullAndNotContains(o);
 			}
 		}
 		return this;

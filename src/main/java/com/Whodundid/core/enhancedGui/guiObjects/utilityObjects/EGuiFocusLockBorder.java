@@ -1,6 +1,6 @@
 package com.Whodundid.core.enhancedGui.guiObjects.utilityObjects;
 
-import com.Whodundid.core.coreSubMod.EMCResources;
+import com.Whodundid.core.coreApp.EMCResources;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.storageUtil.EDimension;
@@ -36,7 +36,7 @@ public class EGuiFocusLockBorder extends EnhancedGuiObject {
 	}
 	
 	@Override
-	public void drawObject(int mXIn, int mYIn, float ticks) {
+	public void drawObject(int mXIn, int mYIn) {
 		if (System.currentTimeMillis() - startTime >= 200) {
 			mc.getSoundHandler().playSound(PositionedSoundRecord.create(EMCResources.buttonSound, 1.0F));
 			if (second) { parent.removeObject(this); drawingBorder = false; }

@@ -25,14 +25,18 @@ import net.minecraft.client.settings.GameSettings;
 /** A helper class used to display WindowParents and GuiScreens. */
 public class GuiOpener {
 	
-	public static Object openGui(Class guiIn) throws Exception { return openGui(guiIn, null, null, null, CenterType.screen); }
-	public static Object openGui(Class guiIn, IWindowParent old) throws Exception { return openGui(guiIn, null, null, old, CenterType.screen); }
-	public static Object openGui(Class guiIn, CenterType typeIn) throws Exception { return openGui(guiIn, null, null, null, typeIn); }
-	public static Object openGui(Class guiIn, IWindowParent old, CenterType typeIn) throws Exception { return openGui(guiIn, null, null, old, typeIn); }
-	public static Object openGui(Class guiIn, Class[] paramTypes, Object[] paramValues) throws Exception { return openGui(guiIn, null, null, null, CenterType.screen); }
-	public static Object openGui(Class guiIn, Class[] paramTypes, Object[] paramValues, IWindowParent old) throws Exception { return openGui(guiIn, null, null, old, CenterType.screen); }
-	public static Object openGui(Class guiIn, Class[] paramTypes, Object[] paramValues, CenterType typeIn) throws Exception { return openGui(guiIn, null, null, null, CenterType.screen); }
-	public static Object openGui(Class guiIn, Class[] paramTypes, Object[] paramValues, IWindowParent old, CenterType typeIn) throws Exception {
+	public static Object openGui(Class guiIn) throws Exception { return openGui(guiIn, null, null, null, false, CenterType.screen); }
+	public static Object openGui(Class guiIn, IWindowParent old) throws Exception { return openGui(guiIn, null, null, old, false, CenterType.screen); }
+	public static Object openGui(Class guiIn, IWindowParent old, boolean passOld) throws Exception { return openGui(guiIn, null, null, old, passOld, CenterType.screen); }
+	public static Object openGui(Class guiIn, CenterType typeIn) throws Exception { return openGui(guiIn, null, null, null, false, typeIn); }
+	public static Object openGui(Class guiIn, IWindowParent old, CenterType typeIn) throws Exception { return openGui(guiIn, null, null, old, false, typeIn); }
+	public static Object openGui(Class guiIn, IWindowParent old, boolean passOld, CenterType typeIn) throws Exception { return openGui(guiIn, null, null, old, passOld, typeIn); }
+	public static Object openGui(Class guiIn, Class[] paramTypes, Object[] paramValues) throws Exception { return openGui(guiIn, null, null, null, false, CenterType.screen); }
+	public static Object openGui(Class guiIn, Class[] paramTypes, Object[] paramValues, IWindowParent old) throws Exception { return openGui(guiIn, null, null, old, false, CenterType.screen); }
+	public static Object openGui(Class guiIn, Class[] paramTypes, Object[] paramValues, IWindowParent old, boolean passOld) throws Exception { return openGui(guiIn, null, null, old, passOld, CenterType.screen); }
+	public static Object openGui(Class guiIn, Class[] paramTypes, Object[] paramValues, CenterType typeIn) throws Exception { return openGui(guiIn, null, null, null, false, CenterType.screen); }
+	public static Object openGui(Class guiIn, Class[] paramTypes, Object[] paramValues, IWindowParent old, CenterType typeIn) throws Exception { return openGui(guiIn, null, null, null, false, CenterType.screen); }
+	public static Object openGui(Class guiIn, Class[] paramTypes, Object[] paramValues, IWindowParent old, boolean passOld, CenterType typeIn) throws Exception {
 		if (guiIn != null) {
 			if (!testForVanillaGui(guiIn)) {
 				
@@ -40,10 +44,10 @@ public class GuiOpener {
 				
 				if (obj != null) {
 					if (obj instanceof WindowParent) {
-						return EnhancedMC.displayEGui((WindowParent) obj, old, true, true, true, typeIn);
+						return EnhancedMC.displayWindow((WindowParent) obj, old, true, true, passOld, typeIn);				
 					}
 					else if (obj instanceof EnhancedGui) {
-						return EnhancedMC.displayEGui((EnhancedGui) obj, old, true, false, false, typeIn);
+						return EnhancedMC.displayWindow((EnhancedGui) obj, old, true, false, passOld, typeIn);
 					}
 					else if (obj instanceof GuiScreen) {
 						Minecraft.getMinecraft().displayGuiScreen((GuiScreen) obj);

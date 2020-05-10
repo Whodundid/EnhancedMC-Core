@@ -1,8 +1,11 @@
 package com.Whodundid.core.coreEvents;
 
 import com.Whodundid.core.coreEvents.emcEvents.ChatLineCreatedEvent;
-import com.Whodundid.core.coreEvents.emcEvents.SubModCalloutEvent;
+import com.Whodundid.core.coreEvents.emcEvents.EMCAppCalloutEvent;
+import com.Whodundid.core.coreEvents.emcEvents.RendererRCMOpenEvent;
 import com.Whodundid.core.coreEvents.emcEvents.TabCompletionEvent;
+import com.Whodundid.core.coreEvents.emcEvents.WindowClosedEvent;
+import com.Whodundid.core.coreEvents.emcEvents.WindowOpenedEvent;
 import com.Whodundid.core.coreEvents.eventUtil.EMCEventDistributor;
 import com.Whodundid.core.coreEvents.eventUtil.EMCEvents;
 import net.minecraftforge.client.event.RenderPlayerEvent;
@@ -14,6 +17,9 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.event.FMLEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -38,6 +44,9 @@ public class EventListener {
 	//-----------
 	//event hooks
 	//-----------
+	
+	//init
+	@EventHandler public void postInit(FMLPostInitializationEvent e) { distributeInit(EMCEvents.postInit, e); }
 	
 	//ticks
 	@SubscribeEvent public void eventTick(TickEvent e) { distributeEvent(EMCEvents.tick, e); }
@@ -75,13 +84,17 @@ public class EventListener {
 	@SubscribeEvent public void eventServerJoin(EntityJoinWorldEvent e) { distributeEvent(EMCEvents.serverJoin, e); }
 	
 	//emc specific
+	@SubscribeEvent public void eventRendererRCMOpen(RendererRCMOpenEvent e) { distributeEvent(EMCEvents.rendererRCM, e); }
 	@SubscribeEvent public void eventTabCompletion(TabCompletionEvent e) { distributeEvent(EMCEvents.tabComplete, e); }
 	@SubscribeEvent public void eventChatLineCreated(ChatLineCreatedEvent e) { distributeEvent(EMCEvents.chatLine, e); }
-	@SubscribeEvent public void eventModCallout(SubModCalloutEvent e) { distributeEvent(EMCEvents.modCallout, e); }
+	@SubscribeEvent public void eventAppCallout(EMCAppCalloutEvent e) { distributeEvent(EMCEvents.appCallout, e); }
+	@SubscribeEvent public void eventWindowOpened(WindowOpenedEvent e) { distributeEvent(EMCEvents.windowOpened, e); }
+	@SubscribeEvent public void eventWindowOpened(WindowClosedEvent e) { distributeEvent(EMCEvents.windowClosed, e); }
 	
 	//-----------
 	//distributor
 	//-----------
 	
+	public void distributeInit(EMCEvents type, FMLEvent e) { distributor.distributeInit(type, e); }
 	public void distributeEvent(EMCEvents type, Event e) { distributor.distributeEvent(type, e); }
 }

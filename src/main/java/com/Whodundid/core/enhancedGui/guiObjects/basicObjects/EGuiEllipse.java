@@ -1,6 +1,5 @@
 package com.Whodundid.core.enhancedGui.guiObjects.basicObjects;
 
-import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.StorageBox;
@@ -22,12 +21,12 @@ public class EGuiEllipse extends EGuiShape {
 		color = colorIn;
 	}
 	@Override
-	public void drawObject(int mXIn, int mYIn, float ticks) {
+	public void drawObject(int mXIn, int mYIn) {
 		
 		if (filled) { drawFilledEllipse(startX + width / 2, startY + height / 2, width, height, 50, color); }
 		else { drawEllipse(startX + width / 2, startY + height / 2, width, height, 50, color); }
 		
-		super.drawObject(mXIn, mYIn, ticks);
+		super.drawObject(mXIn, mYIn);
 	}
 	
 	//-------------------
