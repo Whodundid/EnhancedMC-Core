@@ -24,6 +24,7 @@ public enum EColors {
 	lgray(0xffb2b2b2, "Light Gray"),
 	gray(0xff8d8d8d, "Gray"),
 	dgray(0xff474747, "Dark Gray"),
+	pdgray(0xff303030, "Pretty Dark Gray"),
 	vdgray(0xff111111, "Very Dark Gray"),
 	steel(0xff1f1f1f, "Steel"),
 	black(0xff000000, "Black");
@@ -61,6 +62,7 @@ public enum EColors {
 		case 0xffffffff: return white;
 		case 0xffb2b2b2: return lgray;
 		case 0xff8d8d8d: return gray;
+		case 0xff303030: return pdgray;
 		case 0xff474747: return dgray;
 		case 0xff111111: return vdgray;
 		case 0xff1f1f1f: return steel;
@@ -90,6 +92,7 @@ public enum EColors {
 			case "white": return white;
 			case "lgray": case "lightgray": case "light gray": return lgray;
 			case "gray": return gray;
+			case "pdgray": return pdgray;
 			case "dgray": case "darkgray": case "dark gray": return dgray;
 			case "vdgray": case "verydarkgray": case "very dark gray": return vdgray;
 			case "steel": return steel;

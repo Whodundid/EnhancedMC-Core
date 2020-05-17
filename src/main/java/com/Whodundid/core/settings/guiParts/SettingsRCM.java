@@ -6,7 +6,7 @@ import com.Whodundid.core.app.gui.AppErrorType;
 import com.Whodundid.core.app.util.AppEnabler;
 import com.Whodundid.core.app.util.AppErrorDisplay;
 import com.Whodundid.core.coreApp.EMCResources;
-import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.EGuiRightClickMenu;
+import com.Whodundid.core.enhancedGui.guiObjects.windows.EGuiRightClickMenu;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.settings.SettingsGuiMain;
@@ -45,7 +45,7 @@ public class SettingsRCM extends EGuiRightClickMenu {
 		}
 		
 		setRunActionOnPress(true);
-		setActionReciever(this);
+		setActionReceiver(this);
 		
 		setUseTitle(true);
 		setBackgroundColor(0xff4b4b4b);

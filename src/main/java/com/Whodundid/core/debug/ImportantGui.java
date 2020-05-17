@@ -26,7 +26,6 @@ public class ImportantGui extends WindowParent {
 	@Override
 	public void drawObject(int mX, int mY) {
 		drawRect(0, 0, res.getScaledWidth(), res.getScaledHeight(), importantColor);
-		drawRect(midX - 257, 0, midX + 257, res.getScaledHeight(), 0xff4f4f40);
 		GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
 		holder.draw();
 		importantColor = Color.HSBtoRGB(System.currentTimeMillis() % 10000L / 5000.0f, 0.8f, 1f);

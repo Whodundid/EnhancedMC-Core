@@ -54,6 +54,8 @@ public abstract class TerminalCommand {
 	//TerminalCommand Protected Methods
 	//---------------------------------
 	
+	public void onConfirmation(String response) {}
+	
 	protected boolean checkForModifier(String in) {
 		return in != null && in.length() >= 1 && in.startsWith("-") && modifiers.contains(in);
 	}

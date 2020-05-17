@@ -11,6 +11,8 @@ import com.Whodundid.core.coreEvents.emcEvents.WindowOpenedEvent;
 import com.Whodundid.core.debug.ExperimentGui;
 import com.Whodundid.core.debug.ImportantGui;
 import com.Whodundid.core.debug.TestWindow;
+import com.Whodundid.core.notifications.util.NotificationType;
+import com.Whodundid.core.notifications.window.NotificationWindow;
 import com.Whodundid.core.renderer.BlockDrawer;
 import com.Whodundid.core.renderer.renderUtil.IRendererProxy;
 import com.Whodundid.core.renderer.renderUtil.RendererProxyGui;
@@ -50,6 +52,7 @@ public class CoreApp extends EMCApp {
 	public static final AppConfigSetting<Boolean> drawHudBorder = new AppConfigSetting(Boolean.class, "drawHudBorder", "Draw Hud Border", true);
 	public static final AppConfigSetting<Boolean> showIncompats = new AppConfigSetting(Boolean.class, "showIncompats", "Show Incompatible Mods", false);
 	public static final AppConfigSetting<String> drawChatOnHud = new AppConfigSetting(String.class, "drawChatOnHud", "Draw Chat on Hud", "partial").setArgs("partial", "off", "full");
+	public static final AppConfigSetting<Boolean> customCursors = new AppConfigSetting(Boolean.class, "customCursors", "Use Custom Cursors", true);
 	
 	public static final AppConfigSetting<Boolean> enableTerminal = new AppConfigSetting(Boolean.class, "enableTerminal", "Enable Terminal", false);
 	//public static final AppConfigSetting<Boolean> termLineNumbers = new AppConfigSetting(Boolean.class, "termLineNumbers", "Show Terminal Line Numbers", false);
@@ -62,6 +65,11 @@ public class CoreApp extends EMCApp {
 	public static final AppConfigSetting<Boolean> enableBlockDrawer = new AppConfigSetting(Boolean.class, "enableBlockDrawer", "Enable Block Drawer", true);
 	public static final AppConfigSetting<Boolean> worldEditVisual = new AppConfigSetting(Boolean.class, "worldEditVisual", "Enanble World Edit Visual", false);
 	
+	public static final AppConfigSetting<Boolean> firstUse = new AppConfigSetting(Boolean.class, "firstUse", "EMC First Use", false);
+	public static final AppConfigSetting<Boolean> openedTut = new AppConfigSetting(Boolean.class, "openedTut", "Opened Tutorial", false);
+	
+	public static final NotificationType emcNotification = new NotificationType("emcGeneral", "General Events", "EMC", "Notifications received on general EMC events.");
+	
 	private boolean oldWasProxy;
 	private boolean firstPass = false;
 	private long startLoadTime = 0l;
@@ -72,14 +80,15 @@ public class CoreApp extends EMCApp {
 		instance = this;
 		version = EnhancedMC.VERSION;
 		author = "Whodundid";
-		versionDate = "May 10, 2020";
+		artist = "Mr.JamminOtter";
+		versionDate = "May 17, 2020";
 		isDisableable = false;
 		setEnabled(true);
 		
 		configManager.setMainConfig(new AppConfigFile(this, "enhancedMCCore", "EMC Core Config"));
 		
 		setMainGui(new CoreAppSettingsGui());
-		addGui(new SettingsGuiMain(), new KeyBindGui(), new ImportantGui(), new ETerminal(), new TerminalOptions(), new ExperimentGui(), new TestWindow());
+		addGui(new SettingsGuiMain(), new KeyBindGui(), new NotificationWindow(), new ImportantGui(), new ETerminal(), new TerminalOptions(), new ExperimentGui(), new TestWindow());
 		setAliases("enhancedmc", "emc", "core");
 		
 		taskBarSide.setOpSetting(true);
@@ -89,10 +98,13 @@ public class CoreApp extends EMCApp {
 		setResources(new EMCResources());
 		logo = new EArrayList<EResource>(EMCResources.logo);
 		
-		registerSetting(closeHudWhenEmpty, drawHudBorder, showIncompats, drawChatOnHud);
+		registerSetting(closeHudWhenEmpty, drawHudBorder, showIncompats, drawChatOnHud, customCursors);
 		registerSetting(enableTerminal, termBackground);
 		registerSetting(enableTaskBar, taskBarSide);
 		registerSetting(enableBlockDrawer, worldEditVisual);
+		registerSetting(firstUse, openedTut);
+		
+		EnhancedMC.getNotificationHandler().registerNotificationType(emcNotification);
 	}
 	
 	public static CoreApp instance() { return instance; }
@@ -150,7 +162,8 @@ public class CoreApp extends EMCApp {
 	@Override public void keyEvent(KeyInputEvent e) { EnhancedMC.checkKeyBinds(); }
 	@Override public void mouseEvent(MouseEvent e) { EMouseHelper.mouseClicked(e.button); }
 	@Override public void renderTickEvent(TickEvent.RenderTickEvent e) { PlayerFacing.checkEyePosition(e); }
-	@Override public void OverlayPostEvent(RenderGameOverlayEvent.Post e) { }
+	@Override public void overlayTextEvent(RenderGameOverlayEvent.Text e) { EnhancedMC.getRenderer().onTextRender(e); }
+	@Override public void overlayPostEvent(RenderGameOverlayEvent.Post e) { }
 	@Override public void renderLastWorldEvent(RenderWorldLastEvent e) { BlockDrawer.draw(e); }
 	@Override public void chatEvent(ClientChatReceivedEvent e) { EChatUtil.readChat(e.message); WorldEditListener.checkForPositions(); }
 	@Override public void tabCompletionEvent(TabCompletionEvent e) { EChatUtil.onTabComplete(e.getCompletion()); }

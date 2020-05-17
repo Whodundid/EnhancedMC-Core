@@ -1,6 +1,5 @@
 package com.Whodundid.core.util.playerUtil;
 
-import com.Whodundid.playerInfo.PlayerInfoApp;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -16,8 +15,10 @@ public class DummyPlayer extends AbstractClientPlayer {
 	private boolean armLeft = true;
 	private boolean headLeft = true;
 	private boolean drawSkin = false;
+	private boolean drawName = true;
 	private float swingAmount = 0.7f;
 	private float headAmount = 0f;
+	private String name = "";
 	private Thread animationUpdater;
 	private volatile boolean run = true;
 	
@@ -27,6 +28,7 @@ public class DummyPlayer extends AbstractClientPlayer {
 		skin = skinIn;
 		cape = capeIn;
 		alex = alexModel;
+		name = nameIn;
 		instance = this;
 		headAmount = rotationYawHead;
 		
@@ -81,7 +83,7 @@ public class DummyPlayer extends AbstractClientPlayer {
 	
 	@Override
 	public boolean isWearing(EnumPlayerModelParts m) {
-		if (getName().toLowerCase().equals("notch")) {
+		if (name.toLowerCase().equals("notch")) {
 			return false;
 		}
 		return true;
@@ -94,7 +96,7 @@ public class DummyPlayer extends AbstractClientPlayer {
 	
 	@Override
 	public String getName() {
-		if (PlayerInfoApp.drawNames.get()) { return super.getName(); }
+		if (drawName) { return super.getName(); }
 		return "";
 	}
 	
@@ -117,4 +119,5 @@ public class DummyPlayer extends AbstractClientPlayer {
 		super.finalize();
 	}
 	
+	public DummyPlayer setDrawName(boolean val) { drawName = val; return this; }
 }

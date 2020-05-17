@@ -195,7 +195,7 @@ public class EGuiScrollBar extends EnhancedActionObject {
 		}
 		calculateScrollPos();
 		lastScrollChange = vertical ? newY : newX;
-		getActionReciever().actionPerformed(this);
+		getActionReceiver().actionPerformed(this);
 	}
 	
 	public boolean isMouseInThumb(int mX, int mY) {
@@ -219,7 +219,7 @@ public class EGuiScrollBar extends EnhancedActionObject {
 			thumbEndX = thumbStartX + thumbSize;
 			thumbEndY = endY;
 		}
-		getActionReciever().actionPerformed(this);
+		getActionReceiver().actionPerformed(this);
 		return this;
 	}
 	

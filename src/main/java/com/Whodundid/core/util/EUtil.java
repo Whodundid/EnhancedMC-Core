@@ -266,25 +266,36 @@ public class EUtil {
 		return r;
 	}
 	
-	public static String subStringToString(String in, int startPos, String toFind) {
+	public static String subStringToString(String in, int startPos, String toFind) { return subStringToString(in, startPos, toFind, false); }
+	public static String subStringToString(String in, int startPos, String toFind, boolean startFromEnd) {
 		if (in != null) {
 			if (startPos <= in.length()) {
-				String from = in.substring(startPos);
-				int index = findStartingIndex(from, toFind);
-				return (index >= -1) ? from.substring(0, index) : from;
+				String from = startFromEnd ? in.substring(startPos, in.length()) : in.substring(startPos);
+				int index = startFromEnd ? findIndexAfter(from, toFind) : findStartingIndex(from, toFind);
+				return (index >= 0) ? (startFromEnd ? from.substring(index, in.length()) : from.substring(0, index)) : from;
 			}
 		}
 		return in;
 	}
 	
 	/** Creates a substring from a given string ending at the first space found from the given starting position. */
-	public static String subStringToSpace(String in, int startPos) {
+	public static String subStringToSpace(String in, int startPos) { return subStringToSpace(in, startPos, false); }
+	public static String subStringToSpace(String in, int startPos, boolean startFromEnd) {
 		if (in != null && !in.isEmpty()) {
-			int pos = startPos;
-			while (pos < in.length() && in.charAt(pos) != ' ') {
-				pos++;
+			int pos = startFromEnd ? in.length() - 1 : startPos;
+			
+			if (startFromEnd) {
+				while (pos > startPos && in.charAt(pos) != ' ') {
+					pos--;
+				}
+				return in.substring(pos + 1, in.length());
 			}
-			return in.substring(startPos, pos);
+			else {
+				while (pos < in.length() && in.charAt(pos) != ' ') {
+					pos++;
+				}
+				return in.substring(startPos, pos);
+			}
 		}
 		return in;
 	}
@@ -295,7 +306,8 @@ public class EUtil {
 			String cur = "";
 			int index = 0;
 			int j = 0;
-			for (int i = 0; i < toSearch.length() - toFind.length() + 1; i++) {
+			
+			for (int i = 0; i <= toSearch.length() - 1; i++) {
 				if (cur.equals(toFind)) { return index; }
 				if (toSearch.charAt(i) == toFind.charAt(j)) {
 					cur += toSearch.charAt(i);
@@ -312,6 +324,14 @@ public class EUtil {
 					j = 0;
 				}
 			}
+		}
+		return -1;
+	}
+	
+	public static int findIndexAfter(String toSearch, String toFind) {
+		if (toSearch != null && toFind != null && !toSearch.isEmpty() && !toFind.isEmpty()) {
+			int index = findStartingIndex(toSearch, toFind);
+			return index + toFind.length();
 		}
 		return -1;
 	}
@@ -373,14 +393,16 @@ public class EUtil {
 	}
 	
 	/** A statement that performs the following action on the given object if the object is not null. */
-	public static <E> void ifNotNullDo(E object, Consumer<? super E> action) {
+	public static <E> boolean ifNotNullDo(E object, Consumer<? super E> action) {
 		Objects.requireNonNull(action);
-		if (object != null) { action.accept(object); }
+		if (object != null) { action.accept(object); return true; }
+		return false;
 	}
 	
-	public static <E, A> void ifNotNullDo(E object1, A object2, BiConsumer<? super E, ? super A> action) {
+	public static <E, A> boolean ifNotNullDo(E object1, A object2, BiConsumer<? super E, ? super A> action) {
 		Objects.requireNonNull(action);
-		if (object1 != null && object2 != null) { action.accept(object1, object2); }
+		if (object1 != null && object2 != null) { action.accept(object1, object2); return true; }
+		return false;
 	}
 	
 	/** A statemnt that returns the result of a given function if the given object is not null. */
@@ -405,6 +427,31 @@ public class EUtil {
 		}
 		
 		return ifFalse;
+	}
+	
+	public static <E> E getFirst(List<E> list, Predicate<? super E> predicate) {
+		Objects.requireNonNull(predicate);
+		
+		if (list != null) {
+			for (E e : list) {
+				if (predicate.test(e)) { return e; }
+			}
+		}
+		
+		return null;
+	}
+	
+	public static <E> E getLast(List<E> list, Predicate<? super E> predicate) {
+		Objects.requireNonNull(predicate);
+		
+		if (list != null) {
+			for (int i = list.size(); i >= 0; i--) {
+				E e = list.get(i);
+				if (predicate.test(e)) { return e; }
+			}
+		}
+		
+		return null;
 	}
 	
 }

@@ -2,11 +2,12 @@ package com.Whodundid.core.renderer.taskView;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.coreApp.EMCResources;
-import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.EGuiRightClickMenu;
+import com.Whodundid.core.enhancedGui.guiObjects.windows.EGuiRightClickMenu;
 import com.Whodundid.core.enhancedGui.guiObjects.windows.EMCGuiSelectionList;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
@@ -16,7 +17,6 @@ import net.minecraft.client.gui.ScaledResolution;
 public class TaskBar extends EnhancedGuiObject {
 	
 	public static int drawSize = 24;
-	public static EArrayList<WindowParent> typeOrder = new EArrayList();
 	public static EArrayList<TaskButton> buttons = new EArrayList();
 	protected static EArrayList<WindowParent> toAdd = new EArrayList();
 	protected static EArrayList<WindowParent> toRemove = new EArrayList();
@@ -60,8 +60,8 @@ public class TaskBar extends EnhancedGuiObject {
 		if (button == 1) {
 			EGuiRightClickMenu menu = new EGuiRightClickMenu();
 			menu.setTitle("Taskbar");
-			menu.setActionReciever(this);
-			menu.setStorredObject(this);
+			menu.setActionReceiver(this);
+			menu.setStoredObject(this);
 			menu.addOption("Open Window..", EMCResources.plusButton);
 			EnhancedMC.displayWindow(menu, CenterType.cursorCorner);
 		}
@@ -84,18 +84,18 @@ public class TaskBar extends EnhancedGuiObject {
 		if (object instanceof EGuiRightClickMenu) {
 			EGuiRightClickMenu rcm = (EGuiRightClickMenu) object;
 			
-			if (rcm.getStorredObject() == this) {
+			if (rcm.getStoredObject() == this) {
 				if (rcm.getSelectedObject().equals("Open Window..")) {
 					EnhancedMC.displayWindow(new EMCGuiSelectionList(), CenterType.screen);
 				}
 			}
-			else if (rcm.getStorredObject() instanceof WindowParent) {
+			else if (rcm.getStoredObject() instanceof WindowParent) {
 				if (rcm.getSelectedObject() == "Pin" ) {
-					System.out.println("pinnging: " + rcm.getStorredObject().getClass().getSimpleName());
+					System.out.println("pinnging: " + rcm.getStoredObject().getClass().getSimpleName());
 				}
 				if (rcm.getSelectedObject() == "New Window") {
 					try {
-						WindowParent w = (WindowParent) rcm.getStorredObject();
+						WindowParent w = (WindowParent) rcm.getStoredObject();
 						if (w != null) {
 							WindowParent n = w.getClass().newInstance();
 							
@@ -111,8 +111,12 @@ public class TaskBar extends EnhancedGuiObject {
 					
 				}
 				if (rcm.getSelectedObject().equals("Close")) {
-					WindowParent w = (WindowParent) rcm.getStorredObject();
-					w.close();
+					WindowParent w = (WindowParent) rcm.getStoredObject();
+					if (w != null) {
+						Class c = w.getClass();
+						EArrayList<WindowParent> windows = EnhancedMC.getAllWindowInstances(c);
+						windows.forEach(p -> p.close());
+					}
 				}
 			}
 			
@@ -125,6 +129,14 @@ public class TaskBar extends EnhancedGuiObject {
 		toAdd.clear();
 		toRemove.clear();
 		super.close();
+	}
+	
+	//---------------
+	//TaskBar Methods
+	//---------------
+	
+	public void forceUpdate() {
+		updateLists();
 	}
 	
 	//---------------
@@ -168,6 +180,23 @@ public class TaskBar extends EnhancedGuiObject {
 	
 	private void updateLists() {
 		try {
+			
+			EArrayList<IEnhancedGuiObject> removeGhosts = new EArrayList();
+			for (IEnhancedGuiObject o : getObjects()) {
+				if (o instanceof TaskButton) {
+					if (!EnhancedMC.isEGuiOpen(((TaskButton) o).getWindowType().getClass())) { removeGhosts.add(o); }
+				}
+			}
+			
+			for (IEnhancedGuiObject o : removeGhosts) {
+				removeObject(o);
+			}
+			
+			//check for ghost buttons
+			for (TaskButton b : buttons) {
+				if (!EnhancedMC.isEGuiOpen(b.getWindowType().getClass())) { toRemove.add(b.getWindowType()); }
+			}
+			
 			//process objects to be added
 			EUtil.ifForEach(toAdd.isNotEmpty(), toAdd, p -> addButton(p));
 			toAdd.clear();

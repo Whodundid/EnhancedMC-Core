@@ -169,7 +169,7 @@ public class EGuiColorPickerSimple extends ActionWindowParent {
 		}
 		else {
 			if (object == inputField) { parseInputColor(); }
-			if (object == select) { getActionReciever().actionPerformed(this, currentColor); close(); }
+			if (object == select) { getActionReceiver().actionPerformed(this, currentColor); close(); }
 			if (object == back) { close(); }
 		}
 	}

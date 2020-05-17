@@ -4,8 +4,10 @@ import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.app.EMCApp;
 import com.Whodundid.core.app.RegisteredApps;
 import com.Whodundid.core.debug.ExperimentGui;
+import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
+import com.Whodundid.core.notifications.util.NotificationType;
 import com.Whodundid.core.terminal.TerminalCommandHandler;
 import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
@@ -15,6 +17,8 @@ import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.chatUtil.EChatUtil;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
+import com.Whodundid.core.util.storageUtil.StorageBox;
+import java.util.Iterator;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -39,14 +43,14 @@ public class ListCMD extends TerminalCommand {
 	
 	@Override
 	public void handleTabComplete(ETerminal termIn, EArrayList<String> args) {
-		String[] types = {"apps", "mods", "objects", "guis"};
+		String[] types = {"mods", "apps", "players", "objects", "guis", "windows", "notifications"};
 		super.basicTabComplete(termIn, args, new EArrayList().addA(types));
 	}
 	
 	@Override
 	public void runCommand(ETerminal termIn, EArrayList<String> args, boolean runVisually) {
 		if (args.isEmpty()) {
-			if (runVisually) { termIn.writeln("mods, players, objects, guis", EColors.green); }
+			if (runVisually) { termIn.writeln("mods, apps, players, objects, guis, windows, notifications", EColors.green); }
 			else { termIn.info(getUsage()); }
 		}
 		else if (args.size() > 1) { termIn.error("Too many arguments!"); }
@@ -66,6 +70,13 @@ public class ListCMD extends TerminalCommand {
 			case "g":
 			case "gui":
 			case "guis": listGuis(termIn, args, runVisually); break;
+			case "w":
+			case "win":
+			case "windows": listWindows(termIn, args, runVisually); break;
+			case "n":
+			case "note":
+			case "notification":
+			case "notifications": listNotifications(termIn, args, runVisually); break;
 			default:
 				boolean found = false;
 				
@@ -90,6 +101,8 @@ public class ListCMD extends TerminalCommand {
 		EArrayList<EMCApp> mods = RegisteredApps.getAppsList();
 		
 		if (mods != null) {
+			EArrayList<EMCApp> apps = RegisteredApps.getAppsList();
+			
 			termIn.info("Listing all EMC Apps");
 			for (EMCApp m : RegisteredApps.getAppsList()) {
 				EColors c = m.isIncompatible() ? EColors.red : EColors.lgray;
@@ -108,7 +121,6 @@ public class ListCMD extends TerminalCommand {
 				
 				termIn.writeln(s, c);
 			}
-			termIn.writeln("Total Apps: " + mods.size(), 0xffff00);
 		}
 	}
 	
@@ -259,6 +271,89 @@ public class ListCMD extends TerminalCommand {
 			termIn.writeln("  -Language", EColors.lgray);
 		}
 		else { termIn.error("Unknown error!"); }
+	}
+	
+	private void listWindows(ETerminal termIn, EArrayList<String> args, boolean runVisually) {
+		EArrayList<WindowParent> windows = EnhancedMC.getAllActiveWindows();
+		
+		String plural = windows.size() > 1 ? "s" : "";
+		
+		termIn.info("Listing " + windows.size() + " active window" + plural + "..\n");
+		
+		termIn.writeln("(Name | PID | Type)", EColors.lime);
+		termIn.writeln(EUtil.repeatString("-", 16), EColors.lime);
+		
+		for (WindowParent p : windows) {
+			String out = p.getObjectName() + " | " + p.getObjectID() + " | " + p.getClass().getSimpleName();
+			termIn.writeln(out, EColors.lime);
+		}
+		
+	}
+	
+	private void listNotifications(ETerminal termIn, EArrayList<String> args, boolean runVisually) {
+		EArrayList<StorageBox<String, EArrayList<NotificationType>>> notes = new EArrayList();
+		EArrayList<NotificationType> unSorted = new EArrayList(EnhancedMC.getNotificationHandler().getNotificationTypes());
+		
+		if (unSorted.isEmpty()) { termIn.info("There are no registered notifications"); return; }
+		
+		termIn.info("Listing all " + unSorted.size() + " Notification Types\n");
+		
+		EArrayList<String> categories = new EArrayList();
+		for (NotificationType t : unSorted) { categories.addIfNotNullAndNotContains(t.getCategory()); }
+		
+		//search for emc
+		for (String s : categories) {
+			EArrayList<NotificationType> types = new EArrayList();
+			Iterator<NotificationType> it = unSorted.iterator();
+			
+			boolean found = false;
+			while (it.hasNext()) {
+				NotificationType t = it.next();
+				if (t.getCategory() != null && t.getCategory().equals("EMC")) {
+					types.add(t);
+					it.remove();
+					found = true;
+					break;
+				}
+			}
+			
+			if (found) { notes.add(new StorageBox("EMC", new EArrayList(types))); break; }
+		}
+		
+		if (categories.contains("EMC")) { categories.remove("EMC"); }
+		
+		//get all other categories
+		for (String s : categories) {
+			EArrayList<NotificationType> types = new EArrayList();
+			Iterator<NotificationType> it = unSorted.iterator();
+			while (it.hasNext()) {
+				NotificationType t = it.next();
+				if (t.getCategory() != null && t.getCategory().equals(s)) {
+					types.add(t);
+					it.remove();
+				}
+			}
+			
+			notes.add(new StorageBox(s, new EArrayList(types)));
+		}
+		
+		//add all the rest as generic
+		if (unSorted.isNotEmpty()) {
+			notes.add(new StorageBox("Non Specific", new EArrayList(unSorted)));
+		}
+		
+		for (StorageBox<String, EArrayList<NotificationType>> box : notes) {
+			if (box != null) {
+				String category = box.getObject();
+				EArrayList<NotificationType> types = box.getValue();
+				
+				termIn.writeln(category, EColors.orange);
+				for (NotificationType t : types) {
+					boolean enabled = EnhancedMC.getNotificationHandler().isNotificationTypeEnabled(t);
+					termIn.writeln("-" + t.getInternalName() + ": " + (enabled ? EnumChatFormatting.GREEN + "Enabled" : EnumChatFormatting.RED + "Disabled"), EColors.lgray);  
+				}
+			}
+		}
 	}
 	
 }

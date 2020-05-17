@@ -238,7 +238,7 @@ public class EGuiSlider extends EnhancedActionObject implements IEnhancedActionO
 			thumbEndX = thumbStartX + thumbSize;
 			thumbEndY = endY - 1;
 		}
-		if (actionReciever != null) { actionReciever.actionPerformed(this); }
+		if (actionReceiver != null) { actionReceiver.actionPerformed(this); }
 	}
 	
 	public EGuiSlider reset() { setSliderValue(defaultVal); return this; }

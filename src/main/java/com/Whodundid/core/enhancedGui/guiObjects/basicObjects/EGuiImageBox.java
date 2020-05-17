@@ -3,8 +3,10 @@ package com.Whodundid.core.enhancedGui.guiObjects.basicObjects;
 import com.Whodundid.core.app.EMCApp;
 import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.resourceUtil.EResource;
+import com.Whodundid.core.util.resourceUtil.ResourceUtil;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.MathHelper;
@@ -21,6 +23,7 @@ public class EGuiImageBox extends EnhancedGuiObject {
 	boolean drawBorder = true;
 	boolean drawBackground = true;
 	boolean centerImage = true;
+	boolean drawStretched = false;
 	boolean singleImage = false;
 	String nullText = "Texture is null!";
 	int nullTextColor = EColors.lred.intVal;
@@ -28,10 +31,15 @@ public class EGuiImageBox extends EnhancedGuiObject {
 	long timeSince = 0l;
 	int curImage = 0;
 	
-	public EGuiImageBox(IEnhancedGuiObject objIn, int xIn, int yIn, int widthIn, int heightIn) { this(objIn, xIn, yIn, widthIn, heightIn, null); }
+	public EGuiImageBox(IEnhancedGuiObject objIn, int xIn, int yIn, int widthIn, int heightIn) { this(objIn, xIn, yIn, widthIn, heightIn, (EResource) null); }
 	public EGuiImageBox(IEnhancedGuiObject objIn, int xIn, int yIn, int widthIn, int heightIn, ResourceLocation imageIn) {
 		init(objIn, xIn, yIn, widthIn, heightIn);
 		images.add(imageIn);
+		singleImage = true;
+	}
+	public EGuiImageBox(IEnhancedGuiObject objIn, int xIn, int yIn, int widthIn, int heightIn, EResource imageIn) {
+		init(objIn, xIn, yIn, widthIn, heightIn);
+		EUtil.ifNotNullDo(imageIn, i -> images.add(i.getResource()));
 		singleImage = true;
 	}
 	
@@ -71,6 +79,16 @@ public class EGuiImageBox extends EnhancedGuiObject {
 					h = smaller;
 				}
 				
+				if (!drawStretched) {
+					ResourceLocation cur = images.get(curImage);
+					
+					int imgW = ResourceUtil.getImageWidth(cur);
+					int imgH = ResourceUtil.getImageHeight(cur);
+					
+					if (w > imgW) { posX = (w - imgW) / 2; }
+					if (h > imgH) { posY = (h - imgH) / 2; }
+				}
+				
 				drawTexture(posX, posY, w, h);
 				
 				GlStateManager.disableAlpha();
@@ -91,6 +109,7 @@ public class EGuiImageBox extends EnhancedGuiObject {
 	public boolean drawsImage() { return drawImage; }
 	public boolean drawsBorder() { return drawBorder; }
 	public boolean drawsBackground() { return drawBackground; }
+	public boolean drawsStretched() { return drawStretched; }
 	
 	public EGuiImageBox setImage(ResourceLocation imageIn) {
 		if (imageIn != null) {
@@ -140,6 +159,7 @@ public class EGuiImageBox extends EnhancedGuiObject {
 		return this;
 	}
 	
+	public EGuiImageBox setDrawStretched(boolean val) { drawStretched = val; return this; }
 	public EGuiImageBox setNullText(String textIn) { nullText = textIn; return this; }
 	public EGuiImageBox setNullTextColor(EColors colorIn) { return setNullTextColor(colorIn.intVal); }
 	public EGuiImageBox setNullTextColor(int colorIn) { nullTextColor = colorIn; return this; }
@@ -152,4 +172,5 @@ public class EGuiImageBox extends EnhancedGuiObject {
 	public EGuiImageBox setBorderColor(int colorIn) { borderColor = colorIn; return this; }
 	public EGuiImageBox setBackgroundColor(EColors colorIn) { return setBackgroundColor(colorIn.c()); }
 	public EGuiImageBox setBackgroundColor(int colorIn) { backgroundColor = colorIn; return this; }
+	
 }

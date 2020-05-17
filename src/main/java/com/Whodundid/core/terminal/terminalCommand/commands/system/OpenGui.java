@@ -4,6 +4,7 @@ import com.Whodundid.core.app.EMCApp;
 import com.Whodundid.core.app.RegisteredApps;
 import com.Whodundid.core.debug.ExperimentGui;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
+import com.Whodundid.core.renderer.EnhancedMCRenderer;
 import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
 import com.Whodundid.core.terminal.terminalCommand.TerminalCommand;
@@ -34,11 +35,11 @@ public class OpenGui extends TerminalCommand {
 		numArgs = -1;
 	}
 	
-	@Override public String getName() { return "gui"; }
+	@Override public String getName() { return "opengui"; }
 	@Override public boolean showInHelp() { return true; }
-	@Override public EArrayList<String> getAliases() { return new EArrayList("og"); }
+	@Override public EArrayList<String> getAliases() { return new EArrayList("gui", "og"); }
 	@Override public String getHelpInfo(boolean runVisually) { return "Command used for opening guis."; }
-	@Override public String getUsage() { return "ex: gui settings"; }
+	@Override public String getUsage() { return "ex: og settings"; }
 	
 	@Override
 	public void handleTabComplete(ETerminal termIn, EArrayList<String> args) {
@@ -102,6 +103,10 @@ public class OpenGui extends TerminalCommand {
 							termIn.writeln("Opening gui: " + guiClass.getSimpleName(), EColors.green);
 						}
 					}
+					
+					//update the taskbar -- if it exists
+					EUtil.ifNotNullDo(EnhancedMCRenderer.getInstance().getTaskBar(), b -> b.forceUpdate());
+					
 				}
 				else {
 					termIn.error("No guis found");

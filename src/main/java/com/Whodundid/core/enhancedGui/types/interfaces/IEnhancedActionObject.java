@@ -9,15 +9,15 @@ public interface IEnhancedActionObject {
 	
 	public void performAction(Object... args);
 	public void onPress();
-	public boolean runActionOnPress();
+	public boolean runsActionOnPress();
 	public IEnhancedActionObject setRunActionOnPress(boolean val);
-	public IEnhancedActionObject setActionReciever(IEnhancedGuiObject objIn);
-	public IEnhancedGuiObject getActionReciever();
+	public IEnhancedActionObject setActionReceiver(IEnhancedGuiObject objIn);
+	public IEnhancedGuiObject getActionReceiver();
 	
 	//objects
 	
-	public IEnhancedActionObject setStorredObject(Object objIn);
-	public Object getStorredObject();
+	public IEnhancedActionObject setStoredObject(Object objIn);
+	public Object getStoredObject();
 	public IEnhancedActionObject setSelectedObject(Object objIn);
 	public Object getSelectedObject();
 }

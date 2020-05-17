@@ -4,6 +4,7 @@ import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.app.AppConfigSetting;
 import com.Whodundid.core.app.EMCApp;
 import com.Whodundid.core.app.RegisteredApps;
+import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
 import com.Whodundid.core.terminal.terminalCommand.TerminalCommand;
@@ -87,7 +88,6 @@ public class EMCAppTerminalCommands extends TerminalCommand {
 				
 				for (AppConfigSetting s : settings) {
 					EnumChatFormatting color = EnumChatFormatting.WHITE;
-					System.out.println(s.getType());
 					if (s.getType() == DataType.BOOL) { color = (boolean) s.get() ? EnumChatFormatting.GREEN : EnumChatFormatting.RED; }
 					if (s.getType() == DataType.INT) { color = EnumChatFormatting.GOLD; }
 					if (s.getType() == DataType.STRING) { color = EnumChatFormatting.AQUA; }
@@ -146,6 +146,8 @@ public class EMCAppTerminalCommands extends TerminalCommand {
 				
 				EnumChatFormatting color = val ? EnumChatFormatting.GREEN : EnumChatFormatting.RED;
 				termIn.writeln(settingIn.getDescription() + ": " + color + val, EColors.yellow);
+				
+				for (WindowParent w : EnhancedMC.getAllActiveWindows()) { w.sendArgs("Reload"); }
 			}
 			else { termIn.error("Cannot parse argument: " + args.get(1)); }
 		}
@@ -169,6 +171,8 @@ public class EMCAppTerminalCommands extends TerminalCommand {
 				if (app != null && app.getConfig() != null) {
 					app.getConfig().saveMainConfig();
 				}
+				
+				for (WindowParent w : EnhancedMC.getAllActiveWindows()) { w.sendArgs("Reload"); }
 			}
 			else { termIn.error("Invalid argument given - allowed args are: " + settingIn.getArgs()); return; }
 			
@@ -185,6 +189,20 @@ public class EMCAppTerminalCommands extends TerminalCommand {
 				int val = Integer.parseInt(arg);
 				
 				settingIn.set(val);
+				
+				EMCApp app = settingIn.getMod();
+				if (app != null && app.getConfig() != null) {
+					app.getConfig().saveMainConfig();
+				}
+				
+				termIn.writeln(settingIn.getDescription() + ": " + EnumChatFormatting.WHITE + val, EColors.yellow);
+				
+				for (WindowParent w : EnhancedMC.getAllActiveWindows()) { w.sendArgs("Reload"); }
+			}
+			catch (NumberFormatException e) {
+				long val = Long.parseLong(arg.substring(2), 16);
+				
+				settingIn.set((int) val);
 				
 				EMCApp app = settingIn.getMod();
 				if (app != null && app.getConfig() != null) {

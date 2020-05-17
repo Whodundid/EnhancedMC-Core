@@ -2,15 +2,15 @@ package com.Whodundid.core.debug;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.app.EMCApp;
+import com.Whodundid.core.coreApp.EMCNotification;
 import com.Whodundid.core.coreApp.EMCResources;
 import com.Whodundid.core.coreEvents.emcEvents.ChatLineCreatedEvent;
 import com.Whodundid.core.coreEvents.emcEvents.TabCompletionEvent;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.colorPicker.EGuiColorPicker;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.colorPicker.EGuiColorPickerSimple;
 import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.EGuiPlayerViewer;
-import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.TextureDisplayer;
+import com.Whodundid.core.enhancedGui.guiObjects.windows.TextureDisplayer;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
-import com.Whodundid.core.notifications.baseObjects.EMCNotification;
 import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.playerUtil.PlayerFacing;
@@ -57,7 +57,9 @@ import org.lwjgl.BufferUtils;
 public class DebugFunctions {
 
 	static Minecraft mc = Minecraft.getMinecraft();
-
+	public static boolean drawWindowInit = false;
+	public static boolean drawWindowPID = true;
+	
 	public static void runDebugFunction(IDebugCommand function) { runDebugFunction(function.getDebugCommandID(), null); }
 	public static boolean runDebugFunction(int functionID) { return runDebugFunction(functionID, null); }
 	public static boolean runDebugFunction(int functionID, ETerminal termIn, String... args) {
@@ -76,60 +78,15 @@ public class DebugFunctions {
 	public static int getNum() { return IDebugCommand.values().length; }
 
 	private static void debug_0(ETerminal termIn, String... args) throws Throwable {
-		if (args != null && args.length > 0) {
-			String file = EUtil.combineAll(args, "");
-			
-			FileSystem filesystem = null;
-			URL url = EnhancedMC.class.getResource(file);
-
-			try {
-				if (url != null) {
-					URI uri = url.toURI();
-					Path path = null;
-
-					if ("file".equals(uri.getScheme())) {
-						path = Paths.get(EnhancedMC.class.getResource(file).toURI());
-					}
-					else {
-						filesystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
-						path = filesystem.getPath(file);
-					}
-					
-					Optional<Path> obj = Files.walk(path).findFirst();
-					
-					Path p = obj.get();
-					
-					if (p != null) {
-						try {
-							BufferedImage img = ImageIO.read(p.toFile());
-							System.out.println(img);
-							DynamicTextureHandler handler = new DynamicTextureHandler(mc.renderEngine, img);
-							System.out.println(handler);
-							if (handler != null) {
-								EnhancedMC.displayWindow(new TextureDisplayer(handler), CenterType.screen);
-							}
-						}
-						catch (IIOException e) {
-							if (termIn != null) {
-								termIn.writeln(p, EColors.cyan);
-							}
-							System.out.println(p);
-						}
-					}
-				}
-			}
-			catch (Exception e) { e.printStackTrace(); }
-		}
-		else { System.out.println("empty args"); }
+		
 	}
 	
 	private static void debug_1(ETerminal termIn, String... args) throws Throwable {
-		PlayerFacing.setFacingDir(PlayerFacing.getCompassFacingDir());
-		//EnhancedMC.getRenderer().addObject(new EMCNotification("EMC: Welcome to EnhancedMC!"));
+		
 	}
 	
 	private static void debug_2(ETerminal termIn, String... args) throws Throwable {
-		//EnhancedMC.displayWindow(new EGuiColorPickerSimple(EnhancedMC.getRenderer()));
+		
 	}
 	
 	private static void debug_3(ETerminal termIn, String... args) throws Throwable {
@@ -137,7 +94,7 @@ public class DebugFunctions {
 	}
 	
 	private static void debug_4(ETerminal termIn, String... args) throws Throwable {
-		//EnhancedMC.getNotificationHandler().clearNotifications();
+		
 	}
 	
 }

@@ -1,34 +1,43 @@
 package com.Whodundid.core.util.resourceUtil;
 
+import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.storageUtil.DynamicTextureHandler;
-import java.awt.image.BufferedImage;
-import java.io.InputStream;
-import javax.imageio.ImageIO;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.IResource;
+import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
 public class ResourceUtil {
 
 	/** Returns the actual width in pixels for the given RescoureLocation. */
 	public static int getImageWidth(ResourceLocation locIn) {
 		try {
-			IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(locIn);
-			InputStream stream = resource.getInputStream();
-			BufferedImage image = ImageIO.read(stream);
-			return image.getWidth();
-		} catch (Exception e) { e.printStackTrace(); }
+			String path = EUtil.subStringToString(locIn.getResourcePath(), 0, "texture/", true);
+			ITextureObject resource = Minecraft.getMinecraft().getTextureManager().getTexture(locIn);
+			
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, resource.getGlTextureId());
+			
+			int width = GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
+			
+			return width;
+		}
+		catch (Exception e) { e.printStackTrace(); }
 		return -1;
 	}
 	
 	/** Returns the actual height in pixels for the given RescoureLocation. */
 	public static int getImageHeight(ResourceLocation locIn) {
 		try {
-			IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(locIn);
-			InputStream stream = resource.getInputStream();
-			BufferedImage image = ImageIO.read(stream);
-			return image.getHeight();
-		} catch (Exception e) { e.printStackTrace(); }
+			String path = EUtil.subStringToString(locIn.getResourcePath(), 0, "texture/", true);
+			ITextureObject resource = Minecraft.getMinecraft().getTextureManager().getTexture(locIn);
+			
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, resource.getGlTextureId());
+			
+			int height = GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_HEIGHT);
+			
+			return height;
+		}
+		catch (Exception e) { e.printStackTrace(); }
 		return -1;
 	}
 	

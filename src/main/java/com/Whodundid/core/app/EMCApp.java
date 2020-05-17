@@ -46,6 +46,8 @@ public abstract class EMCApp implements Comparable<EMCApp> {
 	protected boolean enabled = false;
 	protected String version = "no version";
 	protected String author = "no author";
+	protected String artist = "no artist";
+	protected EArrayList<String> contributors = new EArrayList();
 	protected String versionDate = "no date";
 	protected boolean isDisableable = true;
 	protected boolean incompatible = false; //a flag stating that this submod is incompatible with at least one other loaded emc submod
@@ -82,7 +84,9 @@ public abstract class EMCApp implements Comparable<EMCApp> {
 	public String getVersion() { return version; }
 	public String getName() { return appName; }
 	public String getAuthor() { return author; }
+	public String getArtist() { return artist; }
 	public String getVersionDate() { return versionDate; }
+	public EArrayList<String> getContributors() { return contributors; }
 	public EMCApp setResources(AppResources resourcesIn) { resources = resourcesIn; return this; }
 	public AppResources getResources() { return resources; }
 	public EArrayList<EResource> getLogo() { return logo; }
@@ -155,7 +159,7 @@ public abstract class EMCApp implements Comparable<EMCApp> {
 	public void overlayEvent(RenderGameOverlayEvent e) {}
 	public void overlayTextEvent(RenderGameOverlayEvent.Text e) {}
 	public void overlayPreEvent(RenderGameOverlayEvent.Pre e) {}
-	public void OverlayPostEvent(RenderGameOverlayEvent.Post e) {}
+	public void overlayPostEvent(RenderGameOverlayEvent.Post e) {}
 	
 	//visual renders
 	public void renderFogDensityEvent(EntityViewRenderEvent.FogDensity e) {}

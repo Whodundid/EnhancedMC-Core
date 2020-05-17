@@ -42,6 +42,7 @@ public class EGuiButton extends EnhancedActionObject {
 	}
 	public EGuiButton(IEnhancedGuiObject parentIn, int posX, int posY, int width, int height) { this(parentIn, posX, posY, width, height, ""); }
 	public EGuiButton(IEnhancedGuiObject parentIn, int posX, int posY, int width, int height, String displayStringIn) {
+		setMaxDims(200, 20);
 		init(parentIn, posX, posY, width, height);
 		displayLabel = new EGuiLabel(this, (drawCentered ? midX : startX + 3) + textOffset, startY + (height - 7) / 2, displayStringIn) {
 			@Override
@@ -151,6 +152,15 @@ public class EGuiButton extends EnhancedActionObject {
 				performAction(null, null);
 			}
 		}
+	}
+	
+	public EGuiButton updateTrueFalseDisplay() {
+		if (trueFalseButton) {
+			String cur = getDisplayString();
+			boolean val = cur.equals("False");
+			setDisplayString(val ? "True" : "False").setDisplayStringColor(val ? 0x55ff55 : 0xff5555);
+		}
+		return this;
 	}
 	
 	public EGuiButton updateTrueFalseDisplay(AppConfigSetting<Boolean> setting) { return updateTrueFalseDisplay(setting.get()); }

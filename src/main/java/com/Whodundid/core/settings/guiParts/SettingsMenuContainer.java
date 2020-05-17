@@ -3,7 +3,7 @@ package com.Whodundid.core.settings.guiParts;
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.app.EMCApp;
 import com.Whodundid.core.app.gui.AppErrorType;
-import com.Whodundid.core.app.gui.AppInfoDialogueBox;
+import com.Whodundid.core.app.gui.AppInfoWindow;
 import com.Whodundid.core.app.util.AppEnabler;
 import com.Whodundid.core.app.util.AppErrorDisplay;
 import com.Whodundid.core.coreApp.EMCResources;
@@ -96,7 +96,7 @@ public class SettingsMenuContainer extends EnhancedGuiObject {
 	
 	private void openInfo() {
 		EDimension d = topParent.getDimensions();
-		AppInfoDialogueBox infoBox = new AppInfoDialogueBox(mod);
+		AppInfoWindow infoBox = new AppInfoWindow(mod);
 		EnhancedMC.displayWindow(infoBox, CenterType.screen);
 	}
 	

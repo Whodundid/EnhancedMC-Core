@@ -62,7 +62,6 @@ public class KeyBindGui extends WindowParent {
 			@Override
 			public void mousePressed(int mX, int mY, int button) {
 				super.mousePressed(mX, mY, button);
-				System.out.println(this.getCurrentLine());
 				if (getCurrentLine() != null && getCurrentLine().getStoredObj() != null) {
 					KeyBinding k = (KeyBinding) getCurrentLine().getStoredObj();
 					loadKeyValues(k);
@@ -190,9 +189,21 @@ public class KeyBindGui extends WindowParent {
 				setDimensions(0, header.height, screen.width, screen.height - header.height);
 			}
 			
+			TextAreaLine l = keyList.getCurrentLine();
 			int pos = keyList.getVScrollBar().getScrollPos();
 			reInitObjects();
 			keyList.getVScrollBar().setScrollBarPos(pos);
+			
+			if (l != null) {
+				TextAreaLine theLine = keyList.getLineWithText(l.getText());
+				keyList.setSelectedLine(theLine);
+			}
+			
+			if (selectedKey != null) {
+				changeKey.setVisible(true);
+				resetKey.setVisible(true);
+				loadKeyValues(selectedKey);
+			}
 		}
 		catch (Exception e) { e.printStackTrace(); }
 	}
@@ -201,9 +212,21 @@ public class KeyBindGui extends WindowParent {
 	public void miniturize() {
 		setDimensions(getPreMax());
 		
+		TextAreaLine l = keyList.getCurrentLine();
 		int pos = keyList.getVScrollBar().getScrollPos();
 		reInitObjects();
 		keyList.getVScrollBar().setScrollBarPos(pos);
+		
+		if (l != null) {
+			TextAreaLine theLine = keyList.getLineWithText(l.getText());
+			keyList.setSelectedLine(theLine);
+		}
+		
+		if (selectedKey != null) {
+			changeKey.setVisible(true);
+			resetKey.setVisible(true);
+			loadKeyValues(selectedKey);
+		}
 	}
 	
 	protected boolean updateLists() { return updateLists(null); }

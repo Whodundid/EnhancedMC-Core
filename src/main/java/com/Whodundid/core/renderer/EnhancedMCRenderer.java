@@ -27,7 +27,10 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
@@ -74,6 +77,36 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 		drawObject(0, 0);
 	}
 	
+	public void onTextRender(RenderGameOverlayEvent.Text e) {
+		TaskBar b = getTaskBar();
+		if (b != null && e.left != null && e.right != null) {
+			e.setCanceled(true);
+			ArrayList<String> l = e.left;
+			ArrayList<String> r = e.right;
+			int width = res.getScaledWidth();
+			
+			FontRenderer fontrenderer = Minecraft.getMinecraft().fontRendererObj;
+			
+			int top = b.endY + 2;
+			for (String msg : l) {
+				if (msg == null) { continue; }
+				drawRect(1, top - 1, 2 + fontrenderer.getStringWidth(msg) + 1, top + fontrenderer.FONT_HEIGHT - 1, -1873784752);
+				fontrenderer.drawString(msg, 2, top, 14737632);
+				top += fontrenderer.FONT_HEIGHT;
+			}
+			
+			top = b.endY + 2;
+			for (String msg : r) {
+				if (msg == null) { continue; }
+				int w = fontrenderer.getStringWidth(msg);
+				int left = width - 2 - w;
+				drawRect(left - 1, top - 1, left + w + 1, top + fontrenderer.FONT_HEIGHT - 1, -1873784752);
+				fontrenderer.drawString(msg, left, top, 14737632);
+				top += fontrenderer.FONT_HEIGHT;
+			}
+		}
+	}
+	
 	//----------------
 	//Object Overrides
 	//----------------
@@ -101,6 +134,8 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	//main draw
 	@Override
 	public void drawObject(int mXIn, int mYIn) {
+		//System.out.println(Minecraft.getMinecraft().gameSettings.showDebugInfo);
+		
 		checkForProxy();
 		updateBeforeNextDraw(mXIn, mYIn);
 		
@@ -147,7 +182,7 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 			if (getHoveringObject() != null) { getHoveringObject().onMouseHover(mX, mY); }
 			
 			//draw debug stuff
-			if (EnhancedMC.isDebugMode() && !mc.gameSettings.showDebugInfo) { drawDebugInfo(); }
+			if (EnhancedMC.isDebugMode() && !mc.gameSettings.showDebugInfo && (mc.currentScreen instanceof IRendererProxy)) { drawDebugInfo(); }
 		}
 		
 		GlStateManager.popMatrix();
@@ -160,8 +195,8 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	@Override public EnhancedMCRenderer setHoverTextColor(int colorIn) { return this; }
 	
 	//obj ids;
-	@Override public int getObjectID() { return 0; }
-	@Override public EnhancedMCRenderer setObjectID(int idIn) { return this; }
+	@Override public long getObjectID() { return -1; }
+	@Override public EnhancedMCRenderer setObjectID(long idIn) { return this; }
 	@Override public String getObjectName() { return "EMC Renderer"; }
 	@Override public EnhancedMCRenderer setObjectName(String nameIn) { return this; }
 	
@@ -378,7 +413,7 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 		else { mX = -1; mY = -1; }
 		
 		//handle cursor stuff for highest obj
-		if (!EnhancedMC.safeRemoteDesktopMode) {
+		if (CoreApp.customCursors.get()) {
 			if (getHighestZObjectUnderMouse() != null) { getHighestZObjectUnderMouse().updateCursorImage(); }
 			else { updateCursorImage(); }
 		}
@@ -408,6 +443,13 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	
 	public void addTaskBar() {
 		addObject(new TaskBar());
+	}
+	
+	public TaskBar getTaskBar() {
+		for (IEnhancedGuiObject o : guiObjects) {
+			if (o instanceof TaskBar) { return (TaskBar) o; }
+		}
+		return null;
 	}
 	
 	public GuiScreen getProxyGuiScreen() { return proxy instanceof GuiScreen ? (GuiScreen) proxy : null; }
@@ -441,6 +483,7 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	
 	protected void updateZLayers() {
 		if (toFront != null) {
+			
 			//move the 'toFront' object to the front
 			if (guiObjects.contains(toFront)) {
 				guiObjects.remove(toFront);
@@ -458,14 +501,15 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 		}
 		
 		if (toBack != null) {
+			
 			//move the 'toBack' object to the back
 			if (guiObjects.contains(toBack)) {
 				EArrayList<IEnhancedGuiObject> objects = new EArrayList();
-				guiObjects.remove(toFront);
-				objects.addAll(guiObjects);
-				guiObjects.clear();
-				guiObjects.add(toFront);
-				guiObjects.addAll(objects);
+				guiObjects.remove(toBack);
+				//objects.addAll(guiObjects);
+				//guiObjects.clear();
+				guiObjects.add(guiObjects.size() - 1, toBack);
+				//guiObjects.addAll(objects);
 			}
 			
 			//move things that should always be at the top to the top

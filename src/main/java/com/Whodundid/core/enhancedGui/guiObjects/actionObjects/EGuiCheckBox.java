@@ -12,6 +12,7 @@ import com.Whodundid.core.util.renderUtil.EColors;
 public class EGuiCheckBox extends EnhancedActionObject {
 	
 	boolean checked = false;
+	boolean drawX = false;
 	
 	public EGuiCheckBox(IEnhancedGuiObject objIn, int xIn, int yIn, int widthIn, int heightIn) { this(objIn, xIn, yIn, widthIn, heightIn, false); }
 	public EGuiCheckBox(IEnhancedGuiObject objIn, int xIn, int yIn, int widthIn, int heightIn, AppConfigSetting<Boolean> settingIn) { this(objIn, xIn, yIn, widthIn, heightIn, settingIn.get()); }
@@ -27,6 +28,9 @@ public class EGuiCheckBox extends EnhancedActionObject {
 		
 		if (checked) {
 			drawTexture(startX - 2, startY - 5, width + 5, height + 6, EMCResources.guiCheck);
+		}
+		else if (drawX) {
+			drawTexture(startX - 2, startY - 2, width + 4, height + 4, EMCResources.guiX);
 		}
 	}
 	
@@ -48,7 +52,10 @@ public class EGuiCheckBox extends EnhancedActionObject {
 		return this;
 	}
 	
+	public boolean drawsX() { return drawX; }
 	public boolean isChecked() { return checked; }
 	
+	public EGuiCheckBox setDrawX(boolean val) { drawX = val; return this; }
 	public EGuiCheckBox setChecked(boolean val) { checked = val; return this; }
+	
 }

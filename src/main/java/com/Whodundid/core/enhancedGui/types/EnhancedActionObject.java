@@ -10,50 +10,50 @@ public abstract class EnhancedActionObject extends EnhancedGuiObject implements 
 
 	protected boolean runActionOnPress = false;
 	protected Object selectedObject = null;
-	protected Object storredObject = null;
-	protected IEnhancedGuiObject actionReciever;
+	protected Object storedObject = null;
+	protected IEnhancedGuiObject actionReceiver;
 	
 	protected EnhancedActionObject() {}
 	protected EnhancedActionObject(IEnhancedGuiObject parentIn) {
-		actionReciever = parentIn;
+		actionReceiver = parentIn;
 	}
 	
 	@Override
 	public void init(IEnhancedGuiObject objIn, int xIn, int yIn) {
 		super.init(objIn, xIn, yIn);
-		actionReciever = objIn;
+		actionReceiver = objIn;
 	}
 	
 	@Override
 	public void init(IEnhancedGuiObject objIn, int xIn, int yIn, int widthIn, int heightIn) {
 		init(objIn, xIn, yIn, widthIn, heightIn, -1);
-		actionReciever = objIn;
+		actionReceiver = objIn;
 	}
 	
 	@Override
 	public void init(IEnhancedGuiObject objIn, int xIn, int yIn, int widthIn, int heightIn, int objectIdIn) {
 		super.init(objIn, xIn, yIn, widthIn, heightIn, objectIdIn);
-		actionReciever = objIn;
+		actionReceiver = objIn;
 	}
 	
 	//actions
 	@Override
 	public void performAction(Object... args) {
-		if (actionReciever != null) {
-			IWindowParent p = actionReciever.getWindowParent();
+		if (actionReceiver != null) {
+			IWindowParent p = actionReceiver.getWindowParent();
 			if (p != null) { p.bringToFront(); }
-			actionReciever.actionPerformed(this, args);
+			actionReceiver.actionPerformed(this, args);
 		}
 	}
 	@Override public void onPress() {}
-	@Override public boolean runActionOnPress() { return runActionOnPress; }
+	@Override public boolean runsActionOnPress() { return runActionOnPress; }
 	@Override public IEnhancedActionObject setRunActionOnPress(boolean value) { runActionOnPress = value; return this; }
-	@Override public IEnhancedActionObject setActionReciever(IEnhancedGuiObject objIn) { actionReciever = objIn; return this; }
-	@Override public IEnhancedGuiObject getActionReciever() { return actionReciever; }
+	@Override public IEnhancedActionObject setActionReceiver(IEnhancedGuiObject objIn) { actionReceiver = objIn; return this; }
+	@Override public IEnhancedGuiObject getActionReceiver() { return actionReceiver; }
 		
 	//objects
-	@Override public IEnhancedActionObject setStorredObject(Object objIn) { storredObject = objIn; return this; }
-	@Override public Object getStorredObject() { return storredObject; }
+	@Override public IEnhancedActionObject setStoredObject(Object objIn) { storedObject = objIn; return this; }
+	@Override public Object getStoredObject() { return storedObject; }
 	@Override public IEnhancedActionObject setSelectedObject(Object objIn) { selectedObject = objIn; return this; }
 	@Override public Object getSelectedObject() { return selectedObject; }
 }

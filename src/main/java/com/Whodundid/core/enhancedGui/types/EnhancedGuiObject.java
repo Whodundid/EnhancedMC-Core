@@ -24,6 +24,7 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.util.chatUtil.EChatUtil;
+import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
@@ -50,9 +51,9 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	protected ScreenLocation oldArea = ScreenLocation.out;
 	protected EObjectGroup objectGroup;
 	protected String objectName = "noname";
-	protected String hoverText = "";
+	protected String hoverText = null;
 	protected int objZLevel = 0;
-	protected int objectId = -1;
+	protected long objectId = -1;
 	protected boolean enabled = true;
 	protected boolean visible = true;
 	protected boolean mouseEntered = false;
@@ -66,7 +67,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	protected boolean firstDraw = false;
 	protected boolean closeable = true;
 	protected boolean closed = false;
-	protected int hoverTextColor = 0xff00d1ff;
+	protected int hoverTextColor = EColors.lime.intVal;
 	private boolean hasBeenInitialized = false;
 	private boolean objectInit = false;
 	private boolean beingRemoved = false;
@@ -190,10 +191,11 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	@Override public boolean isDrawingHover() { return getTopParent() != null && this.equals(getTopParent().getHoveringObject()); }
 	@Override public IEnhancedGuiObject setHoverText(String textIn) { hoverText = textIn; return this; }
 	@Override public IEnhancedGuiObject setHoverTextColor(int colorIn) { hoverTextColor = colorIn; return this; }
+	@Override public String getHoverText() { return hoverText; }
 	
 	//obj ids
-	@Override public int getObjectID() { return objectId; }
-	@Override public IEnhancedGuiObject setObjectID(int idIn) { objectId = idIn; return this; }
+	@Override public long getObjectID() { return objectId; }
+	@Override public IEnhancedGuiObject setObjectID(long idIn) { objectId = idIn; return this; }
 	@Override public String getObjectName() { return objectName; }
 	@Override public IEnhancedGuiObject setObjectName(String nameIn) { objectName = nameIn; return this; }
 	
@@ -342,6 +344,7 @@ public abstract class EnhancedGuiObject extends EGui implements IEnhancedGuiObje
 	@Override public EDimension getBoundaryEnforcer() { return boundaryDimension; }
 	@Override public boolean isClickable() { return clickable; }
 	@Override public IEnhancedGuiObject setClickable(boolean valIn) { clickable = valIn; return this; }
+	@Override public IEnhancedGuiObject setEntiretyClickable(boolean val) { StaticEGuiObject.setEntiretyClickable(this, val); return this; }
 	
 	//basic inputs
 	@Override public void parseMousePosition(int mX, int mY) { StaticEGuiObject.parseMousePosition(this, mX, mY); }

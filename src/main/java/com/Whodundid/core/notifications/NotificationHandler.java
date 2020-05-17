@@ -1,12 +1,18 @@
 package com.Whodundid.core.notifications;
 
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.app.AppType;
+import com.Whodundid.core.app.RegisteredApps;
+import com.Whodundid.core.coreApp.EMCNotification;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
-import com.Whodundid.core.notifications.baseObjects.EMCNotification;
+import com.Whodundid.core.notifications.util.NotificationObject;
+import com.Whodundid.core.notifications.util.NotificationType;
 import com.Whodundid.core.util.storageUtil.EArrayList;
-
+import java.io.File;
+import java.io.PrintWriter;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Scanner;
 import net.minecraft.client.Minecraft;
 
 //Author: Hunter Bragg
@@ -14,13 +20,17 @@ import net.minecraft.client.Minecraft;
 public class NotificationHandler {
 	
 	private static NotificationHandler instance = null;
+	public static File configLocation = new File(RegisteredApps.getAppConfigBaseFileLocation(AppType.CORE).getAbsolutePath() + "/notifications.cfg");
 	protected Deque<NotificationObject> notificationQueue;
-	protected EArrayList<String> registeredNotifications = new EArrayList();
-	protected EArrayList<String> enabledNotifications = new EArrayList();
-	protected EArrayList<String> disabledNotifications = new EArrayList();
+	protected EArrayList<NotificationType> enabledNotifications = new EArrayList();
+	protected EArrayList<NotificationType> disabledNotifications = new EArrayList();
 	protected NotificationObject curNote = null;
 	protected long delayStart = 0l;
 	protected long delayTime = 300l;
+	
+	//-----------------------------------
+	//NotificationHandler Static Instance
+	//-----------------------------------
 	
 	public static NotificationHandler getHandler() {
 		return instance = instance != null ? instance : new NotificationHandler();
@@ -29,7 +39,103 @@ public class NotificationHandler {
 	private NotificationHandler() {
 		notificationQueue = new ArrayDeque();
 	}
+	
+	//--------------------------
+	//NotificationHandler Config
+	//--------------------------
+	
+	public boolean loadConfig() {
+		if (!configLocation.exists()) { saveConfig(); }
+		
+		if (load()) { EnhancedMC.info("EMC: Successfully loaded Notification config file!"); }
+		else { EnhancedMC.error("EMC Error: Failed to load Notification config file!"); }
+		
+		return false;
+	}
+	
+	private boolean load() {
+		EnhancedMC.info("EMC: Loading Notification config file...");
+		try (Scanner reader = new Scanner(configLocation)) {
+			while (reader.hasNextLine()) {
+				String line = reader.nextLine();
+				
+				if (line.equals("END")) { break; } //config end identifier
+				if (line.isEmpty() || line.startsWith("**")) { continue; } //ignore comment line
+				
+				String[] parts = line.split(",");
+				if (parts.length == 2) {
+					
+					String internal = "";
+					boolean enabled = false;
+					
+					internal = parts[0];
+					enabled = Boolean.parseBoolean(parts[1]);
+					
+					if (internal != null && !internal.isEmpty()) {
+						for (NotificationType o : getNotificationTypes()) {
+							if (o != null) {
+								if (o.getInternalName().equals(internal)) {
+									if (enabled) { enableNotificationType(o, false); }
+									else { disableNotificationType(o, false); }
+								}
+							}
+						}
+					}
+					
+				} //while
+			}
+			
+			return true;
+		}
+		catch (Exception e) { e.printStackTrace(); }
+		return false;
+	}
+	
+	public boolean saveConfig() {
+		if (!configLocation.exists()) {
+			EnhancedMC.info("EMC: Notification config not found, attempting to create a new one...");
+			
+			//if no config exists, enable all
+			for (NotificationType o : getNotificationTypes()) {
+				enableNotificationType(o, false);
+			}
+		}
+		
+		if (!save()) {
+			EnhancedMC.error("EMC Error: Failed to save Notification config file!");
+			return false;
+		}
+		
+		return true;
+	}
+	
+	private boolean save() {
+		try (PrintWriter saver = new PrintWriter(configLocation, "UTF-8")) {
+			saver.println("** EMC Notification Config **");
+			saver.println();
+			
+			boolean oneEnabled = false;
+			
+			for (NotificationType o : getNotificationTypes()) {
+				if (o != null) {
+					oneEnabled = true;
+					saver.println(o.getInternalName() + "," + isNotificationTypeEnabled(o));
+				}
+			}
+			
+			if (oneEnabled) { saver.println(); }
+			saver.print("END");
+			
+			return true;
+		}
+		catch (Exception e) { e.printStackTrace(); }
+		return false;
+	}
 
+	//---------------------------
+	//NotificationHandler Methods
+	//---------------------------
+	
 	public NotificationHandler post(String message, WindowParent attentionWindow) { return post(new EMCNotification(message)); }
 	public NotificationHandler post(NotificationObject obj) {
 		if (obj != null) { notificationQueue.add(obj); }
@@ -46,7 +152,7 @@ public class NotificationHandler {
 		}
 	}
 	
-	public void clearNotifications() {
+	public void clearAllNotifications() {
 		if (EnhancedMC.isEGuiOpen(NotificationObject.class)) {
 			Object o = EnhancedMC.getWindowInstance(NotificationObject.class);
 			if (o instanceof NotificationObject) {
@@ -57,7 +163,75 @@ public class NotificationHandler {
 		notificationQueue.clear();
 		curNote = null;
 	}
-
+	
+	public void removeCurrentNotification() {
+		curNote = null;
+		delayStart = System.currentTimeMillis();
+	}
+	
+	public void registerNotificationType(NotificationType typeIn) {
+		if (!containsType(typeIn)) { enabledNotifications.add(typeIn); }
+		else { EnhancedMC.error("EMC Error: A NotificationType of " + typeIn.getInternalName() + " already exists!"); }
+	}
+	
+	public void unregisterNotificationType(NotificationType typeIn) {
+		if (containsType(typeIn)) { 
+			enabledNotifications.removeIfContains(typeIn);
+			disabledNotifications.removeIfContains(typeIn);
+		}
+		else { EnhancedMC.error("EMC Error: A NotificationType of " + typeIn.getInternalName() + " does not exist!"); }
+	}
+	
+	public void enableNotificationType(NotificationType typeIn, boolean save) {
+		enabledNotifications.addIfNotNullAndNotContains(typeIn);
+		disabledNotifications.removeIfContains(typeIn);
+		if (save) { saveConfig(); }
+	}
+	
+	public void disableNotificationType(NotificationType typeIn, boolean save) {
+		enabledNotifications.removeIfContains(typeIn);
+		disabledNotifications.addIfNotNullAndNotContains(typeIn);
+		if (save) { saveConfig(); }
+	}
+	
+	public boolean toggleNotificationEnabled(NotificationType typeIn, boolean save) {
+		if (enabledNotifications.contains(typeIn)) { disableNotificationType(typeIn, save); saveConfig(); return false; }
+		else if (disabledNotifications.contains(typeIn)) { enableNotificationType(typeIn, save); saveConfig(); return true; }
+		return false;
+	}
+	
+	public boolean isNotificationTypeEnabled(NotificationType typeIn) {
+		return enabledNotifications.contains(typeIn);
+	}
+	
+	//---------------------------
+	//NotificationHandler Getters
+	//---------------------------
+	
+	public EArrayList<NotificationType> getNotificationTypes() {
+		return EArrayList.combineLists(enabledNotifications, disabledNotifications);
+	}
+	
+	public EArrayList<String> getInternalNames() {
+		EArrayList<String> names = new EArrayList();
+		for (NotificationType t : getNotificationTypes()) {
+			names.add(t.getInternalName());
+		}
+		return names;
+	}
+	
+	public NotificationObject getCurrentNotification() { return curNote; }
+	
+	//---------------------------
+	//NotificationHandler Setters
+	//---------------------------
+	
+	public void setNotificationDelay(long delayIn) { delayTime = delayIn; }
+	
+	//------------------------------------
+	//NotificationHandler Internal Methods
+	//------------------------------------
+	
 	protected void displayNextNotification() {
 		if (!notificationQueue.isEmpty()) {
 			NotificationObject n = notificationQueue.pop();
@@ -66,16 +240,13 @@ public class NotificationHandler {
 		}
 	}
 	
-	public void removeCurrentNotification() {
-		curNote = null;
-		delayStart = System.currentTimeMillis();
+	protected boolean containsType(NotificationType typeIn) {
+		if (typeIn != null) {
+			for (NotificationType t : getNotificationTypes()) {
+				if (t.getInternalName() == typeIn.getInternalName()) { return true; }
+			}
+		}
+		return false;
 	}
 	
-	public void registerNotificationType(String typeIn) {
-		registeredNotifications.addIfNotNullAndNotContains(typeIn);
-	}
-	
-	public void unregisterNotificationType(String typeIn) {
-		registeredNotifications.removeIfContains(typeIn);
-	}
 }

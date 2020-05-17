@@ -19,6 +19,7 @@ import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.util.renderUtil.CursorHelper;
+import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
@@ -31,6 +32,11 @@ import org.lwjgl.input.Mouse;
 //Author: Hunter Bragg
 
 public class StaticEGuiObject extends EGui {
+	
+	private static volatile long windowPID = 0l;
+	
+	/** Returns the next pid that will be assigned to a requesting object. */
+	public static synchronized long getPID() { return windowPID++; }
 	
 	//main draw
 	public static void updateCursorImage(IEnhancedGuiObject obj) {
@@ -74,8 +80,8 @@ public class StaticEGuiObject extends EGui {
 			int eX = sX + strWidth + 10;
 			int eY = sY + 16;
 			
-			drawRect(sX, sY, sX + strWidth + 10, sY + 16, 0xff000000);
-			drawRect(sX + 1, sY + 1, eX - 1, eY - 1, 0xff323232);
+			drawRect(sX, sY, sX + strWidth + 10, sY + 16, EColors.black);
+			drawRect(sX + 1, sY + 1, eX - 1, eY - 1, EColors.steel);
 			drawStringWithShadow(hoverText, sX + 5, sY + 4, textColor);
 		}
 	}
@@ -445,7 +451,6 @@ public class StaticEGuiObject extends EGui {
 	public static void mouseDragged(IEnhancedGuiObject objIn, int mX, int mY, int button, long timeSinceLastClick) {}
 	public static void mouseScolled(IEnhancedGuiObject objIn, int mX, int mY, int change) {
 		objIn.postEvent(new EventMouse(objIn, mX, mY, -1, MouseType.Scrolled));
-		//objIn.mouseScrolled(change);
 		for (IEnhancedGuiObject o : objIn.getObjects()) {
 			if (o.isMouseInside(mX, mY) && o.checkDraw()) { o.mouseScrolled(change); }
 		}
@@ -481,6 +486,11 @@ public class StaticEGuiObject extends EGui {
 	}
 	public static void keyReleased(IEnhancedGuiObject objIn, char typedChar, int keyCode) {
 		objIn.postEvent(new EventKeyboard(objIn, typedChar, keyCode, KeyboardType.Released));
+	}
+	public static void setEntiretyClickable(IEnhancedGuiObject objIn, boolean val) {
+		EArrayList<IEnhancedGuiObject> children = objIn.getAllChildren();
+		children.forEach(o -> o.setClickable(val));
+		objIn.setClickable(val);
 	}
 	
 	public static void addObjects(IEnhancedGuiObject objIn, EArrayList<IEnhancedGuiObject> toBeAdded) {

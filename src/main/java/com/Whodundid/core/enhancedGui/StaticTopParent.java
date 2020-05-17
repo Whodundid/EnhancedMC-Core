@@ -28,6 +28,7 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 import java.util.Deque;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
@@ -107,9 +108,14 @@ public class StaticTopParent extends EGui {
 			mc.displayGuiScreen(null);
 			mc.setIngameFocus();
 		}
-		IEnhancedGuiObject fo = objIn.getFocusedObject();
-		if (fo != null && fo != objIn) { fo.keyPressed(Keyboard.getEventCharacter(), Keyboard.getEventKey()); }
-		if (fo == null || fo == objIn) { if (RegisteredApps.isAppRegEn(AppType.ENHANCEDCHAT)) { RegisteredApps.getApp(AppType.ENHANCEDCHAT).keyEvent(new KeyInputEvent()); } }
+		if (keyCode == 61) { //f3 key for debug info
+			Minecraft.getMinecraft().gameSettings.showDebugInfo = !Minecraft.getMinecraft().gameSettings.showDebugInfo;
+		}
+		else {
+			IEnhancedGuiObject fo = objIn.getFocusedObject();
+			if (fo != null && fo != objIn) { fo.keyPressed(Keyboard.getEventCharacter(), Keyboard.getEventKey()); }
+			if (fo == null || fo == objIn) { if (RegisteredApps.isAppRegEn(AppType.ENHANCEDCHAT)) { RegisteredApps.getApp(AppType.ENHANCEDCHAT).keyEvent(new KeyInputEvent()); } }
+		}
 	}
 	/** Notify the focused object that the keyboard just had a key released. */
 	public static void keyReleased(IEnhancedTopParent objIn, char typedChar, int keyCode) {
@@ -129,7 +135,7 @@ public class StaticTopParent extends EGui {
 		String topParent = "TopParent: " + objIn.getTopParent();
 		String focusedObject = "";
 		String focusLockObject = "";
-		String objects = "objs: " + objIn.getObjects();
+		//String objects = "objs: " + objIn.getObjects();
 		String modifyType = "ModifyingObject & type: (" + objIn.getModifyingObject() + " : " + objIn.getModifyType() + ")";
 		String underMouse = "Object under mouse: " + out + " " + (ho != null ? ho.getZLevel() : -1);
 		String mousePos = "(" + EMouseHelper.mX + ", " + EMouseHelper.mY + ")";
@@ -153,15 +159,15 @@ public class StaticTopParent extends EGui {
 		
 		if (fr.getStringWidth(focusedObject) > longestX) { longestX = fr.getStringWidth(focusedObject); }
 		if (fr.getStringWidth(focusLockObject) > longestX) { longestX = fr.getStringWidth(focusLockObject); }
-		if (fr.getStringWidth(objects) > longestX) { longestX = fr.getStringWidth(objects); }
+		//if (fr.getStringWidth(objects) > longestX) { longestX = fr.getStringWidth(objects); }
 		if (fr.getStringWidth(modifyType) > longestX) { longestX = fr.getStringWidth(modifyType); }
 		if (fr.getStringWidth(underMouse) > longestX) { longestX = fr.getStringWidth(underMouse); }
 		if (fr.getStringWidth(mousePos) > longestX) { longestX = fr.getStringWidth(mousePos); }
 		
 		longestX += 3;
 		
-		drawRect(0, yPos - 3, longestX + 1, yPos + 71, EColors.seafoam);
-		drawRect(1, yPos - 2, longestX, yPos + 70, EColors.dgray);
+		drawRect(0, yPos - 4, longestX + 1, yPos + 61, EColors.black);
+		drawRect(1, yPos - 3, longestX, yPos + 60, EColors.dgray);
 		
 		//draw what the topParent is
 		drawStringWithShadow(topParent, 2, yPos, 0x70f3ff);
@@ -170,13 +176,13 @@ public class StaticTopParent extends EGui {
 		//draw the current focusLockObject - if it's a button, show that too
 		drawStringWithShadow(focusLockObject, 2, yPos + 20, 0x70f3ff);
 		//draw the topParent's current immediate children
-		drawStringWithShadow(objects, 2, yPos + 30, 0x70f3ff);
+		//drawStringWithShadow(objects, 2, yPos + 30, 0x70f3ff);
 		//draw the topParent's current modifying object and type
-		drawStringWithShadow(modifyType, 2, yPos + 40, 0x70f3ff);
+		drawStringWithShadow(modifyType, 2, yPos + 30, 0x70f3ff);
 		//draw the highest object currently under the mouse
-		drawStringWithShadow(underMouse, 2, yPos + 50, 0xffbb00);
+		drawStringWithShadow(underMouse, 2, yPos + 40, 0xffbb00);
 		//draw the current mouse position
-		drawStringWithShadow(mousePos, 2, yPos + 60, 0xffbb00);
+		drawStringWithShadow(mousePos, 2, yPos + 50, 0xffbb00);
 		
 		//draw escape stopper
 		//drawStringWithShadow("EscapeStopper: " + objIn.getEscapeStopper(), 2, 72, 0x70f3ff);
@@ -211,7 +217,8 @@ public class StaticTopParent extends EGui {
 			else {
 				EArrayList<IEnhancedGuiObject> childObjects = objIn.getAllChildren();
 				for (int i = childObjects.size() - 1; i >= 0; i--) {
-					childObjects.get(i).close();
+					IEnhancedGuiObject u = childObjects.get(i);
+					u.close();
 				}
 			}
 		}
@@ -373,7 +380,7 @@ public class StaticTopParent extends EGui {
 		if (objIn.getModifyType() != ObjectModifyType.Resize) {
 			for (IEnhancedGuiObject o : objIn.getAllChildren()) {
 				//check if the object can even be selected
-				if (o.isVisible() && o.isClickable()) {
+				if (o.isVisible() && (o.isClickable() || o.getHoverText() != null)) {
 					//then check if the mouse is in or around the object if it's resizeable
 					if (o.isMouseInside(mX, mY) || (o.isResizeable() && o.isMouseOnObjEdge(mX, mY))) { underMouse.add(o); }
 				}

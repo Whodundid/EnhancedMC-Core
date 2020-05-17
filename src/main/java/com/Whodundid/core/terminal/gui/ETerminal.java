@@ -17,6 +17,7 @@ import com.Whodundid.core.renderer.taskView.TaskBar;
 import com.Whodundid.core.terminal.TerminalCommandHandler;
 import com.Whodundid.core.terminal.gui.termParts.TerminalTextField;
 import com.Whodundid.core.terminal.gui.termParts.TerminalTextLine;
+import com.Whodundid.core.terminal.terminalCommand.TerminalCommand;
 import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.renderUtil.EColors;
@@ -44,6 +45,13 @@ public class ETerminal extends WindowParent {
 	public int startArgPos = -1;
 	public EArrayList<String> tabData = new EArrayList();
 	EArrayList<TextAreaLine> tabDisplayLines = new EArrayList();
+	boolean isCommand = false;
+	
+	public boolean requireConfirmation = false;
+	public String confirmationMessage = "";
+	public EArrayList<String> previousArgs = null;
+	public boolean prevRunVisually = false;
+	public TerminalCommand confirmationCommand = null;
 	
 	public ETerminal() {
 		super();
@@ -59,7 +67,6 @@ public class ETerminal extends WindowParent {
 		setMinDims(70, 32);
 		setResizeable(true);
 		setMaximizable(true);
-		//setPinnable(true);
 	}
 	
 	@Override
@@ -105,7 +112,6 @@ public class ETerminal extends WindowParent {
 		if (!init) {
 			history.addTextLine("EMC " + (EnhancedMC.isOpMode() ? "Op " : "") + "Terminal v1.0 initialized..", 0xffff00);
 			history.addTextLine();
-			//info("> Current Dir: " + EnumChatFormatting.AQUA + EnumChatFormatting.UNDERLINE + dir);
 			init = true;
 		}
 		
@@ -208,17 +214,33 @@ public class ETerminal extends WindowParent {
 			
 			try {
 				if (!cmd.isEmpty()) {
-					if (isTab) { handleTab(); }
-					else {
-						if (!(cmd.equals("clear") || cmd.equals("clr") || cmd.equals("cls"))) {
-							writeln("> " + cmd, 0xffffff);
+					if (requireConfirmation) {
+						writeln(cmd);
+						if (cmd.equals("y") || cmd.equals("n")) {
+							confirmationCommand.onConfirmation(cmd);
+							confirmationCommand.runCommand(this, previousArgs, prevRunVisually);
+							clearConfirmationRequirement();
+						}
+						else {
+							error("Invalid input! Type either 'y' or 'n'");
 						}
 						EnhancedMC.getTerminalHandler().cmdHistory.add(cmd);
-						EnhancedMC.getTerminalHandler().executeCommand(this, cmd);
 						inputField.setText("");
 						scrollToBottom();
-						tab1 = false;
-						tabData.clear();
+					}
+					else {
+						if (isTab) { handleTab(); }
+						else {
+							if (!(cmd.equals("clear") || cmd.equals("clr") || cmd.equals("cls"))) {
+								writeln("> " + cmd, 0xffffff);
+							}
+							EnhancedMC.getTerminalHandler().cmdHistory.add(cmd);
+							EnhancedMC.getTerminalHandler().executeCommand(this, cmd);
+							inputField.setText("");
+							scrollToBottom();
+							tab1 = false;
+							tabData.clear();
+						}
 					}
 				}
 				else if (isTab) { handleTab(); }
@@ -233,11 +255,12 @@ public class ETerminal extends WindowParent {
 			EDimension screen = getTopParent().getDimensions();
 			
 			if (getTopParent().containsObject(TaskBar.class)) {
+				int t = TaskBar.drawSize - 1;
 				switch (CoreApp.taskBarSide.get()) {
-				case "top": setDimensions(0, header.height + TaskBar.drawSize, screen.width, screen.height - (header.height + TaskBar.drawSize)); break;
-				case "bottom": setDimensions(0, header.height, screen.width, screen.height - (header.height + TaskBar.drawSize)); break;
-				case "left": setDimensions(TaskBar.drawSize, header.height, screen.width - TaskBar.drawSize, screen.height - header.height); break;
-				case "right": setDimensions(0, 0, screen.width - TaskBar.drawSize, screen.height - header.height); break;
+				case "top": setDimensions(0, header.height + t, screen.width, screen.height - (header.height + t)); break;
+				case "bottom": setDimensions(0, header.height, screen.width, screen.height - (header.height + t)); break;
+				case "left": setDimensions(t, header.height, screen.width - t, screen.height - header.height); break;
+				case "right": setDimensions(0, 0, screen.width - t, screen.height - header.height); break;
 				}
 			}
 			else {
@@ -307,14 +330,38 @@ public class ETerminal extends WindowParent {
 		return this;
 	}
 	
+	public ETerminal scrollToTop() {
+		history.getVScrollBar().setScrollBarPos(0);
+		return this;
+	}
+	
 	public void handleTab() {
 		String input = inputField.getText();
+		String command = EUtil.subStringToSpace(input, 0);
+		
+		System.out.println("arg: " + startArgPos + " " + getCurrentArg() + " " + isCommand + " " + command + " " + tab1);
 		
 		try {
 			if (!input.isEmpty()) {
 				//only test on a command if the starting input wasn't at arg 0 or if it was at -1
-				if (startArgPos != 0) {
+				if (!isCommand && getCurrentArg() >= 1) {
 					EnhancedMC.getTerminalHandler().executeCommand(this, input, true);
+				}
+				else if (startArgPos == -1 || getCurrentArg() == 0 && !tab1) { //build completions off of partial command input
+					if (!isCommand) {
+						isCommand = true;
+						try {
+							EArrayList<String> options = new EArrayList();
+							
+							for (String s : TerminalCommandHandler.getInstance().getSortedCommandNames()) {
+								if (s.startsWith(input)) { options.add(s); }
+							}
+						
+							buildTabCompletions(options);
+						}
+						catch (IndexOutOfBoundsException e) {}
+						catch (Exception e) { e.printStackTrace(); }
+					}
 				}
 				
 				//set tab true only after parsing the first if condition
@@ -323,8 +370,11 @@ public class ETerminal extends WindowParent {
 				//only run if there is tab data to iterate over
 				if (tabPos >= 0 && tabData.isNotEmpty()) {
 					
-					//determine where we are getting tab completion data from
-					if (startArgPos != 0) {
+					if (isCommand) {
+						inputField.setText(tabData.get(tabPos));
+					}
+					else if (startArgPos >= 0) { //determine where we are getting tab completion data from
+						
 						//grab everything up to the argument being tabbed
 						String f = "";
 						for (int i = 0, spaces = 0; i < input.length(); i++) {
@@ -371,8 +421,6 @@ public class ETerminal extends WindowParent {
 		}
 		catch (Exception e) { e.printStackTrace(); }
 	}
-	
-	
 	
 	public ETerminal buildTabCompletions(String... dataIn) { return buildTabCompletions(new EArrayList().addA(dataIn)); }
 	public ETerminal buildTabCompletions(EArrayList<String> dataIn) {
@@ -448,13 +496,11 @@ public class ETerminal extends WindowParent {
 	}
 	
 	public ETerminal clearTabCompletions() {
-		//System.out.println("Size: " + infoLines.size());
 		for (TextAreaLine l : tabDisplayLines) {
 			history.deleteLine(l);
 		}
 		
 		tabDisplayLines.clear();
-		//tabData.clear();
 		
 		return this;
 	}
@@ -468,7 +514,7 @@ public class ETerminal extends WindowParent {
 		if (inputField.isNotEmpty()) {
 			int spaces = EUtil.countSpaces(inputField.getText());
 			
-			if (spaces == 0) { arg = 1; }
+			if (spaces == 0) { arg = 0; }
 			else { arg = spaces; }
 		}
 		
@@ -476,13 +522,15 @@ public class ETerminal extends WindowParent {
 	}
 	
 	public void resetTab() {
+		int scroll = history.getVScrollBar().getScrollPos();
 		clearTabCompletions();
+		history.getVScrollBar().setScrollBarPos(scroll);
+		
 		tab1 = false;
 		textTabBegin = "";
 		tabData.clear();
-		startArgPos = -1;
-		scrollToBottom();
-		//history.getVScrollBar().setScrollBarPos(history.getVScrollBar().getHighVal());
+		startArgPos = isCommand ? 0 : -1;
+		isCommand = false;
 	}
 	
 	public ETerminal writeln() { return writeln("", 0xffffff); }
@@ -502,7 +550,7 @@ public class ETerminal extends WindowParent {
 	public ETerminal badError(String msgIn) { parseText(msgIn, 0xff0000); return this; }
 	
 	private void parseText(String msgIn, int colorIn) {
-		String[] lines = msgIn.split("[\\r?\\n]+", -1);
+		String[] lines = msgIn.split("[\\r\\n]+", -1);
 		
 		for (String s : lines) {
 			TerminalTextLine line = new TerminalTextLine(this, s, colorIn);
@@ -532,6 +580,27 @@ public class ETerminal extends WindowParent {
 	//-----------------
 	//ETerminal Setters
 	//-----------------
+	
+	public ETerminal setRequiresCommandConfirmation(TerminalCommand commandIn, String message, EArrayList<String> args, boolean runVisually) {
+		if (commandIn != null) {
+			requireConfirmation = true;
+			confirmationCommand = commandIn;
+			previousArgs = args;
+			prevRunVisually = runVisually;
+			confirmationMessage = message != null && !message.isEmpty() ? message : "Are you sure you wish to continue? (Y, N)";
+			
+			warn(message);
+		}
+		return this;
+	}
+	public ETerminal clearConfirmationRequirement() {
+		requireConfirmation = false;
+		confirmationCommand = null;
+		previousArgs = null;
+		prevRunVisually = false;
+		confirmationMessage = "";
+		return this;
+	}
 	
 	public ETerminal setDir(File dirIn) { dir = dirIn; return this; }
 	public synchronized ETerminal setInputEnabled(boolean val) { inputField.setEnabled(val); return this; }

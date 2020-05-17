@@ -1,6 +1,7 @@
 package com.Whodundid.core.enhancedGui.types;
 
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.coreApp.CoreApp;
 import com.Whodundid.core.enhancedGui.StaticEGuiObject;
 import com.Whodundid.core.enhancedGui.StaticTopParent;
 import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
@@ -104,9 +105,9 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	protected int maxWidth = 0;
 	protected int maxHeight = 0;
 	public int objZLevel = 0;
-	public int objectId = -1;
+	public long objectId = -1;
 	protected String objectName = "noname";
-	protected String hoverText = "";
+	protected String hoverText = null;
 	protected int hoverTextColor = 0xff00d1ff;
 	public long mouseHoverTime = 0l;
 	public long hoverRefTime = 0l;
@@ -447,10 +448,11 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override public boolean isDrawingHover() { return false; }
 	@Override public IEnhancedGuiObject setHoverText(String textIn) { hoverText = textIn; return this; }
 	@Override public IEnhancedGuiObject setHoverTextColor(int colorIn) { hoverTextColor = colorIn; return this; }
+	@Override public String getHoverText() { return hoverText; }
 	
 	//obj ids
-	@Override public int getObjectID() { return objectId; }
-	@Override public IEnhancedGuiObject setObjectID(int idIn) { objectId = idIn; return this; }
+	@Override public long getObjectID() { return objectId; }
+	@Override public IEnhancedGuiObject setObjectID(long idIn) { objectId = idIn; return this; }
 	@Override public String getObjectName() { return objectName; }
 	@Override public IEnhancedGuiObject setObjectName(String nameIn) { objectName = nameIn; return this; }
 	
@@ -625,6 +627,7 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 	@Override public EDimension getBoundaryEnforcer() { return boundaryDimension; }
 	@Override public boolean isClickable() { return clickable; }
 	@Override public IEnhancedGuiObject setClickable(boolean valIn) { clickable = valIn; return this; }
+	@Override public IEnhancedGuiObject setEntiretyClickable(boolean val) { StaticEGuiObject.setEntiretyClickable(this, val); return this; }
 	
 	//basic inputs
 	@Override public void parseMousePosition(int mX, int mY) { guiObjects.stream().filter(o -> o.isMouseInside(mX, mY)).forEach(o -> o.parseMousePosition(mX, mY)); }
@@ -914,9 +917,9 @@ public abstract class EnhancedGui extends GuiScreen implements IEnhancedTopParen
 		mX = mXIn; mY = mYIn;
 		
 		//handle cursor stuff for highest obj
-		if (!EnhancedMC.safeRemoteDesktopMode) {
+		if (CoreApp.customCursors.get()) {
 			if (getHighestZObjectUnderMouse() != null) { getHighestZObjectUnderMouse().updateCursorImage(); }
-			else { this.updateCursorImage(); }
+			else { updateCursorImage(); }
 		}
 		if (!CursorHelper.isNormalCursor() && getHighestZObjectUnderMouse() == null && modifyType != ObjectModifyType.Resize) { CursorHelper.reset(); }
 		

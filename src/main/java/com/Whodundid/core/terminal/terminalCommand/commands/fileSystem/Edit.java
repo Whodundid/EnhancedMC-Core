@@ -17,7 +17,7 @@ public class Edit extends FileCommand {
 	}
 	
 	@Override public String getName() { return "edit"; }
-	@Override public boolean showInHelp() { return EnhancedMC.isOpMode(); }
+	@Override public boolean showInHelp() { return true; }
 	@Override public EArrayList<String> getAliases() { return null; }
 	@Override public String getHelpInfo(boolean runVisually) { return "Used to edit the contents of a file."; }
 	@Override public String getUsage() { return "ex: edit 'file'"; }
@@ -25,47 +25,44 @@ public class Edit extends FileCommand {
 	
 	@Override
 	public void runCommand(ETerminal termIn, EArrayList<String> args, boolean runVisually) {
-		if (EnhancedMC.isOpMode()) {
-			if (args.isEmpty()) { termIn.error("Not enough arguments!"); }
-			else if (args.size() == 1) {
-				try {
-					String all = EUtil.combineAll(args, " ");
-					File f = new File(termIn.getDir(), all);
-					
-					if (all.startsWith("..")) { f = new File(termIn.getDir(), args.get(0)); }
-					if (args.get(0).equals("~")) { f = new File(System.getProperty("user.dir")); }
+		if (args.isEmpty()) { termIn.error("Not enough arguments!"); }
+		else if (args.size() == 1) {
+			try {
+				String all = EUtil.combineAll(args, " ");
+				File f = new File(termIn.getDir(), all);
+				
+				if (all.startsWith("..")) { f = new File(termIn.getDir(), args.get(0)); }
+				if (args.get(0).equals("~")) { f = new File(System.getProperty("user.dir")); }
+				
+				if (f.exists()) { check(termIn, f); }
+				else {
+					f = new File(all);
 					
 					if (f.exists()) { check(termIn, f); }
 					else {
-						f = new File(all);
+						if (args.get(0).startsWith("..")) { f = new File(termIn.getDir(), args.get(0)); }
+						else { f = new File(args.get(0)); }
 						
 						if (f.exists()) { check(termIn, f); }
 						else {
-							if (args.get(0).startsWith("..")) { f = new File(termIn.getDir(), args.get(0)); }
-							else { f = new File(args.get(0)); }
+							f = new File(termIn.getDir(), args.get(0));
 							
 							if (f.exists()) { check(termIn, f); }
 							else {
-								f = new File(termIn.getDir(), args.get(0));
-								
-								if (f.exists()) { check(termIn, f); }
-								else {
-									try {
-										openEditWindow(termIn, f);
-									} catch (Exception e) {
-										e.printStackTrace();
-										termIn.error("'" + args.get(0) + "' is not a vaild file!");
-									}
+								try {
+									openEditWindow(termIn, f);
+								} catch (Exception e) {
+									e.printStackTrace();
+									termIn.error("'" + args.get(0) + "' is not a vaild file!");
 								}
 							}
 						}
 					}
-					
-				} catch (Exception e) { e.printStackTrace(); }
-			}
-			else { termIn.error("Too many arguments!"); }
+				}
+				
+			} catch (Exception e) { e.printStackTrace(); }
 		}
-		else { termIn.error("Unrecognized Command!"); }
+		else { termIn.error("Too many arguments!"); }
 	}
 	
 	private void check(ETerminal termIn, File path) {

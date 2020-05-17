@@ -51,6 +51,7 @@ public class TerminalCommandHandler {
 		registerCommand(new ClearObjects(), termIn, runVisually);
 		registerCommand(new ClearTerminal(), termIn, runVisually);
 		registerCommand(new ClearTerminalHistory(), termIn, runVisually);
+		registerCommand(new CloseWindow(), termIn, runVisually);
 		registerCommand(new DebugControl(), termIn, runVisually);
 		registerCommand(new Exit(), termIn, runVisually);
 		registerCommand(new Help(), termIn, runVisually);
@@ -63,6 +64,7 @@ public class TerminalCommandHandler {
 		registerCommand(new OpControl(), termIn, EnhancedMC.isOpMode() && runVisually);
 		registerCommand(new RuntimeCMD(), termIn, runVisually);
 		registerCommand(new ViewTexture(), termIn, runVisually);
+		registerCommand(new NotificationControl(), termIn, runVisually);
 		if (EnhancedMC.isOpMode()) { registerCommand(new ForLoop(), termIn, runVisually); }
 		if (EnhancedMC.isOpMode()) { registerCommand(new Server(), termIn, runVisually); }
 		
@@ -73,7 +75,7 @@ public class TerminalCommandHandler {
 		registerCommand(new EnableApp(), termIn, runVisually);
 		registerCommand(new ReloadApps(), termIn, runVisually);
 		registerCommand(new ReloadApp(), termIn, runVisually);
-		//registerCommand(conIn, new ResetMod(), runVisually);
+		registerCommand(new ResetApp(), termIn, runVisually);
 		
 		//file system
 		registerCommand(new Ls(), termIn, runVisually);
@@ -87,6 +89,7 @@ public class TerminalCommandHandler {
 		registerCommand(new Lsblk(), termIn, runVisually);
 		registerCommand(new Cat(), termIn, runVisually);
 		registerCommand(new Edit(), termIn, runVisually);
+		registerCommand(new Open(), termIn, runVisually);
 	}
 	
 	private void registerSubModCommands(boolean runVisually) { registerSubModCommands(null, runVisually); }
@@ -147,7 +150,9 @@ public class TerminalCommandHandler {
 					}
 				}
 				
-				if (tab) { command.handleTabComplete(termIn, commandArguments); }
+				if (tab) {
+					if (command.showInHelp()) { command.handleTabComplete(termIn, commandArguments); }
+				}
 				else {
 					command.runCommand(termIn, commandArguments, runVisually);
 				

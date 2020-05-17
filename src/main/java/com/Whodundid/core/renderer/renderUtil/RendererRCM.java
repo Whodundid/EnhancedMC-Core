@@ -4,7 +4,7 @@ import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.app.AppType;
 import com.Whodundid.core.app.RegisteredApps;
 import com.Whodundid.core.coreApp.EMCResources;
-import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.EGuiRightClickMenu;
+import com.Whodundid.core.enhancedGui.guiObjects.windows.EGuiRightClickMenu;
 import com.Whodundid.core.enhancedGui.guiObjects.windows.EMCGuiSelectionList;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
@@ -27,7 +27,7 @@ public class RendererRCM extends EGuiRightClickMenu {
 		addOption("Close All Objects", EMCResources.guiCloseButton);
 		
 		setRunActionOnPress(true);
-		setActionReciever(this);
+		setActionReceiver(this);
 		
 		setTitle("Options...");
 	}

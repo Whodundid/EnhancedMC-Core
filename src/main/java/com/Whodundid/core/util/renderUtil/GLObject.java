@@ -464,6 +464,7 @@ public class GLObject {
 	public static void drawTexture(double x, double y, double w, double h, double oX, double oY, double tW, double tH, double z) {
 		double f = 1.0 / tW;
 		double f1 = 1.0 / tH;
+		GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
 		Tessellator tessellator = Tessellator.getInstance();
 		WorldRenderer worldrenderer = tessellator.getWorldRenderer();
 		worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);

@@ -5,12 +5,13 @@ import com.Whodundid.core.coreApp.CoreApp;
 import com.Whodundid.core.coreEvents.EventListener;
 import com.Whodundid.core.coreEvents.emcEvents.RendererRCMOpenEvent;
 import com.Whodundid.core.coreEvents.emcEvents.WindowOpenedEvent;
+import com.Whodundid.core.enhancedGui.StaticEGuiObject;
 import com.Whodundid.core.enhancedGui.types.EnhancedGui;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.notifications.NotificationHandler;
-import com.Whodundid.core.notifications.NotificationObject;
+import com.Whodundid.core.notifications.util.NotificationObject;
 import com.Whodundid.core.renderer.EnhancedMCRenderer;
 import com.Whodundid.core.renderer.renderUtil.RendererProxyGui;
 import com.Whodundid.core.renderer.renderUtil.RendererRCM;
@@ -65,7 +66,6 @@ public class EnhancedMC extends DummyModContainer {
 	public static int updateCounter = 0;
 	public static boolean enableDebugFunctions = false;
 	public static final CoreApp appInstance = new CoreApp();
-	public static boolean safeRemoteDesktopMode = false;
 	public static boolean enableOpFunctions = false;
 	private static boolean isDev = false;
 	private static boolean deobf = false;
@@ -73,19 +73,14 @@ public class EnhancedMC extends DummyModContainer {
 	public EnhancedMC() {
 		super(new ModMetadata());
 		ModMetadata meta = getMetadata();
-		//meta.modId = "enhancedmccore";
-		//meta.name = "EnhancedMC Core";
-		
-		//System.out.println("FILES: " + this.getClass().getResourceAsStream("/assets));
-		
 		meta.modId = MODID;
 		meta.version = VERSION;
 		meta.name = NAME;
-		
 		meta.credits = "EMC backend containing library functions, window-based environment kit, hud interaction, and primary event distribution."
-					 + "\nASM Modifications: Minor fixes for MC and implementation of additional event hooks.";
+					 + "\nASM Modifications: Minor fixes for MC and implementation of additional event hooks."
+					 + "\nArt assets created by Mr.JamminOtter";
 		meta.description = "The core mod of EnhancedMC";
-		meta.authorList = Arrays.asList("Whodundid");
+		meta.authorList = Arrays.asList("Whodundid", "Mr.JamminOtter");
 		meta.url = "https://github.com/Whodundid/EnhancedMC-Core";
 	}
 	
@@ -126,14 +121,16 @@ public class EnhancedMC extends DummyModContainer {
 		String id = mc.getSession() != null ? mc.getSession().getProfile().getId().toString() : "";
 		
 		isDev = id.equals("be8ba059-2644-4f4c-a5e7-88a38e555b1e") || id.equals("e8f9070f-74f0-4229-8134-5857c794e44d");
-		if (enableOpFunctions = isDev) { log(Level.INFO, "Dev detected -- Running EMC in Op mode"); }
-		//if (id.equals("e8f9070f-74f0-4229-8134-5857c794e44d")) { Display.setTitle("Alt Acc"); }
+		if (enableOpFunctions = isDev) { info("Dev detected -- Running EMC in Op mode!"); }
 		
 		//load EMC apps
 		AppLoader.loadApps();
 		
 		//register all commands within the terminal
 		terminal.initCommands();
+		
+		//load currently active notifications
+		notifications.loadConfig();
 		
 		isInitialized = true;
 	}
@@ -149,7 +146,14 @@ public class EnhancedMC extends DummyModContainer {
 		return windowIn != null ? renderer.getAllChildren().stream().anyMatch(o -> o.getClass() == windowIn) : false;
 	}
 	
-	public static EArrayList<WindowParent> getAllActiveWindows() { return getAllWindowInstances(WindowParent.class); }
+	public static EArrayList<WindowParent> getAllActiveWindows() {
+		EArrayList<WindowParent> windows = new EArrayList();
+		try {
+			renderer.getAllChildren().stream().filter(o -> WindowParent.class.isInstance(o)).filter(o -> !o.isBeingRemoved()).forEach(w -> windows.add((WindowParent) w));
+		}
+		catch (Exception e) { e.printStackTrace(); }
+		return windows;
+	}
 	
 	public static <T extends WindowParent> WindowParent getWindowInstance(Class<T> windowIn) {
 		return windowIn != null ? (WindowParent) renderer.getAllChildren().stream().filter(o -> o.getClass() == windowIn).findFirst().get() : null;
@@ -186,6 +190,7 @@ public class EnhancedMC extends DummyModContainer {
 				}
 				if (oldObject instanceof GuiScreen) { mc.displayGuiScreen(null); }
 				else if (oldObject instanceof IWindowParent && closeOld) { ((IWindowParent) oldObject).close(); }
+				windowIn.setObjectID(StaticEGuiObject.getPID());
 				renderer.addObject(windowIn);
 			}
 			if (transferHistory && oldObject instanceof IWindowParent && !(windowIn instanceof EnhancedGui)) {

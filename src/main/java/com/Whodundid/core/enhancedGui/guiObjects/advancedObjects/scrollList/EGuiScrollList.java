@@ -43,6 +43,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 	protected boolean vScrollVis = true;
 	protected boolean hScrollVis = true;
 	protected boolean resetVis = false;
+	protected boolean allowScrolling = true;
 	
 	protected EGuiScrollList() {}
 	public EGuiScrollList(IEnhancedGuiObject parentIn, int xIn, int yIn, int widthIn, int heightIn) {
@@ -235,10 +236,12 @@ public class EGuiScrollList extends EnhancedGuiObject {
 	
 	@Override
 	public void mouseScrolled(int change) {
-		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
-			if (scrollableWidth - (width - 2) > 0) { horizontalScroll.setScrollBarPos(horizontalScroll.getScrollPos() - change * 18); }
+		if (allowScrolling) {
+			if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+				if (scrollableWidth - (width - 2) > 0) { horizontalScroll.setScrollBarPos(horizontalScroll.getScrollPos() - change * 18); }
+			}
+			else if (scrollableHeight - (height - 2) > 0) { verticalScroll.setScrollBarPos(verticalScroll.getScrollPos() - change * 18); }
 		}
-		else if (scrollableHeight - (height - 2) > 0) { verticalScroll.setScrollBarPos(verticalScroll.getScrollPos() - change * 18); }
 		super.mouseScrolled(change);
 	}
 	
@@ -431,6 +434,7 @@ public class EGuiScrollList extends EnhancedGuiObject {
 		reInitObjects();
 	}
 	
+	public EGuiScrollList setAllowScrolling(boolean val) { allowScrolling = val; return this; }
 	public EGuiScrollList setBackgroundColor(int colorIn) { backgroundColor = colorIn; return this; }
 	public EGuiScrollList setBorderColor(int colorIn) { borderColor = colorIn; return this; }
 	public EGuiScrollList setVScrollDrawn(boolean valIn) { vScrollVis = valIn; if (verticalScroll != null) { verticalScroll.setVisible(valIn); } updateVisuals(); return this; }

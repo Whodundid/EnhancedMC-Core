@@ -37,6 +37,7 @@ public class EGuiHeader extends EnhancedGuiObject {
 	protected boolean drawBackground = true;
 	protected boolean drawHeader = true;
 	protected boolean drawParentFocus = true;
+	protected boolean alwaysDrawFocused = false;
 	protected boolean moving = false;
 	protected EArrayList<HeaderTab> tabs = new EArrayList();
 	protected IWindowParent window;
@@ -146,7 +147,7 @@ public class EGuiHeader extends EnhancedGuiObject {
 		}
 		
 		if (drawHeader) {
-			boolean anyFocus = false;
+			boolean anyFocus = alwaysDrawFocused;
 			if (drawParentFocus) {
 				IEnhancedGuiObject p = drawDefault ? getWindowParent() : getParent();
 				if (p != null) {
@@ -342,6 +343,7 @@ public class EGuiHeader extends EnhancedGuiObject {
 		return this;
 	}
 	
+	public EGuiHeader setAlwaysDrawFocused(boolean val) { alwaysDrawFocused = val; return this; }
 	public EGuiHeader setMoveable(boolean val) { headerMoveable = val; return this; }
 	public EGuiHeader setTitleColor(int colorIn) { titleColor = colorIn; return this; }
 	public EGuiHeader setBorderColor(int colorIn) { borderColor = colorIn; return this; }

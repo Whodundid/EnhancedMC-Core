@@ -25,14 +25,14 @@ public abstract class ActionWindowParent extends WindowParent implements IEnhanc
 		}
 	}
 	@Override public void onPress() {}
-	@Override public boolean runActionOnPress() { return runActionOnPress; }
+	@Override public boolean runsActionOnPress() { return runActionOnPress; }
 	@Override public IEnhancedActionObject setRunActionOnPress(boolean value) { runActionOnPress = value; return this; }
-	@Override public IEnhancedActionObject setActionReciever(IEnhancedGuiObject objIn) { actionReciever = objIn; return this; }
-	@Override public IEnhancedGuiObject getActionReciever() { return actionReciever; }
+	@Override public IEnhancedActionObject setActionReceiver(IEnhancedGuiObject objIn) { actionReciever = objIn; return this; }
+	@Override public IEnhancedGuiObject getActionReceiver() { return actionReciever; }
 			
 	//objects
-	@Override public IEnhancedActionObject setStorredObject(Object objIn) { storredObject = objIn; return this; }
-	@Override public Object getStorredObject() { return storredObject; }
+	@Override public IEnhancedActionObject setStoredObject(Object objIn) { storredObject = objIn; return this; }
+	@Override public Object getStoredObject() { return storredObject; }
 	@Override public IEnhancedActionObject setSelectedObject(Object objIn) { selectedObject = objIn; return this; }
 	@Override public Object getSelectedObject() { return selectedObject; }
 }

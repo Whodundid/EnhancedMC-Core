@@ -157,10 +157,10 @@ public class EGuiSelectionList extends ActionWindowParent {
 		}
 	}
 	@Override public void onPress() {}
-	@Override public boolean runActionOnPress() { return false; }
+	@Override public boolean runsActionOnPress() { return false; }
 	@Override public EGuiSelectionList setRunActionOnPress(boolean val) { return null; }
-	@Override public EGuiSelectionList setActionReciever(IEnhancedGuiObject objIn) { actionReciever = objIn; return this; }
-	@Override public IEnhancedGuiObject getActionReciever() { return actionReciever; }
+	@Override public EGuiSelectionList setActionReceiver(IEnhancedGuiObject objIn) { actionReciever = objIn; return this; }
+	@Override public IEnhancedGuiObject getActionReceiver() { return actionReciever; }
 	@Override public EGuiSelectionList setSelectedObject(Object objIn) { selectedObject = objIn; return this; }
 	@Override public Object getSelectedObject() { return selectedObject; }
 }

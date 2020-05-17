@@ -3,7 +3,7 @@ package com.Whodundid.core.renderer.taskView;
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.coreApp.EMCResources;
 import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
-import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.EGuiRightClickMenu;
+import com.Whodundid.core.enhancedGui.guiObjects.windows.EGuiRightClickMenu;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.renderUtil.EColors;
@@ -79,8 +79,8 @@ public class TaskButton extends EGuiButton implements Comparable<TaskButton> {
 			else if (button == 1) {
 				EGuiRightClickMenu pinOption = new EGuiRightClickMenu();
 				pinOption.setTitle(hoverText);
-				pinOption.setActionReciever(parentBar);
-				pinOption.setStorredObject(base);
+				pinOption.setActionReceiver(parentBar);
+				pinOption.setStoredObject(base);
 				//pinOption.addOption("Pin", EMCResources.guiPinButton);
 				pinOption.addOption("Close", EMCResources.guiCloseButton);
 				if (base.showInLists()) { pinOption.addOption("New Window", EMCResources.plusButton); }

@@ -1,10 +1,16 @@
 package com.Whodundid.core.util.storageUtil;
 
+import com.Whodundid.core.EnhancedMC;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.util.Map;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.BufferUtils;
 
@@ -67,6 +73,28 @@ public class DynamicTextureHandler {
 	public BufferedImage GBI() { return image; } //get buffered image
 	public int getTextureHeight() {	return image.getHeight(); }
 	public int getTextureWidth() { return image.getWidth(); }
-	public void destroy() { texture.deleteGlTexture(); }
+	
+	public void destroy() {
+		TextureManager man = Minecraft.getMinecraft().getTextureManager();
+		if (man != null) {
+			try {
+				Class c = man.getClass();
+				Field mapTextures = c.getDeclaredField(EnhancedMC.isObfus() ? "b" : "mapTextureObjects");
+				
+				//open
+				mapTextures.setAccessible(true);
+				
+				Map<ResourceLocation, ITextureObject> map = (Map<ResourceLocation, ITextureObject>) mapTextures.get(man);
+				map.remove(location);
+				
+				//close
+				mapTextures.setAccessible(false);
+			}
+			catch (Exception e) { e.printStackTrace(); }
+		}
+		
+		TextureUtil.deleteTexture(texture.getGlTextureId());
+		texture.deleteGlTexture();
+	}
 	
 }

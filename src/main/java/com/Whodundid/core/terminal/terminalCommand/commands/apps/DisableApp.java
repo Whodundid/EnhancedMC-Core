@@ -66,7 +66,7 @@ public class DisableApp extends TerminalCommand {
 						if (m.isDisableable()) {
 							if (m.isEnabled()) { termIn.writeln(m.getName() + " disabled", EColors.green); }
 							m.setEnabled(false);
-							for (WindowParent w : EnhancedMC.getAllActiveWindows()) { w.sendArgs("Reload", m); }
+							for (WindowParent w : EnhancedMC.getAllActiveWindows()) { w.sendArgs("Reload"); }
 						}
 						else { termIn.error(m.getName() + " cannot be disabled!"); }
 					}

@@ -31,7 +31,7 @@ public class EGuiDialogueBox extends WindowParent {
 	@Override
 	public void initObjects() {
 		defaultHeader(this);
-		getHeader().setTitle(title).setTitleColor(titleColor);
+		getHeader().setTitleColor(titleColor);
 		
 		if (type != null) {
 			switch (type) {
@@ -88,8 +88,8 @@ public class EGuiDialogueBox extends WindowParent {
 	}
 	
 	public EGuiDialogueBox setDefaultObject(IEnhancedGuiObject objIn) { defaultObject = objIn; return this; }
-	public EGuiDialogueBox setTitle(String stringIn) { title = stringIn; return this; }
-	public EGuiDialogueBox setTitleColor(int colorIn) { titleColor = colorIn; return this; }
+	public EGuiDialogueBox setTitle(String stringIn) { title = stringIn; setObjectName(title); return this; }
+	public EGuiDialogueBox setTitleColor(int colorIn) { titleColor = colorIn; if (getHeader() != null) { header.setTitleColor(titleColor); } return this; }
 	public EGuiDialogueBox setMessage(String stringIn) {
 		message = stringIn;
 		wordWrappedLines = EUtil.createWordWrapString(message, width - 20);

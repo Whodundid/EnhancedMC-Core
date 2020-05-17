@@ -73,7 +73,7 @@ public class EMCEventDistributor {
 					GL11.glPushMatrix();
 					GlStateManager.disableAlpha();
 					GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
-					for (EMCApp m : mods) { m.OverlayPostEvent((Post) e); }
+					for (EMCApp m : mods) { m.overlayPostEvent((Post) e); }
 					GlStateManager.enableAlpha();
 					GL11.glPopMatrix();
 					EnhancedMC.getRenderer().onRenderTick((RenderGameOverlayEvent) e);

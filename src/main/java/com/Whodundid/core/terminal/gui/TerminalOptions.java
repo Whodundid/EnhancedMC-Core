@@ -58,8 +58,8 @@ public class TerminalOptions extends WindowParent {
 		backColor.setBackgroundColor(CoreApp.termBackground.get());
 		backColor.setTextures(null, null);
 		
-		drawLineNumbers.setActionReciever(this);
-		backColor.setActionReciever(this);
+		drawLineNumbers.setActionReceiver(this);
+		backColor.setActionReceiver(this);
 		
 		//labels
 		EGuiLabel numberLabel = new EGuiLabel(settings, drawLineNumbers.endX + 10, drawLineNumbers.midY - 4, "Draw line numbers", EColors.lgray);

@@ -25,4 +25,5 @@ public class Exit extends TerminalCommand {
 	public void runCommand(ETerminal termIn, EArrayList<String> args, boolean runVisually) {
 		termIn.close();
 	}
+	
 }

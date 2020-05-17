@@ -1,8 +1,14 @@
 package com.Whodundid.core.renderer.renderUtil;
 
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.app.AppType;
+import com.Whodundid.core.app.RegisteredApps;
 import com.Whodundid.core.coreApp.CoreApp;
+import com.Whodundid.core.coreApp.EMCNotification;
+import com.Whodundid.core.enhancedGui.guiObjects.windows.TutorialWindow;
 import com.Whodundid.core.enhancedGui.types.WindowParent;
+import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
+import com.Whodundid.core.notifications.util.NotificationObject;
 import com.Whodundid.core.renderer.EnhancedMCRenderer;
 import com.Whodundid.core.renderer.taskView.TaskBar;
 import com.google.common.collect.Lists;
@@ -44,14 +50,43 @@ public class RendererProxyGui extends GuiChat implements IRendererProxy {
 	public RendererProxyGui() { this(false); }
 	public RendererProxyGui(boolean ignoreEmptyIn) {
 		ignoreEmpty = ignoreEmptyIn;
-		if (CoreApp.enableTaskBar.get()) { renderer.addTaskBar(); }
+		handleOpen();
 	}
 	public RendererProxyGui(WindowParent guiIn) { this(guiIn, false); }
 	public RendererProxyGui(WindowParent guiIn, boolean ignoreEmptyIn) {
 		renderer = EnhancedMC.getRenderer();
 		renderer.addObject(guiIn);
-		if (CoreApp.enableTaskBar.get()) { renderer.addTaskBar(); }
+		handleOpen();
 		ignoreEmpty = ignoreEmptyIn;
+	}
+	
+	private void handleOpen() {
+		if (CoreApp.enableTaskBar.get()) { renderer.addTaskBar(); }
+		
+		if (EnhancedMC.getNotificationHandler().isNotificationTypeEnabled(CoreApp.emcNotification)) {
+			if (!CoreApp.firstUse.get()) {
+				EMCNotification note = new EMCNotification("EMC: Welcome to EnhancedMC!");
+				note.setHoverText("Click to open a tutorial on EMC");
+				note.setAttentionObject(new TutorialWindow());
+				note.setOnlyDrawOnHud(true);
+				note.setTimeOut(12000l);
+				
+				EnhancedMC.postNotification(note);
+				
+				CoreApp.firstUse.set(true);
+				CoreApp app = (CoreApp) RegisteredApps.getApp(AppType.CORE);
+				if (app != null) { app.getConfig().saveMainConfig(); }
+			}
+			else if (!CoreApp.openedTut.get()) {
+				EMCNotification note = new EMCNotification("EMC: Click to view Tutorial!");
+				note.setHoverText("Click to open a tutorial on EMC");
+				note.setAttentionObject(new TutorialWindow());
+				note.setOnlyDrawOnHud(true);
+				note.setTimeOut(12000l);
+				
+				EnhancedMC.postNotification(note);
+			}
+		}
 	}
 	
 	// ------------------------
@@ -77,6 +112,27 @@ public class RendererProxyGui extends GuiChat implements IRendererProxy {
 					mc.displayGuiScreen(null);
 					mc.setIngameFocus();
 				}
+				else {
+					boolean onlyNotifications = false;
+					for (IEnhancedGuiObject o : renderer.getObjects()) {
+						if (o instanceof TaskBar) { continue; }
+						if (o instanceof NotificationObject) { onlyNotifications = true; }
+						else { onlyNotifications = false; break; }
+					}
+					
+					if (onlyNotifications) {
+						for (IEnhancedGuiObject o : renderer.getObjects()) {
+							if (o instanceof NotificationObject) {
+								NotificationObject n = (NotificationObject) o;
+								if (n.onlyDrawsOnHud()) { n.close(); }
+							}
+							else { o.close(); }
+						}
+						mc.displayGuiScreen(null);
+						mc.setIngameFocus();
+					}
+				}
+				
 			}
 		}
 	}

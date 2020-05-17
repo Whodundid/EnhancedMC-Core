@@ -83,9 +83,9 @@ public class SettingsGuiMain extends WindowParent {
 		problem.setVisible(RegisteredApps.getIncompatibleAppList().isNotEmpty());
 		problem.setDrawBackground(true).setBackgroundColor(0xffbb0000);
 		
-		reloadConfigs.setActionReciever(this);
-		keyBindGui.setActionReciever(this);
-		problem.setActionReciever(this);
+		reloadConfigs.setActionReceiver(this);
+		keyBindGui.setActionReceiver(this);
+		problem.setActionReceiver(this);
 		
 		StaticEGuiObject.setPersistent(true, keyBindGui, reloadConfigs);
 		
@@ -272,7 +272,7 @@ public class SettingsGuiMain extends WindowParent {
 	
 	@Override
 	public void actionPerformed(IEnhancedActionObject object, Object... args) {
-		if (object.runActionOnPress()) { object.performAction(); }
+		if (object.runsActionOnPress()) { object.performAction(); }
 		else {
 			if (object == keyBindGui) { EnhancedMC.displayWindow(new KeyBindGui(), this); }
 			if (object == reloadConfigs) {

@@ -1,5 +1,6 @@
 package com.Whodundid.core.util.storageUtil;
 
+import com.Whodundid.core.util.EUtil;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,15 +14,28 @@ public class StorageBoxHolder<Obj, Val> implements Iterable<StorageBox<Obj, Val>
 	
 	/** Creates a new StorageBoxHolder that does allow duplicate object entries. */
 	public StorageBoxHolder() { this(true); }
+	
 	/** Creates a new StorageBoxHolder in which duplicates can be allowed or not. */
 	public StorageBoxHolder(boolean allowDuplicatesIn) {
 		allowDuplicates = allowDuplicatesIn;
+	}
+	
+	public StorageBoxHolder(Obj obj, Val val) {
+		this(true);
+		add(obj, val);
+	}
+	
+	public StorageBoxHolder(boolean allowDuplicatesIn, Obj obj, Val val) {
+		this(allowDuplicatesIn);
+		add(obj, val);
 	}
 	
 	/** Creates a new StorageBox with the given object and value and then adds it to the specified position of this holder. */
 	public void add(int pos, Obj obj, Val value) {
 		if (allowDuplicates || !contains(obj)) { createdList.add(pos, new StorageBox<Obj, Val>(obj, value)); }
 	}
+	
+	public boolean add() { return add(null, null); }
 	
 	/** Creates a new StorageBox with the given object and value and then adds it to the end of this holder. */
 	public boolean add(Obj obj, Val value) {
@@ -141,6 +155,11 @@ public class StorageBoxHolder<Obj, Val> implements Iterable<StorageBox<Obj, Val>
 		return new EArrayList<StorageBox<Obj, Val>>(createdList);
 	}
 	
+	/** Returns the boxes of this holder within an array of StorageBox objects with the corresponding parameters. */
+	public StorageBox<Obj, Val>[] getBoxesAsArray() {
+		return (StorageBox<Obj, Val>[]) EUtil.asArray(getBoxes().toArray(new StorageBox[0]));
+	}
+	
 	/** Returns the value of a box with the specified object. */
 	public Val getValueInBox(Obj objIn) {
 		StorageBox<Obj, Val> b = getBoxWithObj(objIn);
@@ -170,10 +189,10 @@ public class StorageBoxHolder<Obj, Val> implements Iterable<StorageBox<Obj, Val>
 	 *  A variable sized list of argument is passed to initialize the values of this holder. For every argument
 	 *  passed, a corresponding value must also be passed along with it so that is adheres to the <Object, Value>
 	 *  relationship. */
-	public static <T, V> StorageBoxHolder<T, V> createBox(Object... dataIn) {
+	public static <T, V> StorageBoxHolder<T, V> of(Class<T> tType, Class<V> vType, Object... dataIn) {
 		if (dataIn.length % 2 == 0) {
 			StorageBoxHolder<T, V> newHolder = new StorageBoxHolder();
-			for (int i = 0; i < dataIn.length; i++) { newHolder.add((T) dataIn[i], (V) dataIn[i + 1]); }
+			for (int i = 0; i < dataIn.length; i += 2) { newHolder.add((T) dataIn[i], (V) dataIn[i + 1]); }
 			return newHolder;
 		}
 		return null;

@@ -22,7 +22,7 @@ public class GuiNewChatTransformer extends IETransformer {
 	
 	@Override
 	public void transform(ClassNode classIn) {
-		if (historyDisplay(classIn)) { System.out.println("EMC: GuiNewChat transform successful!"); }
+		if (historyDisplay(classIn) && chatGrabber(classIn)) { System.out.println("EMC: GuiNewChat transform successful!"); }
 		else { System.err.println("EMC: GUINEWCHAT ASM TRANSFORM FAILED!"); }
 	}
 	
@@ -35,14 +35,10 @@ public class GuiNewChatTransformer extends IETransformer {
 		final String CHATMETHOD_DESC = isObfuscated ? "(Leu;I)V" : "(Lnet/minecraft/util/IChatComponent;I)V";
 		
 		System.out.println("EMC: Starting ChatGrabber ASM");
-		System.out.println("EMC: obfucated? " + isObfuscated);
-		System.out.println("EMC: methodName: " + CHATMETHOD + " ; description: " + CHATMETHOD_DESC);
 		
 		for (MethodNode method : classIn.methods) {
 			
 			if (method.name.equals(CHATMETHOD) && method.desc.equals(CHATMETHOD_DESC)) {
-				
-				System.out.println("EMC: Found method: " + method);
 				
 				AbstractInsnNode targetNode = null;
 				for (AbstractInsnNode instruction : method.instructions.toArray()) {
@@ -61,8 +57,6 @@ public class GuiNewChatTransformer extends IETransformer {
 				String getUpdateCounter = isObfuscated? "e" : "getUpdateCounter";
 				String IChatComponent = isObfuscated? "eu" : "net/minecraft/util/IChatComponent";
 				
-				System.out.println("EMC: ChatGrabber target node: " + targetNode);
-				
 				if (targetNode != null) {
 					InsnList toInsert = new InsnList();
 					
@@ -72,7 +66,7 @@ public class GuiNewChatTransformer extends IETransformer {
 					toInsert.add(new InsnNode(DUP));
 					toInsert.add(new TypeInsnNode(NEW, "com/Whodundid/core/util/chatUtil/TimedChatLine"));
 					toInsert.add(new InsnNode(DUP));
-					toInsert.add(new MethodInsnNode(INVOKESTATIC, Minecraft, getMinecraft, "()" + Minecraft + ";", false));
+					toInsert.add(new MethodInsnNode(INVOKESTATIC, Minecraft, getMinecraft, "()L" + Minecraft + ";", false));
 					toInsert.add(new FieldInsnNode(GETFIELD, Minecraft, ingameGUI, "L" + GuiInGame + ";"));
 					toInsert.add(new MethodInsnNode(INVOKEVIRTUAL, GuiInGame, getUpdateCounter, "()I", false));
 					toInsert.add(new VarInsnNode(ALOAD, 1));

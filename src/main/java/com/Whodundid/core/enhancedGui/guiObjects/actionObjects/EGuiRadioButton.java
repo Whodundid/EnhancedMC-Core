@@ -11,7 +11,7 @@ import com.Whodundid.core.util.renderUtil.EColors;
 public class EGuiRadioButton extends EnhancedActionObject {
 
 	boolean checked = false;
-	int color = EColors.green.c();
+	int color = EColors.green.intVal;
 	
 	public EGuiRadioButton(IEnhancedGuiObject objIn, int xIn, int yIn, int widthIn, int heightIn) { this(objIn, xIn, yIn, widthIn, heightIn, false); }
 	public EGuiRadioButton(IEnhancedGuiObject objIn, int xIn, int yIn, int widthIn, int heightIn, AppConfigSetting<Boolean> settingIn) { this(objIn, xIn, yIn, widthIn, heightIn, settingIn.get()); }

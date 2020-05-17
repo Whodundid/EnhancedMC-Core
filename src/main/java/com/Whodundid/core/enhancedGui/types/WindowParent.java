@@ -1,12 +1,15 @@
 package com.Whodundid.core.enhancedGui.types;
 
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.coreApp.CoreApp;
 import com.Whodundid.core.coreApp.EMCResources;
 import com.Whodundid.core.coreEvents.emcEvents.WindowClosedEvent;
+import com.Whodundid.core.debug.DebugFunctions;
 import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.renderer.EnhancedMCRenderer;
+import com.Whodundid.core.renderer.taskView.TaskBar;
 import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.resourceUtil.EResource;
@@ -71,10 +74,32 @@ public class WindowParent extends EnhancedGuiObject implements IWindowParent, Co
 		if (drawDefaultBackground) { drawDefaultBackground(); }
 		if (EnhancedMC.isDebugMode()) {
 			int y = hasHeader() ? getHeader().startY - 9 : startY - 9;
-			int pos = mc.fontRendererObj.getStringWidth("InitTime: " + EnumChatFormatting.YELLOW + initTime);
+			int pos = 0;
+			int half = -1;
+			String draw = "";
+			String time = String.valueOf(initTime);
+			
+			if (time.length() > 6) { time = time.substring(time.length() - 6); }
+			
+			if (DebugFunctions.drawWindowPID) {
+				pos = mc.fontRendererObj.getStringWidth("PID: " + EnumChatFormatting.YELLOW + getObjectID());
+				draw = "PID: " + EnumChatFormatting.YELLOW + getObjectID();
+				
+				if (DebugFunctions.drawWindowInit) {
+					half = pos + 6;
+					pos += mc.fontRendererObj.getStringWidth(EnumChatFormatting.AQUA + "  InitTime: " + EnumChatFormatting.YELLOW + time);
+					draw += EnumChatFormatting.AQUA + "  InitTime: " + EnumChatFormatting.YELLOW + time;
+				}
+			}
+			else if (DebugFunctions.drawWindowInit) {
+				pos = mc.fontRendererObj.getStringWidth("InitTime: " + EnumChatFormatting.YELLOW + time);
+				draw += "InitTime: " + EnumChatFormatting.YELLOW + time;
+			}
+			
 			drawRect(startX, y - 1, startX + pos + 5, y + mc.fontRendererObj.FONT_HEIGHT + 1, EColors.black);
 			drawRect(startX + 1, y, startX + pos + 4, y + mc.fontRendererObj.FONT_HEIGHT, EColors.dgray);
-			drawString("InitTime: " + EnumChatFormatting.YELLOW + initTime, startX + 3, y + 1, EColors.cyan);
+			if (half > 0) { drawRect(startX + half, y, startX + half + 1, y + mc.fontRendererObj.FONT_HEIGHT, EColors.black); }
+			drawString(draw, startX + 3, y + 1, EColors.cyan);
 		}
 		super.drawObject(mXIn, mYIn);
 	}
@@ -104,8 +129,31 @@ public class WindowParent extends EnhancedGuiObject implements IWindowParent, Co
 	@Override public IWindowParent setPinnable(boolean val) { pinnable = val; return this; }
 	@Override public IWindowParent setMaximizable(boolean val) { maximizable = val; return this; }
 	
-	@Override public void maximize() {}
-	@Override public void miniturize() {}
+	@Override
+	public void maximize() {
+		EDimension screen = getTopParent().getDimensions();
+		
+		if (getTopParent().containsObject(TaskBar.class)) {
+			int t = TaskBar.drawSize - 1;
+			switch (CoreApp.taskBarSide.get()) {
+			case "top": setDimensions(0, header.height + t, screen.width, screen.height - (header.height + t)); break;
+			case "bottom": setDimensions(0, header.height, screen.width, screen.height - (header.height + t)); break;
+			case "left": setDimensions(t, header.height, screen.width - t, screen.height - header.height); break;
+			case "right": setDimensions(0, 0, screen.width - t, screen.height - header.height); break;
+			}
+		}
+		else {
+			setDimensions(0, header.height, screen.width, screen.height - header.height);
+		}
+		
+		reInitObjects();
+	}
+	
+	@Override
+	public void miniturize() {
+		setDimensions(getPreMax());
+		reInitObjects();
+	}
 	
 	@Override public EDimension getPreMax() { return preMaxDims; }
 	@Override public IWindowParent setPreMax(EDimension dimIn) { preMaxDims = new EDimension(dimIn); return this; }

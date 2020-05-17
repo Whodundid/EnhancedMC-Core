@@ -50,13 +50,15 @@ public interface IEnhancedGuiObject extends ITabCompleteListener {
 	public IEnhancedGuiObject setHoverText(String textIn);
 	/** Sets hover text color. */
 	public IEnhancedGuiObject setHoverTextColor(int colorIn);
+	/** Gets the hover text. */
+	public String getHoverText();
 	
 	//obj ids
 	
 	/** Returns this object's set ID number. */
-	public int getObjectID();
+	public long getObjectID();
 	/** Designates this object with the specified ID number. Useful for ordering objects and referencing objects by shorthand calls. */
-	public IEnhancedGuiObject setObjectID(int idIn);
+	public IEnhancedGuiObject setObjectID(long l);
 	/** Returns the name of this object. */
 	public String getObjectName();
 	/** Sets the name of this object. */
@@ -247,6 +249,8 @@ public interface IEnhancedGuiObject extends ITabCompleteListener {
 	public boolean isClickable();
 	/** Specifies if this object can be clicked on. */
 	public IEnhancedGuiObject setClickable(boolean valIn);
+	/** Sets this object and every child to be clickable or not. */
+	public IEnhancedGuiObject setEntiretyClickable(boolean val);
 	
 	//basic inputs
 	
@@ -303,4 +307,5 @@ public interface IEnhancedGuiObject extends ITabCompleteListener {
 	public void setBeingRemoved();
 	/** Returns true if this object is currently scheduled to be removed on the next draw cycle. */
 	public boolean isBeingRemoved();
+	
 }

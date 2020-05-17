@@ -14,6 +14,8 @@ public class EMCResources extends AppResources {
 	
 	//global
 	public static EResource logo = new EResource(EnhancedMC.MODID, "global/logo.png");
+	public static EResource arrow = new EResource(EnhancedMC.MODID, "global/arrow.png");
+	public static EResource tutSettings = new EResource(EnhancedMC.MODID, "global/tut_settings.png");
 	public static EResource important1 = new EResource(EnhancedMC.MODID, "global/important1.png");
 	public static EResource important2 = new EResource(EnhancedMC.MODID, "global/important2.png");
 	public static EResource important3 = new EResource(EnhancedMC.MODID, "global/important3.png");
@@ -56,13 +58,21 @@ public class EMCResources extends AppResources {
 	public static EResource terminalButtonSel = new EResource(EnhancedMC.MODID, "window/terminal_sel.png");
 	public static EResource plusButton = new EResource(EnhancedMC.MODID, "window/plus.png");
 	public static EResource plusButtonSel = new EResource(EnhancedMC.MODID, "window/plus_sel.png");
+	public static EResource guiX = new EResource(EnhancedMC.MODID, "window/x_image.png");
+	public static EResource refresh = new EResource(EnhancedMC.MODID, "window/refresh.png");
+	public static EResource refreshSel = new EResource(EnhancedMC.MODID, "window/refresh_sel.png");
 	//taskbar icons
+	public static EResource emcSettingsIcon = new EResource(EnhancedMC.MODID, "taskbar/emc_settings.png");
 	public static EResource settingsIcon = new EResource(EnhancedMC.MODID, "taskbar/settings.png");
 	public static EResource terminalIcon = new EResource(EnhancedMC.MODID, "taskbar/terminal.png");
 	public static EResource experimentIcon = new EResource(EnhancedMC.MODID, "taskbar/experiment.png");
 	public static EResource keyboardIcon = new EResource(EnhancedMC.MODID, "taskbar/keyboard.png");
 	public static EResource openGuiIcon = new EResource(EnhancedMC.MODID, "taskbar/opengui.png");
 	public static EResource windowIcon = new EResource(EnhancedMC.MODID, "taskbar/window.png");
+	public static EResource notificationIcon = new EResource(EnhancedMC.MODID, "taskbar/notification.png");
+	public static EResource textEditorIcon = new EResource(EnhancedMC.MODID, "taskbar/texteditor.png");
+	public static EResource textureViewerIcon = new EResource(EnhancedMC.MODID, "taskbar/textureviewer.png");
+	public static EResource appinfoIcon = new EResource(EnhancedMC.MODID, "taskbar/appinfo.png");
 	//cursors
 	public static EResource mouseIBeam = new EResource(EnhancedMC.MODID, "cursor/text_pos.png");
 	public static EResource mouseResizeNS = new EResource(EnhancedMC.MODID, "cursor/resize_ns.png");
@@ -87,6 +97,8 @@ public class EMCResources extends AppResources {
 		//textures
 		//global
 		logo.register();
+		arrow.register();
+		tutSettings.register();
 		important1.register();
 		important2.register();
 		important3.register();
@@ -129,13 +141,21 @@ public class EMCResources extends AppResources {
 		terminalButtonSel.register();
 		plusButton.register();
 		plusButtonSel.register();
+		guiX.register();
+		refresh.register();
+		refreshSel.register();
 		//taskbar icons
+		emcSettingsIcon.register();
 		settingsIcon.register();
 		terminalIcon.register();
 		experimentIcon.register();
 		keyboardIcon.register();
 		openGuiIcon.register();
 		windowIcon.register();
+		notificationIcon.register();
+		textEditorIcon.register();
+		textureViewerIcon.register();
+		appinfoIcon.register();
 		//cursors
 		mouseIBeam.register();
 		mouseResizeNS.register();

@@ -1,7 +1,7 @@
 package com.Whodundid.core.terminal.gui;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.EGuiRightClickMenu;
+import com.Whodundid.core.enhancedGui.guiObjects.windows.EGuiRightClickMenu;
 import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.terminal.TerminalCommandHandler;
 import com.Whodundid.core.terminal.gui.termParts.TerminalTextField;
@@ -54,7 +54,7 @@ public class TerminalRCM extends EGuiRightClickMenu {
 	
 	private void build() {
 		setRunActionOnPress(true);
-		setActionReciever(this);
+		setActionReceiver(this);
 		
 		setTitle("Terminal");
 	}
