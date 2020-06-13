@@ -1,12 +1,12 @@
 package com.Whodundid.core.terminal.terminalCommand.commands.fileSystem;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.enhancedGui.guiObjects.windows.TextEditorWindow;
-import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
+import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.storageUtil.EArrayList;
+import com.Whodundid.core.windowLibrary.windowObjects.windows.TextEditorWindow;
 import java.io.File;
 
 public class Edit extends FileCommand {
@@ -21,7 +21,7 @@ public class Edit extends FileCommand {
 	@Override public EArrayList<String> getAliases() { return null; }
 	@Override public String getHelpInfo(boolean runVisually) { return "Used to edit the contents of a file."; }
 	@Override public String getUsage() { return "ex: edit 'file'"; }
-	@Override public void handleTabComplete(ETerminal termIn, EArrayList<String> args) { defaultTabComplete(termIn, args); }
+	@Override public void handleTabComplete(ETerminal termIn, EArrayList<String> args) { fileTabComplete(termIn, args); }
 	
 	@Override
 	public void runCommand(ETerminal termIn, EArrayList<String> args, boolean runVisually) {
@@ -51,16 +51,19 @@ public class Edit extends FileCommand {
 							else {
 								try {
 									openEditWindow(termIn, f);
-								} catch (Exception e) {
-									e.printStackTrace();
-									termIn.error("'" + args.get(0) + "' is not a vaild file!");
+								}
+								catch (Exception e) {
+									error(termIn, e);
 								}
 							}
 						}
-					}
+					} //else
 				}
 				
-			} catch (Exception e) { e.printStackTrace(); }
+			}
+			catch (Exception e) {
+				error(termIn, e);
+			}
 		}
 		else { termIn.error("Too many arguments!"); }
 	}

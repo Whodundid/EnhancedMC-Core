@@ -1,14 +1,14 @@
 package com.Whodundid.core.terminal.terminalCommand.commands.system;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.enhancedGui.guiObjects.windows.TextureDisplayer;
-import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
 import com.Whodundid.core.terminal.terminalCommand.TerminalCommand;
+import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.renderUtil.EColors;
-import com.Whodundid.core.util.storageUtil.DynamicTextureHandler;
+import com.Whodundid.core.util.resourceUtil.DynamicTextureHandler;
 import com.Whodundid.core.util.storageUtil.EArrayList;
+import com.Whodundid.core.windowLibrary.windowObjects.windows.TextureDisplayer;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;
@@ -31,11 +31,12 @@ public class ViewTexture extends TerminalCommand {
 	
 	public ViewTexture() {
 		super(CommandType.NORMAL);
+		setCategory("System");
 		numArgs = 1;
 	}
 
 	@Override public String getName() { return "viewtexture"; }
-	@Override public boolean showInHelp() { return true; }
+	@Override public boolean showInHelp() { return EnhancedMC.isDevMode(); }
 	@Override public EArrayList<String> getAliases() { return EArrayList.of("vt"); }
 	@Override public String getHelpInfo(boolean runVisually) { return "Attempts to display a texture from the specified runtime (resources) path."; }
 	@Override public String getUsage() { return "ex: vt /assets/enhancedmc/global/logo.png"; }
@@ -43,11 +44,14 @@ public class ViewTexture extends TerminalCommand {
 	
 	@Override
 	public void runCommand(ETerminal termIn, EArrayList<String> args, boolean runVisually) {
-		if (args.isEmpty()) { termIn.info(getUsage()); }
-		else if (args.size() == 1) {
-			parse(termIn, args.get(0));
+		if (EnhancedMC.isDevMode()) {
+			if (args.isEmpty()) { termIn.info(getUsage()); }
+			else if (args.size() == 1) {
+				parse(termIn, args.get(0));
+			}
+			else { termIn.error("Too many arguments!"); }
 		}
-		else { termIn.error("Too many arguments!"); }
+		else { termIn.error("Unrecognized command."); }
 	}
 	
 	private void parse(ETerminal termIn, String pathIn) {
@@ -96,6 +100,7 @@ public class ViewTexture extends TerminalCommand {
 								termIn.writeln(f + (d ? "\\" : ""), d ? 0xff2265f0 : EColors.green.intVal);
 							}
 							
+							error(termIn, e);
 						}
 					}
 					catch (UnsupportedOperationException e) {
@@ -120,6 +125,8 @@ public class ViewTexture extends TerminalCommand {
 								boolean d = Files.isDirectory(p);
 								termIn.writeln(p, d ? 0xff2265f0 : EColors.green.intVal);
 							}
+							
+							error(termIn, e);
 						}
 					}
 					
@@ -132,8 +139,7 @@ public class ViewTexture extends TerminalCommand {
 			if (filesystem != null) { filesystem.close(); }
 		}
 		catch (Exception e) {
-			e.printStackTrace();
-			termIn.badError(e.toString());
+			error(termIn, e);
 		}
 	}
 	

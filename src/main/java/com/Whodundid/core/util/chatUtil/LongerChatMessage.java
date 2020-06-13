@@ -25,7 +25,8 @@ public class LongerChatMessage {
 				Field f = message.getClass().getDeclaredField("message");
 				f.setAccessible(true);
 				f.set(message, m);
-			} catch (Exception e) { e.printStackTrace(); }
+			}
+			catch (Exception e) { e.printStackTrace(); }
 		}
 	}
 	
@@ -41,4 +42,5 @@ public class LongerChatMessage {
 		}
 		if (mc.thePlayer != null) {	mc.thePlayer.sendQueue.addToSendQueue(message); }
 	}
+	
 }

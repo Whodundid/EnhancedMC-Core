@@ -1,7 +1,6 @@
 package com.Whodundid.core.app;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.enhancedGui.types.WindowParent;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.Scanner;
@@ -25,7 +24,7 @@ public class AppSettings {
 						}
 					}
 					
-					for (WindowParent s : EnhancedMC.getAllActiveWindows()) { s.sendArgs("Reload", m); }
+					EnhancedMC.reloadAllWindows();
 				}
 				break;
 			}
@@ -47,12 +46,12 @@ public class AppSettings {
 					}
 				}
 				
-				for (WindowParent s : EnhancedMC.getAllActiveWindows()) { s.sendArgs("Reload", m); }
+				EnhancedMC.reloadAllWindows();
 			}
 		}
 	}
 	
-	/** Sets all mods to disabled and rebuilds the enabled submods file. */
+	/** Sets all mods to disabled and rebuilds the enabled apps file. */
 	public static void resetConfig() { saveConfig(true); }
 	
 	public static void saveConfig() { saveConfig(false); }
@@ -94,13 +93,15 @@ public class AppSettings {
 									AppType type = AppType.getTypeFromString(readMod);
 									//isType = type != null;
 									
-									String valIn = lineReader.next();
-									//System.out.println("the app: " + readMod + " ;; " + type);
-									boolean val = false;
-									try {
-										val = Boolean.parseBoolean(valIn);
-									} catch (Exception f) { EnhancedMC.log(Level.WARN, "failed to parse emc EMCApps file line: " + valIn); val = false; }
-									updateAppState(type != null ? type.appName : readMod, val);
+									if (lineReader.hasNext()) {
+										String valIn = lineReader.next();
+										//System.out.println("the app: " + readMod + " ;; " + type);
+										boolean val = false;
+										try {
+											val = Boolean.parseBoolean(valIn);
+										} catch (Exception f) { EnhancedMC.log(Level.WARN, "failed to parse emc EMCApps file line: " + valIn); val = false; }
+										updateAppState(type != null ? type.appName : readMod, val);
+									}
 								}
 								lineReader.close();
 							}

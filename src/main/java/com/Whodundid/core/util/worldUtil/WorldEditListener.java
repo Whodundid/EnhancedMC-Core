@@ -2,10 +2,9 @@ package com.Whodundid.core.util.worldUtil;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.coreApp.CoreApp;
-import com.Whodundid.core.renderer.BlockDrawer;
 import com.Whodundid.core.util.chatUtil.EChatUtil;
+import com.Whodundid.core.util.renderUtil.BlockDrawer;
 import com.Whodundid.core.util.storageUtil.Vector3D;
-import com.Whodundid.core.util.storageUtil.WorldRegion;
 
 //Author: Hunter Bragg
 
@@ -21,10 +20,11 @@ public class WorldEditListener {
 	
 	public static void checkForPositions() {
 		if (CoreApp.worldEditVisual.get()) {
-			if (EnhancedMC.isOpMode() && EnhancedMC.isUserDev()) {
+			if (EnhancedMC.isDevMode() && EnhancedMC.isUserDev()) {
 				try {
 					parse(EChatUtil.checkMsgUnfContains("First position set to ("), EChatUtil.getLMsgUnf());
-				} catch (Exception e) { e.printStackTrace(); }
+				}
+				catch (Exception e) { e.printStackTrace(); }
 				
 				if (EChatUtil.checkMsgUnfContains("First position set to (") || EChatUtil.checkMsgUnfContains("Second position set to (")) {
 					if (getPos1() != null && getPos2() != null) {
@@ -42,8 +42,10 @@ public class WorldEditListener {
 						BlockDrawer.addBlock(getPos2(), 0xff5555ff);
 					}
 				}
+				
 			}
 		}
+		
 	}
 	
 	private static void parse(boolean isPos1, String in) {
@@ -67,4 +69,5 @@ public class WorldEditListener {
 			else { pos2.set(x, y, z); pos2Set = true; }
 		}
 	}
+	
 }

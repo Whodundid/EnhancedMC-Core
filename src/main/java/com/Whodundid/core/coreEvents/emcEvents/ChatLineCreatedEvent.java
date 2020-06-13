@@ -15,4 +15,5 @@ public class ChatLineCreatedEvent extends Event {
 	}
 	
 	public TimedChatLine getLine() { return l; }
+	
 }

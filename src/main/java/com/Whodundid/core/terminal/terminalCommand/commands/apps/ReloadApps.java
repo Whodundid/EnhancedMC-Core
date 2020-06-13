@@ -3,9 +3,9 @@ package com.Whodundid.core.terminal.terminalCommand.commands.apps;
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.app.AppLoader;
 import com.Whodundid.core.app.RegisteredApps;
-import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
 import com.Whodundid.core.terminal.terminalCommand.TerminalCommand;
+import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
@@ -13,6 +13,7 @@ public class ReloadApps extends TerminalCommand {
 	
 	public ReloadApps() {
 		super(CommandType.NORMAL);
+		setCategory("App Specific");
 	}
 
 	@Override public String getName() { return "reloadapps"; }

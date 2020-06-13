@@ -1,10 +1,11 @@
 package com.Whodundid.core.terminal.terminalCommand.commands.system;
 
+import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.coreApp.CoreApp;
-import com.Whodundid.core.renderer.BlockDrawer;
-import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
 import com.Whodundid.core.terminal.terminalCommand.TerminalCommand;
+import com.Whodundid.core.terminal.window.ETerminal;
+import com.Whodundid.core.util.renderUtil.BlockDrawer;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
@@ -12,11 +13,12 @@ public class BlockDrawerCommands extends TerminalCommand {
 
 	public BlockDrawerCommands() {
 		super(CommandType.NORMAL);
+		setCategory("System");
 		numArgs = 1;
 	}
 
 	@Override public String getName() { return "blockdrawer"; }
-	@Override public boolean showInHelp() { return true; }
+	@Override public boolean showInHelp() { return EnhancedMC.isDevMode(); }
 	@Override public EArrayList<String> getAliases() { return new EArrayList<String>("bdrawer", "bdraw"); }
 	@Override public String getHelpInfo(boolean runVisually) { return "Interface for the EMC Block Drawer API"; }
 	@Override public String getUsage() { return "ex: bdraw clear"; }

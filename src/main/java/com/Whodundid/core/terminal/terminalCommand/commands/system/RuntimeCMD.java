@@ -1,9 +1,9 @@
 package com.Whodundid.core.terminal.terminalCommand.commands.system;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
 import com.Whodundid.core.terminal.terminalCommand.TerminalCommand;
+import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
@@ -14,6 +14,7 @@ public class RuntimeCMD extends TerminalCommand {
 	
 	public RuntimeCMD() {
 		super(CommandType.NORMAL);
+		setCategory("System");
 		numArgs = 0;
 	}
 
@@ -30,10 +31,19 @@ public class RuntimeCMD extends TerminalCommand {
 		else {
 			Runtime rt = Runtime.getRuntime();
 			
-			String javaVer = "Java Version: " + EnumChatFormatting.AQUA + Runtime.class.getPackage().getImplementationVersion();
-			String totMem = "Total Memory: " + EnumChatFormatting.AQUA + rt.totalMemory();
-			String usedMem = "Used Memory: " + EnumChatFormatting.AQUA + (rt.totalMemory() - rt.freeMemory());
-			String obfus = "Obfuscated: " + EnumChatFormatting.AQUA + EnhancedMC.isObfus();
+			double memJVMTotal = (double) ((double) rt.maxMemory() / 1024d / 1024d / 1024d);
+			double memJVMUsed = (double) ((double) rt.totalMemory() / 1024d / 1024d / 1024d);
+			double memJVMFree = (double) ((double) rt.freeMemory() / 1024d / 1024d / 1024d);
+			
+			String memJVMTotalString = String.format("%.2f gb", memJVMTotal);
+			String memJVMUsedString = String.format("%.2f gb", memJVMUsed);
+			String memJVMFreeString = String.format("%.2f gb", memJVMFree);
+			
+			String javaVer = "Java Version: " + EnumChatFormatting.GREEN + Runtime.class.getPackage().getImplementationVersion();
+			String totMem = "Total Memory: " + EnumChatFormatting.GREEN + memJVMTotalString;
+			String usedMem = "Used Memory: " + EnumChatFormatting.GREEN + memJVMUsedString;
+			String freeMem = "Free Memory: " + EnumChatFormatting.GREEN + memJVMFreeString;
+			String obfus = "Obfuscated: " + EnumChatFormatting.GREEN + EnhancedMC.isObfus();
 			
 			String longest = EArrayList.of(javaVer, totMem, usedMem, obfus).stream().max(Comparator.comparingInt(String::length)).get();
 			int len = (longest != null) ? longest.length() : 0;
@@ -41,16 +51,17 @@ public class RuntimeCMD extends TerminalCommand {
 			String divider = EUtil.repeatString("-", len - 3);
 			
 			//java version
-			termIn.writeln(javaVer, EColors.green);
+			termIn.writeln(javaVer, EColors.cyan);
 			termIn.writeln(divider, EColors.lgray);
 			
 			//memory
-			termIn.writeln(totMem, EColors.green);
-			termIn.writeln(usedMem, EColors.green);
+			termIn.writeln(totMem, EColors.cyan);
+			termIn.writeln(usedMem, EColors.cyan);
+			termIn.writeln(freeMem, EColors.cyan);
 			termIn.writeln(divider, EColors.lgray);
 			
 			//obfus
-			termIn.writeln(obfus, EColors.green);
+			termIn.writeln(obfus, EColors.cyan);
 		}
 		
 	}

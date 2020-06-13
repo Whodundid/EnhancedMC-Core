@@ -2,29 +2,29 @@ package com.Whodundid.core.settings.guiParts;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.app.EMCApp;
-import com.Whodundid.core.app.gui.AppErrorType;
 import com.Whodundid.core.app.util.AppEnabler;
 import com.Whodundid.core.app.util.AppErrorDisplay;
+import com.Whodundid.core.app.window.windowUtil.AppErrorType;
 import com.Whodundid.core.coreApp.EMCResources;
-import com.Whodundid.core.enhancedGui.guiObjects.windows.EGuiRightClickMenu;
-import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
-import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
-import com.Whodundid.core.settings.SettingsGuiMain;
+import com.Whodundid.core.settings.SettingsWindowMain;
 import com.Whodundid.core.util.renderUtil.CenterType;
+import com.Whodundid.core.windowLibrary.windowObjects.windows.RightClickMenu;
+import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IActionObject;
+import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IWindowParent;
 
 //Author: Hunter Bragg
 
-public class SettingsRCM extends EGuiRightClickMenu {
+public class SettingsRCM extends RightClickMenu {
 
-	private SettingsGuiMain window;
+	private SettingsWindowMain window;
 	private EMCApp mod;
 	private IWindowParent gui;
 	private String title;
 	
-	public SettingsRCM(SettingsGuiMain parentIn) { this(parentIn, null); }
-	public SettingsRCM(SettingsGuiMain parentIn, IWindowParent guiIn, String titleIn) { this (parentIn, null, guiIn, titleIn); }
-	public SettingsRCM(SettingsGuiMain parentIn, EMCApp modIn) { this(parentIn, modIn, null, ""); }
-	protected SettingsRCM(SettingsGuiMain parentIn, EMCApp modIn, IWindowParent guiIn, String titleIn) {
+	public SettingsRCM(SettingsWindowMain parentIn) { this(parentIn, null); }
+	public SettingsRCM(SettingsWindowMain parentIn, IWindowParent guiIn, String titleIn) { this (parentIn, null, guiIn, titleIn); }
+	public SettingsRCM(SettingsWindowMain parentIn, EMCApp modIn) { this(parentIn, modIn, null, ""); }
+	protected SettingsRCM(SettingsWindowMain parentIn, EMCApp modIn, IWindowParent guiIn, String titleIn) {
 		window = parentIn;
 		mod = modIn;
 		gui = guiIn;
@@ -32,7 +32,7 @@ public class SettingsRCM extends EGuiRightClickMenu {
 	}
 	
 	@Override
-	public void initGui() {
+	public void initWindow() {
 		addOption("Open", EMCResources.guiFileUpButton);
 		addOption("Open in new Window", EMCResources.guiFileUpButtonSel);
 		
@@ -53,7 +53,7 @@ public class SettingsRCM extends EGuiRightClickMenu {
 	}
 	
 	@Override
-	public void actionPerformed(IEnhancedActionObject object, Object... args) {
+	public void actionPerformed(IActionObject object, Object... args) {
 		if (object == this) {
 			switch ((String) getSelectedObject()) {
 			case "Open": open(); break;
@@ -66,7 +66,7 @@ public class SettingsRCM extends EGuiRightClickMenu {
 	
 	private void open() {
 		try {
-			IWindowParent g = mod != null ? mod.getMainGui() : gui;
+			IWindowParent g = mod != null ? mod.getMainWindow() : gui;
 			if (g != null) { EnhancedMC.displayWindow(g, getWindowParent()); }
 			else { AppErrorDisplay.displayError(AppErrorType.NOGUI, mod); }
 		} catch (Exception e) { e.printStackTrace(); }
@@ -74,7 +74,7 @@ public class SettingsRCM extends EGuiRightClickMenu {
 	
 	private void openNewWindow() {
 		try {
-			IWindowParent g = mod != null ? mod.getMainGui() : gui;
+			IWindowParent g = mod != null ? mod.getMainWindow() : gui;
 			if (g != null) { EnhancedMC.displayWindow(g, window, true, false, false, CenterType.objectIndent); }
 			else { AppErrorDisplay.displayError(AppErrorType.NOGUI, mod); }
 		} catch (Exception e) { e.printStackTrace(); }
@@ -82,6 +82,6 @@ public class SettingsRCM extends EGuiRightClickMenu {
 	
 	private void toggleEnabled() {
 		AppEnabler.toggleEnabled(mod);
-		window.updateList();
+		window.sendArgs("Reload");
 	}
 }

@@ -26,4 +26,5 @@ public enum Direction {
 	public String getDir() { return direction; }
 	public float getDegree() { return degreeDir; }
 	public String getXZFacing() { return xzFacing; }
+	
 }

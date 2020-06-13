@@ -148,7 +148,8 @@ public final class PlayerFacing {
 							vec33 = movingobjectposition == null ? vec3 : movingobjectposition.hitVec;
 							range = 0.0D;
 						}
-					} else if (movingobjectposition != null) {
+					}
+					else if (movingobjectposition != null) {
 						double d3 = vec3.distanceTo(movingobjectposition.hitVec);
 
 						if (d3 < range || range == 0.0D) {
@@ -157,7 +158,8 @@ public final class PlayerFacing {
 									hitEntity = entity1;
 									vec33 = movingobjectposition.hitVec;
 								}
-							} else {
+							}
+							else {
 								hitEntity = entity1;
 								vec33 = movingobjectposition.hitVec;
 								range = d3;
@@ -231,9 +233,8 @@ public final class PlayerFacing {
 				Block blocky = mc.theWorld.getBlockState(mop.getBlockPos()).getBlock();
 				return blocky;
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
+		catch (Exception e) { e.printStackTrace(); }
 		return null;
 	}
 
@@ -249,9 +250,8 @@ public final class PlayerFacing {
 			if (mop != null) {
 				return mop.getBlockPos();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
+		catch (Exception e) { e.printStackTrace(); }
 		return null;
 	}
 
@@ -313,9 +313,8 @@ public final class PlayerFacing {
 		 boolean toZero = Math.abs(rotMod) - 180 < 0;
 		 boolean isFullRot = (dir == 0 || dir == 360);
 		 
-		 if (rotMod < 0) { rotMod += 360; diff = isFullRot ? (toZero ? (360 - rotMod)
-		 : -rotMod) : dir - rotMod; } else { diff = isFullRot ? (toZero ? -rotMod :
-		 (360 - rotMod)) : dir - rotMod; }
+		 if (rotMod < 0) { rotMod += 360; diff = isFullRot ? (toZero ? (360 - rotMod) : -rotMod) : dir - rotMod; }
+		 else { diff = isFullRot ? (toZero ? -rotMod : (360 - rotMod)) : dir - rotMod; }
 		 
 		 curRot += diff;
 		 
@@ -331,4 +330,5 @@ public final class PlayerFacing {
 	public static void graduallyFaceDir(float dir, int speed) {
 		// unfinished
 	}
+	
 }

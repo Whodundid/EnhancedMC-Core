@@ -1,7 +1,6 @@
 package com.Whodundid.core.util.resourceUtil;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.util.storageUtil.DynamicTextureHandler;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;
@@ -59,12 +58,21 @@ public class EResource {
 	public DynamicTextureHandler getHandler() { return handler; }
 	public ResourceLocation getResource() { return (handler != null) ? handler.getTextureLocation() : null; }
 	
+	//-----------------
+	//EResource Getters
+	//-----------------
+	
+	public EResource setDomain(String domainIn) { domain = domainIn; return this; }
+	public EResource setPath(String pathIn) { path = pathIn; return this; }
+	public EResource setFullPath(String domainIn, String pathIn) { domain = domainIn; path = pathIn; return this; }
+	
 	//--------------------------
 	//EResource Internal Methods
 	//--------------------------
 	
 	private DynamicTextureHandler getHandler(String domain, String path) {
 		BufferedImage img = getImage(domain, path);
+		if (handler != null) { handler.destroy(); }
 		
 		if (img != null) {
 			DynamicTextureHandler handler = new DynamicTextureHandler(Minecraft.getMinecraft().renderEngine, img);

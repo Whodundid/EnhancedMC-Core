@@ -1,8 +1,8 @@
 package com.Whodundid.core.terminal.terminalCommand.commands.system;
 
-import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
 import com.Whodundid.core.terminal.terminalCommand.TerminalCommand;
+import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
 //Author: Hunter Bragg
@@ -11,6 +11,7 @@ public class ClearTerminal extends TerminalCommand {
 	
 	public ClearTerminal() {
 		super(CommandType.NORMAL);
+		setCategory("System");
 		numArgs = 0;
 	}
 
@@ -25,4 +26,5 @@ public class ClearTerminal extends TerminalCommand {
 	public void runCommand(ETerminal termIn, EArrayList<String> args, boolean runVisually) {
 		termIn.clear();
 	}
+	
 }

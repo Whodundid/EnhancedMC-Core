@@ -34,4 +34,5 @@ public class StorageBox<Obj, Val> {
 	public static boolean compare(StorageBox<?, ?> box1, StorageBox<?, ?> box2) { return (box1 != null && box2 != null) ? box1.compare(box2) : false; }
 	
 	@Override public String toString() { return "[" + storedObj + ", " + storedVal + "]"; }
+	
 }

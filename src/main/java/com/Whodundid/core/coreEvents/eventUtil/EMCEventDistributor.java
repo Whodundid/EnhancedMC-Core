@@ -55,7 +55,7 @@ public class EMCEventDistributor {
 	
 	public static void distributeEvent(EMCEvents type, Event e) {
 		if (EnhancedMC.isInitialized()) {
-			EArrayList<EMCApp> mods = RegisteredApps.getRegisteredAppList();
+			EArrayList<EMCApp> mods = RegisteredApps.getRegisteredAppList().stream().filter(a -> a.isEnabled()).collect(EArrayList.toEArrayList());
 			
 			switch (type) {
 			//ticks

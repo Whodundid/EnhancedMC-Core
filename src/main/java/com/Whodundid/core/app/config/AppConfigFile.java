@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 import scala.actors.threadpool.Arrays;
-import com.Whodundid.core.app.AppConfigSetting;
 import com.Whodundid.core.app.EMCApp;
+import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
@@ -227,6 +227,7 @@ public class AppConfigFile {
 				
 				if (block.createsEmptyLineAfterBlock()) { saver.println(); }
 			}
+			saver.println();
 			saver.print("END");
 		}
 		catch (Exception e) { e.printStackTrace(); return false; }
@@ -299,16 +300,14 @@ public class AppConfigFile {
 	
 	public boolean trySave() {
 		addLine(configTitleLine != null ? configTitleLine : mod.getName() + " Config").nl();
-		mod.getSettings().forEach(c -> addLine(c));
+		EUtil.filterDo(s -> !s.getIgnoreConfigWrite(), s -> addLine(s), mod.getSettings());
 		return save();
 	}
 	
 	public boolean tryLoad() {
 		try {
 			if (load()) {
-				
-				mod.getSettings().forEach(c -> setConfigVal(c));
-				
+				EUtil.filterDo(s -> !s.getIgnoreConfigRead(), s -> setConfigVal(s), mod.getSettings());
 				return true;
 			}
 		}

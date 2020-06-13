@@ -49,4 +49,5 @@ public enum EMCEvents {
 	appCallout,
 	windowOpened,
 	windowClosed;
+	
 }

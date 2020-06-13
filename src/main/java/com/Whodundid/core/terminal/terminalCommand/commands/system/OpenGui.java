@@ -3,16 +3,16 @@ package com.Whodundid.core.terminal.terminalCommand.commands.system;
 import com.Whodundid.core.app.EMCApp;
 import com.Whodundid.core.app.RegisteredApps;
 import com.Whodundid.core.debug.ExperimentGui;
-import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.renderer.EnhancedMCRenderer;
-import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
 import com.Whodundid.core.terminal.terminalCommand.TerminalCommand;
+import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.guiUtil.GuiOpener;
 import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
+import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IWindowParent;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiCustomizeSkin;
 import net.minecraft.client.gui.GuiIngameMenu;
@@ -32,6 +32,7 @@ public class OpenGui extends TerminalCommand {
 	
 	public OpenGui() {
 		super(CommandType.NORMAL);
+		setCategory("System");
 		numArgs = -1;
 	}
 	
@@ -51,7 +52,7 @@ public class OpenGui extends TerminalCommand {
 		options.addAll(RegisteredApps.getAllGuiClasses().stream().map(c -> c.getSimpleName()).collect(EArrayList.toEArrayList()));
 		
 		for (EMCApp a : RegisteredApps.getAppsList()) {
-			for (IWindowParent p : a.getGuis()) {
+			for (IWindowParent p : a.getWindows()) {
 				options.addAll(p.getAliases());
 			}
 		}
@@ -68,8 +69,8 @@ public class OpenGui extends TerminalCommand {
 				for (String s : args) {
 					s = s.toLowerCase();
 					
-					if (EUtil.findMatch(s, termIn.getAliases())) { guis.addIfNotNull(termIn.getClass()); }
-					else if (EUtil.findMatch(s, ExperimentGui.aliases)) { guis.addIfNotNull(ExperimentGui.class); }
+					if (termIn.getAliases().contains(s)) { guis.addIfNotNull(termIn.getClass()); }
+					else if (ExperimentGui.aliases.contains(s)) { guis.addIfNotNull(ExperimentGui.class); }
 					else {
 						Class found = RegisteredApps.getGuiClassByAlias(s);
 						guis.addIfNotNull(found);
@@ -114,8 +115,7 @@ public class OpenGui extends TerminalCommand {
 			}
 		}
 		catch (Exception e) {
-			termIn.badError(e.toString());
-			e.printStackTrace();
+			error(termIn, e);
 		}
 	}
 	

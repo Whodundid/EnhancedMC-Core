@@ -1,6 +1,6 @@
 package com.Whodundid.core.coreEvents.emcEvents;
 
-import com.Whodundid.core.enhancedGui.types.WindowParent;
+import com.Whodundid.core.windowLibrary.windowTypes.WindowParent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 public class WindowClosedEvent extends Event {
@@ -12,4 +12,5 @@ public class WindowClosedEvent extends Event {
 	}
 	
 	public WindowParent getWindow() { return window; }
+	
 }

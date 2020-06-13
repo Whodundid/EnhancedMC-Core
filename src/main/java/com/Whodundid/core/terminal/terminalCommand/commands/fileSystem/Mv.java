@@ -5,8 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import net.minecraft.util.EnumChatFormatting;
-import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
+import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
@@ -22,7 +22,7 @@ public class Mv extends FileCommand {
 	@Override public EArrayList<String> getAliases() { return null; }
 	@Override public String getHelpInfo(boolean runVisually) { return "Moves the contents of one file to another."; }
 	@Override public String getUsage() { return "ex: mv 'src' 'dest'"; }
-	@Override public void handleTabComplete(ETerminal termIn, EArrayList<String> args) { defaultTabComplete(termIn, args); }
+	@Override public void handleTabComplete(ETerminal termIn, EArrayList<String> args) { fileTabComplete(termIn, args); }
 	
 	@Override
 	public void runCommand(ETerminal termIn, EArrayList<String> args, boolean runVisually) {
@@ -40,7 +40,9 @@ public class Mv extends FileCommand {
 				else { termIn.error("Error: Cannot find the object specified!"); }
 				
 			}
-			catch (Exception e) { e.printStackTrace(); }
+			catch (Exception e) {
+				error(termIn, e);
+			}
 		}
 		else if (args.size() > 2) { termIn.error("Too many arguments!"); }
 	}
@@ -52,7 +54,7 @@ public class Mv extends FileCommand {
 		}
 		catch (Exception e) {
 			termIn.error("Error: Failed to move object! " + EnumChatFormatting.WHITE + e.toString());
-			e.printStackTrace();
+			error(termIn, e);
 		}
 	}
 	

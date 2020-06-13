@@ -2,19 +2,24 @@ package com.Whodundid.core.renderer.taskView;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.coreApp.EMCResources;
-import com.Whodundid.core.enhancedGui.guiObjects.windows.EGuiRightClickMenu;
-import com.Whodundid.core.enhancedGui.guiObjects.windows.EMCGuiSelectionList;
-import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
-import com.Whodundid.core.enhancedGui.types.WindowParent;
-import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
-import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.renderUtil.CenterType;
+import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
+import com.Whodundid.core.windowLibrary.windowObjects.advancedObjects.header.WindowHeader;
+import com.Whodundid.core.windowLibrary.windowObjects.windows.EMCGuiSelectionList;
+import com.Whodundid.core.windowLibrary.windowObjects.windows.RightClickMenu;
+import com.Whodundid.core.windowLibrary.windowTypes.WindowObject;
+import com.Whodundid.core.windowLibrary.windowTypes.WindowParent;
+import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IActionObject;
+import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IWindowObject;
+import java.util.Collections;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.util.MathHelper;
 
-public class TaskBar extends EnhancedGuiObject {
+public class TaskBar extends WindowObject {
 	
 	public static int drawSize = 24;
 	public static EArrayList<TaskButton> buttons = new EArrayList();
@@ -26,8 +31,11 @@ public class TaskBar extends EnhancedGuiObject {
 	//TaskBar Constructors
 	//--------------------
 	
-	public TaskBar() {
+	public TaskBar() { this(false); }
+	public TaskBar(boolean fromScratch) {
 		reorient();
+		res = new ScaledResolution(Minecraft.getMinecraft());
+		if (fromScratch) { buildFromScratch(); }
 	}
 	
 	//----------------------
@@ -43,14 +51,16 @@ public class TaskBar extends EnhancedGuiObject {
 	
 	@Override
 	public void drawObject(int mXIn, int mYIn) {
-		
 		//validate buttons
-		//update();
 		updateLists();
 		
 		//draw background
-		drawRect(0xff2d2d2d);
-		drawHRect(startX - 1, startY, endX + 1, endY, 1, 0xff000000);
+		drawRect(startX, startY - 1, res.getScaledWidth(), endY, 0xff232323);
+		drawRect(startX - 1, endY - 1, res.getScaledWidth(), endY, 0xff000000);
+		
+		if (buttons.isEmpty() && toAdd.isEmpty()) {
+			drawString("No currently open windows..", startX + 5, midY - 4, EColors.lgray);
+		}
 		
 		super.drawObject(mXIn, mYIn);
 	}
@@ -58,7 +68,7 @@ public class TaskBar extends EnhancedGuiObject {
 	@Override
 	public void mousePressed(int mXIn, int mYIn, int button) {
 		if (button == 1) {
-			EGuiRightClickMenu menu = new EGuiRightClickMenu();
+			RightClickMenu menu = new RightClickMenu();
 			menu.setTitle("Taskbar");
 			menu.setActionReceiver(this);
 			menu.setStoredObject(this);
@@ -70,19 +80,20 @@ public class TaskBar extends EnhancedGuiObject {
 	}
 	
 	@Override
-	public void actionPerformed(IEnhancedActionObject object, Object... args) {
+	public void actionPerformed(IActionObject object, Object... args) {
 		if (object instanceof TaskButton) {
 			TaskButton b = (TaskButton) object;
 			
 			if (args.length > 0 && args[0] instanceof WindowParent) {
 				WindowParent window = (WindowParent) args[0];
 				
+				if (window.isMinimized()) { window.setMinimized(false); }
 				window.bringToFront();
-				window.requestFocus();
+				EnhancedMC.getRenderer().setFocusedObject(window);
 			}
 		}
-		if (object instanceof EGuiRightClickMenu) {
-			EGuiRightClickMenu rcm = (EGuiRightClickMenu) object;
+		if (object instanceof RightClickMenu) {
+			RightClickMenu rcm = (RightClickMenu) object;
 			
 			if (rcm.getStoredObject() == this) {
 				if (rcm.getSelectedObject().equals("Open Window..")) {
@@ -91,7 +102,7 @@ public class TaskBar extends EnhancedGuiObject {
 			}
 			else if (rcm.getStoredObject() instanceof WindowParent) {
 				if (rcm.getSelectedObject() == "Pin" ) {
-					System.out.println("pinnging: " + rcm.getStoredObject().getClass().getSimpleName());
+					System.out.println("pinning: " + rcm.getStoredObject().getClass().getSimpleName());
 				}
 				if (rcm.getSelectedObject() == "New Window") {
 					try {
@@ -110,7 +121,7 @@ public class TaskBar extends EnhancedGuiObject {
 					catch (Exception e) { e.printStackTrace(); }
 					
 				}
-				if (rcm.getSelectedObject().equals("Close")) {
+				if (rcm.getSelectedObject().equals("Close") || rcm.getSelectedObject().equals("Close All")) {
 					WindowParent w = (WindowParent) rcm.getStoredObject();
 					if (w != null) {
 						Class c = w.getClass();
@@ -118,9 +129,33 @@ public class TaskBar extends EnhancedGuiObject {
 						windows.forEach(p -> p.close());
 					}
 				}
+				if (rcm.getSelectedObject().equals("Recenter")) {
+					WindowParent w = (WindowParent) rcm.getStoredObject();
+					if (w != null) {
+						Class c = w.getClass();
+						
+						EArrayList<WindowParent> windows = EnhancedMC.getAllWindowInstances(c);
+						
+						if (windows.size() == 1) {
+							WindowParent p = windows.get(0);
+							WindowHeader h = p.getHeader();
+							TaskBar b = EnhancedMC.getRenderer().getTaskBar();
+							
+							int hh = (h != null) ? h.height : 0;
+							int bh = (b != null) ? b.height : 0;
+							int oH = hh + bh;
+							int maxW = MathHelper.clamp_int(p.width, 0, res.getScaledWidth() - 40);
+							int maxH = MathHelper.clamp_int(p.height, 0, res.getScaledHeight() - 40 - oH);
+							
+							p.setDimensions(maxW, maxH);
+							p.centerObjectWithSize(maxW, maxH);
+							p.setPosition(p.startX, p.startY + hh);
+							p.reInitObjects();
+						}
+					}
+				} //recenter
 			}
-			
-		}
+		} //instanceof rcm
 	}
 	
 	@Override
@@ -181,15 +216,15 @@ public class TaskBar extends EnhancedGuiObject {
 	private void updateLists() {
 		try {
 			
-			EArrayList<IEnhancedGuiObject> removeGhosts = new EArrayList();
-			for (IEnhancedGuiObject o : getObjects()) {
+			EArrayList<IWindowObject> removeGhosts = new EArrayList();
+			for (IWindowObject o : getObjects()) {
 				if (o instanceof TaskButton) {
 					if (!EnhancedMC.isEGuiOpen(((TaskButton) o).getWindowType().getClass())) { removeGhosts.add(o); }
 				}
 			}
 			
-			for (IEnhancedGuiObject o : removeGhosts) {
-				removeObject(o);
+			for (IWindowObject o : removeGhosts) {
+				removeObject(null, o);
 			}
 			
 			//check for ghost buttons
@@ -218,7 +253,7 @@ public class TaskBar extends EnhancedGuiObject {
 				
 				//remove old ones
 				buttons.removeAll(removing);
-				removing.forEach(b -> removeObject(b));
+				removing.forEach(b -> removeObject(null, b));
 				
 				//update the remaining
 				buttons.forEach(b -> b.update());
@@ -235,20 +270,20 @@ public class TaskBar extends EnhancedGuiObject {
 			if (!typeExists(window)) {
 				TaskButton b = new TaskButton(this, window);
 				
-				int sX = 2;
-				int sY = 2;
-				int w = drawSize - 4;
-				int h = drawSize - 4;
+				int sX = 0;
+				int sY = 0;
+				int w = drawSize + 2;
+				int h = drawSize - 1;
 				boolean v = isVertical();
 				
-				if (v) { sY += (w * buttons.size()) + (6 * buttons.size()); }
-				else { sX += (w * buttons.size()) + (6 * buttons.size()); }
+				if (v) { sY += (w * buttons.size()) + (0 * buttons.size()); }
+				else { sX += (w * buttons.size()) + (0 * buttons.size()); }
 				
 				b.setDimensions(sX, sY, w, h);
 				
 				//add to bar
 				buttons.add(b);
-				addObject(b);
+				addObject(null, b);
 			}
 			else {
 				for (TaskButton b : buttons) {
@@ -264,14 +299,14 @@ public class TaskBar extends EnhancedGuiObject {
 		for (int i = 0; i < buttons.size(); i++) {
 			TaskButton b = buttons.get(i);
 			
-			int sX = 2;
-			int sY = 2;
-			int w = drawSize - 4;
-			int h = drawSize - 4;
+			int sX = 0;
+			int sY = 0;
+			int w = drawSize + 2;
+			int h = drawSize - 1;
 			boolean v = isVertical();
 			
-			if (v) { sY += (w * i) + (6 * i); }
-			else { sX += (w * i) + (6 * i); }
+			if (v) { sY += (w * i) + (0 * i); }
+			else { sX += (w * i) + (0 * i); }
 			
 			b.setDimensions(sX, sY, w, h);
 		}
@@ -286,6 +321,37 @@ public class TaskBar extends EnhancedGuiObject {
 			}
 		}
 		return false;
+	}
+	
+	private void buildFromScratch() {
+		windowObjects.clear();
+		objsToBeAdded.clear();
+		objsToBeRemoved.clear();
+		buttons.clear();
+		toAdd.clear();
+		toRemove.clear();
+		
+		EArrayList<WindowParent> windows = EnhancedMC.getAllActiveWindows();
+		EArrayList<WindowParent> filtered = new EArrayList();
+		EArrayList<TaskButton> toBuild = new EArrayList();
+		
+		for (WindowParent w : windows) {
+			boolean contains = false;
+			for (WindowParent f : filtered) {
+				if (f.getClass() == w.getClass()) { contains = true; break; }
+			}
+			if (!contains) { filtered.add(w); }
+		}
+		
+		filtered.forEach(w -> toBuild.add(new TaskButton(this, w)));
+		Collections.sort(toBuild);
+		
+		for (TaskButton b : toBuild) {
+			buttons.add(b);
+			addObject(null, b);
+		}
+		
+		repositionButtons();
 	}
 	
 }

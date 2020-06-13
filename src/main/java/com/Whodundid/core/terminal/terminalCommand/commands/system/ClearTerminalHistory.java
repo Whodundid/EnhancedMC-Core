@@ -1,9 +1,9 @@
 package com.Whodundid.core.terminal.terminalCommand.commands.system;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
 import com.Whodundid.core.terminal.terminalCommand.TerminalCommand;
+import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
 //Author: Hunter Bragg
@@ -12,6 +12,7 @@ public class ClearTerminalHistory extends TerminalCommand {
 	
 	public ClearTerminalHistory() {
 		super(CommandType.NORMAL);
+		setCategory("System");
 		numArgs = 0;
 	}
 	
@@ -27,4 +28,5 @@ public class ClearTerminalHistory extends TerminalCommand {
 		EnhancedMC.getTerminalHandler().clearHistory();
 		termIn.writeln("Terminal history cleared..", 0x55ff55);
 	}
+	
 }

@@ -4,20 +4,20 @@ import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.app.EMCApp;
 import com.Whodundid.core.app.RegisteredApps;
 import com.Whodundid.core.debug.ExperimentGui;
-import com.Whodundid.core.enhancedGui.types.WindowParent;
-import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
-import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.notifications.util.NotificationType;
 import com.Whodundid.core.terminal.TerminalCommandHandler;
-import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
 import com.Whodundid.core.terminal.terminalCommand.IListableCommand;
 import com.Whodundid.core.terminal.terminalCommand.TerminalCommand;
+import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.chatUtil.EChatUtil;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
+import com.Whodundid.core.windowLibrary.windowTypes.WindowParent;
+import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IWindowObject;
+import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IWindowParent;
 import java.util.Iterator;
 import java.util.List;
 import net.minecraft.client.Minecraft;
@@ -32,6 +32,7 @@ public class ListCMD extends TerminalCommand {
 	
 	public ListCMD() {
 		super(CommandType.NORMAL);
+		setCategory("System");
 		numArgs = 1;
 	}
 
@@ -43,14 +44,20 @@ public class ListCMD extends TerminalCommand {
 	
 	@Override
 	public void handleTabComplete(ETerminal termIn, EArrayList<String> args) {
-		String[] types = {"mods", "apps", "players", "objects", "guis", "windows", "notifications"};
-		super.basicTabComplete(termIn, args, new EArrayList().addA(types));
+		if (EnhancedMC.isDevMode()) {
+			String[] types = {"mods", "apps", "players", "objects", "guis", "windows", "notifications"};
+			super.basicTabComplete(termIn, args, new EArrayList().addA(types));
+		}
+		else {
+			String[] types = {"mods", "apps", "objects", "guis", "windows", "notifications"};
+			super.basicTabComplete(termIn, args, new EArrayList().addA(types));
+		}
 	}
 	
 	@Override
 	public void runCommand(ETerminal termIn, EArrayList<String> args, boolean runVisually) {
 		if (args.isEmpty()) {
-			if (runVisually) { termIn.writeln("mods, apps, players, objects, guis, windows, notifications", EColors.green); }
+			if (runVisually) { termIn.writeln("mods, apps, " + (EnhancedMC.isDevMode() ? "players, " : "") + "objects, guis, windows, notifications", EColors.green); }
 			else { termIn.info(getUsage()); }
 		}
 		else if (args.size() > 1) { termIn.error("Too many arguments!"); }
@@ -84,7 +91,7 @@ public class ListCMD extends TerminalCommand {
 				for (TerminalCommand c : TerminalCommandHandler.getInstance().getCommandList()) {
 					String name = args.get(0).toLowerCase();
 					
-					if (c.getName().equals(name) || EUtil.findMatch(name, c.getAliases())) {
+					if (c.getName().equals(name) || c.getAliases().contains(name)) {
 						if (c instanceof IListableCommand) {
 							found = true;
 							((IListableCommand) c).list(termIn, args, runVisually);
@@ -106,7 +113,9 @@ public class ListCMD extends TerminalCommand {
 			termIn.info("Listing all EMC Apps");
 			for (EMCApp m : RegisteredApps.getAppsList()) {
 				EColors c = m.isIncompatible() ? EColors.red : EColors.lgray;
-				String s = "-" + m.getName() + ": " + (m.isEnabled() ? EnumChatFormatting.GREEN + "Enabled" : EnumChatFormatting.RED + "Disabled");
+				String s = "-" + m.getName() + ": " + (m.isEnabled() ?
+						(m.isDisableable() ? EnumChatFormatting.GREEN + "Enabled" : EnumChatFormatting.DARK_GREEN + "Enabled") :
+						(m.canBeEnabled() ? EnumChatFormatting.RED + "Disabled" : EnumChatFormatting.DARK_RED + "Disabled"));
 				if (m.isIncompatible()) { s = "-" + m.getName() + ": Incompatible!"; }
 				
 				if (runVisually) {
@@ -139,45 +148,48 @@ public class ListCMD extends TerminalCommand {
 	}
 	
 	private void listPlayers(ETerminal termIn, EArrayList<String> args, boolean runVisually) {
-		try {
-			Minecraft mc = Minecraft.getMinecraft();
-			List<EntityPlayer> list = mc.theWorld.playerEntities;
-			
-			termIn.info("Listing all current players in world");
-			for (EntityPlayer p : list) {
-				int c = 0xb2b2b2;
-				String s = "-" + p.getName();
-				if (p.isUser()) { s += EnumChatFormatting.GREEN + " (you)"; c = 0x66ff66; }
-				if (p.isInvisible()) { s += " is invisible"; c = EColors.magenta.c(); }
-				termIn.writeln(s, c);
+		if (EnhancedMC.isDevMode()) {
+			try {
+				Minecraft mc = Minecraft.getMinecraft();
+				List<EntityPlayer> list = mc.theWorld.playerEntities;
+				
+				termIn.info("Listing all current players in world");
+				for (EntityPlayer p : list) {
+					int c = 0xb2b2b2;
+					String s = "-" + p.getName();
+					if (p.isUser()) { s += EnumChatFormatting.GREEN + " (you)"; c = 0x66ff66; }
+					if (p.isInvisible()) { s += " is invisible"; c = EColors.magenta.c(); }
+					termIn.writeln(s, c);
+				}
+				termIn.writeln("Total players: " + list.size(), 0xffff00);
+				
 			}
-			termIn.writeln("Total players: " + list.size(), 0xffff00);
-			
-		} catch (Exception e) {
-			termIn.error("Java Error!");
-			termIn.writeln(e.getMessage(), 0xff0000);
+			catch (Exception e) {
+				error(termIn, e);
+			}
 		}
+		else { termIn.error("Unrecognized list type!"); }
 	}
 	
 	private void listObjects(ETerminal termIn, EArrayList<String> args, boolean runVisually) {
 		termIn.info("Listing all current objects in renderer");
 		if (runVisually) {
 			int grandTotal = 0; //this isn't completely right tree wise, but whatever
-			for (IEnhancedGuiObject obj : EnhancedMC.getRenderer().getObjects()) {
+			for (IWindowObject obj : EnhancedMC.getRenderer().getObjects()) {
 				termIn.writeln(obj.toString(), EColors.green);
 				
 				//int depth = 3;
 				
-				EArrayList<IEnhancedGuiObject> foundObjs = new EArrayList();
-				EArrayList<IEnhancedGuiObject> objsWithChildren = new EArrayList();
-				EArrayList<IEnhancedGuiObject> workList = new EArrayList();
+				EArrayList<IWindowObject> foundObjs = new EArrayList();
+				EArrayList<IWindowObject> objsWithChildren = new EArrayList();
+				EArrayList<IWindowObject> workList = new EArrayList();
 				
 				//grab all immediate children and add them to foundObjs, then check if any have children of their own
 				obj.getObjects().forEach(o -> { foundObjs.add(o); if (!o.getObjects().isEmpty()) { objsWithChildren.add(o); } });
 				//load the workList with every child found on each object
 				objsWithChildren.forEach(c -> workList.addAll(c.getObjects()));
 				
-				for (IEnhancedGuiObject o : EArrayList.combineLists(objsWithChildren, workList)) {
+				for (IWindowObject o : EArrayList.combineLists(objsWithChildren, workList)) {
 					String s = "   ";
 					//for (int i = 0; i < depth; i++) { s += " "; }
 					termIn.writeln(s + EChatUtil.removeFormattingCodes(o.toString()), EColors.lgray);
@@ -197,7 +209,7 @@ public class ListCMD extends TerminalCommand {
 					workList.clear();
 					objsWithChildren.forEach(c -> workList.addAll(c.getObjects()));
 					
-					for (IEnhancedGuiObject o : EArrayList.combineLists(objsWithChildren, workList)) {
+					for (IWindowObject o : EArrayList.combineLists(objsWithChildren, workList)) {
 						String s = "   ";
 						//for (int i = 0; i < depth; i++) { s += " "; }
 						termIn.writeln(s + EChatUtil.removeFormattingCodes(o.toString()), EColors.lgray);
@@ -213,7 +225,7 @@ public class ListCMD extends TerminalCommand {
 			termIn.writeln("Grand total: " + grandTotal, EColors.orange);
 		}
 		else {
-			for (IEnhancedGuiObject obj : EnhancedMC.getRenderer().getObjects()) {
+			for (IWindowObject obj : EnhancedMC.getRenderer().getObjects()) {
 				termIn.writeln(obj.toString(), EColors.green);
 			}
 			termIn.writeln("Total objects: " + EnhancedMC.getRenderer().getObjects().size(), 0xffff00);
@@ -238,10 +250,10 @@ public class ListCMD extends TerminalCommand {
 			termIn.writeln(terminal, EColors.lgray);
 			
 			for (EMCApp m : RegisteredApps.getAppsList()) {
-				if (m.getGuis().isNotEmpty()) {
+				if (m.getWindows().isNotEmpty()) {
 					termIn.writeln();
 					termIn.writeln(m.getName(), EColors.cyan);
-					for (IWindowParent g : m.getGuis()) {
+					for (IWindowParent g : m.getWindows()) {
 						String gui = "  -" + g.getClass().getSimpleName();
 						
 						if (g.getAliases().isNotEmpty()) {
@@ -284,10 +296,11 @@ public class ListCMD extends TerminalCommand {
 		termIn.writeln(EUtil.repeatString("-", 16), EColors.lime);
 		
 		for (WindowParent p : windows) {
-			String out = p.getObjectName() + " | " + p.getObjectID() + " | " + p.getClass().getSimpleName();
+			String out = p.getObjectName() + " | " + p.getObjectID() + " | " + p.getClass().getSimpleName()
+						 + (p.isPinned() ? " | " + EnumChatFormatting.LIGHT_PURPLE + "pinned" : ""
+						 + (p.isMinimized() ? " | " + EnumChatFormatting.LIGHT_PURPLE + "minimized" : ""));
 			termIn.writeln(out, EColors.lime);
 		}
-		
 	}
 	
 	private void listNotifications(ETerminal termIn, EArrayList<String> args, boolean runVisually) {

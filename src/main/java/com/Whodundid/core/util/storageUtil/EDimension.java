@@ -10,7 +10,6 @@ public class EDimension {
 	public int width = 0, height = 0;
 	
 	public EDimension() { this(0, 0, 0, 0); }
-	
 	public EDimension(int startXIn, int startYIn, int endXIn, int endYIn) {
 		startX = startXIn;
 		startY = startYIn;
@@ -79,4 +78,5 @@ public class EDimension {
 	public boolean isEqualTo(EDimension dimIn) { return startX == dimIn.startX && startY == dimIn.startY && width == dimIn.width && height == dimIn.height; }
 	
 	@Override public String toString() { return "[startX/Y: " + startX + ", " + startY + "; endX/Y: " + endX + ", " + endY + "; width/Height: " + width + ", " + height + "]"; }
+	
 }

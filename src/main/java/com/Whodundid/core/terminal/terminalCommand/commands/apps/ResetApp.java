@@ -3,10 +3,9 @@ package com.Whodundid.core.terminal.terminalCommand.commands.apps;
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.app.EMCApp;
 import com.Whodundid.core.app.RegisteredApps;
-import com.Whodundid.core.enhancedGui.types.WindowParent;
-import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
 import com.Whodundid.core.terminal.terminalCommand.TerminalCommand;
+import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
 //Author: Hunter Bragg
@@ -18,6 +17,7 @@ public class ResetApp extends TerminalCommand {
 	
 	public ResetApp() {
 		super(CommandType.NORMAL);
+		setCategory("App Specific");
 		numArgs = 1;
 	}
 
@@ -70,7 +70,7 @@ public class ResetApp extends TerminalCommand {
 				termIn.info(app.getName() + " reset!");
 			}
 			
-			for (WindowParent w : EnhancedMC.getAllActiveWindows()) { w.sendArgs("Reload"); }
+			EnhancedMC.reloadAllWindows();
 		}
 		else {
 			String theArg = args.get(0).toLowerCase();
@@ -83,7 +83,7 @@ public class ResetApp extends TerminalCommand {
 				app.getSettings().forEach(s -> s.set(s.getDefault()));
 				if (app.isDisableable()) { app.setEnabled(false); }
 				termIn.info(app.getName() + " reset!");
-				for (WindowParent w : EnhancedMC.getAllActiveWindows()) { w.sendArgs("Reload", app); }
+				EnhancedMC.reloadAllWindows();
 			}
 		}
 	}

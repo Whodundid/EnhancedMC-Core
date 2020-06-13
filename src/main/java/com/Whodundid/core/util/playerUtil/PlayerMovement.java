@@ -56,4 +56,5 @@ public class PlayerMovement {
 		mc.thePlayer.motionY = 0;
 		mc.thePlayer.motionZ = 0;
 	}
+	
 }

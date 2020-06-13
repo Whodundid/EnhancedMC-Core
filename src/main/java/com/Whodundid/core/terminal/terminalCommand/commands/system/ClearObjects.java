@@ -1,11 +1,11 @@
 package com.Whodundid.core.terminal.terminalCommand.commands.system;
 
-import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.renderer.EnhancedMCRenderer;
-import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
 import com.Whodundid.core.terminal.terminalCommand.TerminalCommand;
+import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.storageUtil.EArrayList;
+import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IWindowObject;
 
 //Author: Hunter Bragg
 
@@ -13,6 +13,7 @@ public class ClearObjects extends TerminalCommand {
 	
 	public ClearObjects() {
 		super(CommandType.NORMAL);
+		setCategory("System");
 		numArgs = 0;
 	}
 
@@ -26,11 +27,11 @@ public class ClearObjects extends TerminalCommand {
 	@Override
 	public void runCommand(ETerminal termIn, EArrayList<String> args, boolean runVisually) {
 		EnhancedMCRenderer ren = EnhancedMCRenderer.getInstance();
-		EArrayList<IEnhancedGuiObject> objs = EArrayList.combineLists(ren.getObjects(), ren.getAddingObjects());
+		EArrayList<IWindowObject> objs = EArrayList.combineLists(ren.getObjects(), ren.getAddingObjects());
 		if (objs.contains(termIn)) { objs.remove(termIn); }
 		if (objs.isNotEmpty()) {
 			termIn.writeln("Closing Renderer Objects..", 0x00ffff);
-			for (IEnhancedGuiObject o : objs) {
+			for (IWindowObject o : objs) {
 				if (o.isCloseable()) {
 					if (runVisually) { termIn.writeln("Closing: " + o, 0xffff00); }
 					o.close();
@@ -39,4 +40,5 @@ public class ClearObjects extends TerminalCommand {
 			if (runVisually) { termIn.writeln(objs.size() + " closed.", 0xffaa00); }
 		}
 	}
+	
 }

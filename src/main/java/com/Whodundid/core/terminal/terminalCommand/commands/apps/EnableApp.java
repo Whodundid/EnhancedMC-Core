@@ -4,10 +4,9 @@ import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.app.EMCApp;
 import com.Whodundid.core.app.RegisteredApps;
 import com.Whodundid.core.app.util.AppEnabler;
-import com.Whodundid.core.enhancedGui.types.WindowParent;
-import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
 import com.Whodundid.core.terminal.terminalCommand.TerminalCommand;
+import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
@@ -17,6 +16,7 @@ public class EnableApp extends TerminalCommand {
 	
 	public EnableApp() {
 		super(CommandType.NORMAL);
+		setCategory("App Specific");
 		numArgs = 1;
 	}
 	
@@ -66,7 +66,7 @@ public class EnableApp extends TerminalCommand {
 					for (EMCApp m : RegisteredApps.getRegisteredAppList()) {
 						if (!m.isEnabled()) { termIn.writeln(m.getName() + " enabled", EColors.green); }
 						m.setEnabled(true);
-						for (WindowParent w : EnhancedMC.getAllActiveWindows()) { w.sendArgs("Reload"); }
+						EnhancedMC.reloadAllWindows();
 					}
 					
 					break;
@@ -76,13 +76,13 @@ public class EnableApp extends TerminalCommand {
 					if (m != null) {
 						if (m.isEnabled()) { termIn.writeln(m.getName() + " is already enabled.", EColors.orange); }
 						else {
-							if (AppEnabler.enableMod(m, termIn)) { termIn.writeln(m.getName() + " enabled", EColors.green); }
+							if (AppEnabler.enableApp(m, termIn)) { termIn.writeln(m.getName() + " enabled", EColors.green); }
 						}
 					}
 					else { termIn.error("Cannot find a submod by '" + s + "'"); }
 				}
 			}
-		}
+		} //if
 	}
 	
 }

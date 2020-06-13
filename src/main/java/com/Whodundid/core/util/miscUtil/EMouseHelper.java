@@ -24,4 +24,5 @@ public class EMouseHelper {
 	public static int getMx() { return mX; }
 	public static int getMy() { return mY; }
 	public static int getLastButton() { return lastButton; }
+	
 }

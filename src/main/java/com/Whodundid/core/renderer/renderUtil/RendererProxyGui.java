@@ -5,17 +5,20 @@ import com.Whodundid.core.app.AppType;
 import com.Whodundid.core.app.RegisteredApps;
 import com.Whodundid.core.coreApp.CoreApp;
 import com.Whodundid.core.coreApp.EMCNotification;
-import com.Whodundid.core.enhancedGui.guiObjects.windows.TutorialWindow;
-import com.Whodundid.core.enhancedGui.types.WindowParent;
-import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
 import com.Whodundid.core.notifications.util.NotificationObject;
 import com.Whodundid.core.renderer.EnhancedMCRenderer;
 import com.Whodundid.core.renderer.taskView.TaskBar;
+import com.Whodundid.core.util.renderUtil.EColors;
+import com.Whodundid.core.util.renderUtil.GLObject;
+import com.Whodundid.core.windowLibrary.windowObjects.windows.TutorialWindow;
+import com.Whodundid.core.windowLibrary.windowTypes.WindowParent;
+import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IWindowObject;
 import com.google.common.collect.Lists;
 import java.io.IOException;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
@@ -55,13 +58,17 @@ public class RendererProxyGui extends GuiChat implements IRendererProxy {
 	public RendererProxyGui(WindowParent guiIn) { this(guiIn, false); }
 	public RendererProxyGui(WindowParent guiIn, boolean ignoreEmptyIn) {
 		renderer = EnhancedMC.getRenderer();
-		renderer.addObject(guiIn);
+		renderer.addObject(null, guiIn);
 		handleOpen();
 		ignoreEmpty = ignoreEmptyIn;
 	}
 	
 	private void handleOpen() {
-		if (CoreApp.enableTaskBar.get()) { renderer.addTaskBar(); }
+		renderer.revealHiddenObjects();
+		
+		if (CoreApp.enableTaskBar.get()) {
+			if (renderer.getTaskBar() == null) { renderer.addTaskBar(false); }
+		}
 		
 		if (EnhancedMC.getNotificationHandler().isNotificationTypeEnabled(CoreApp.emcNotification)) {
 			if (!CoreApp.firstUse.get()) {
@@ -114,14 +121,14 @@ public class RendererProxyGui extends GuiChat implements IRendererProxy {
 				}
 				else {
 					boolean onlyNotifications = false;
-					for (IEnhancedGuiObject o : renderer.getObjects()) {
+					for (IWindowObject o : renderer.getObjects()) {
 						if (o instanceof TaskBar) { continue; }
 						if (o instanceof NotificationObject) { onlyNotifications = true; }
 						else { onlyNotifications = false; break; }
 					}
 					
 					if (onlyNotifications) {
-						for (IEnhancedGuiObject o : renderer.getObjects()) {
+						for (IWindowObject o : renderer.getObjects()) {
 							if (o instanceof NotificationObject) {
 								NotificationObject n = (NotificationObject) o;
 								if (n.onlyDrawsOnHud()) { n.close(); }
@@ -135,6 +142,18 @@ public class RendererProxyGui extends GuiChat implements IRendererProxy {
 				
 			}
 		}
+		else {
+			if (renderer.getObjects().size() == 0) {
+				int x = width / 2;
+				int y = height - height / 7;
+				String str = "EMC Hud: " + EnumChatFormatting.AQUA + "No currently open windows..";
+				int len = fontRendererObj.getStringWidth(str);
+				GLObject.drawRect(x - len / 2 - 5, y - 5, x + len / 2 + 5, y + 13, EColors.black);
+				GLObject.drawRect(x - len / 2 - 4, y - 4, x + len / 2 + 4, y + 12, EColors.steel);
+				GLObject.drawStringCS(str, x, y, EColors.orange);
+			}
+		}
+		
 	}
 	
 	// basic inputs

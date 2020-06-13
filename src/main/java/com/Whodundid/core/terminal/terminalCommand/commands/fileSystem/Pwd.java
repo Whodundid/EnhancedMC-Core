@@ -1,14 +1,15 @@
 package com.Whodundid.core.terminal.terminalCommand.commands.fileSystem;
 
+import java.io.File;
 import java.io.IOException;
 import net.minecraft.util.EnumChatFormatting;
 import com.Whodundid.core.terminal.TerminalCommandHandler;
-import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
-import com.Whodundid.core.terminal.terminalCommand.TerminalCommand;
+import com.Whodundid.core.terminal.window.ETerminal;
+import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
-public class Pwd extends TerminalCommand {
+public class Pwd extends FileCommand {
 	
 	TerminalCommandHandler handler;
 	
@@ -26,9 +27,18 @@ public class Pwd extends TerminalCommand {
 	
 	@Override
 	public void runCommand(ETerminal termIn, EArrayList<String> args, boolean runVisually) {
-		try {
-			if (args.size() == 0) { termIn.info("Current Dir: " + EnumChatFormatting.AQUA + EnumChatFormatting.UNDERLINE + termIn.getDir().getCanonicalPath()); }
-			else { termIn.error("Too many arguments!"); }
-		} catch (IOException e) { e.printStackTrace(); }
+		if (args.size() == 0) {
+			try {
+				String path = termIn.getDir().getCanonicalPath();
+				String colorPath = "" + EnumChatFormatting.AQUA + EnumChatFormatting.UNDERLINE + path + EnumChatFormatting.RESET;
+				termIn.writeLink("Current Dir: " + colorPath, path, new File(path), false, EColors.yellow);
+			}
+			catch (IOException e) {
+				error(termIn, e);
+			}
+		}
+		else { termIn.error("Too many arguments!"); }
 	}
+	
 }
+

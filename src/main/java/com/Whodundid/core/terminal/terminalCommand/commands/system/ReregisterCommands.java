@@ -1,9 +1,9 @@
 package com.Whodundid.core.terminal.terminalCommand.commands.system;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
 import com.Whodundid.core.terminal.terminalCommand.TerminalCommand;
+import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
 //Author: Hunter Bragg
@@ -12,6 +12,7 @@ public class ReregisterCommands extends TerminalCommand {
 	
 	public ReregisterCommands() {
 		super(CommandType.NORMAL);
+		setCategory("System");
 		numArgs = 0;
 	}
 	
@@ -27,4 +28,5 @@ public class ReregisterCommands extends TerminalCommand {
 		conIn.writeln("Reregistering all commands..", 0xffaa00);
 		EnhancedMC.getTerminalHandler().reregisterAllCommands(conIn, runVisually);
 	}
+	
 }

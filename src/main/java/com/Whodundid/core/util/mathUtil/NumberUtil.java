@@ -97,11 +97,15 @@ public class NumberUtil {
 	}
 	
 	public static boolean roll(int check, int min, int max) {
-		return ((int) (Math.random() * (max + 1) + min)) == check;
+		return (min + (int) (Math.random() * ((max - min) + 1))) == check;
 	}
 	
 	public static int getRoll(int min, int max) {
-		return (int) (Math.random() * (max + 1) + min);
+		return min + (int) (Math.random() * ((max - min) + 1));
+	}
+	
+	public static char randomChar() {
+		return (char) getRoll(32, 126);
 	}
 	
 }

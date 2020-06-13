@@ -91,12 +91,7 @@ public class HSLColor {
 		return Integer.parseInt(rC + gC + bC, 16);
 	}
 	
-	public static HSLColor convertFromRGB(Color colorIn) {
-		if (colorIn != null) {
-			return convertFromRGB(colorIn.getRGB());
-		}
-		return null;
-	}
+	public static HSLColor convertFromRGB(Color colorIn) { return (colorIn != null) ? convertFromRGB(colorIn.getRGB()) : null; }
 	
 	public static HSLColor convertFromRGB(String colorIn) {
 		if (!colorIn.isEmpty() && colorIn.length() == 6) {
@@ -167,4 +162,5 @@ public class HSLColor {
 		bd = bd.setScale(places, RoundingMode.HALF_UP);
 		return bd.doubleValue();
 	}
+	
 }

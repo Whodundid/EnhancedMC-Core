@@ -4,10 +4,10 @@ import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.app.AppType;
 import com.Whodundid.core.app.RegisteredApps;
 import com.Whodundid.core.coreApp.EMCNotification;
-import com.Whodundid.core.enhancedGui.types.WindowParent;
 import com.Whodundid.core.notifications.util.NotificationObject;
 import com.Whodundid.core.notifications.util.NotificationType;
 import com.Whodundid.core.util.storageUtil.EArrayList;
+import com.Whodundid.core.windowLibrary.windowTypes.WindowParent;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayDeque;
@@ -186,23 +186,29 @@ public class NotificationHandler {
 		enabledNotifications.addIfNotNullAndNotContains(typeIn);
 		disabledNotifications.removeIfContains(typeIn);
 		if (save) { saveConfig(); }
+		EnhancedMC.reloadAllWindows();
+		reloadWindows();
 	}
 	
 	public void disableNotificationType(NotificationType typeIn, boolean save) {
 		enabledNotifications.removeIfContains(typeIn);
 		disabledNotifications.addIfNotNullAndNotContains(typeIn);
 		if (save) { saveConfig(); }
+		EnhancedMC.reloadAllWindows();
+		reloadWindows();
 	}
 	
 	public boolean toggleNotificationEnabled(NotificationType typeIn, boolean save) {
-		if (enabledNotifications.contains(typeIn)) { disableNotificationType(typeIn, save); saveConfig(); return false; }
-		else if (disabledNotifications.contains(typeIn)) { enableNotificationType(typeIn, save); saveConfig(); return true; }
+		if (enabledNotifications.contains(typeIn)) { disableNotificationType(typeIn, save); return false; }
+		else if (disabledNotifications.contains(typeIn)) { enableNotificationType(typeIn, save); return true; }
 		return false;
 	}
 	
 	public boolean isNotificationTypeEnabled(NotificationType typeIn) {
 		return enabledNotifications.contains(typeIn);
 	}
+	
+	public NotificationHandler reloadWindows() { EnhancedMC.getAllActiveWindows().forEach(w -> w.sendArgs("Reload Notifications")); return this; }
 	
 	//---------------------------
 	//NotificationHandler Getters
@@ -236,7 +242,7 @@ public class NotificationHandler {
 		if (!notificationQueue.isEmpty()) {
 			NotificationObject n = notificationQueue.pop();
 			curNote = n;
-			EnhancedMC.getRenderer().addObject(curNote);
+			EnhancedMC.getRenderer().addObject(null, curNote);
 		}
 	}
 	

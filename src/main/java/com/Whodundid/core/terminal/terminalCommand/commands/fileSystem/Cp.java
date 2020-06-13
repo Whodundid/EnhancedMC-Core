@@ -1,7 +1,7 @@
 package com.Whodundid.core.terminal.terminalCommand.commands.fileSystem;
 
-import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
+import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import java.io.File;
@@ -20,7 +20,7 @@ public class Cp extends FileCommand {
 	@Override public EArrayList<String> getAliases() { return null; }
 	@Override public String getHelpInfo(boolean runVisually) { return "Copies a file from one place and pastes in another."; }
 	@Override public String getUsage() { return "ex: cp 'src' 'dest'"; }
-	@Override public void handleTabComplete(ETerminal termIn, EArrayList<String> args) { defaultTabComplete(termIn, args); }
+	@Override public void handleTabComplete(ETerminal termIn, EArrayList<String> args) { fileTabComplete(termIn, args); }
 	
 	@Override
 	public void runCommand(ETerminal termIn, EArrayList<String> args, boolean runVisually) {
@@ -38,7 +38,9 @@ public class Cp extends FileCommand {
 				else { termIn.error("Error: Cannot find the object specified!"); }
 				
 			}
-			catch (Exception e) { e.printStackTrace(); }
+			catch (Exception e) {
+				error(termIn, e);
+			}
 		}
 		else if (args.size() > 2) { termIn.error("Too many arguments!"); }
 	}
@@ -52,7 +54,8 @@ public class Cp extends FileCommand {
 		}
 		catch (Exception e) {
 			termIn.error("Error: Failed to copy object! " + EnumChatFormatting.WHITE + e.toString());
-			e.printStackTrace();
+			error(termIn, e);
 		}
 	}
+	
 }

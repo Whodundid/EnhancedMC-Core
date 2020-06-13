@@ -4,10 +4,9 @@ import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.app.EMCApp;
 import com.Whodundid.core.app.RegisteredApps;
 import com.Whodundid.core.app.util.AppEnabler;
-import com.Whodundid.core.enhancedGui.types.WindowParent;
-import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
 import com.Whodundid.core.terminal.terminalCommand.TerminalCommand;
+import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
@@ -17,6 +16,7 @@ public class DisableApp extends TerminalCommand {
 	
 	public DisableApp() {
 		super(CommandType.NORMAL);
+		setCategory("App Specific");
 		numArgs = 1;
 	}
 	
@@ -66,7 +66,7 @@ public class DisableApp extends TerminalCommand {
 						if (m.isDisableable()) {
 							if (m.isEnabled()) { termIn.writeln(m.getName() + " disabled", EColors.green); }
 							m.setEnabled(false);
-							for (WindowParent w : EnhancedMC.getAllActiveWindows()) { w.sendArgs("Reload"); }
+							EnhancedMC.reloadAllWindows();
 						}
 						else { termIn.error(m.getName() + " cannot be disabled!"); }
 					}
@@ -78,7 +78,7 @@ public class DisableApp extends TerminalCommand {
 					if (m != null) {
 						if (!m.isEnabled()) { termIn.writeln(m.getName() + " is already disabled.", EColors.orange); }
 						else {
-							if (AppEnabler.disableMod(m, termIn)) {
+							if (AppEnabler.disableApp(m, termIn)) {
 								termIn.writeln(m.getName() + " disabled", EColors.green);
 							}
 						}
@@ -86,6 +86,7 @@ public class DisableApp extends TerminalCommand {
 					else { termIn.error("Cannot find an app by '" + s + "'"); }
 				}
 			}
-		}
+		} //if
 	}
+	
 }

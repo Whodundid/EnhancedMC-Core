@@ -1,24 +1,33 @@
 package com.Whodundid.core.debug;
 
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.app.AppResources;
 import com.Whodundid.core.app.EMCApp;
+import com.Whodundid.core.app.RegisteredApps;
+import com.Whodundid.core.coreApp.CoreApp;
 import com.Whodundid.core.coreApp.EMCNotification;
 import com.Whodundid.core.coreApp.EMCResources;
 import com.Whodundid.core.coreEvents.emcEvents.ChatLineCreatedEvent;
 import com.Whodundid.core.coreEvents.emcEvents.TabCompletionEvent;
-import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.colorPicker.EGuiColorPicker;
-import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.colorPicker.EGuiColorPickerSimple;
-import com.Whodundid.core.enhancedGui.guiObjects.utilityObjects.EGuiPlayerViewer;
-import com.Whodundid.core.enhancedGui.guiObjects.windows.TextureDisplayer;
-import com.Whodundid.core.enhancedGui.types.WindowParent;
-import com.Whodundid.core.terminal.gui.ETerminal;
+import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.EUtil;
+import com.Whodundid.core.util.mathUtil.NumberUtil;
+import com.Whodundid.core.util.playerUtil.DummyPlayer;
+import com.Whodundid.core.util.playerUtil.PlayerDrawer;
 import com.Whodundid.core.util.playerUtil.PlayerFacing;
 import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.renderUtil.CursorHelper;
 import com.Whodundid.core.util.renderUtil.EColors;
-import com.Whodundid.core.util.storageUtil.DynamicTextureHandler;
+import com.Whodundid.core.util.renderUtil.GLObject;
+import com.Whodundid.core.util.resourceUtil.DynamicTextureHandler;
+import com.Whodundid.core.util.resourceUtil.EResource;
+import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.Matrix;
+import com.Whodundid.core.windowLibrary.windowObjects.advancedObjects.colorPicker.ColorPicker;
+import com.Whodundid.core.windowLibrary.windowObjects.advancedObjects.colorPicker.ColorPickerSimple;
+import com.Whodundid.core.windowLibrary.windowObjects.utilityObjects.PlayerViewer;
+import com.Whodundid.core.windowLibrary.windowObjects.windows.TextureDisplayer;
+import com.Whodundid.core.windowLibrary.windowTypes.WindowParent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.lang.reflect.Field;
@@ -39,6 +48,7 @@ import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
+import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.resources.FallbackResourceManager;
 import net.minecraft.client.resources.IResource;
@@ -57,6 +67,7 @@ import org.lwjgl.BufferUtils;
 public class DebugFunctions {
 
 	static Minecraft mc = Minecraft.getMinecraft();
+	public static boolean drawInfo = true;
 	public static boolean drawWindowInit = false;
 	public static boolean drawWindowPID = true;
 	
@@ -75,7 +86,7 @@ public class DebugFunctions {
 		return false;
 	}
 	
-	public static int getNum() { return IDebugCommand.values().length; }
+	public static int getTotal() { return IDebugCommand.values().length; }
 
 	private static void debug_0(ETerminal termIn, String... args) throws Throwable {
 		

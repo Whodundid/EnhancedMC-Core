@@ -21,7 +21,7 @@ public class HexMath {
 	public static int floatToHex(float valIn) {
 		int val = (int) (valIn * 255);
 		String sVal = Integer.toHexString(val);
-		System.out.println(sVal);
 		return val;
 	}
+	
 }

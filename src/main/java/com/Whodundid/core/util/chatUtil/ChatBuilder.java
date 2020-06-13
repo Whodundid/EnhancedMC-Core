@@ -55,4 +55,5 @@ public class ChatBuilder {
 	}
 
 	public enum Inheritance { DEEP, SHALLOW, NONE; }
+	
 }

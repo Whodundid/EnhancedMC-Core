@@ -1,8 +1,8 @@
 package com.Whodundid.core.app;
 
-import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.StorageBox;
+import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IWindowParent;
 
 //Author: Hunter Bragg
 

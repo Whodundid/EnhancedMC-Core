@@ -1,8 +1,8 @@
 package com.Whodundid.core.terminal.terminalCommand.commands.system;
 
-import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
 import com.Whodundid.core.terminal.terminalCommand.TerminalCommand;
+import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.chatUtil.EChatUtil;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import net.minecraft.client.Minecraft;
@@ -13,6 +13,7 @@ public class Say extends TerminalCommand {
 	
 	public Say() {
 		super(CommandType.NORMAL);
+		setCategory("System");
 		numArgs = 0;
 	}
 
@@ -37,4 +38,5 @@ public class Say extends TerminalCommand {
 		}
 		else { termIn.error("Message should not be empty!"); }
 	}
+	
 }

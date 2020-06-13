@@ -4,128 +4,144 @@ import com.Whodundid.core.app.AppSettings;
 import com.Whodundid.core.app.AppType;
 import com.Whodundid.core.app.EMCApp;
 import com.Whodundid.core.app.RegisteredApps;
-import com.Whodundid.core.app.gui.AppErrorType;
-import com.Whodundid.core.terminal.gui.ETerminal;
+import com.Whodundid.core.app.window.windowUtil.AppErrorType;
+import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
 //Author: Hunter Bragg
 
 public class AppEnabler {
 
-	public static boolean enableMod(String modNameIn) { return enableMod(RegisteredApps.getApp(modNameIn), null); }
-	public static boolean enableMod(AppType typeIn) { return enableMod(RegisteredApps.getApp(typeIn), null); }
-	public static boolean enableMod(EMCApp modIn) { return enableMod(modIn, null); }
-	public static boolean enableMod(String modNameIn, ETerminal conIn) { return enableMod(RegisteredApps.getApp(modNameIn), conIn); }
-	public static boolean enableMod(AppType typeIn, ETerminal conIn) { return enableMod(RegisteredApps.getApp(typeIn), conIn); }
-	public static boolean enableMod(EMCApp modIn, ETerminal conIn) {
+	public static boolean enableApp(String appNameIn) { return enableApp(RegisteredApps.getApp(appNameIn), null); }
+	public static boolean enableApp(AppType typeIn) { return enableApp(RegisteredApps.getApp(typeIn), null); }
+	public static boolean enableApp(EMCApp appIn) { return enableApp(appIn, null); }
+	public static boolean enableApp(String appNameIn, ETerminal termIn) { return enableApp(RegisteredApps.getApp(appNameIn), termIn); }
+	public static boolean enableApp(AppType typeIn, ETerminal termIn) { return enableApp(RegisteredApps.getApp(typeIn), termIn); }
+	public static boolean enableApp(EMCApp appIn, ETerminal termIn) {
 		try {
-			if (modIn != null) {
-				if (!modIn.isEnabled()) { tryEnable(modIn); }
+			if (appIn != null) {
+				if (!appIn.canBeEnabled()) {
+					if (termIn != null) { termIn.error(appIn.getName() + " cannot be enabled!"); }
+					return false;
+				}
+				if (!appIn.isEnabled()) { tryEnable(appIn); }
 				
-				AppSettings.updateAppState(modIn, true);
+				AppSettings.updateAppState(appIn, true);
 				return true;
 			}
 		}
 		catch (AppToggleException e) {
-			if (conIn != null) {
+			if (termIn != null) {
 				String message = "Apps: (";
 				for (EMCApp m : e.getModList()) { message += (m.getName() + ", "); }
 				message = message.substring(0, message.length() - 2);
 				message += ")";
-				message += " are required to enable " + modIn.getName() + ".";
-				conIn.error(message);
+				message += " are required to enable " + appIn.getName() + ".";
+				termIn.error(message);
 			}
-			else { AppErrorDisplay.displayError(e.getErrorType(), modIn, e.getModList()); }
+			else { AppErrorDisplay.displayError(e.getErrorType(), appIn, e.getModList()); }
 		}
 		catch (Exception e) {
-			if (conIn != null) { conIn.badError(e.getMessage()); }
-			else { AppErrorDisplay.displayError(AppErrorType.ERROR, modIn, e); }
+			if (termIn != null) {
+				StackTraceElement[] trace = e.getStackTrace();
+				String errLoc = (trace != null && trace[0] != null) ? "\n" + trace[0].toString() : null;
+				termIn.javaError(e.toString() + errLoc);
+			}
+			else { AppErrorDisplay.displayError(AppErrorType.ERROR, appIn, e); }
 		}
 		return false;
 	}
 	
-	public static boolean disableMod(String modNameIn) { return disableMod(RegisteredApps.getApp(modNameIn), null); }
-	public static boolean disableMod(AppType typeIn) { return disableMod(RegisteredApps.getApp(typeIn), null); }
-	public static boolean disableMod(EMCApp modIn) { return disableMod(modIn, null); }
-	public static boolean disableMod(String modNameIn, ETerminal conIn) { return disableMod(RegisteredApps.getApp(modNameIn), conIn); }
-	public static boolean disableMod(AppType typeIn, ETerminal conIn) { return disableMod(RegisteredApps.getApp(typeIn), conIn); }
-	public static boolean disableMod(EMCApp modIn, ETerminal conIn) {
+	public static boolean disableApp(String appNameIn) { return disableApp(RegisteredApps.getApp(appNameIn), null); }
+	public static boolean disableApp(AppType typeIn) { return disableApp(RegisteredApps.getApp(typeIn), null); }
+	public static boolean disableApp(EMCApp appIn) { return disableApp(appIn, null); }
+	public static boolean disableApp(String appNameIn, ETerminal termIn) { return disableApp(RegisteredApps.getApp(appNameIn), termIn); }
+	public static boolean disableApp(AppType typeIn, ETerminal termIn) { return disableApp(RegisteredApps.getApp(typeIn), termIn); }
+	public static boolean disableApp(EMCApp appIn, ETerminal termIn) {
 		try {
-			if (modIn != null) {
-				if (modIn.isEnabled()) {
-					if (!modIn.isDisableable()) {
-						if (conIn != null) { conIn.error(modIn.getName() + " cannot be disabled!"); }
+			if (appIn != null) {
+				if (appIn.isEnabled()) {
+					if (!appIn.isDisableable()) {
+						if (termIn != null) { termIn.error(appIn.getName() + " cannot be disabled!"); }
 						return false;
 					}
-					tryDisable(modIn);
+					tryDisable(appIn);
 				}
 				
-				AppSettings.updateAppState(modIn, false);
+				AppSettings.updateAppState(appIn, false);
 				return true;
 			}
 		}
 		catch (AppToggleException e) {
-			if (conIn != null) {
+			if (termIn != null) {
 				String message = "Apps: (";
 				for (EMCApp m : e.getModList()) { message += (m.getName() + ", "); }
 				message = message.substring(0, message.length() - 2);
 				message += ")";
-				message += " require " + modIn.getName() + " to properly function.";
-				conIn.error(message);
+				message += " require " + appIn.getName() + " to properly function.";
+				termIn.error(message);
 			}
-			else { AppErrorDisplay.displayError(e.getErrorType(), modIn, e.getModList()); }
+			else { AppErrorDisplay.displayError(e.getErrorType(), appIn, e.getModList()); }
 		}
 		catch (Exception e) {
-			if (conIn != null) { conIn.badError(e.getMessage()); }
-			else { AppErrorDisplay.displayError(AppErrorType.ERROR, modIn, e); }
+			if (termIn != null) {
+				StackTraceElement[] trace = e.getStackTrace();
+				String errLoc = (trace != null && trace[0] != null) ? "\n" + trace[0].toString() : null;
+				termIn.javaError(e.toString() + errLoc);
+			}
+			else { AppErrorDisplay.displayError(AppErrorType.ERROR, appIn, e); }
 		}
 		return false;
 	}
 	
-	public static boolean toggleEnabled(String modNameIn) { return toggleEnabled(RegisteredApps.getApp(modNameIn), null); }
+	public static boolean toggleEnabled(String appNameIn) { return toggleEnabled(RegisteredApps.getApp(appNameIn), null); }
 	public static boolean toggleEnabled(AppType typeIn) { return toggleEnabled(RegisteredApps.getApp(typeIn), null); }
-	public static boolean toggleEnabled(EMCApp modIn) { return toggleEnabled(modIn, null); }
-	public static boolean toggleEnabled(String modNameIn, ETerminal conIn) { return toggleEnabled(RegisteredApps.getApp(modNameIn), conIn); }
-	public static boolean toggleEnabled(AppType typeIn, ETerminal conIn) { return toggleEnabled(RegisteredApps.getApp(typeIn), conIn); }
-	public static boolean toggleEnabled(EMCApp modIn, ETerminal conIn) {
+	public static boolean toggleEnabled(EMCApp appIn) { return toggleEnabled(appIn, null); }
+	public static boolean toggleEnabled(String appNameIn, ETerminal termIn) { return toggleEnabled(RegisteredApps.getApp(appNameIn), termIn); }
+	public static boolean toggleEnabled(AppType typeIn, ETerminal termIn) { return toggleEnabled(RegisteredApps.getApp(typeIn), termIn); }
+	public static boolean toggleEnabled(EMCApp appIn, ETerminal termIn) {
 		try {
-			if (modIn != null) {
-				if (modIn.isEnabled()) {
-					if (!modIn.isDisableable()) {
-						if (conIn != null) { conIn.error(modIn.getName() + " cannot be disabled!"); }
+			if (appIn != null) {
+				if (appIn.isEnabled()) {
+					if (!appIn.isDisableable()) {
+						if (termIn != null) { termIn.error(appIn.getName() + " cannot be disabled!"); }
 					}
-					else { tryDisable(modIn); }
+					else { tryDisable(appIn); }
 				}
-				else { tryEnable(modIn); }
+				else { tryEnable(appIn); }
 				
-				AppSettings.updateAppState(modIn, !modIn.isEnabled());
+				AppSettings.updateAppState(appIn, !appIn.isEnabled());
 				return true;
 			}
 		} 
 		catch (AppToggleException e) {
-			if (conIn != null) {
+			if (termIn != null) {
 				String message = "Apps: (";
 				for (EMCApp m : e.getModList()) { message += (m.getName() + ", "); }
 				message = message.substring(0, message.length() - 2);
 				message += ")";
-				if (modIn.isEnabled()) { message += " require " + modIn.getName() + " to properly function."; }
-				else { message += " are required to enable " + modIn.getName() + "."; }
+				if (appIn.isEnabled()) { message += " require " + appIn.getName() + " to properly function."; }
+				else { message += " are required to enable " + appIn.getName() + "."; }
 			}
-			else { AppErrorDisplay.displayError(e.getErrorType(), modIn, e.getModList()); }
+			else { AppErrorDisplay.displayError(e.getErrorType(), appIn, e.getModList()); }
 		}
 		catch (Exception e) {
-			if (conIn != null) { conIn.badError(e.getMessage()); }
-			else { AppErrorDisplay.displayError(AppErrorType.ERROR, modIn, e); }
+			if (termIn != null) {
+				StackTraceElement[] trace = e.getStackTrace();
+				String errLoc = (trace != null && trace[0] != null) ? "\n" + trace[0].toString() : null;
+				termIn.javaError(e.toString() + errLoc);
+			}
+			else { AppErrorDisplay.displayError(AppErrorType.ERROR, appIn, e); }
 		}
 		return false;
 	}
 	
-	private static void tryEnable(EMCApp mod) throws AppToggleException {
-		EArrayList<EMCApp> incompats = getIncompatibleDependencies(mod);
+	private static void tryEnable(EMCApp app) throws AppToggleException {
+		EArrayList<EMCApp> incompats = getIncompatibleDependencies(app);
 		
-		if (mod.isIncompatible() || incompats.isNotEmpty()) { throw new AppToggleException(AppErrorType.INCOMPATIBLE); }
+		if (app.isIncompatible() || incompats.isNotEmpty()) { throw new AppToggleException(AppErrorType.INCOMPATIBLE); }
 		
-		EArrayList<String> allDependencies = RegisteredApps.getAllAppDependencies(mod);
+		EArrayList<String> allDependencies = RegisteredApps.getAllAppDependencies(app);
 		EArrayList<EMCApp> disabledDependencies = new EArrayList();
 		allDependencies.forEach((t) -> { EMCApp m = RegisteredApps.getApp(t); if (!m.isEnabled()) { disabledDependencies.add(m); } });
 		
@@ -134,9 +150,9 @@ public class AppEnabler {
 		}
 	}
 	
-	private static void tryDisable(EMCApp mod) throws AppToggleException {
-		if (!mod.isDisableable()) { throw new AppToggleException(AppErrorType.DISABLE); }
-		EArrayList<String> allDependents = RegisteredApps.getAllDependantsOfApp(mod);
+	private static void tryDisable(EMCApp app) throws AppToggleException {
+		if (!app.isDisableable()) { throw new AppToggleException(AppErrorType.DISABLE); }
+		EArrayList<String> allDependents = RegisteredApps.getAllDependantsOfApp(app);
 		EArrayList<EMCApp> enabledDependants = new EArrayList();
 		allDependents.forEach(t -> { EMCApp m = RegisteredApps.getApp(t); if (m.isEnabled()) { enabledDependants.add(m); } }); 
 		if (!enabledDependants.isEmpty()) {
@@ -144,13 +160,14 @@ public class AppEnabler {
 		}
 	}
 	
-	private static EArrayList<EMCApp> getIncompatibleDependencies(EMCApp mod) {
+	private static EArrayList<EMCApp> getIncompatibleDependencies(EMCApp app) {
 		EArrayList<EMCApp> incompatibles = new EArrayList();
-		EArrayList<String> allDependencies = RegisteredApps.getAllAppDependencies(mod);
+		EArrayList<String> allDependencies = RegisteredApps.getAllAppDependencies(app);
 		for (String s : allDependencies) {
 			EMCApp m = RegisteredApps.getApp(s);
 			if (m != null && m.isIncompatible()) { incompatibles.add(m); }
 		}
 		return incompatibles;
 	}
+	
 }

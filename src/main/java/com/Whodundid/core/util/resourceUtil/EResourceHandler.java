@@ -1,6 +1,5 @@
 package com.Whodundid.core.util.resourceUtil;
 
-import com.Whodundid.core.util.storageUtil.DynamicTextureHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureUtil;

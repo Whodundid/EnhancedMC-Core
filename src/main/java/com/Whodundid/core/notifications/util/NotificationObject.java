@@ -2,12 +2,12 @@ package com.Whodundid.core.notifications.util;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.coreApp.EMCResources;
-import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
-import com.Whodundid.core.enhancedGui.types.WindowParent;
-import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.notifications.window.NotificationRCM;
 import com.Whodundid.core.renderer.renderUtil.IRendererProxy;
 import com.Whodundid.core.util.renderUtil.CenterType;
+import com.Whodundid.core.windowLibrary.windowObjects.actionObjects.WindowButton;
+import com.Whodundid.core.windowLibrary.windowTypes.WindowParent;
+import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IActionObject;
 
 //Author: Hunter Bragg
 
@@ -16,7 +16,7 @@ public abstract class NotificationObject extends WindowParent {
 	protected String message = "";
 	protected NotificationType type;
 	protected WindowParent attentionObject = null;
-	protected EGuiButton close;
+	protected WindowButton close;
 	protected boolean expires = true;
 	protected boolean onlyDrawOnHud = false;
 	boolean moveOut = false;
@@ -38,12 +38,12 @@ public abstract class NotificationObject extends WindowParent {
 	
 	@Override
 	public void initObjects() {
-		close = new EGuiButton(this, endX - 10, startY + 2, 8, 8);
+		close = new WindowButton(this, endX - 10, startY + 2, 8, 8);
 		close.setTextures(EMCResources.guiCloseButton, EMCResources.guiCloseButtonSel);
 		
 		close.setVisible(false);
 		
-		addObject(close);
+		addObject(null, close);
 	}
 
 	@Override
@@ -123,7 +123,7 @@ public abstract class NotificationObject extends WindowParent {
 	}
 	
 	@Override
-	public void actionPerformed(IEnhancedActionObject object, Object... args) {
+	public void actionPerformed(IActionObject object, Object... args) {
 		if (object == close) { close(); }
 	}
 

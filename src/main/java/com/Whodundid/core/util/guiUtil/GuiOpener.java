@@ -1,11 +1,11 @@
 package com.Whodundid.core.util.guiUtil;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.enhancedGui.types.EnhancedGui;
-import com.Whodundid.core.enhancedGui.types.WindowParent;
-import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.storageUtil.EArrayList;
+import com.Whodundid.core.windowLibrary.windowTypes.EnhancedGui;
+import com.Whodundid.core.windowLibrary.windowTypes.WindowParent;
+import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IWindowParent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiCustomizeSkin;
 import net.minecraft.client.gui.GuiLanguage;
@@ -83,10 +83,13 @@ public class GuiOpener {
 					for (int i = 0; i < types.size(); i++) { typesC[i] = types.get(i); }
 					return (GuiScreen) Class.forName(gui.getName()).getConstructor(typesC).newInstance(values.toArray());
 				}
+				
 				Object o = Class.forName(gui.getName()).getConstructor().newInstance();
 				if (o instanceof GuiScreen) { return (GuiScreen) o; }
 			}
-		} catch (Exception e) { e.printStackTrace(); }
+		}
+		catch (Exception e) { e.printStackTrace(); }
+		
 		return null;
 	}
 	
@@ -111,4 +114,5 @@ public class GuiOpener {
 		
 		return false;
 	}
+	
 }

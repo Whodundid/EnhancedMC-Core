@@ -1,9 +1,11 @@
 package com.Whodundid.core.util.playerUtil;
 
+import com.Whodundid.core.util.chatUtil.EChatUtil;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.player.EnumPlayerModelParts;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 
 public class DummyPlayer extends AbstractClientPlayer {
@@ -17,9 +19,9 @@ public class DummyPlayer extends AbstractClientPlayer {
 	private boolean drawSkin = false;
 	private boolean drawName = true;
 	private float swingAmount = 0.7f;
-	private float headAmount = 0f;
 	private String name = "";
 	private Thread animationUpdater;
+	private volatile boolean animate = true;
 	private volatile boolean run = true;
 	
 	public DummyPlayer() { this(null, null, false, null, "dummy", false); }
@@ -30,7 +32,6 @@ public class DummyPlayer extends AbstractClientPlayer {
 		alex = alexModel;
 		name = nameIn;
 		instance = this;
-		headAmount = rotationYawHead;
 		
 		animationUpdater = new Thread() {
 			@Override
@@ -41,40 +42,58 @@ public class DummyPlayer extends AbstractClientPlayer {
 						Thread.currentThread().sleep(0, 500);
 					}
 					catch (Exception e) { e.printStackTrace(); }
-					
 				}
 			}
 		};
-		if (animate) { animationUpdater.start(); }
+		animationUpdater.start();
 	}
 	
 	public void updateAnimation() {
-		if (armLeft) {
-			if (limbSwingAmount <= swingAmount) {
-				limbSwingAmount += 0.002f;
+		if (animate) {
+			
+			//limbs
+			
+			if (armLeft) {
+				if (limbSwingAmount <= swingAmount) {
+					limbSwingAmount += 0.002f;
+				}
+				else { armLeft = false; }
 			}
-			else { armLeft = false; }
-		}
-		else {
-			if (limbSwingAmount >= -swingAmount) {
-				limbSwingAmount -= 0.002f;
+			else {
+				if (limbSwingAmount >= -swingAmount) {
+					limbSwingAmount -= 0.002f;
+				}
+				else { armLeft = true; }
 			}
-			else { armLeft = true; }
-		}
-		
-		if (headLeft) {
-			if (headAmount <= 25) {
-				headAmount += 0.065f;
-				rotationYawHead = headAmount;
+			
+			//head
+			
+			//position fixing
+			if (rotationYawHead >= (float) (rotationYaw + 25.4f)) {
+				rotationYawHead = (float) (rotationYaw + 25.1f);
+				headLeft = false;
 			}
-			else { headLeft = false; }
-		}
-		else {
-			if (headAmount >= -25) {
-				headAmount -= 0.065f;
-				rotationYawHead = headAmount;
+			if (rotationYawHead <= (float) (rotationYaw - 25.4f)) {
+				rotationYawHead = (float) (rotationYaw - 25.1f);
+				headLeft = true;
 			}
-			else { headLeft = true; }
+			
+			//update pos
+			if (headLeft) {
+				if (rotationYawHead < (rotationYaw + 25f)) {
+					rotationYawHead += 0.080f;
+				}
+				else { headLeft = false; }
+			}
+			else {
+				if (rotationYawHead > (rotationYaw - 25f)) {
+					rotationYawHead -= 0.080f;
+				}
+				else { headLeft = true; }
+			}
+			
+			//limit pos
+			rotationYawHead = MathHelper.clamp_float(rotationYawHead, rotationYaw - 25f, rotationYaw + 25f);
 		}
 	}
 
@@ -83,15 +102,13 @@ public class DummyPlayer extends AbstractClientPlayer {
 	
 	@Override
 	public boolean isWearing(EnumPlayerModelParts m) {
-		if (name.toLowerCase().equals("notch")) {
-			return false;
-		}
-		return true;
+		return !name.toLowerCase().equals("notch");
 	}
 	
+	//to prevent minecraft vanilla cape draw
 	@Override
 	public boolean hasPlayerInfo() {
-		return drawSkin;
+		return false;
 	}
 	
 	@Override
@@ -111,6 +128,7 @@ public class DummyPlayer extends AbstractClientPlayer {
 		if (animationUpdater != null) {
 			instance.run = false;
 		}
+		EChatUtil.threadTextObject = null;
 	}
 	
 	@Override
@@ -120,4 +138,19 @@ public class DummyPlayer extends AbstractClientPlayer {
 	}
 	
 	public DummyPlayer setDrawName(boolean val) { drawName = val; return this; }
+	
+	public DummyPlayer setAnimate(boolean val) {
+		animate = val;
+		
+		if (!animate) {
+			limbSwingAmount = 0;
+			rotationYawHead = rotationYaw;
+		}
+		
+		return this;
+	}
+	
+	public boolean getArmLeft() { return armLeft; }
+	public boolean getHeadLeft() { return headLeft; }
+	
 }

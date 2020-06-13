@@ -32,4 +32,5 @@ public class TimedChatLine extends ChatLine implements Comparable<TimedChatLine>
 	public TimedChatLine setCreationTime(long timeIn) { creationTime = timeIn; generateTimeStamp(); return this; }
 
 	@Override public int compareTo(TimedChatLine o) { return creationTime.compareTo(o.getCreationTime()); }
+	
 }

@@ -3,9 +3,9 @@ package com.Whodundid.core.terminal.terminalCommand.commands.system;
 import com.Whodundid.core.app.EMCApp;
 import com.Whodundid.core.app.RegisteredApps;
 import com.Whodundid.core.terminal.TerminalCommandHandler;
-import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
 import com.Whodundid.core.terminal.terminalCommand.TerminalCommand;
+import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import net.minecraft.client.Minecraft;
@@ -19,6 +19,7 @@ public class Version extends TerminalCommand {
 	
 	public Version() {
 		super(CommandType.NORMAL);
+		setCategory("System");
 		numArgs = 1;
 	}
 	
@@ -41,7 +42,7 @@ public class Version extends TerminalCommand {
 	@Override
 	public void runCommand(ETerminal termIn, EArrayList<String> args, boolean runVisually) {
 		if (args.isEmpty()) {
-			if (runVisually) { termIn.writeln("terminal, minecraft, minecraftforge, 'EMCApp'", EColors.green); }
+			if (runVisually) { termIn.writeln("terminal, minecraft, minecraftforge, minecraftcoderpack, forgemodloader, 'EMCApp'", EColors.green); }
 			else { termIn.writeln("EMC Terminal Version: " + TerminalCommandHandler.version, EColors.cyan); }
 		}
 		else if (args.size() == 1) {
@@ -77,4 +78,5 @@ public class Version extends TerminalCommand {
 			termIn.error("Too many arguments!");
 		}
 	}
+	
 }

@@ -61,4 +61,5 @@ public class CommonVanillaGuis {
 		if (instance == null || vanillaGuis == null) { createRepo(); }
 		return vanillaGuis;
 	}
+	
 }

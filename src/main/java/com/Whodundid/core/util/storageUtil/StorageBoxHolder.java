@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 //Author: Hunter Bragg
 
+/** Essentially an ArrayList implementation that holds StorageBoxes. */
 public class StorageBoxHolder<Obj, Val> implements Iterable<StorageBox<Obj, Val>> {
 	
 	List<StorageBox<Obj, Val>> createdList = new EArrayList();
@@ -200,6 +201,7 @@ public class StorageBoxHolder<Obj, Val> implements Iterable<StorageBox<Obj, Val>
 	
 	/** Sets this box to not have duplicates and procedes to purge any and all duplicates from this holder. */
 	public StorageBoxHolder<Obj, Val> noDuplicates() { allowDuplicates = false; purgeDuplicates(this); return this; }
+	
 	/** Sets this box to have duplicates or not. If no, all duplicates are purged from this holder. */
 	public StorageBoxHolder<Obj, Val> setAllowDuplicates(boolean val) { allowDuplicates = val; if (!allowDuplicates) { purgeDuplicates(this); } return this; }
 	
@@ -225,18 +227,25 @@ public class StorageBoxHolder<Obj, Val> implements Iterable<StorageBox<Obj, Val>
 	
 	/** Returns the total number of boxes in this holder. */
 	public int size() { return this.createdList.size(); }
+	
 	/** Returns the box at the specified point number. */
 	public StorageBox<Obj, Val> get(int pointNumber) { return createdList.get(pointNumber); }
+	
 	/** Returns true if this holder does not contain any boxes. */
 	public boolean isEmpty() { return createdList.isEmpty(); }
+	
 	/** Returns true if this holder does contain boxes. */
 	public boolean isNotEmpty() { return !createdList.isEmpty(); }
+	
 	/** Removes every box, along with the contents of each box, from this holder. */
 	public void clear() { this.createdList.clear(); }
+	
 	/** Removes the box at the specified point number. */
 	public boolean remove(int pointNumber) { return createdList.remove(pointNumber) != null; }
+	
 	/** Returns the object from the box at the specified point number. */
 	public Obj getObject(int pointNumber) { return createdList.get(pointNumber).getObject(); }
+	
 	/** Returns the value from the box at the specified point number. */
 	public Val getValue(int pointNumber) { return createdList.get(pointNumber).getValue(); }
 	
@@ -253,4 +262,5 @@ public class StorageBoxHolder<Obj, Val> implements Iterable<StorageBox<Obj, Val>
 		returnString += "]";
 		return returnString;
 	}
+	
 }

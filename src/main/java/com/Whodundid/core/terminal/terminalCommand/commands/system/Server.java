@@ -1,9 +1,9 @@
 package com.Whodundid.core.terminal.terminalCommand.commands.system;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
 import com.Whodundid.core.terminal.terminalCommand.TerminalCommand;
+import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import java.net.InetAddress;
@@ -30,11 +30,12 @@ public class Server extends TerminalCommand {
 	
 	public Server() {
 		super(CommandType.NORMAL);
+		setCategory("System");
 		numArgs = 1;
 	}
 
 	@Override public String getName() { return "server"; }
-	@Override public boolean showInHelp() { return EnhancedMC.isOpMode(); }
+	@Override public boolean showInHelp() { return EnhancedMC.isDevMode(); }
 	@Override public EArrayList<String> getAliases() { return null; }
 	@Override public String getHelpInfo(boolean runVisually) { return "Used to interface with Minecraft servers." + (runVisually ? " connect, disconnect" : ""); }
 	@Override public String getUsage() { return "ex: server connect localhost"; }
@@ -102,10 +103,10 @@ public class Server extends TerminalCommand {
 	                    networkManager.sendPacket(new C00PacketLoginStart(mc.getSession().getProfile()));
 	                }
 	                catch (UnknownHostException unknownhostexception) {
-
 	                    EnhancedMC.EMCLogger.error("Couldn\'t connect to server", unknownhostexception);
 	                    termIn.error(I18n.format("connect.failed", new Object[0]));
 	                    termIn.error(I18n.format("disconnect.genericReason", new Object[] {"Unknown host"}));
+	                    error(termIn, unknownhostexception);
 	                }
 	                catch (Exception exception) {
 
@@ -119,6 +120,8 @@ public class Server extends TerminalCommand {
 
 	                    termIn.error(I18n.format("connect.failed", new Object[0]));
 	                    termIn.error(I18n.format("disconnect.genericReason", new Object[] {s}));
+	                    
+	                    error(termIn, exception);
 	                }
 	            }
 	        }).start();
@@ -135,7 +138,8 @@ public class Server extends TerminalCommand {
 		else if (flag1) {
 			RealmsBridge bridge = new RealmsBridge();
 			bridge.switchToRealms(new GuiMainMenu());
-		} else { mc.displayGuiScreen(new GuiMultiplayer(new GuiMainMenu())); }
+		}
+		else { mc.displayGuiScreen(new GuiMultiplayer(new GuiMainMenu())); }
 	}
 	
 	private void pingServer(ETerminal termIn, EArrayList<String> args, boolean runVisually) {
@@ -151,7 +155,7 @@ public class Server extends TerminalCommand {
 					}
 					catch (Exception e) {
 						Server.this.onPingResult(termIn, "Unknown Host: " + args.get(1), false);
-						e.printStackTrace();
+						error(termIn, e);
 					}
 				}
 			};
@@ -171,4 +175,5 @@ public class Server extends TerminalCommand {
 		EnhancedMC.getTerminalHandler().drawSpace = true;
 		termIn.setInputEnabled(true);
 	}
+	
 }

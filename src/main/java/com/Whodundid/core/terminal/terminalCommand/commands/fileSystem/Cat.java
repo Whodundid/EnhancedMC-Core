@@ -1,7 +1,7 @@
 package com.Whodundid.core.terminal.terminalCommand.commands.fileSystem;
 
-import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
+import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
@@ -20,7 +20,7 @@ public class Cat extends FileCommand {
 	@Override public EArrayList<String> getAliases() { return null; }
 	@Override public String getHelpInfo(boolean runVisually) { return "Displays the content of a file."; }
 	@Override public String getUsage() { return "ex: cat '.txt'"; }
-	@Override public void handleTabComplete(ETerminal termIn, EArrayList<String> args) { defaultTabComplete(termIn, args); }
+	@Override public void handleTabComplete(ETerminal termIn, EArrayList<String> args) { fileTabComplete(termIn, args); }
 	
 	@Override
 	public void runCommand(ETerminal termIn, EArrayList<String> args, boolean runVisually) {
@@ -54,7 +54,10 @@ public class Cat extends FileCommand {
 				}
 			}
 			else { termIn.error("Too many arguments!"); }
-		} catch (Exception e) { e.printStackTrace(); }
+		}
+		catch (Exception e) {
+			error(termIn, e);
+		}
 	}
 	
 	private void displayFile(ETerminal termIn, File fileIn) {
@@ -68,8 +71,11 @@ public class Cat extends FileCommand {
 					termIn.writeln(s, EColors.lgray);
 				}
 			}
-			catch (Exception e) { e.printStackTrace(); }
+			catch (Exception e) {
+				error(termIn, e);
+			}
 		}
 		else { termIn.error(fileIn.getName() + " is a directory not a file!"); }
 	}
+	
 }

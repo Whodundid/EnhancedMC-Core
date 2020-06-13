@@ -1,7 +1,7 @@
 package com.Whodundid.core.app.util;
 
 import com.Whodundid.core.app.EMCApp;
-import com.Whodundid.core.app.gui.AppErrorType;
+import com.Whodundid.core.app.window.windowUtil.AppErrorType;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
 //Author: Hunter Bragg

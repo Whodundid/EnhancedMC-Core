@@ -88,7 +88,8 @@ public class Matrix {
 				toList().forEach(n -> w.print(n + " "));
 			}
 			w.close();
-		} catch (Exception e) { e.printStackTrace(); }
+		}
+		catch (Exception e) { e.printStackTrace(); }
 		return this;
 	}
 	
@@ -106,7 +107,8 @@ public class Matrix {
 	public Number getVal(int rowPos, int colPos) {
 		try {
 			return rangeCheck(rowPos, colPos) ? table.getBoxWithObj(rowPos).getValue().get(colPos) : -1;
-		} catch (Exception e) { return Double.NaN; }
+		}
+		catch (Exception e) { return Double.NaN; }
 	}
 	
 	public Matrix setVal(int rowPos, int colPos, Number valIn) {
@@ -143,9 +145,7 @@ public class Matrix {
 				if (box != null && box.getValue() != null && box.getValue().get(colNumIn) != null) {
 					l.add(i, box.getValue().get(colNumIn));
 				}
-				else {
-					l.set(i, Double.NaN);
-				}
+				else { l.set(i, Double.NaN); }
 			}
 			return l;
 		}
@@ -348,4 +348,5 @@ public class Matrix {
 		
 		return returnVal;
 	}
+	
 }

@@ -1,9 +1,9 @@
 package com.Whodundid.core.coreApp;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
 import com.Whodundid.core.notifications.util.NotificationObject;
 import com.Whodundid.core.util.renderUtil.EColors;
+import com.Whodundid.core.windowLibrary.windowObjects.actionObjects.WindowButton;
 import net.minecraft.client.renderer.GlStateManager;
 
 //Author: Hunter Bragg
@@ -16,7 +16,7 @@ public class EMCNotification extends NotificationObject {
 	}
 	
 	@Override
-	public void initGui() {
+	public void initWindow() {
 		setDimensions(startX, res.getScaledHeight() - 52, 44 + mc.fontRendererObj.getStringWidth(message), 30);
 		setPinned(true);
 	}
@@ -34,7 +34,7 @@ public class EMCNotification extends NotificationObject {
 		super.mousePressed(mXIn, mYIn, button);
 		
 		if (button == 0) {
-			EGuiButton.playPressSound();
+			WindowButton.playPressSound();
 			close();
 			if (attentionObject != null) {
 				if (EnhancedMC.getRenderer().getObjects().contains(attentionObject)) { attentionObject.requestFocus(); }

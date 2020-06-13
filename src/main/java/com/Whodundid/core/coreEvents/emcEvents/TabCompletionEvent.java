@@ -12,4 +12,5 @@ public class TabCompletionEvent extends Event {
 	}
 	
 	public String[] getCompletion() { return completion; }
+	
 }

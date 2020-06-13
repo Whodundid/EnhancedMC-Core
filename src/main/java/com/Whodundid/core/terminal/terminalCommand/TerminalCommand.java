@@ -1,6 +1,6 @@
 package com.Whodundid.core.terminal.terminalCommand;
 
-import com.Whodundid.core.terminal.gui.ETerminal;
+import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import net.minecraft.util.MathHelper;
 
@@ -85,6 +85,13 @@ public abstract class TerminalCommand {
 			}
 		}
 		
+	}
+	
+	protected void error(ETerminal termIn, Throwable e) {
+		StackTraceElement[] trace = e.getStackTrace();
+		String errLoc = (trace != null && trace[0] != null) ? "\n" + trace[0].toString() : null;
+		termIn.javaError(e.toString() + errLoc);
+		e.printStackTrace();
 	}
 	
 }

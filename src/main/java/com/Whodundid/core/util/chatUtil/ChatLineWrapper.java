@@ -93,4 +93,5 @@ public class ChatLineWrapper {
         list.add(ichatcomponent);
         return list;
     }
+    
 }

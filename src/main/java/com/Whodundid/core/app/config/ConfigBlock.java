@@ -1,6 +1,5 @@
 package com.Whodundid.core.app.config;
 
-import com.Whodundid.core.app.AppConfigSetting;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
 import java.util.List;

@@ -2,9 +2,9 @@ package com.Whodundid.core.terminal.terminalCommand.commands.system;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.notifications.util.NotificationType;
-import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
 import com.Whodundid.core.terminal.terminalCommand.TerminalCommand;
+import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import net.minecraft.util.EnumChatFormatting;
@@ -13,6 +13,7 @@ public class NotificationControl extends TerminalCommand {
 	
 	public NotificationControl() {
 		super(CommandType.NORMAL);
+		setCategory("System");
 		numArgs = 2;
 	}
 

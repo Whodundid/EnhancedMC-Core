@@ -1,9 +1,9 @@
 package com.Whodundid.core.terminal.terminalCommand.commands.system;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
 import com.Whodundid.core.terminal.terminalCommand.TerminalCommand;
+import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.mathUtil.NumberUtil;
 import com.Whodundid.core.util.storageUtil.EArrayList;
@@ -14,14 +14,15 @@ public class ForLoop extends TerminalCommand {
 	
 	public ForLoop() {
 		super(CommandType.NORMAL);
+		setCategory("System");
 		numArgs = 2;
 	}
 
 	@Override public String getName() { return "for"; }
-	@Override public boolean showInHelp() { return EnhancedMC.isOpMode(); }
+	@Override public boolean showInHelp() { return EnhancedMC.isDevMode(); }
 	@Override public EArrayList<String> getAliases() { return null; }
 	@Override public String getHelpInfo(boolean runVisually) { return "Runs a command n number of times in given range replacing any '#' arguments with current value."; }
-	@Override public String getUsage() { return "ex: for 0-9 server ping 192.168.0.#"; }
+	@Override public String getUsage() { return "ex: for 0-9-1 server ping 192.168.0.#"; }
 	@Override public void handleTabComplete(ETerminal termIn, EArrayList<String> args) { }
 	
 	@Override
@@ -40,13 +41,24 @@ public class ForLoop extends TerminalCommand {
 			else if (vals.length() >= 3 && vals.contains("-")) {
 				int pos = EUtil.findStartingIndex(vals, "-");
 				String firstArg = vals.substring(0, pos);
-				String secondArg = vals.substring(pos + 1);
+				String secondParse = vals.substring(pos + 1);
+				
+				String secondArg = EUtil.subStringToString(secondParse, 0, "-");
+				System.out.println(secondArg);
+				
+				
+				String thirdArg = EUtil.subStringToString(secondParse, 0, "-", true);
+				
+				System.out.println(thirdArg);
+				
+				
 				
 				boolean positive = true;
 				int firstI = 0;
 				int secondI = 0;
+				int thirdI = 0;
 				
-				Class type = checkClasses(termIn, firstArg, secondArg);
+				Class type = checkClasses(termIn, firstArg, secondArg, thirdArg);
 				
 				if (type == null) { termIn.error("Could not parse range value types!"); return; }
 				if (type == Exception.class) { termIn.error("Inconsistent range datatype values!"); return; }
@@ -54,26 +66,28 @@ public class ForLoop extends TerminalCommand {
 				if (type == Integer.class) {
 					firstI = Integer.parseInt(firstArg);
 					secondI = Integer.parseInt(secondArg);
+					thirdI = Integer.parseInt(thirdArg);
+					
 					positive = (secondI - firstI > 0); //check direction
 					
 					if (positive) {
 						try {
-							for (int i = firstI; i <= secondI; i++) {
+							for (int i = firstI; i <= secondI; i = i + thirdI) {
 								runLoop(termIn, i, otherArgs);
 							}
-						} catch (Exception e) {
-							termIn.badError("Java Error: " + e);
-							e.printStackTrace();
+						}
+						catch (Exception e) {
+							error(termIn, e);
 						}
 					}
 					else {
 						try {
-							for (int i = firstI; i >= secondI; i--) {
+							for (int i = firstI; i >= secondI; i = i - thirdI) {
 								runLoop(termIn, i, otherArgs);
 							}
-						} catch (Exception e) {
-							termIn.badError("Java Error: " + e);
-							e.printStackTrace();
+						}
+						catch (Exception e) {
+							error(termIn, e);
 						}
 					}
 				}
@@ -98,21 +112,23 @@ public class ForLoop extends TerminalCommand {
 		
 	}
 	
-	private Class checkClasses(ETerminal termIn, String firstArg, String secondArg) {
+	private Class checkClasses(ETerminal termIn, String firstArg, String secondArg, String thirdArg) {
 		try {
 			Class first = String.class;
 			Class second = String.class;
+			Class third = String.class;
 			
 			if (NumberUtil.isInteger(firstArg, 10)) { first = Integer.class; }
 			if (NumberUtil.isInteger(secondArg, 10)) { second = Integer.class; }
+			if (NumberUtil.isInteger(thirdArg, 10)) { third = Integer.class; }
 			
-			if (!first.equals(second)) { return Exception.class; } //error and return if the parsed range types are not the same
+			if (!first.equals(second) || !first.equals(third)) { return Exception.class; } //error and return if the parsed range types are not the same
 			else if (first == Integer.class) { return Integer.class; } //try for integer range
 			else if (first == Integer.class) { return String.class; } //try for character range instead
 			
-		} catch (Exception e) {
-			termIn.badError("Java Error: " + e);
-			e.printStackTrace();
+		}
+		catch (Exception e) {
+			error(termIn, e);
 		}
 		return null;
 	}
@@ -132,4 +148,5 @@ public class ForLoop extends TerminalCommand {
 		if (argsIn.size() > 0 && cmd.length() > 0) { cmd = cmd.substring(0, cmd.length() - 1); }
 		return cmd;
 	}
+	
 }

@@ -227,8 +227,8 @@ public abstract class WorldHelper {
 	
 	public static boolean is16thBlockHeight(IBlockState state) {
 		switch (getBlockID(state.getBlock())) {
-		//case 55: case 70: case 72: case 147: case 148: //redstone dust, pressure plates
-		//case 27: case 28: case 66: case 157: //powered, detector, base, activator rails
+		case 55: case 70: case 72: case 147: case 148: //redstone dust, pressure plates
+		case 27: case 28: case 66: case 157: //powered, detector, base, activator rails
 		case 171: return true; //carpets
 		default: return false;
 		}
@@ -257,4 +257,5 @@ public abstract class WorldHelper {
 		default: return 16;
 		}
 	}
+	
 }

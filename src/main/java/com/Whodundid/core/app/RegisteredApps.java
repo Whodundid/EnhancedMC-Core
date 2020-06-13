@@ -5,10 +5,10 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
+import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IWindowParent;
 
 //Author: Hunter Bragg
 
@@ -54,7 +54,12 @@ public final class RegisteredApps {
 		EArrayList<EMCApp> appsToRegister = new EArrayList();
 		
 		for (EMCApp m : appsIn) {
-			if (!isAppRegistered(m)) { appsToRegister.add(m); }
+			if (!isAppRegistered(m)) {
+				if (!allApps.contains(m)) {
+					appsToRegister.add(m);
+				}
+				else { EnhancedMC.error("Duplicate App: " + m.getName() + "! Ignoring duplicate..."); }
+			}
 		}
 		
 		if (appsToRegister.size() > 0) {
@@ -104,7 +109,7 @@ public final class RegisteredApps {
 		EArrayList<EMCApp> appsToUnregister = new EArrayList();
 		
 		for (EMCApp m : appsIn) {
-			if (isAppRegistered(m)) { appsToUnregister.add(m); }
+			appsToUnregister.add(m);
 		}
 		
 		if (appsToUnregister.size() > 0) {
@@ -112,12 +117,13 @@ public final class RegisteredApps {
 				if (m != null) {
 					if (m.isIncompatible()) {
 						EnhancedMC.log(Level.INFO, "Removing incompatible EMC App: " + m.getName());
-						incompatibleApps.remove(m);
 					}
 					else {
 						EnhancedMC.log(Level.INFO, "Unregistering EMC App: " + m.getName());
-						registeredApps.remove(m);
 					}
+					
+					incompatibleApps.remove(m);
+					registeredApps.remove(m);
 					allApps.remove(m);
 				}
 			}
@@ -288,7 +294,7 @@ public final class RegisteredApps {
 	public static EArrayList<Class> getAllGuiClasses() {
 		EArrayList<Class> guis = new EArrayList();
 		for (EMCApp m : getRegisteredAppList()) {
-			for (IWindowParent g : m.getGuis()) { if (g != null) { guis.add(g.getClass()); } }
+			for (IWindowParent g : m.getWindows()) { if (g != null) { guis.add(g.getClass()); } }
 		}
 		return guis;
 	}
@@ -296,7 +302,7 @@ public final class RegisteredApps {
 	public static Class getGuiClassByAlias(String aliasIn) {
 		if (aliasIn != null && !aliasIn.isEmpty()) {
 			for (EMCApp m : getRegisteredAppList()) {
-				for (IWindowParent g : m.getGuis()) {
+				for (IWindowParent g : m.getWindows()) {
 					for (String a : g.getAliases()) {
 						if (a.equals(aliasIn)) { return g.getClass(); }
 					}

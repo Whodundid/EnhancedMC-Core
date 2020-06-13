@@ -115,8 +115,10 @@ public class CursorHelper {
 	
 	/** Sets the cursor to be invisible. */
 	public static void setInvisible() { setCursorVisibility(false); }
+	
 	/** Sets the cursor to be visible. */
 	public static void setVisible() { setCursorVisibility(true); }
+	
 	/** Sets the cursor to be either visible or invisible. */
 	public static void setCursorVisibility(boolean visible) {
 		if (isVisible != visible) {
@@ -128,18 +130,20 @@ public class CursorHelper {
 	
 	/** Returns the mouse location in terms of OpenGL. */
 	public static Point getPosGL() { return MouseInfo.getPointerInfo() != null ? MouseInfo.getPointerInfo().getLocation() : new Point(0, 0); }
+	
 	/** Returns the mouse location in terms of Minecraft. */
 	public static Point getPosMC() { return Mouse.isCreated() ? new Point(Mouse.getX(), Mouse.getY()) : new Point(0, 0); }
 	
-	
 	/** Resets the cursor image back to default. */
-	public static void reset() {
-		setCursor(null);
-	}
+	public static void reset() { setCursor(null); }
+	
 	/** Returns true if the cursor is currently the default cursor. */
 	public static boolean isNormalCursor() { return Mouse.isCreated() && Mouse.getNativeCursor() == null; }
+	
 	/** Returns the current cursor. */
 	public static Cursor getCursor() { return Mouse.getNativeCursor(); }
+	
 	/** Returns true if the cursor is visible. */
 	public static boolean isCursorVisible() { return isVisible; }
+	
 }

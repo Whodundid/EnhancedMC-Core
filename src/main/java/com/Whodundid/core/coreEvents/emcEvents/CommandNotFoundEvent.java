@@ -13,4 +13,5 @@ public class CommandNotFoundEvent extends Event {
 	}
 	
 	public String getAttemptedCommand() { return attemptedCommand; }
+	
 }

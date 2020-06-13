@@ -1,8 +1,8 @@
 package com.Whodundid.core.util.renderUtil;
 
+import com.Whodundid.core.util.resourceUtil.DynamicTextureHandler;
 import com.Whodundid.core.util.resourceUtil.EResource;
 import com.Whodundid.core.util.resourceUtil.EResourceHandler;
-import com.Whodundid.core.util.storageUtil.DynamicTextureHandler;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Sets;
 import java.util.Arrays;
@@ -198,6 +198,27 @@ public class GLObject {
 			endY = i;
 		}
 		drawRect(x, startY + 1, x + 1, endY, color);
+	}
+	
+	/** Draws an arrow pointing towards the ending coordinates. */
+	public static void drawArrow(double sX, double sY, double eX, double eY, int thickness, EColors color) { drawArrow(sX, sY, eX, eY, thickness, color.intVal); }
+	public static void drawArrow(double sX, double sY, double eX, double eY, int thickness, int color) {
+		double hypot = Math.sqrt(Math.pow(eX - sX, 2) + Math.pow(eY - sY, 2));
+		double width = Math.abs(eX - sX);
+		double height = Math.abs(eY - sY);
+		
+		System.out.println("width: " + width + " height: " + height + " hypotenuse: " + hypot);
+		
+		double theta = Math.asin(height / hypot);
+		
+		double hyp4 = hypot / 4;
+		double aw1 = hyp4 * (Math.cos(theta));
+		double ah1 = hyp4 * (Math.sin(theta));
+		
+		double ax1 = eX + aw1;
+		//double ay1 = eY +
+		
+		System.out.println("aw1: " + aw1 + " ah1: " + ah1);
 	}
 	
 	/** Draws a hollow circle expanding out from the center. */

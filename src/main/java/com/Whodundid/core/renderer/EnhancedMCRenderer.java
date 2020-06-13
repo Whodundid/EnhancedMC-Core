@@ -2,67 +2,80 @@ package com.Whodundid.core.renderer;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.coreApp.CoreApp;
-import com.Whodundid.core.enhancedGui.StaticEGuiObject;
-import com.Whodundid.core.enhancedGui.StaticTopParent;
-import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.header.EGuiHeader;
-import com.Whodundid.core.enhancedGui.guiUtil.EObjectGroup;
-import com.Whodundid.core.enhancedGui.objectEvents.EventAction;
-import com.Whodundid.core.enhancedGui.objectEvents.EventFocus;
-import com.Whodundid.core.enhancedGui.objectEvents.EventRedraw;
-import com.Whodundid.core.enhancedGui.objectEvents.ObjectEvent;
-import com.Whodundid.core.enhancedGui.objectEvents.ObjectEventHandler;
-import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.FocusType;
-import com.Whodundid.core.enhancedGui.objectEvents.eventUtil.ObjectModifyType;
-import com.Whodundid.core.enhancedGui.types.EnhancedGui;
-import com.Whodundid.core.enhancedGui.types.EnhancedGuiObject;
-import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
-import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedGuiObject;
-import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedTopParent;
-import com.Whodundid.core.enhancedGui.types.interfaces.IWindowParent;
 import com.Whodundid.core.renderer.renderUtil.IRendererProxy;
 import com.Whodundid.core.renderer.taskView.TaskBar;
+import com.Whodundid.core.util.miscUtil.EMouseHelper;
+import com.Whodundid.core.util.renderUtil.BlockDrawer;
 import com.Whodundid.core.util.renderUtil.CursorHelper;
+import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.StorageBox;
+import com.Whodundid.core.windowLibrary.StaticTopParent;
+import com.Whodundid.core.windowLibrary.WindowObjectS;
+import com.Whodundid.core.windowLibrary.windowObjects.advancedObjects.header.WindowHeader;
+import com.Whodundid.core.windowLibrary.windowTypes.EnhancedGui;
+import com.Whodundid.core.windowLibrary.windowTypes.OverlayWindow;
+import com.Whodundid.core.windowLibrary.windowTypes.WindowObject;
+import com.Whodundid.core.windowLibrary.windowTypes.WindowParent;
+import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IActionObject;
+import com.Whodundid.core.windowLibrary.windowTypes.interfaces.ITopParent;
+import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IWindowObject;
+import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IWindowParent;
+import com.Whodundid.core.windowLibrary.windowUtil.EObjectGroup;
+import com.Whodundid.core.windowLibrary.windowUtil.windowEvents.ObjectEvent;
+import com.Whodundid.core.windowLibrary.windowUtil.windowEvents.ObjectEventHandler;
+import com.Whodundid.core.windowLibrary.windowUtil.windowEvents.eventUtil.FocusType;
+import com.Whodundid.core.windowLibrary.windowUtil.windowEvents.eventUtil.ObjectModifyType;
+import com.Whodundid.core.windowLibrary.windowUtil.windowEvents.events.EventAction;
+import com.Whodundid.core.windowLibrary.windowUtil.windowEvents.events.EventFocus;
+import com.Whodundid.core.windowLibrary.windowUtil.windowEvents.events.EventRedraw;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import org.lwjgl.opengl.GL11;
 
 //Author: Hunter Bragg
 
-public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTopParent {
+public class EnhancedMCRenderer extends WindowObject implements ITopParent {
 	
 	public static EnhancedMCRenderer instance;
-	protected IEnhancedGuiObject modifyingObject;
-	protected IEnhancedGuiObject objectRequestingFocus, focusedObject, focusLockObject;
-	protected IEnhancedGuiObject defaultFocusObject;
-	protected IEnhancedGuiObject toFront, toBack;
-	protected IEnhancedGuiObject hoveringTextObject;
-	protected IEnhancedGuiObject escapeStopper;
+	protected IWindowObject modifyingObject;
+	protected IWindowObject objectRequestingFocus, focusedObject, focusLockObject;
+	protected IWindowObject defaultFocusObject;
+	protected IWindowObject toFront, toBack;
+	protected IWindowObject hoveringTextObject;
+	protected IWindowObject escapeStopper;
 	protected IRendererProxy proxy;
 	protected StorageBox<Integer, Integer> oldMousePos = new StorageBox();
-	protected EArrayList<IEnhancedGuiObject> guiObjects = new EArrayList();
-	protected EArrayList<IEnhancedGuiObject> objsToBeAdded = new EArrayList();
-	protected EArrayList<IEnhancedGuiObject> objsToBeRemoved = new EArrayList();
+	protected EArrayList<IWindowObject> WindowObjects = new EArrayList();
+	protected EArrayList<IWindowObject> objsToBeAdded = new EArrayList();
+	protected EArrayList<IWindowObject> objsToBeRemoved = new EArrayList();
 	protected ObjectEventHandler eventHandler = new ObjectEventHandler(this);
 	protected StorageBox<Integer, Integer> mousePos = new StorageBox(0, 0);
 	protected Deque<EventFocus> focusQueue = new ArrayDeque();
 	protected ObjectModifyType modifyType = ObjectModifyType.None;
 	protected ScreenLocation resizingDir = ScreenLocation.out;
+	protected IWindowParent maximizingWindow;
+	protected ScreenLocation maximizingArea = ScreenLocation.out;
+	protected boolean maximizingHeaderCenter = false;
 	protected boolean objectInit = false;
 	protected boolean hasProxy = false;
 	protected int mX = 0, mY = 0;
 	protected long mouseHoverTime = 0l;
 	protected long hoverRefTime = 0l;
+	protected IWindowObject lastClickedObject = null;
+	protected long lastClickTime = 0l;
+	protected long doubleClickThreshold = 500l;
 	
 	public static EnhancedMCRenderer getInstance() {
 		return instance == null ? instance = new EnhancedMCRenderer() : instance;
@@ -79,7 +92,7 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	
 	public void onTextRender(RenderGameOverlayEvent.Text e) {
 		TaskBar b = getTaskBar();
-		if (b != null && e.left != null && e.right != null) {
+		if (b != null && !b.isHidden() && e.left != null && e.right != null) {
 			e.setCanceled(true);
 			ArrayList<String> l = e.left;
 			ArrayList<String> r = e.right;
@@ -126,7 +139,7 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	@Override
 	public void reInitObjects() {
 		objectInit = false;
-		guiObjects.clear();
+		WindowObjects.clear();
 		initObjects();
 	}
 	@Override public void onAdded() {}
@@ -144,45 +157,83 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 		GlStateManager.enableBlend();
 		GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
 		
+		BlockDrawer.clearBlocks();
+		if (EnhancedMC.isDevMode() && CoreApp.drawHiddenPlayers.get()) {
+			if (mc.theWorld != null) {
+				List<EntityPlayer> list = mc.theWorld.playerEntities;
+				if (list != null) {
+					for (EntityPlayer p : list) {
+						if (p.isInvisible()) {
+							BlockDrawer.addPlayer(p, EColors.lred.intVal, true, EColors.seafoam.intVal);
+						}
+					}
+				}
+			}
+		}
+		
 		if (visible) {
+			
+			//draw debug stuff
+			if (EnhancedMC.isDebugMode() && !mc.gameSettings.showDebugInfo && (mc.currentScreen instanceof IRendererProxy)) { drawDebugInfo(); }
 			
 			//draw Hud Border
 			if (hasProxy && CoreApp.drawHudBorder.get()) {
-				int borderColor = 0x88ff0000;
-				if (containsObject(TaskBar.class)) {
-					drawRect(0, 24, 1, res.getScaledHeight(), borderColor); //left
-					drawRect(1, 24, res.getScaledWidth() - 1, 25, borderColor); //top
-					drawRect(res.getScaledWidth() - 1, 24, res.getScaledWidth(), res.getScaledHeight(), borderColor); //right
-					drawRect(1, res.getScaledHeight() - 2, res.getScaledWidth() - 1, res.getScaledHeight(), borderColor); //bottom
+				boolean hasOverlay = false;
+				for (IWindowObject o : WindowObjects) {
+					if (o instanceof OverlayWindow) { hasOverlay = true; }
 				}
-				else {
-					drawRect(0, 0, 1, res.getScaledHeight(), borderColor); //left
-					drawRect(1, 0, res.getScaledWidth() - 1, 2, borderColor); //top
-					drawRect(res.getScaledWidth() - 1, 0, res.getScaledWidth(), res.getScaledHeight(), borderColor); //right
-					drawRect(1, res.getScaledHeight() - 2, res.getScaledWidth() - 1, res.getScaledHeight(), borderColor); //bottom
+				
+				if (!hasOverlay) {
+					int borderColor = 0x88ff0000;
+					TaskBar b = getTaskBar();
+					if (b != null && !b.isHidden()) {
+						drawRect(0, 24, 1, res.getScaledHeight(), borderColor); //left
+						drawRect(1, 24, res.getScaledWidth() - 1, 25, borderColor); //top
+						drawRect(res.getScaledWidth() - 1, 24, res.getScaledWidth(), res.getScaledHeight(), borderColor); //right
+						drawRect(1, res.getScaledHeight() - 2, res.getScaledWidth() - 1, res.getScaledHeight(), borderColor); //bottom
+					}
+					else {
+						drawRect(0, 0, 1, res.getScaledHeight(), borderColor); //left
+						drawRect(1, 0, res.getScaledWidth() - 1, 2, borderColor); //top
+						drawRect(res.getScaledWidth() - 1, 0, res.getScaledWidth(), res.getScaledHeight(), borderColor); //right
+						drawRect(1, res.getScaledHeight() - 2, res.getScaledWidth() - 1, res.getScaledHeight(), borderColor); //bottom
+					}
 				}
 			}
 			
 			//draw all child objects
-			guiObjects.stream().filter(o -> o.checkDraw()).forEach(o -> {
-				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-				GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
-				GL11.glDisable(GL11.GL_SCISSOR_TEST);
-				if (!o.hasFirstDraw()) { o.onFirstDraw(); }
-				o.drawObject(mX, mY);
-				if (focusLockObject != null && !o.equals(focusLockObject)) {
-					if (o.isVisible()) {
-						EDimension d = o.getDimensions();
-						drawRect(d.startX, d.startY, d.endX, d.endY, 0x77000000);
+			for (IWindowObject o : WindowObjects) {
+				if (o.checkDraw() && !o.isHidden()) {
+					boolean draw = true;
+					
+					if (o instanceof WindowParent) {
+						WindowParent wp = (WindowParent) o;
+						if (!wp.isMinimized() || wp.drawsWhileMinimized()) { draw = true; }
+						else { draw = false; }
 					}
+					
+					if (draw) {
+						GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+						GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
+						GL11.glDisable(GL11.GL_SCISSOR_TEST);
+						
+						if (!o.hasFirstDraw()) { o.onFirstDraw(); }
+						o.drawObject(mX, mY);
+						
+						//draw greyed out overlay over everything if a focus lock object is present
+						if (focusLockObject != null && !o.equals(focusLockObject)) {
+							if (o.isVisible()) {
+								EDimension d = o.getDimensions();
+								drawRect(d.startX, d.startY, d.endX, d.endY, 0x77000000);
+							}
+						}
+					}
+					
 				}
-			});
+			}
 			
 			//notify hover object
 			if (getHoveringObject() != null) { getHoveringObject().onMouseHover(mX, mY); }
-			
-			//draw debug stuff
-			if (EnhancedMC.isDebugMode() && !mc.gameSettings.showDebugInfo && (mc.currentScreen instanceof IRendererProxy)) { drawDebugInfo(); }
 		}
 		
 		GlStateManager.popMatrix();
@@ -215,7 +266,7 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	//size
 	@Override public boolean hasHeader() { return false; }
 	@Override public boolean isResizeable() { return false; }
-	@Override public EGuiHeader getHeader() { return null; }
+	@Override public WindowHeader getHeader() { return null; }
 	@Override public int getMinWidth() { return res.getScaledWidth(); }
 	@Override public int getMinHeight() { return res.getScaledHeight(); }
 	@Override public int getMaxWidth() { return res.getScaledWidth(); }
@@ -244,22 +295,22 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	@Override public EDimension getDimensions() { return new EDimension(0, 0, res.getScaledWidth(), res.getScaledHeight()); }
 	
 	//objects
-	@Override public boolean isChild(IEnhancedGuiObject objIn) { return false; }
-	@Override public EnhancedMCRenderer addObject(IEnhancedGuiObject... objsIn) { StaticEGuiObject.addObject(this, objsIn); return this; }
-	@Override public EnhancedMCRenderer removeObject(IEnhancedGuiObject... objsIn) { StaticEGuiObject.removeObject(this, objsIn); return this; }
+	@Override public boolean isChild(IWindowObject objIn) { return false; }
+	@Override public EnhancedMCRenderer addObject(IWindowObject obj, IWindowObject... additional) { WindowObjectS.addObject(this, obj, additional); return this; }
+	@Override public EnhancedMCRenderer removeObject(IWindowObject obj, IWindowObject... additional) { WindowObjectS.removeObject(this, obj, additional); return this; }
 	@Override public EObjectGroup getObjectGroup() { return objectGroup; }
 	@Override public EnhancedMCRenderer setObjectGroup(EObjectGroup groupIn) { objectGroup = groupIn; return this; }
 	@Override public void onGroupNotification(ObjectEvent e) {}
-	@Override public EArrayList<IEnhancedGuiObject> getObjects() { return guiObjects; }
-	@Override public EArrayList<IEnhancedGuiObject> getAddingObjects() { return objsToBeAdded; }
-	@Override public EArrayList<IEnhancedGuiObject> getRemovingObjects() { return objsToBeRemoved; }
-	@Override public EArrayList<IEnhancedGuiObject> getAllChildren() { return StaticEGuiObject.getAllChildren(this); }
-	@Override public EArrayList<IEnhancedGuiObject> getAllChildrenUnderMouse() { return StaticEGuiObject.getAllChildrenUnderMouse(this, mX, mY); }
+	@Override public EArrayList<IWindowObject> getObjects() { return WindowObjects; }
+	@Override public EArrayList<IWindowObject> getAddingObjects() { return objsToBeAdded; }
+	@Override public EArrayList<IWindowObject> getRemovingObjects() { return objsToBeRemoved; }
+	@Override public EArrayList<IWindowObject> getAllChildren() { return WindowObjectS.getAllChildren(this); }
+	@Override public EArrayList<IWindowObject> getAllChildrenUnderMouse() { return WindowObjectS.getAllChildrenUnderMouse(this, mX, mY); }
 	
 	//parents
-	@Override public IEnhancedGuiObject getParent() { return null; }
-	@Override public EnhancedMCRenderer setParent(IEnhancedGuiObject parentIn) { return this; }
-	@Override public IEnhancedTopParent getTopParent() { return this; }
+	@Override public IWindowObject getParent() { return null; }
+	@Override public EnhancedMCRenderer setParent(IWindowObject parentIn) { return this; }
+	@Override public ITopParent getTopParent() { return this; }
 	@Override public IWindowParent getWindowParent() { return null; }
 	
 	//zLevel
@@ -285,7 +336,7 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	}
 	@Override public void onFocusLost(EventFocus eventIn) { postEvent(new EventFocus(this, this, FocusType.Lost)); }
 	@Override
-	public void transferFocus(IEnhancedGuiObject objIn) {
+	public void transferFocus(IWindowObject objIn) {
 		if (!doesFocusLockExist()) {
 			if (objIn != null) {
 				relinquishFocus();
@@ -300,8 +351,8 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 		if (!hasFocus() && !doesFocusLockExist()) { setObjectRequestingFocus(this); }
 		return this;
 	}
-	@Override public IEnhancedGuiObject getDefaultFocusObject() { return defaultFocusObject; }
-	@Override public IEnhancedGuiObject setDefaultFocusObject(IEnhancedGuiObject objIn) { defaultFocusObject = objIn; return this; }
+	@Override public IWindowObject getDefaultFocusObject() { return defaultFocusObject; }
+	@Override public EnhancedMCRenderer setDefaultFocusObject(IWindowObject objIn) { defaultFocusObject = objIn; return this; }
 	
 	//mouse checks
 	@Override public void mouseEntered(int mX, int mY) {}
@@ -311,64 +362,75 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	@Override public EnhancedMCRenderer setBoundaryEnforcer(EDimension dimIn) { return this; }
 	@Override public EDimension getBoundaryEnforcer() { return getDimensions(); }
 	@Override public boolean isClickable() { return true; }
-	@Override public IEnhancedGuiObject setClickable(boolean valIn) { return this; }
+	@Override public EnhancedMCRenderer setClickable(boolean valIn) { return this; }
 	//@Override public IEnhancedGuiObject setClickableArea(EDimension dimIn) { return this; }
 	//@Override public IEnhancedGuiObject setClickableArea(int startX, int startY, int width, int height) { return this; }
 	//@Override public EDimension getClickableArea() { return getDimensions(); }
 	
 	//basic inputs
-	@Override public void parseMousePosition(int mX, int mY) { guiObjects.stream().filter(o -> o.isMouseInside(mX, mY)).forEach(o -> o.parseMousePosition(mX, mY)); }
+	@Override public void parseMousePosition(int mX, int mY) { WindowObjects.stream().filter(o -> o.isMouseInside(mX, mY)).forEach(o -> o.parseMousePosition(mX, mY)); }
 	@Override public void mousePressed(int mX, int mY, int button) { StaticTopParent.mousePressed(this, mX, mY, button, focusQueue); }
 	@Override public void mouseReleased(int mX, int mY, int button) { StaticTopParent.mouseReleased(this, mX, mY, button); }
 	@Override public void mouseDragged(int mX, int mY, int button, long timeSinceLastClick) { StaticTopParent.mouseDragged(this, mX, mY, button, timeSinceLastClick); }
 	@Override public void mouseScrolled(int change) { StaticTopParent.mouseScrolled(this, mX, mY, change); }
+	@Override public void onDoubleClick() {}
 	@Override public void keyPressed(char typedChar, int keyCode) { StaticTopParent.keyPressed(this, typedChar, keyCode); }
 	@Override public void keyReleased(char typedChar, int keyCode) { StaticTopParent.keyReleased(this, typedChar, keyCode); }
 	
 	//events
 	@Override public ObjectEventHandler getEventHandler() { return eventHandler; }
-	@Override public EnhancedMCRenderer registerListener(IEnhancedGuiObject objIn) { if (eventHandler != null) { eventHandler.registerObject(objIn); } return this; }
-	@Override public EnhancedMCRenderer unregisterListener(IEnhancedGuiObject objIn) { if (eventHandler != null) { eventHandler.unregisterObject(objIn); } return this; }
+	@Override public EnhancedMCRenderer registerListener(IWindowObject objIn) { if (eventHandler != null) { eventHandler.registerObject(objIn); } return this; }
+	@Override public EnhancedMCRenderer unregisterListener(IWindowObject objIn) { if (eventHandler != null) { eventHandler.unregisterObject(objIn); } return this; }
 	@Override public EnhancedMCRenderer postEvent(ObjectEvent e) { if (eventHandler != null) { eventHandler.processEvent(e); } return this; }
 	@Override public void onEvent(ObjectEvent e) {}
 	
 	//action object
-	@Override public void actionPerformed(IEnhancedActionObject object, Object... args) { postEvent(new EventAction(this, object, args)); }
+	@Override public void actionPerformed(IActionObject object, Object... args) { postEvent(new EventAction(this, object, args)); }
 	
 	//close object
 	@Override public boolean isCloseable() { return false; }
 	@Override public boolean isClosed() { return closed; }
-	@Override public IEnhancedGuiObject setCloseable(boolean val) { return this; }
+	@Override public EnhancedMCRenderer setCloseable(boolean val) { return this; }
 	@Override public void close() { System.out.println("FOOL! Dagoth Ur cannot be closed, I am a god!"); }
 	@Override public void onClosed() {}
-	@Override public EnhancedMCRenderer setFocusedObjectOnClose(IEnhancedGuiObject objIn) { return this; }
+	@Override public EnhancedMCRenderer setFocusedObjectOnClose(IWindowObject objIn) { return this; }
 	
-	//-------------------------
-	//IEnhancedTopGui Overrides
-	//-------------------------
+	//--------------------
+	//ITopParent Overrides
+	//--------------------
 	
 	//drawing
 	@Override public void drawDebugInfo() { StaticTopParent.drawDebugInfo(this); }
 	
 	//draw order
-	@Override public EnhancedMCRenderer bringObjectToFront(IEnhancedGuiObject objIn) { toFront = objIn; return this; }
-	@Override public EnhancedMCRenderer sendObjectToBack(IEnhancedGuiObject objIn) { toBack = objIn; return this; }
+	@Override public EnhancedMCRenderer bringObjectToFront(IWindowObject objIn) { toFront = objIn; return this; }
+	@Override public EnhancedMCRenderer sendObjectToBack(IWindowObject objIn) { toBack = objIn; return this; }
 	
 	//hovering text
-	@Override public EnhancedMCRenderer setHoveringObject(IEnhancedGuiObject objIn) { hoveringTextObject = objIn; return this; }
-	@Override public IEnhancedGuiObject getHoveringObject() { return hoveringTextObject; }
+	@Override public EnhancedMCRenderer setHoveringObject(IWindowObject objIn) { hoveringTextObject = objIn; return this; }
+	@Override public IWindowObject getHoveringObject() { return hoveringTextObject; }
+	
+	//double click
+	@Override public ITopParent setLastClickedObject(IWindowObject objectIn) { lastClickedObject = objectIn; return this; }
+	@Override public IWindowObject getLastClickedObject() { return lastClickedObject; }
+	@Override public ITopParent setLastClickTime(long timeIn) { lastClickTime = timeIn; return this; }
+	@Override public long getLastClickTime() { return lastClickTime; }
 	
 	//objects
-	@Override public IEnhancedGuiObject getHighestZLevelObject() { return StaticTopParent.getHighestZLevelObject(this); }
-	@Override public IEnhancedTopParent removeUnpinnedObjects() { return StaticTopParent.removeUnpinnedWindows(this); }
+	@Override public IWindowObject getHighestZLevelObject() { return StaticTopParent.getHighestZLevelObject(this); }
+	@Override public ITopParent hideUnpinnedObjects() { return StaticTopParent.hideUnpinnedObjects(this); }
+	@Override public ITopParent hideAllExcept(IWindowObject objIn) { return StaticTopParent.hideAllExcept(this, objIn); }
+	@Override public ITopParent revealHiddenObjects() { return StaticTopParent.revealHiddenObjects(this); }
+	@Override public ITopParent removeUnpinnedObjects() { return StaticTopParent.removeUnpinnedWindows(this); }
+	@Override public ITopParent removeAllObjects() { return StaticTopParent.removeAllObjects(this); }
 	@Override public boolean hasPinnedObjects() { return StaticTopParent.hasPinnedWindows(this); }
 	
 	//focus
-	@Override public IEnhancedGuiObject getFocusedObject() { return focusedObject; }
-	@Override public EnhancedMCRenderer setFocusedObject(IEnhancedGuiObject objIn) { focusedObject = objIn; return this; }
-	@Override public EnhancedMCRenderer setObjectRequestingFocus(IEnhancedGuiObject objIn) { focusQueue.add(new EventFocus(this, objIn, FocusType.Transfer)); return this; }
-	@Override public IEnhancedGuiObject getFocusLockObject() { return focusLockObject; }
-	@Override public EnhancedMCRenderer setFocusLockObject(IEnhancedGuiObject objIn) { focusLockObject = objIn; transferFocus(focusLockObject); return this; }
+	@Override public IWindowObject getFocusedObject() { return focusedObject; }
+	@Override public EnhancedMCRenderer setFocusedObject(IWindowObject objIn) { focusedObject = objIn; return this; }
+	@Override public EnhancedMCRenderer setObjectRequestingFocus(IWindowObject objIn) { focusQueue.add(new EventFocus(this, objIn, FocusType.Transfer)); return this; }
+	@Override public IWindowObject getFocusLockObject() { return focusLockObject; }
+	@Override public EnhancedMCRenderer setFocusLockObject(IWindowObject objIn) { focusLockObject = objIn; transferFocus(focusLockObject); return this; }
 	@Override public EnhancedMCRenderer clearFocusLockObject() { StaticTopParent.clearFocusLockObject(this); return this; }
 	@Override public boolean doesFocusLockExist() { return focusLockObject != null; }
 	@Override public void clearFocusedObject() { StaticTopParent.clearFocusedObject(this);}
@@ -376,10 +438,18 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	
 	//object modification
 	@Override public ObjectModifyType getModifyType() { return modifyType; }
-	@Override public EnhancedMCRenderer setModifyingObject(IEnhancedGuiObject objIn, ObjectModifyType typeIn) { modifyingObject = objIn; modifyType = typeIn; return this; }
+	@Override public EnhancedMCRenderer setModifyingObject(IWindowObject objIn, ObjectModifyType typeIn) { modifyingObject = objIn; modifyType = typeIn; return this; }
+	@Override
+	public EnhancedMCRenderer setMaximizingWindow(IWindowParent objIn, ScreenLocation areaIn, boolean centerAroundHeader) {
+		if (objIn != null && objIn.isMaximizable()) { maximizingWindow = objIn; maximizingArea = areaIn; maximizingHeaderCenter = centerAroundHeader; }
+		return this;
+	}
 	@Override public EnhancedMCRenderer setResizingDir(ScreenLocation areaIn) { resizingDir = areaIn; return this; }
 	@Override public EnhancedMCRenderer setModifyMousePos(int mX, int mY) { mousePos.setValues(mX, mY); return this; }
-	@Override public IEnhancedGuiObject getModifyingObject() { return modifyingObject; }
+	@Override public IWindowObject getModifyingObject() { return modifyingObject; }
+	@Override public IWindowParent getMaximizingWindow() { return maximizingWindow; }
+	@Override public ScreenLocation getMaximizingArea() { return maximizingArea; }
+	@Override public boolean getMaximizingHeaderCenter() { return maximizingHeaderCenter; }
 	@Override public EnhancedMCRenderer clearModifyingObject() { modifyingObject = null; modifyType = ObjectModifyType.None; return this; }
 	
 	//mouse checks
@@ -387,14 +457,12 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	@Override public ScreenLocation getEdgeAreaMouseIsOn() { return StaticTopParent.getEdgeAreaMouseIsOn(this, mX, mY); }
 	@Override public boolean isMouseInsideObject(int mX, int mY) { return getHighestZObjectUnderMouse() != null; }
 	@Override public boolean isMouseInsideHeader(int mX, int mY) { return StaticTopParent.isMouseInsideHeader(this, mX, mY); }
-	@Override public IEnhancedGuiObject getHighestZObjectUnderMouse() { return StaticTopParent.getHighestZObjectUnderMouse(this); }
-	@Override public EArrayList<IEnhancedGuiObject> getAllObjectsUnderMouse() { return StaticTopParent.getAllObjectsUnderMouse(this, mX, mY); }
+	@Override public IWindowObject getHighestZObjectUnderMouse() { return StaticTopParent.getHighestZObjectUnderMouse(this); }
+	@Override public EArrayList<IWindowObject> getAllObjectsUnderMouse() { return StaticTopParent.getAllObjectsUnderMouse(this, mX, mY); }
 	
 	//close
-	@Override public void closeGui(boolean fullClose) {}
-	@Override public EnhancedMCRenderer setCloseAndRecenter(boolean val) { return this; }
-	@Override public EnhancedMCRenderer setEscapeStopper(IEnhancedGuiObject obj) { if (obj != this) { escapeStopper = obj; } return this; }
-	@Override public IEnhancedGuiObject getEscapeStopper() { return escapeStopper; }
+	@Override public EnhancedMCRenderer setEscapeStopper(IWindowObject obj) { if (obj != this) { escapeStopper = obj; } return this; }
+	@Override public IWindowObject getEscapeStopper() { return escapeStopper; }
 	
 	//--------------------------
 	//EnhancedMCRenderer methods
@@ -424,13 +492,14 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 		oldMousePos.setValues(mX, mY);
 		
 		//update objects
-		if (!objsToBeRemoved.isEmpty()) { StaticEGuiObject.removeObjects(this, objsToBeRemoved); }
-		if (!objsToBeAdded.isEmpty()) { StaticEGuiObject.addObjects(this, objsToBeAdded); }
+		if (!objsToBeRemoved.isEmpty()) { WindowObjectS.removeObjects(this, objsToBeRemoved); }
+		if (!objsToBeAdded.isEmpty()) { WindowObjectS.addObjects(this, objsToBeAdded); }
 		if (escapeStopper != null && getAllChildren().notContains(escapeStopper)) { escapeStopper = null; }
 		
 		//update object states
 		updateZLayers();
 		updateFocus();
+		
 		if (modifyingObject != null) {
 			switch (modifyType) {
 			case Move:
@@ -439,14 +508,93 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 			default: break;
 			}
 		}
+		
+		if (maximizingWindow != null) {
+			if (maximizingWindow.isMaximizable()) {
+				switch (maximizingArea) {
+				case topLeft:
+					maximizingWindow.setPreMax(maximizingWindow.getDimensions());
+					maximizingWindow.setMaximized(ScreenLocation.topLeft);
+					maximizingWindow.maximize();
+					setFocusedObject(maximizingWindow);
+					break;
+				case botLeft:
+					maximizingWindow.setPreMax(maximizingWindow.getDimensions());
+					maximizingWindow.setMaximized(ScreenLocation.botLeft);
+					maximizingWindow.maximize();
+					setFocusedObject(maximizingWindow);
+					break;
+				case topRight:
+					maximizingWindow.setPreMax(maximizingWindow.getDimensions());
+					maximizingWindow.setMaximized(ScreenLocation.topRight);
+					maximizingWindow.maximize();
+					setFocusedObject(maximizingWindow);
+					break;
+				case botRight:
+					maximizingWindow.setPreMax(maximizingWindow.getDimensions());
+					maximizingWindow.setMaximized(ScreenLocation.botRight);
+					maximizingWindow.maximize();
+					setFocusedObject(maximizingWindow);
+					break;
+				case left:
+					maximizingWindow.setPreMax(maximizingWindow.getDimensions());
+					maximizingWindow.setMaximized(ScreenLocation.left);
+					maximizingWindow.maximize();
+					setFocusedObject(maximizingWindow);
+					break;
+				case right:
+					maximizingWindow.setPreMax(maximizingWindow.getDimensions());
+					maximizingWindow.setMaximized(ScreenLocation.right);
+					maximizingWindow.maximize();
+					setFocusedObject(maximizingWindow);
+					break;
+				case center:
+					maximizingWindow.setPreMax(maximizingWindow.getDimensions());
+					maximizingWindow.setMaximized(ScreenLocation.center);
+					maximizingWindow.maximize();
+					setFocusedObject(maximizingWindow);
+					break;
+				case out:
+					if (maximizingWindow.isMaximized()) {
+						maximizingWindow.setMaximized(ScreenLocation.out);
+						maximizingWindow.miniaturize();
+						
+						if (maximizingHeaderCenter) {
+							EDimension dims = maximizingWindow.getDimensions();
+							WindowHeader header = maximizingWindow.getHeader();
+							int yPos = header != null ? header.height / 2 : 0;
+							
+							maximizingWindow.setPosition(EMouseHelper.mX - dims.width / 2, EMouseHelper.mY + yPos);
+							maximizingWindow.reInitObjects();
+							
+							WindowHeader newHeader = maximizingWindow.getHeader();
+							newHeader.setHeaderMoving(true);
+							setModifyingObject(maximizingWindow, ObjectModifyType.Move);
+							setModifyMousePos(newHeader.midX, newHeader.midY);
+						}
+						
+						setFocusedObject(maximizingWindow);
+					}
+				default: break;
+				}
+			}
+			
+			maximizingWindow = null;
+			maximizingArea = ScreenLocation.out;
+			maximizingHeaderCenter = false;
+		}
 	}
 	
-	public void addTaskBar() {
-		addObject(new TaskBar());
+	public void addTaskBar(boolean fromScratch) {
+		addObject(null, new TaskBar(fromScratch));
 	}
 	
 	public TaskBar getTaskBar() {
-		for (IEnhancedGuiObject o : guiObjects) {
+		EArrayList<IWindowObject> objects = new EArrayList(WindowObjects);
+		objects.removeAll(objsToBeRemoved);
+		objects.addAll(objsToBeAdded);
+		
+		for (IWindowObject o : objects) {
 			if (o instanceof TaskBar) { return (TaskBar) o; }
 		}
 		return null;
@@ -485,16 +633,16 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 		if (toFront != null) {
 			
 			//move the 'toFront' object to the front
-			if (guiObjects.contains(toFront)) {
-				guiObjects.remove(toFront);
-				guiObjects.add(toFront);
+			if (WindowObjects.contains(toFront)) {
+				WindowObjects.remove(toFront);
+				WindowObjects.add(toFront);
 			}
 			
 			//move things that should always be at the top to the top
-			EArrayList<IEnhancedGuiObject> atTop = guiObjects.stream().filter(o -> o.isAlwaysOnTop()).collect(EArrayList.toEArrayList());
-			for (IEnhancedGuiObject o : atTop) {
-				guiObjects.remove(o);
-				guiObjects.add(o);
+			EArrayList<IWindowObject> atTop = WindowObjects.stream().filter(o -> o.isAlwaysOnTop()).collect(EArrayList.toEArrayList());
+			for (IWindowObject o : atTop) {
+				WindowObjects.remove(o);
+				WindowObjects.add(o);
 			}
 			
 			toFront = null;
@@ -503,20 +651,20 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 		if (toBack != null) {
 			
 			//move the 'toBack' object to the back
-			if (guiObjects.contains(toBack)) {
-				EArrayList<IEnhancedGuiObject> objects = new EArrayList();
-				guiObjects.remove(toBack);
+			if (WindowObjects.contains(toBack)) {
+				EArrayList<IWindowObject> objects = new EArrayList();
+				WindowObjects.remove(toBack);
 				//objects.addAll(guiObjects);
 				//guiObjects.clear();
-				guiObjects.add(guiObjects.size() - 1, toBack);
+				WindowObjects.add(WindowObjects.size() - 1, toBack);
 				//guiObjects.addAll(objects);
 			}
 			
 			//move things that should always be at the top to the top
-			EArrayList<IEnhancedGuiObject> atTop = guiObjects.stream().filter(o -> o.isAlwaysOnTop()).collect(EArrayList.toEArrayList());
-			for (IEnhancedGuiObject o : atTop) {
-				guiObjects.remove(o);
-				guiObjects.add(o);
+			EArrayList<IWindowObject> atTop = WindowObjects.stream().filter(o -> o.isAlwaysOnTop()).collect(EArrayList.toEArrayList());
+			for (IWindowObject o : atTop) {
+				WindowObjects.remove(o);
+				WindowObjects.add(o);
 			}
 			
 			toBack = null;
@@ -524,14 +672,27 @@ public class EnhancedMCRenderer extends EnhancedGuiObject implements IEnhancedTo
 	}
 	
 	public void windowResized(int newWidth, int newHeight) {
-		for (IEnhancedGuiObject o : guiObjects) { if (o.isCloseable()) { o.close(); } }
-		for (IEnhancedGuiObject o : objsToBeAdded) { if (o.isCloseable()) { o.close(); } }
-		objsToBeRemoved.clear();
-		toFront = null;
-		toBack = null;
-		clearFocusedObject();
-		setObjectRequestingFocus(null);
-		reInitObjects();
+		EArrayList<WindowParent> windows = EnhancedMC.getAllActiveWindows();
+		
+		int oldW = res.getScaledWidth();
+		int oldH = res.getScaledHeight();
+		int newW = newWidth;
+		int newH = newHeight;
+		
+		res = new ScaledResolution(mc);
+		
+		for (WindowParent p : windows) {
+			
+			EDimension oldDims = p.getDimensions();
+			
+			int newX = (oldDims.startX * newW) / oldW;
+			int newY = (oldDims.startY * newH) / oldH;
+			
+			p.setPosition(newX, newY);
+			p.reInitObjects();
+			
+			if (p.isMaximized()) { p.maximize(); }
+		}
 	}
 	
 }

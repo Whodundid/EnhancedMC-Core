@@ -3,8 +3,8 @@ package com.Whodundid.core.terminal.terminalCommand.commands.fileSystem;
 import java.io.File;
 import java.io.IOException;
 import net.minecraft.util.EnumChatFormatting;
-import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
+import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
@@ -22,7 +22,7 @@ public class Ls extends FileCommand {
 	@Override public EArrayList<String> getAliases() { return null; }
 	@Override public String getHelpInfo(boolean runVisually) { return "List all files in a directory."; }
 	@Override public String getUsage() { return "ex: ls 'dir'"; }
-	@Override public void handleTabComplete(ETerminal termIn, EArrayList<String> args) { defaultTabComplete(termIn, args); }
+	@Override public void handleTabComplete(ETerminal termIn, EArrayList<String> args) { fileTabComplete(termIn, args); }
 	
 	@Override
 	public void runCommand(ETerminal termIn, EArrayList<String> args, boolean runVisually) {
@@ -70,9 +70,14 @@ public class Ls extends FileCommand {
 			if (!dir.isDirectory()) { termIn.error(dir.getName() + " is a file, not a directory!"); return; }
 			
 			try {
-				termIn.info("Viewing Dir: " + EnumChatFormatting.AQUA + EnumChatFormatting.UNDERLINE + dir.getCanonicalPath());
+				String path = dir.getCanonicalPath();
+				String colorPath = "" + EnumChatFormatting.AQUA + EnumChatFormatting.UNDERLINE + path + EnumChatFormatting.RESET;
+				termIn.writeLink("Viewing Dir: " + colorPath, path, new File(path), false, EColors.yellow);
 			}
-			catch (IOException e) { e.printStackTrace(); }
+			catch (IOException e) {
+				error(termIn, e);
+			}
+			
 			if (dir.list().length > 0) { termIn.writeln(); }
 			
 			for (String s : dir.list()) {
@@ -90,7 +95,9 @@ public class Ls extends FileCommand {
 			try {
 				termIn.error("'" + dir.getCanonicalPath() + "' is not a vaild directory!");
 			}
-			catch (IOException e) { e.printStackTrace(); }
+			catch (IOException e) {
+				error(termIn, e);
+			}
 		}
 	}
 	

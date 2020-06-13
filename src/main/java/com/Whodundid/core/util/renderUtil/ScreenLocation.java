@@ -4,7 +4,17 @@ package com.Whodundid.core.util.renderUtil;
 
 /** A enum representing a location or direction on the physical screen. */
 public enum ScreenLocation {
-	top, topRight, right, botRight, bot, botLeft, left, topLeft, center, custom, out;
+	top,
+	topRight,
+	right,
+	botRight,
+	bot,
+	botLeft,
+	left,
+	topLeft,
+	center,
+	custom,
+	out;
 	
 	public static boolean isCorner(ScreenLocation locIn) {
 		switch (locIn) {
@@ -25,4 +35,5 @@ public enum ScreenLocation {
 		default: return false;
 		}
 	}
+	
 }

@@ -2,9 +2,9 @@ package com.Whodundid.core.terminal.terminalCommand.commands.apps;
 
 import com.Whodundid.core.app.EMCApp;
 import com.Whodundid.core.app.RegisteredApps;
-import com.Whodundid.core.terminal.gui.ETerminal;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
 import com.Whodundid.core.terminal.terminalCommand.TerminalCommand;
+import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
@@ -17,6 +17,7 @@ public class AppInfo extends TerminalCommand {
 	
 	public AppInfo() {
 		super(CommandType.NORMAL);
+		setCategory("App Specific");
 		numArgs = 1;
 	}
 
@@ -27,51 +28,54 @@ public class AppInfo extends TerminalCommand {
 	@Override public String getUsage() { return "ex: info core"; }
 	
 	@Override
-	public void handleTabComplete(ETerminal conIn, EArrayList<String> args) {
+	public void handleTabComplete(ETerminal termIn, EArrayList<String> args) {
 		EArrayList<String> options = new EArrayList();
 		for (EMCApp a : RegisteredApps.getAppsList()) {
 			for (String s : a.getNameAliases()) { options.add(s); }
 		}
 		
-		super.basicTabComplete(conIn, args, options);
+		super.basicTabComplete(termIn, args, options);
 	}
 	
 	@Override
-	public void runCommand(ETerminal conIn, EArrayList<String> args, boolean runVisually) {
+	public void runCommand(ETerminal termIn, EArrayList<String> args, boolean runVisually) {
 		if (args.size() > 1) {
-			conIn.error("Too many arguments!");
-			conIn.error(getUsage());
+			termIn.error("Too many arguments!");
+			termIn.error(getUsage());
 		}
 		else if (args.size() == 1) {
 			EMCApp m = RegisteredApps.getAppByAlias(args.get(0));
-			if (m == null) { conIn.error("No app by that name found!"); return; }
+			if (m == null) { termIn.error("No app by that name found!"); return; }
 			
-			conIn.writeln("App: " + m.getName(), EColors.cyan);
-			conIn.writeln(m.isEnabled() ? "Enabled" : "Disabled", m.isEnabled() ? EColors.green : EColors.lred);
-			conIn.writeln("Author: " + m.getAuthor(), EColors.lgray);
-			conIn.writeln("Version: " + m.getVersion(), EColors.lgray);
-			conIn.writeln("Version Date: " + m.getVersionDate(), EColors.lgray);
+			termIn.writeln("App: " + m.getName(), EColors.cyan);
+			termIn.writeln(m.isEnabled() ? "Enabled" : "Disabled", m.isEnabled() ? EColors.green : EColors.lred);
+			termIn.writeln("Author: " + m.getAuthor(), EColors.lgray);
+			termIn.writeln("Artist: " + m.getArtist(), EColors.lgray);
+			termIn.writeln("Version: " + m.getVersion(), EColors.lgray);
+			termIn.writeln("Version Date: " + m.getVersionDate(), EColors.lgray);
+			if (m.getAdditionalInfo() != null) { termIn.writeln(m.getAdditionalInfo()); }
 			
-			if (m.getDependencies().isEmpty()) { conIn.writeln("Dependencies: none", EColors.lgray); }
+			if (m.getDependencies().isEmpty()) { termIn.writeln("Dependencies: none", EColors.lgray); }
 			else {
-				conIn.writeln("EMC Dependencies:", EColors.lgray);
+				termIn.writeln("EMC Dependencies:", EColors.lgray);
 				for (StorageBox<String, String> depBox : m.getDependencies()) {
-					conIn.writeln(" -" + depBox.getObject() + " v" + depBox.getValue(), EColors.lgray);
+					termIn.writeln(" -" + depBox.getObject() + " v" + depBox.getValue(), EColors.lgray);
 				}
 			}
 			
 			if (m.isIncompatible()) {
-				conIn.writeln("Incompatible", EColors.lred);
+				termIn.writeln("Incompatible", EColors.lred);
 				StorageBoxHolder<EMCApp, String> incompatMods = RegisteredApps.getAppImcompatibility(m);
 				for (StorageBox<EMCApp, String> box : incompatMods) {
 					EMCApp dep = box.getObject();
-					conIn.writeln(" -" + EnumChatFormatting.RED + "requires " + EnumChatFormatting.YELLOW + 
-								  dep.getName() + EnumChatFormatting.RED + " version '" + box.getValue() + "'", EColors.lgray);
+					termIn.writeln(" -" + EnumChatFormatting.RED + "requires " + EnumChatFormatting.YELLOW + 
+								   dep.getName() + EnumChatFormatting.RED + " version '" + box.getValue() + "'", EColors.lgray);
 				}
 			}
 		}
 		else {
-			conIn.info(getUsage());
+			termIn.info(getUsage());
 		}
 	}
+	
 }

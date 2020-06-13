@@ -1,6 +1,11 @@
 package com.Whodundid.core.util.chatUtil;
 
 import com.Whodundid.core.util.EUtil;
+import com.Whodundid.core.util.renderUtil.EColors;
+import com.Whodundid.core.util.renderUtil.GLObject;
+import com.Whodundid.core.util.storageUtil.EArrayList;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.client.C14PacketTabComplete;
 import net.minecraft.util.BlockPos;
@@ -16,7 +21,69 @@ public class EChatUtil {
 	private static IChatComponent lastChat = null;
 	private static String lastTypedMessage = "";
 	private static ITabCompleteListener tabListener = null;
+	public static volatile ScreenTextObject threadTextObject = null;
+	private static EArrayList<ScreenTextObject> textsToAdd = new EArrayList();
+	private static Deque<ScreenTextObject> textsToDraw = new ArrayDeque();
+	private static boolean adding = false;
 	
+	public static void drawTexts() {
+		updateTexts();
+		
+		if (threadTextObject != null) {
+			ScreenTextObject t = threadTextObject;
+			if (t != null) {
+				if (t.getCenter() && t.getShadow()) { GLObject.drawStringCS(t.getText(), t.getX(), t.getY(), t.getColor()); }
+				else if (t.getCenter()) { GLObject.drawStringC(t.getText(), t.getX(), t.getY(), t.getColor()); }
+				else if (t.getShadow()) { GLObject.drawStringS(t.getText(), t.getX(), t.getY(), t.getColor()); }
+				else { GLObject.drawString(t.getText(), t.getX(), t.getY(), t.getColor()); }
+			}
+		}
+		
+		if (!adding) {
+			while (!textsToDraw.isEmpty()) {
+				ScreenTextObject t = textsToDraw.pop();
+				
+				if (t != null) {
+					if (t.getCenter() && t.getShadow()) { GLObject.drawStringCS(t.getText(), t.getX(), t.getY(), t.getColor()); }
+					else if (t.getCenter()) { GLObject.drawStringC(t.getText(), t.getX(), t.getY(), t.getColor()); }
+					else if (t.getShadow()) { GLObject.drawStringS(t.getText(), t.getX(), t.getY(), t.getColor()); }
+					else { GLObject.drawString(t.getText(), t.getX(), t.getY(), t.getColor()); }
+				}
+				
+			}
+		}
+		
+	}
+	
+	private static void updateTexts() {
+		synchronized (textsToAdd) {
+			if (!adding) {
+				adding = true;
+				if (textsToAdd != null && textsToDraw != null && textsToAdd.isNotEmpty()) {
+					textsToDraw.addAll(textsToAdd);
+					textsToAdd.clear();
+				}
+				adding = false;
+			}
+		}
+	}
+	
+	public static ScreenTextObject drawString(String textIn, int xIn, int yIn) { return drawString(textIn, xIn, yIn, EColors.white.intVal, false, false); }
+	public static ScreenTextObject drawString(String textIn, int xIn, int yIn, EColors colorIn) { return drawString(textIn, xIn, yIn, colorIn.intVal, false, false); }
+	public static ScreenTextObject drawString(String textIn, int xIn, int yIn, int colorIn) { return drawString(textIn, xIn, yIn, colorIn, false, false); }
+	public static ScreenTextObject drawString(String textIn, int xIn, int yIn, EColors colorIn, boolean centerIn, boolean shadowIn) { return drawString(textIn, xIn, yIn, colorIn.intVal, centerIn, shadowIn); }
+	public static ScreenTextObject drawString(String textIn, int xIn, int yIn, int colorIn, boolean centerIn, boolean shadowIn) {
+		return drawString(new ScreenTextObject(textIn, xIn, yIn, colorIn, centerIn, shadowIn));
+	}
+	
+	public static ScreenTextObject drawString(ScreenTextObject objIn) {
+		synchronized (textsToAdd) {
+			textsToAdd.add(objIn);
+		}
+		return objIn;
+	}
+	
+	/** Attempts to display a message to the player in the chat. (does not actually send a chat message) */
 	public static void show(String msgIn) {
 		if (mc.thePlayer != null && msgIn != null) {
 			mc.thePlayer.addChatMessage(ChatBuilder.of(msgIn).build());
@@ -30,13 +97,15 @@ public class EChatUtil {
 			char c = chatIn.charAt(i);
 			if (c != getFormattingChar()) { // this symbol: §
 				s += c;
-			} else {
+			}
+			else {
 				i += 1; //remove the following code
 			}
 		}
 		return s;
 	}
 	
+	/** Returns this symbol: § */
 	public static char getFormattingChar() { return '\u00A7'; }
 	
 	public static void registerTabListener(ITabCompleteListener objectIn, String checkWord, String upToCursor) {
@@ -68,8 +137,7 @@ public class EChatUtil {
 	
 	public static void readChat(IChatComponent chatMsg) { lastChat = chatMsg; }
 	
-	public static void checkIfChatWindowOpen() { chatOpen = mc.ingameGUI.getChatGUI().getChatOpen(); }
-	public static boolean isChatOpen() { return chatOpen; }
+	public static boolean isChatOpen() { return mc.ingameGUI.getChatGUI().getChatOpen(); }
 	public static String getLMsgFor() { return lastChat != null ? lastChat.getFormattedText() : ""; }
 	public static String getLMsgUnf() { return lastChat != null ? removeFormattingCodes(lastChat.getUnformattedText()) : ""; }
 	public static void sendLongerChatMessage(String messageIn) { new LongerChatMessage(messageIn).sendMessage(); }
@@ -78,4 +146,5 @@ public class EChatUtil {
 	
 	public static boolean checkMsgUnfContains(String testIn) { return lastChat != null ? getLMsgUnf().contains(testIn) : false; }
 	public static boolean checkMsgForContains(String testIn) { return lastChat != null ? getLMsgFor().contains(testIn) : false; }
+	
 }

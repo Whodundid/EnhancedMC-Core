@@ -2,24 +2,24 @@ package com.Whodundid.core.notifications.window;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.coreApp.EMCResources;
-import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiButton;
-import com.Whodundid.core.enhancedGui.guiObjects.actionObjects.EGuiTextField;
-import com.Whodundid.core.enhancedGui.guiObjects.advancedObjects.scrollList.EGuiScrollList;
-import com.Whodundid.core.enhancedGui.guiObjects.basicObjects.EGuiLabel;
-import com.Whodundid.core.enhancedGui.types.WindowParent;
-import com.Whodundid.core.enhancedGui.types.interfaces.IEnhancedActionObject;
 import com.Whodundid.core.notifications.util.NotificationType;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.util.storageUtil.StorageBox;
+import com.Whodundid.core.windowLibrary.windowObjects.actionObjects.WindowButton;
+import com.Whodundid.core.windowLibrary.windowObjects.actionObjects.WindowTextField;
+import com.Whodundid.core.windowLibrary.windowObjects.advancedObjects.scrollList.WindowScrollList;
+import com.Whodundid.core.windowLibrary.windowObjects.basicObjects.WindowLabel;
+import com.Whodundid.core.windowLibrary.windowTypes.WindowParent;
+import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IActionObject;
 import java.util.Iterator;
 
 public class NotificationWindow extends WindowParent {
 	
-	EGuiButton enableAll, disableAll, back;
-	EGuiScrollList nList;
-	EGuiTextField searchField;
+	WindowButton enableAll, disableAll, back;
+	WindowScrollList nList;
+	WindowTextField searchField;
 	EArrayList<StorageBox<String, EArrayList<NotificationType>>> notes = new EArrayList();
 	
 	public NotificationWindow() {
@@ -29,9 +29,12 @@ public class NotificationWindow extends WindowParent {
 	}
 	
 	@Override
-	public void initGui() {
+	public void initWindow() {
 		defaultDims();
 		setObjectName("Notification Manager");
+		setMaximizable(true);
+		setResizeable(true);
+		setMinDims(defaultWidth, defaultHeight);
 		
 		EArrayList<NotificationType> unSorted = new EArrayList(EnhancedMC.getNotificationHandler().getNotificationTypes());
 		
@@ -84,7 +87,7 @@ public class NotificationWindow extends WindowParent {
 	public void initObjects() {
 		defaultHeader(this);
 		
-		nList = new EGuiScrollList(this, startX + 2, startY + 20, width - 4, height - 50);
+		nList = new WindowScrollList(this, startX + 2, startY + 20, width - 4, height - 50);
 		nList.setBackgroundColor(EColors.pdgray.intVal);
 		EDimension ld = nList.getListDimensions();
 		
@@ -94,7 +97,7 @@ public class NotificationWindow extends WindowParent {
 			String catName = boxes.getObject();
 			EArrayList<NotificationType> types = boxes.getValue();
 			
-			nList.addObjectToList(new EGuiLabel(nList, 6, yPos, catName, EColors.orange));
+			nList.addObjectToList(new WindowLabel(nList, 6, yPos, catName, EColors.orange));
 			yPos += 15;
 			
 			for (NotificationType t : types) {
@@ -105,12 +108,12 @@ public class NotificationWindow extends WindowParent {
 		
 		nList.fitItemsInList();
 		
-		enableAll = new EGuiButton(this, startX + 5, endY - 25, 64, 20, "Enable All").setDisplayStringColor(EColors.green);
-		disableAll = new EGuiButton(this, midX - 32, endY - 25, 64, 20, "Disable All").setDisplayStringColor(EColors.lred);
-		back = new EGuiButton(this, endX - 69, endY - 25, 64, 20, "Back").setDisplayStringColor(EColors.yellow);
+		enableAll = new WindowButton(this, startX + 5, endY - 25, 64, 20, "Enable All").setStringColor(EColors.green);
+		disableAll = new WindowButton(this, midX - 32, endY - 25, 64, 20, "Disable All").setStringColor(EColors.lred);
+		back = new WindowButton(this, endX - 69, endY - 25, 64, 20, "Back").setStringColor(EColors.yellow);
 		
-		addObject(nList);
-		addObject(enableAll, disableAll, back);
+		addObject(null, nList);
+		addObject(null, enableAll, disableAll, back);
 	}
 	
 	@Override
@@ -125,7 +128,7 @@ public class NotificationWindow extends WindowParent {
 	}
 	
 	@Override
-	public void actionPerformed(IEnhancedActionObject object, Object... args) {
+	public void actionPerformed(IActionObject object, Object... args) {
 		if (object == enableAll) {
 			for (NotificationType t : EnhancedMC.getNotificationHandler().getNotificationTypes()) {
 				EnhancedMC.getNotificationHandler().enableNotificationType(t, true);
@@ -152,7 +155,7 @@ public class NotificationWindow extends WindowParent {
 		if (args.length == 1) {
 			if (args[0] instanceof String) {
 				String msg = (String) args[0];
-				if (msg.equals("Reload Notifications")) {
+				if (msg.equals("Reload Notifications") || msg.equals("Reload")) {
 					int pos = nList.getVScrollBar().getScrollPos();
 					reInitObjects();
 					nList.getVScrollBar().setScrollBarPos(pos);

@@ -1,8 +1,10 @@
 package com.Whodundid.core.terminal.terminalCommand.commands.fileSystem;
 
 import java.io.File;
-import com.Whodundid.core.terminal.gui.ETerminal;
+import net.minecraft.util.EnumChatFormatting;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
+import com.Whodundid.core.terminal.window.ETerminal;
+import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 
 public class MkDir extends FileCommand {
@@ -17,7 +19,7 @@ public class MkDir extends FileCommand {
 	@Override public EArrayList<String> getAliases() { return null; }
 	@Override public String getHelpInfo(boolean runVisually) { return "Attempts to create a directory."; }
 	@Override public String getUsage() { return "ex: mkdir 'name'"; }
-	@Override public void handleTabComplete(ETerminal termIn, EArrayList<String> args) { defaultTabComplete(termIn, args); }
+	@Override public void handleTabComplete(ETerminal termIn, EArrayList<String> args) { fileTabComplete(termIn, args); }
 	
 	@Override
 	public void runCommand(ETerminal termIn, EArrayList<String> args, boolean runVisually) {
@@ -29,18 +31,30 @@ public class MkDir extends FileCommand {
 				
 				if (f.exists()) {
 					if (!f.isDirectory()) {
-						f.mkdirs();
+						if (f.mkdirs()) {
+							String path = f.getPath();
+							String colorPath = "" + EnumChatFormatting.AQUA + EnumChatFormatting.UNDERLINE + path + EnumChatFormatting.RESET;
+							termIn.writeLink("Created Dir: " + colorPath, path, new File(path), false, EColors.yellow);
+						}
 					}
 					else { termIn.error("That directory already exists!"); }
 				}
 				else {
-					f.mkdirs();
+					if (f.mkdirs()) {
+						String path = f.getPath();
+						String colorPath = "" + EnumChatFormatting.AQUA + EnumChatFormatting.UNDERLINE + path + EnumChatFormatting.RESET;
+						termIn.writeLink("Created Dir: " + colorPath, path, new File(path), false, EColors.yellow);
+					}
 				}
 				
-			} catch (Exception e) { e.printStackTrace(); }
+			}
+			catch (Exception e) {
+				error(termIn, e);
+			}
 		}
 		else {
 			termIn.error("Too many arguments!");
 		}
 	}
+	
 }

@@ -1,13 +1,12 @@
 package com.Whodundid.core.terminal;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.app.AppConfigSetting;
 import com.Whodundid.core.app.EMCApp;
 import com.Whodundid.core.app.RegisteredApps;
-import com.Whodundid.core.enhancedGui.types.WindowParent;
-import com.Whodundid.core.terminal.gui.ETerminal;
+import com.Whodundid.core.app.config.AppConfigSetting;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
 import com.Whodundid.core.terminal.terminalCommand.TerminalCommand;
+import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.miscUtil.DataType;
 import com.Whodundid.core.util.renderUtil.EColors;
@@ -16,23 +15,23 @@ import net.minecraft.util.EnumChatFormatting;
 
 public class EMCAppTerminalCommands extends TerminalCommand {
 	
-	private EMCApp mod;
+	private EMCApp app;
 	
-	public EMCAppTerminalCommands(EMCApp modIn) {
-		super(CommandType.MOD);
-		mod = modIn;
+	public EMCAppTerminalCommands(EMCApp appIn) {
+		super(CommandType.APP);
+		app = appIn;
 	}
 	
-	@Override public String getName() { return mod.getName().toLowerCase().replace(" ", ""); }
+	@Override public String getName() { return app.getName().toLowerCase().replace(" ", ""); }
 	@Override public boolean showInHelp() { return true; }
-	@Override public EArrayList<String> getAliases() { return mod.getNameAliases(); }
-	@Override public String getHelpInfo(boolean runVisually) { return "Settings for " + mod.getName(); }
-	@Override public String getUsage() { return "Type the mod name to see its list of available settings"; }
+	@Override public EArrayList<String> getAliases() { return app.getNameAliases(); }
+	@Override public String getHelpInfo(boolean runVisually) { return "Settings for " + app.getName(); }
+	@Override public String getUsage() { return "Type the app name to see its list of available settings"; }
 	
 	@Override
 	public void handleTabComplete(ETerminal termIn, EArrayList<String> args) {
 		if (args.size() == 0) {
-			termIn.buildTabCompletions(mod.getSettings().stream().filter(c -> !c.getRequiresOp() || EnhancedMC.isOpMode()).map(c -> c.getName()).collect(EArrayList.toEArrayList()));
+			termIn.buildTabCompletions(app.getSettings().stream().filter(c -> !c.getRequiresDev() || EnhancedMC.isDevMode()).map(c -> c.getName()).collect(EArrayList.toEArrayList()));
 		}
 		else if (args.size() == 1) {
 			if (!termIn.getTab1()) {
@@ -41,8 +40,8 @@ public class EMCAppTerminalCommands extends TerminalCommand {
 				
 				EArrayList<String> options = new EArrayList();
 				
-				for (AppConfigSetting c : mod.getSettings()) {
-					if (!c.getRequiresOp() || EnhancedMC.isOpMode()) {
+				for (AppConfigSetting c : app.getSettings()) {
+					if (!c.getRequiresDev() || EnhancedMC.isDevMode()) {
 						if (c.getName().startsWith(input)) { options.add(c.getName()); }
 					}
 				}
@@ -58,7 +57,7 @@ public class EMCAppTerminalCommands extends TerminalCommand {
 				if (setting != null) {
 					EArrayList<String> options = new EArrayList();
 					
-					if (!setting.getRequiresOp() || EnhancedMC.isOpMode()) {
+					if (!setting.getRequiresDev() || EnhancedMC.isDevMode()) {
 						if (setting.getType() == DataType.BOOL) {
 							options.add("true", "false");
 						}
@@ -77,13 +76,13 @@ public class EMCAppTerminalCommands extends TerminalCommand {
 	@Override
 	public void runCommand(ETerminal termIn, EArrayList<String> args, boolean runVisually) {
 		if (args.isEmpty()) {
-			if (mod.getSettings().isEmpty()) { termIn.writeln("No config settings available.", EColors.lgray); }
+			if (app.getSettings().isEmpty()) { termIn.writeln("No config settings available.", EColors.lgray); }
 			else {
 				EArrayList<AppConfigSetting> settings = new EArrayList();
 				
-				for (AppConfigSetting s : mod.getSettings()) {
-					if (!s.getRequiresOp()) { settings.add(s); }
-					else if (EnhancedMC.isOpMode()) { settings.add(s); }
+				for (AppConfigSetting s : app.getSettings()) {
+					if (!s.getRequiresDev()) { settings.add(s); }
+					else if (EnhancedMC.isDevMode()) { settings.add(s); }
 				}
 				
 				for (AppConfigSetting s : settings) {
@@ -103,7 +102,7 @@ public class EMCAppTerminalCommands extends TerminalCommand {
 			AppConfigSetting setting = getSetting(settingName);
 			
 			if (setting != null) {
-				if (setting.getRequiresOp() && !EnhancedMC.isOpMode()) { termIn.error("Unrecognized setting name!"); }
+				if (setting.getRequiresDev() && !EnhancedMC.isDevMode()) { termIn.error("Unrecognized setting name!"); }
 				else {
 					if (args.size() > 1) {
 						if (setting.getType() == DataType.BOOL) { setSettingTF(setting, termIn, args); }
@@ -127,7 +126,7 @@ public class EMCAppTerminalCommands extends TerminalCommand {
 	//---------------------------------------
 	
 	private AppConfigSetting getSetting(String arg) {
-		for (AppConfigSetting s : RegisteredApps.getApp(mod.getName()).getSettings()) {
+		for (AppConfigSetting s : RegisteredApps.getApp(app.getName()).getSettings()) {
 			if (s.getName().toLowerCase().equals(arg.toLowerCase())) { return s; }
 		}
 		return null;
@@ -139,7 +138,7 @@ public class EMCAppTerminalCommands extends TerminalCommand {
 				boolean val = getTFValue(args.get(1));
 				settingIn.set(val);
 				
-				EMCApp app = settingIn.getMod();
+				EMCApp app = settingIn.getApp();
 				if (app != null && app.getConfig() != null) {
 					app.getConfig().saveMainConfig();
 				}
@@ -147,11 +146,13 @@ public class EMCAppTerminalCommands extends TerminalCommand {
 				EnumChatFormatting color = val ? EnumChatFormatting.GREEN : EnumChatFormatting.RED;
 				termIn.writeln(settingIn.getDescription() + ": " + color + val, EColors.yellow);
 				
-				for (WindowParent w : EnhancedMC.getAllActiveWindows()) { w.sendArgs("Reload"); }
+				EnhancedMC.reloadAllWindows();
 			}
 			else { termIn.error("Cannot parse argument: " + args.get(1)); }
 		}
-		else { termIn.badError("Setting is null!"); }
+		else {
+			termIn.error("Setting is null!");
+		}
 	}
 	
 	private void setSettingString(AppConfigSetting<String> settingIn, ETerminal termIn, EArrayList<String> args) {
@@ -167,18 +168,18 @@ public class EMCAppTerminalCommands extends TerminalCommand {
 			if (contains) {
 				settingIn.set(EUtil.capitalFirst(arg));
 				
-				EMCApp app = settingIn.getMod();
+				EMCApp app = settingIn.getApp();
 				if (app != null && app.getConfig() != null) {
 					app.getConfig().saveMainConfig();
 				}
 				
-				for (WindowParent w : EnhancedMC.getAllActiveWindows()) { w.sendArgs("Reload"); }
+				EnhancedMC.reloadAllWindows();
 			}
 			else { termIn.error("Invalid argument given - allowed args are: " + settingIn.getArgs()); return; }
 			
 			termIn.writeln(settingIn.getDescription() + ": " + EnumChatFormatting.WHITE + EUtil.capitalFirst(args.get(1).toLowerCase()), EColors.yellow);
 		}
-		else { termIn.badError("Setting is null!"); }
+		else { termIn.error("Setting is null!"); }
 	}
 	
 	private void setSettingInt(AppConfigSetting<Integer> settingIn, ETerminal termIn, EArrayList<String> args) {
@@ -190,21 +191,21 @@ public class EMCAppTerminalCommands extends TerminalCommand {
 				
 				settingIn.set(val);
 				
-				EMCApp app = settingIn.getMod();
+				EMCApp app = settingIn.getApp();
 				if (app != null && app.getConfig() != null) {
 					app.getConfig().saveMainConfig();
 				}
 				
 				termIn.writeln(settingIn.getDescription() + ": " + EnumChatFormatting.WHITE + val, EColors.yellow);
 				
-				for (WindowParent w : EnhancedMC.getAllActiveWindows()) { w.sendArgs("Reload"); }
+				EnhancedMC.reloadAllWindows();
 			}
 			catch (NumberFormatException e) {
 				long val = Long.parseLong(arg.substring(2), 16);
 				
 				settingIn.set((int) val);
 				
-				EMCApp app = settingIn.getMod();
+				EMCApp app = settingIn.getApp();
 				if (app != null && app.getConfig() != null) {
 					app.getConfig().saveMainConfig();
 				}
@@ -212,11 +213,11 @@ public class EMCAppTerminalCommands extends TerminalCommand {
 				termIn.writeln(settingIn.getDescription() + ": " + EnumChatFormatting.WHITE + val, EColors.yellow);
 			}
 			catch (Exception e) {
-				termIn.badError("Failed to parse input!");
-				e.printStackTrace();
+				termIn.error("Failed to parse input!");
+				error(termIn, e);
 			}
 		}
-		else { termIn.badError("Setting is null!"); }
+		else { termIn.error("Setting is null!"); }
 	}
 	
 	private boolean checkTF(String argIn) {

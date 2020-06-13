@@ -44,4 +44,5 @@ public class EMCAppCalloutEvent extends Event {
 	
 	public int getMX() { return mX; }
 	public int getMY() { return mY; }
+	
 }

@@ -40,4 +40,5 @@ public class PlayerInventory {
 	public static boolean isPlayerInvSlotEmpty(int x) { return mc.thePlayer.inventory.getStackInSlot(x) == null; }
 	public static boolean doesHotbarContainItem(Item i) { return doesHotbarContainItem(i.getUnlocalizedName()); }
 	public static int getSlotNumberForContaingItem(Item i) { return getSlotNumberForContaingItem(i.getUnlocalizedName()); };
+	
 }

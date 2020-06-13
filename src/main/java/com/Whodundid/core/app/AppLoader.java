@@ -1,7 +1,8 @@
 package com.Whodundid.core.app;
 
 import com.Whodundid.core.EnhancedMC;
-import com.Whodundid.core.terminal.gui.ETerminal;
+import com.Whodundid.core.notifications.util.NotificationType;
+import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
@@ -16,11 +17,39 @@ public class AppLoader {
 	public static boolean reloadApp(EMCApp appIn) { return reloadApp(null, appIn, false); }
 	public static boolean reloadApp(ETerminal termIn, EMCApp appIn, boolean showInfo) {
 		if (appIn != null) {
+			boolean tin = showInfo && termIn != null;
 			
-			if (showInfo && termIn != null) { termIn.writeln("Reloading app: " + appIn.getName() + ".", EColors.seafoam); }
+			if (tin) { termIn.writeln("Reloading app: " + appIn.getName() + ".", EColors.seafoam); }
 			
 			//unregister it before continuing
 			RegisteredApps.unregisterApp(appIn);
+			
+			//unregister the apps notifications
+			try {
+				EArrayList<NotificationType> notes = appIn.getNotifications();
+				if (notes.isNotEmpty()) {
+					if (tin) { termIn.writeln("Attempting to unregister notifications..", EColors.yellow); }
+					for (NotificationType t : appIn.getNotifications()) {
+						EnhancedMC.getNotificationHandler().unregisterNotificationType(t);
+					}
+					if (tin) { termIn.writeln("Notifications for App: " + appIn.getName() + " " + appIn.getVersion() + " unregistered!", EColors.lgreen); }
+				}
+			}
+			catch (Exception e) {
+				EnhancedMC.error("Error tyring to unregister notifications for: " + appIn.getName() + " " + appIn.getVersion() + "!", e);
+				if (tin) { termIn.javaError("Error tyring to unregister notifications for: " + appIn.getName() + " " + appIn.getVersion() + "!"); }
+			}
+			
+			//rebuild the app
+			try {
+				if (tin) { termIn.writeln("Attempting to rebuild app..", EColors.yellow); }
+				appIn.rebuild();
+				if (tin) { termIn.writeln("App: " + appIn.getName() + " " + appIn.getVersion() + " rebuilt!", EColors.lgreen); }
+			}
+			catch (Exception e) {
+				EnhancedMC.error("Error tyring to rebuild app: " + appIn.getName() + " " + appIn.getVersion() + "!", e);
+				if (tin) { termIn.javaError("Error tyring to rebuild app: " + appIn.getName() + " " + appIn.getVersion() + "!"); }
+			}
 			
 			if (appIn != null) {
 				//process app
@@ -54,8 +83,8 @@ public class AppLoader {
 					appIn.setIncompatible(incompatible);
 				}
 				catch (Exception e) {
-					if (showInfo && termIn != null) { termIn.writeln("Error trying to read app: " + appIn.getName() + "! Ignoring...", EColors.red); }
-					EnhancedMC.error("Error trying to read app: " + appIn.getName() + "! Ignoring...");
+					if (tin) { termIn.writeln("Error trying to read app: " + appIn.getName() + "! Ignoring...", EColors.red); }
+					EnhancedMC.error("Error trying to read app: " + appIn.getName() + " " + appIn.getVersion() + " ! Ignoring...");
 					e.printStackTrace();
 				}
 				
@@ -71,24 +100,31 @@ public class AppLoader {
 						//set the mod incompat if one of it's dependencies was incompat too
 						if (dep.isIncompatible()) {
 							EnhancedMC.error("WARNING: EMC App '" + appIn.getName() + "' is incompatible!...");
-							if (showInfo && termIn != null) { termIn.error("WARNING: EMC App '" + appIn.getName() + "' is incompatible!..."); }
+							if (tin) { termIn.error("WARNING: EMC App '" + appIn.getName() + " " + appIn.getVersion() + "' is incompatible!..."); }
 							appIn.setIncompatible(true);
 						}
 					}
 				}
 				
-				if (appIn.isIncompatible()) { EnhancedMC.error("Error: The app: " + appIn.getName() + " is incompatible. Registration halted."); }
+				//keep the app even if it is incompatible
+				RegisteredApps.registerApp(appIn);
+				
+				if (appIn.isIncompatible()) {
+					EnhancedMC.error("Error: The app: " + appIn.getName() + " " + appIn.getVersion() + " is incompatible. Registration halted.");
+					if (tin) {
+						termIn.javaError("The app: " + appIn.getName() + " " + appIn.getVersion() + " is incompatible. Registration halted.");
+					}
+				}
 				else {
-					if (showInfo && termIn != null) { termIn.info("Registering App: " + appIn.getName()); }
-					RegisteredApps.registerApp(appIn);
+					if (tin) { termIn.info("Registering App: " + appIn.getName() + " " + appIn.getVersion()); }
 					
 					//config
 					try {
 						if (appIn.hasConfig()) { appIn.getConfig().loadAllConfigs(); appIn.getConfig().saveAllConfigs(); }
 					}
 					catch (Exception e) {
-						if (showInfo && termIn != null) { termIn.writeln("Error tying to load EMCApp: " + appIn.getName() + " config!", EColors.red); }
-						EnhancedMC.log(Level.INFO, "Error tying to load EMCApp: " + appIn.getName() + " config!");
+						if (tin) { termIn.writeln("Error tying to load EMCApp: " + appIn.getName() + " " + appIn.getVersion() + " config!", EColors.red); }
+						EnhancedMC.log(Level.INFO, "Error tying to load EMCApp: " + appIn.getName() + " " + appIn.getVersion() + " config!");
 						e.printStackTrace();
 					}
 					
@@ -98,8 +134,8 @@ public class AppLoader {
 						if (!appIn.isDisableable()) { appIn.setEnabled(true); }
 					}
 					catch (Exception q) {
-						if (showInfo && termIn != null) { termIn.writeln("Error trying to run postInit on EMCApp: " + appIn.getName() + "!", EColors.red); }
-						EnhancedMC.log(Level.INFO, "Error trying to run postInit on EMCApp: " + appIn.getName() + "!");
+						if (tin) { termIn.writeln("Error trying to run postInit on EMCApp: " + appIn.getName() + " " + appIn.getVersion() + "!", EColors.red); }
+						EnhancedMC.log(Level.INFO, "Error trying to run postInit on EMCApp: " + appIn.getName() + " " + appIn.getVersion() + "!");
 						q.printStackTrace();
 					}
 					
@@ -108,8 +144,8 @@ public class AppLoader {
 						appIn.registerResources();
 					}
 					catch (Exception q) {
-						if (showInfo && termIn != null) { termIn.writeln("Error trying to register resources on EMCApp: " + appIn.getName() + "!", EColors.red); }
-						EnhancedMC.log(Level.INFO, "Error trying to register resources on EMCApp: " + appIn.getName() + "!");
+						if (tin) { termIn.writeln("Error trying to register resources on EMCApp: " + appIn.getName() + " " + appIn.getVersion() + "!", EColors.red); }
+						EnhancedMC.log(Level.INFO, "Error trying to register resources on EMCApp: " + appIn.getName() + " " + appIn.getVersion() + "!");
 						q.printStackTrace();
 					}
 					
@@ -119,18 +155,20 @@ public class AppLoader {
 						AppSettings.loadConfig();
 					}
 					catch (Exception q) {
-						if (showInfo && termIn != null) { termIn.writeln("Error trying to load global config!", EColors.red); }
+						if (tin) { termIn.writeln("Error trying to load global config!", EColors.red); }
 						EnhancedMC.log(Level.INFO, "Error trying to load global config!");
 						q.printStackTrace();
 					}
 					
-					if (showInfo && termIn != null) { termIn.writeln("EMCApp: " + appIn.getName() + " successfully reloaded!", EColors.green); }
+					if (tin) { termIn.writeln("EMCApp: " + appIn.getName() + " " + appIn.getVersion() + " successfully reloaded!", EColors.green); }
 					
 					return true;
 				}
 			} //false
 			
 		}
+		
+		EnhancedMC.reloadAllWindows();
 		
 		return false;
 	}

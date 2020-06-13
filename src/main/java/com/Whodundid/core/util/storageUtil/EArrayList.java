@@ -31,6 +31,7 @@ import java.util.stream.Stream;
 
 //Author: Hunter Bragg
 
+/** A customized implementation of a normal ArrayList. */
 public class EArrayList<E> extends AbstractList<E> {
 
 	protected transient Object[] elementData;
@@ -1028,4 +1029,5 @@ public class EArrayList<E> extends AbstractList<E> {
 		@Override public Function<A, R> finisher() { return finisher; }
 		@Override public Set<Characteristics> characteristics() { return characteristics; }
 	}
+	
 }

@@ -285,4 +285,5 @@ public class Vector3DInt {
 	}
 	
 	@Override public String toString() { return "[" + x + ", " + y + ", " + z + "]"; }
+	
 }
