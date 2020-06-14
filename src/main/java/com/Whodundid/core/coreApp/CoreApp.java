@@ -141,7 +141,7 @@ public class CoreApp extends EMCApp {
 		version = EnhancedMC.VERSION;
 		author = "Whodundid";
 		artist = "Mr.JamminOtter";
-		versionDate = "June 11, 2020";
+		versionDate = "June 13, 2020";
 		donation = new StorageBox("Consider donating to support EMC development!", "https://www.paypal.me/Whodundid");
 		isDisableable = false;
 		setEnabled(true);
@@ -475,6 +475,7 @@ public class CoreApp extends EMCApp {
 		
 		if (newList.isNotEmpty()) {
 			int xTimes = (int) newList.stream().mapToInt(c -> c.intValue()).average().getAsDouble();
+			xTimes = MathHelper.clamp_int(xTimes, 1, xTimes);
 			yTimes /= xTimes;
 		}
 		

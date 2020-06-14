@@ -41,11 +41,11 @@ public class AppInfoWindow extends WindowParent {
 	
 	@Override
 	public void initWindow() {
-		setDimensions(266, 202);
+		setDimensions(275, 210);
 		setResizeable(true);
 		setPinnable(false);
 		setMaximizable(true);
-		setMinDims(140, 202);
+		setMinDims(140, 140);
 		setObjectName("App Info");
 	}
 	

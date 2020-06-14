@@ -96,10 +96,12 @@ public class TextAreaLine<obj> extends WindowTextField {
 			}
 		}
 		
-		if (clickStartPos != -1) {
-			int i = mX - startX + 2;
-			int cursorPos = mc.fontRendererObj.trimStringToWidth(text, i).length();
-			setSelectionPos(cursorPos);
+		if (parentTextArea.isEditable()) {
+			if (clickStartPos != -1) {
+				int i = mX - startX + 2;
+				int cursorPos = mc.fontRendererObj.trimStringToWidth(text, i).length();
+				setSelectionPos(cursorPos);
+			}
 		}
 	}
 	
@@ -195,8 +197,6 @@ public class TextAreaLine<obj> extends WindowTextField {
 	
 	@Override 
 	public void mousePressed(int mX, int mY, int button) {
-		parentTextArea.mousePressed(mX, mY, button);
-		
 		postEvent(new EventMouse(this, mX, mY, button, MouseType.Pressed));
 		try {
 			if (isMouseOver(mX, mY)) { EUtil.ifNotNullDo(getWindowParent(), w -> w.bringToFront()); }
@@ -206,7 +206,7 @@ public class TextAreaLine<obj> extends WindowTextField {
 					getTopParent().setResizingDir(getEdgeAreaMouseIsOn());
 					getTopParent().setModifyMousePos(mX, mY);
 				}
-				if (hasFocus()) {
+				if (parentTextArea.isEditable() && hasFocus()) {
 					int i = mX - startX + 2;
 					int cursorPos = mc.fontRendererObj.trimStringToWidth(text, i).length();
 					setCursorPosition(cursorPos);
@@ -222,6 +222,7 @@ public class TextAreaLine<obj> extends WindowTextField {
 	
 	@Override
 	public void onFocusLost(EventFocus eventIn) {
+		clickStartPos = -1;
 		super.onFocusLost(eventIn);
 	}
 	
@@ -255,7 +256,7 @@ public class TextAreaLine<obj> extends WindowTextField {
 			checkLinkClick(eventIn.getMX(), eventIn.getMY(), eventIn.getActionCode());
 		}
 		
-		else if (eventIn.getEventType() == EventType.Focus) {
+		else if (parentTextArea.isEditable() && eventIn.getEventType() == EventType.Focus) {
 			int i = mX - startX + 2;
 			setCursorPosition(mc.fontRendererObj.trimStringToWidth(text, i).length());
 		}
@@ -404,7 +405,12 @@ public class TextAreaLine<obj> extends WindowTextField {
 	//TextAreaLine Setters
 	//--------------------
 	
-	public TextAreaLine setHighlighted(boolean val) { highlighted = val; return this; }
+	public TextAreaLine setHighlighted(boolean val) {
+		cursorPosition = 0;
+		selectionEnd = val ? text.length() : 0;
+		return this;
+	}
+	
 	public TextAreaLine setStoredObj(obj objectIn) { storedObj = objectIn; return this; }
 	public TextAreaLine setLineNumber(int numberIn) { lineNumber = numberIn; lineNumberWidth = mc.fontRendererObj.getStringWidth(String.valueOf(lineNumber)); return this; }
 	public TextAreaLine setLineNumberColor(int colorIn) { lineNumberColor = colorIn; return this; }

@@ -60,7 +60,10 @@ public class WindowTextArea extends WindowScrollList {
 						setSelectedLine(l);
 						l.requestFocus();
 					}
-					else { setSelectedLine(null); }
+					else {
+						if (currentLine != null) { currentLine.setHighlighted(false); }
+						setSelectedLine(null);
+					}
 				}
 			}
 		}

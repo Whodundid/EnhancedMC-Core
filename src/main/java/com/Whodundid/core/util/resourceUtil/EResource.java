@@ -135,7 +135,7 @@ public class EResource {
 				}
 			}
 			else {
-				System.err.println("Error: File not found!");
+				System.err.println("Error: File: '" + file + "' not found!");
 			}
 			
 			//close the file system to prevent errors!
@@ -143,7 +143,9 @@ public class EResource {
 			
 			return img;
 		}
-		catch (Exception e) { e.printStackTrace(); }
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		return null;
 	}
