@@ -23,6 +23,9 @@ public class DummyPlayer extends AbstractClientPlayer {
 	private Thread animationUpdater;
 	private volatile boolean animate = true;
 	private volatile boolean run = true;
+	private boolean capeFix = true;
+	private long time = 0;
+	private long fixTime = 20l;
 	
 	public DummyPlayer() { this(null, null, false, null, "dummy", false); }
 	public DummyPlayer(ResourceLocation skinIn, ResourceLocation capeIn, boolean alexModel, String uuidIn, String nameIn, boolean animate) {
@@ -36,10 +39,19 @@ public class DummyPlayer extends AbstractClientPlayer {
 		animationUpdater = new Thread() {
 			@Override
 			public void run() {
+				time = System.currentTimeMillis();
 				while (instance.run) {
 					try {
 						instance.updateAnimation();
-						Thread.currentThread().sleep(0, 500);
+						Thread.sleep(0l, 500);
+						
+						//Magic fix ~ BECAUSE SCIENCE!
+						if (capeFix) {
+							if (System.currentTimeMillis() - time >= fixTime) {
+								capeFix = false;
+							}
+						}
+						
 					}
 					catch (Exception e) { e.printStackTrace(); }
 				}
@@ -102,13 +114,22 @@ public class DummyPlayer extends AbstractClientPlayer {
 	
 	@Override
 	public boolean isWearing(EnumPlayerModelParts m) {
-		return !name.toLowerCase().equals("notch");
+		switch (m) {
+		case CAPE: return true;
+		case HAT: 
+		case JACKET:
+		case LEFT_PANTS_LEG:
+		case LEFT_SLEEVE:
+		case RIGHT_PANTS_LEG:
+		case RIGHT_SLEEVE:
+		default: return !name.toLowerCase().equals("notch");
+		}
 	}
 	
 	//to prevent minecraft vanilla cape draw
 	@Override
 	public boolean hasPlayerInfo() {
-		return false;
+		return capeFix;
 	}
 	
 	@Override
@@ -152,5 +173,6 @@ public class DummyPlayer extends AbstractClientPlayer {
 	
 	public boolean getArmLeft() { return armLeft; }
 	public boolean getHeadLeft() { return headLeft; }
+	public DummyPlayer setFixTime(long timeIn) { fixTime = timeIn; return this; }
 	
 }

@@ -87,10 +87,20 @@ public class EMCAppTerminalCommands extends TerminalCommand {
 				
 				for (AppConfigSetting s : settings) {
 					EnumChatFormatting color = EnumChatFormatting.WHITE;
-					if (s.getType() == DataType.BOOL) { color = (boolean) s.get() ? EnumChatFormatting.GREEN : EnumChatFormatting.RED; }
-					if (s.getType() == DataType.INT) { color = EnumChatFormatting.GOLD; }
-					if (s.getType() == DataType.STRING) { color = EnumChatFormatting.AQUA; }
-					if (s.getType() == null) { color = EnumChatFormatting.LIGHT_PURPLE; }
+					
+					switch (s.getType()) {
+					case BOOL: color = (boolean) s.get() ? EnumChatFormatting.GREEN : EnumChatFormatting.RED; break;
+					case BYTE:
+					case SHORT:
+					case INT:
+					case LONG:
+					case FLOAT:
+					case DOUBLE: color = EnumChatFormatting.GOLD; break;
+					case CHAR: 
+					case STRING: color = EnumChatFormatting.AQUA; break;
+					case OBJECT:
+					default: color = EnumChatFormatting.LIGHT_PURPLE;
+					}
 					
 					termIn.writeln(s.getName() + ": " + color + s.get(), EColors.yellow);
 				}
@@ -105,9 +115,19 @@ public class EMCAppTerminalCommands extends TerminalCommand {
 				if (setting.getRequiresDev() && !EnhancedMC.isDevMode()) { termIn.error("Unrecognized setting name!"); }
 				else {
 					if (args.size() > 1) {
-						if (setting.getType() == DataType.BOOL) { setSettingTF(setting, termIn, args); }
-						if (setting.getType() == DataType.STRING) { setSettingString(setting, termIn, args); }
-						if (setting.getType() == DataType.INT) { setSettingInt(setting, termIn, args); }
+						switch (setting.getType()) {
+						case BOOL: setSettingTF(setting, termIn, args); break;
+						case BYTE:
+						case SHORT:
+						case INT:
+						case LONG:
+						case FLOAT:
+						case DOUBLE: setSettingNumber(setting, termIn, args); break;
+						case CHAR: 
+						case STRING: setSettingString(setting, termIn, args); break;
+						case OBJECT:
+						default: termIn.error("Cannot set this value through the terminal!");
+						}
 					}
 					else {
 						EnumChatFormatting color = EnumChatFormatting.WHITE;
@@ -182,14 +202,22 @@ public class EMCAppTerminalCommands extends TerminalCommand {
 		else { termIn.error("Setting is null!"); }
 	}
 	
-	private void setSettingInt(AppConfigSetting<Integer> settingIn, ETerminal termIn, EArrayList<String> args) {
+	private void setSettingNumber(AppConfigSetting settingIn, ETerminal termIn, EArrayList<String> args) {
 		if (settingIn != null) {
 			String arg = args.get(1).toLowerCase();
 			
 			try {
-				int val = Integer.parseInt(arg);
+				Number val = 0;
 				
-				settingIn.set(val);
+				switch (settingIn.getType()) {
+				case BYTE: val = Byte.parseByte(arg); settingIn.set(val.byteValue()); break;
+				case SHORT: val = Short.parseShort(arg); settingIn.set(val.shortValue()); break;
+				case INT: val = Integer.parseInt(arg); settingIn.set(val.intValue()); break;
+				case LONG: val = Long.parseLong(arg); settingIn.set(val.longValue()); break;
+				case FLOAT: val = Float.parseFloat(arg); settingIn.set(val.floatValue()); break;
+				case DOUBLE: val = Double.parseDouble(arg); settingIn.set(val.doubleValue()); break;
+				default: termIn.error("Invalid nubmer type!"); break;
+				}
 				
 				EMCApp app = settingIn.getApp();
 				if (app != null && app.getConfig() != null) {

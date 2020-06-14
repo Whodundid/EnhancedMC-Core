@@ -59,7 +59,7 @@ public class AppInfoWindow extends WindowParent {
 		topLine = new WindowRect(this, startX + 1, startY + 16, endX - 1, startY + 17, 0xff000000);
 		
 		int btnWidth = width / 3;
-		int logoWidth = (width + 20) / 3;
+		int logoWidth = (width + 26) / 3;
 		
 		logoWidth = MathHelper.clamp_int(logoWidth, 0, (height + 6) / 2);
 		

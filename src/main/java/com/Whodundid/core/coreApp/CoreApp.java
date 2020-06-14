@@ -479,7 +479,9 @@ public class CoreApp extends EMCApp {
 			yTimes /= xTimes;
 		}
 		
-		int index = MathHelper.clamp_int(codes.size() / ((auj4l23kdlkfnsldkfnslk34lk3sd + point + val) / 3), 0, codes.size() - 1);
+		int avgA = MathHelper.clamp_int((auj4l23kdlkfnsldkfnslk34lk3sd + point + val) / 3, 1, (auj4l23kdlkfnsldkfnslk34lk3sd + point + val) / 3);
+		
+		int index = MathHelper.clamp_int(codes.size() / avgA, 0, codes.size() - 1);
 		
 		workingCode = codes.get(index);
 		

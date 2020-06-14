@@ -67,7 +67,7 @@ public class PlayerViewer extends WindowObject {
 		//System.out.println(midY + " " + ((ys + ye) / 2));
 		
 		int scale = res.getScaleFactor();
-		scissor(xs, ys, xe, ye);
+		//scissor(xs, ys, xe, ye);
 		{
 			//idk why this works, but it do
 			
@@ -87,7 +87,7 @@ public class PlayerViewer extends WindowObject {
 			GlStateManager.color(2.0f, 2.0f, 2.0f, 2.0f);
 			drawer.drawPlayer(player, xm, ys + yStart + magicH, hS, vS, val + zoom, lockHead, drawCape);
 		}
-		endScissor();
+		//endScissor();
 		
 		if (drawBackground && background != null && background.getResource() != null) {
 			drawTexture(xs - 1, startY, endX - (xs - 1), (ye + 1) - startY, background.getResource());
