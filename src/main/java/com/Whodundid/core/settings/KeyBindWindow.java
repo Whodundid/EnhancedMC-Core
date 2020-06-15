@@ -125,7 +125,7 @@ public class KeyBindWindow extends WindowParent {
 		changeKey.setVisible(false);
 		resetKey.setVisible(false);
 		
-		addObject(null, keyList, changeKey, resetKey);
+		addObject(keyList, changeKey, resetKey);
 		
 		buildKeyList();
 	}

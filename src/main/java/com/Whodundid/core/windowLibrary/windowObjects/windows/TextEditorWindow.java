@@ -58,7 +58,7 @@ public class TextEditorWindow extends WindowParent {
 		
 		reload.setHoverText("Reload");
 		
-		addObject(null, document, save, cancel, reload);
+		addObject(document, save, cancel, reload);
 		
 		loadFile();
 	}

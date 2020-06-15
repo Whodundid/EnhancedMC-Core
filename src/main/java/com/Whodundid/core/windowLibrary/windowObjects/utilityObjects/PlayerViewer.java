@@ -47,7 +47,7 @@ public class PlayerViewer extends WindowObject {
 		
 		reset = new WindowButton(this, startX, startY, 16, 16);
 		
-		addObject(null, hSlider, vSlider, reset);
+		addObject(hSlider, vSlider, reset);
 		
 		reorient();
 	}

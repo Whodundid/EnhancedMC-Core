@@ -45,7 +45,7 @@ public class KeyOverlay extends WindowParent {
 			}
 		};
 		movementHeader.setResizeable(true);
-		addObject(null, movementHeader);
+		addObject(movementHeader);
 	}
 	
 	@Override

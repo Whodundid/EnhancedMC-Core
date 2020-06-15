@@ -56,7 +56,7 @@ public class WindowButton extends ActionObject {
 			}
 		};
 		displayLabel.setDrawCentered(drawCentered).setClickable(false);
-		addObject(null, displayLabel);
+		addObject(displayLabel);
 	}
 
 	@Override

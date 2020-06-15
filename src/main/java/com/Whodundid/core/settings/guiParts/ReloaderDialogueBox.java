@@ -77,9 +77,9 @@ public class ReloaderDialogueBox extends WindowDialogueBox {
 			}
 		};
 		okButton.setRunActionOnPress(true);
-		addObject(null, okButton.setZLevel(1));
+		addObject(okButton.setZLevel(1));
 		
-		addObject(null, display);
+		addObject(display);
 	}
 		
 	public enum Reason {

@@ -35,7 +35,7 @@ public class ScreenLocationSelector extends ActionObject {
 		center = (WindowButton) new WindowButton(this, startX + width / 2 - 11, startY + (heightRatio / 2) - 7, 23, 15, "C").setSelectedObject(ScreenLocation.center);
 		custom = (WindowButton) new WindowButton(this, startX + width / 2 - (95 / 2), endY, 95, 16, "Custom location").setSelectedObject(ScreenLocation.custom);
 		
-		addObject(null, bLeft, bRight, tLeft, tRight, center, custom);
+		addObject(bLeft, bRight, tLeft, tRight, center, custom);
 	}
 	
 	@Override

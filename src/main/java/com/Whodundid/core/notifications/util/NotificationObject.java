@@ -43,7 +43,7 @@ public abstract class NotificationObject extends WindowParent {
 		
 		close.setVisible(false);
 		
-		addObject(null, close);
+		addObject(close);
 	}
 
 	@Override

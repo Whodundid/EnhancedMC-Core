@@ -38,7 +38,7 @@ public class FocusLockBorder extends WindowObject {
 	public void drawObject(int mXIn, int mYIn) {
 		if (System.currentTimeMillis() - startTime >= 200) {
 			mc.getSoundHandler().playSound(PositionedSoundRecord.create(EMCResources.buttonSound, 1.0F));
-			if (second) { parent.removeObject(null, this); drawingBorder = false; }
+			if (second) { parent.removeObject(this); drawingBorder = false; }
 			if (first) { second = true; drawingBorder = true; }
 			if (!first) { first = true; drawingBorder = false; }
 			startTime = System.currentTimeMillis();

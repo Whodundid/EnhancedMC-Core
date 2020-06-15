@@ -107,7 +107,7 @@ public class ExperimentGui extends WindowParent {
 		//addObject(ibox);
 		
 		textArea = new WindowTextArea(this, startX + 5, startY + 5, width - 10, height - 10, true, false).setDrawLineNumbers(true);
-		addObject(null, textArea);
+		addObject(textArea);
 		
 		//textArea.addTextLine("Doggy");
 		
@@ -130,7 +130,7 @@ public class ExperimentGui extends WindowParent {
 		dList.addEntry("A");
 		dList.addEntry("Test");
 		
-		addObject(null, dList);
+		addObject(dList);
 		
 		/*
 		for (int i = 0; i < 50; i++) {

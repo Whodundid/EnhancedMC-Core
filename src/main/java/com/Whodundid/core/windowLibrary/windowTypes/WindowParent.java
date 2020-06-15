@@ -362,10 +362,10 @@ public class WindowParent extends WindowObject implements IWindowParent, Compara
 	}
 	
 	public WindowParent setHeader(WindowHeader headerIn) {
-		if (header != null) { removeObject(null, header); }
+		if (header != null) { removeObject(header); }
 		header = headerIn;
 		if (header != null) { header.updateButtonVisibility(); }
-		addObject(null, headerIn);
+		addObject(headerIn);
 		return this;
 	}
 	

@@ -74,7 +74,7 @@ public class TerminalOptionsWindow extends WindowParent {
 		
 		settings.fitItemsInList();
 		
-		addObject(null, settings);
+		addObject(settings);
 	}
 	
 	@Override

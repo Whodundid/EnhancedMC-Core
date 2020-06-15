@@ -139,7 +139,7 @@ public class ColorPickerSimple extends ActionWindowParent {
 		select.setStringColor(EColors.lgreen);
 		
 		//add containers
-		addObject(null, colorContainer, inputContainer);
+		addObject(colorContainer, inputContainer);
 		
 		//add color buttons
 		colorContainer.addObject(lred, red, maroon, brown, dorange, borange, orange, lorange, yellow);

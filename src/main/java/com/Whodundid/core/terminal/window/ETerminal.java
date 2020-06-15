@@ -113,7 +113,7 @@ public class ETerminal extends WindowParent {
 		history.setObjectGroup(objectGroup);
 		inputField.setObjectGroup(objectGroup);
 		
-		addObject(null, inputField, history);
+		addObject(inputField, history);
 		
 		if (!init) {
 			history.addTextLine("EMC " + (EnhancedMC.isDevMode() ? "Dev " : "") + "Terminal v1.0 initialized..", 0xffff00);

@@ -224,7 +224,7 @@ public class TaskBar extends WindowObject {
 			}
 			
 			for (IWindowObject o : removeGhosts) {
-				removeObject(null, o);
+				removeObject(o);
 			}
 			
 			//check for ghost buttons
@@ -283,7 +283,7 @@ public class TaskBar extends WindowObject {
 				
 				//add to bar
 				buttons.add(b);
-				addObject(null, b);
+				addObject(b);
 			}
 			else {
 				for (TaskButton b : buttons) {
@@ -348,7 +348,7 @@ public class TaskBar extends WindowObject {
 		
 		for (TaskButton b : toBuild) {
 			buttons.add(b);
-			addObject(null, b);
+			addObject(b);
 		}
 		
 		repositionButtons();

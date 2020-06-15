@@ -36,7 +36,7 @@ public class TestWindow extends WindowParent {
 		
 		ok = new WindowButton(this, endX - 55, endY - 25, 50, 20, "Test");
 		
-		addObject(null, viewer);
+		addObject(viewer);
 	}
 	
 	@Override

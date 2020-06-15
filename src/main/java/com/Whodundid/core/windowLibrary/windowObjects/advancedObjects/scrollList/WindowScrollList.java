@@ -68,7 +68,7 @@ public class WindowScrollList extends WindowObject {
 		verticalScroll.setZLevel(getZLevel() + 3);
 		horizontalScroll.setZLevel(getZLevel() + 3);
 
-		addObject(null, verticalScroll, horizontalScroll, reset);
+		addObject(verticalScroll, horizontalScroll, reset);
 		
 		setListHeight(heightToBeSet).setListWidth(widthToBeSet);
 		

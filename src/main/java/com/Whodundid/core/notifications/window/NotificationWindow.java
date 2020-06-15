@@ -112,8 +112,8 @@ public class NotificationWindow extends WindowParent {
 		disableAll = new WindowButton(this, midX - 32, endY - 25, 64, 20, "Disable All").setStringColor(EColors.lred);
 		back = new WindowButton(this, endX - 69, endY - 25, 64, 20, "Back").setStringColor(EColors.yellow);
 		
-		addObject(null, nList);
-		addObject(null, enableAll, disableAll, back);
+		addObject(nList);
+		addObject(enableAll, disableAll, back);
 	}
 	
 	@Override

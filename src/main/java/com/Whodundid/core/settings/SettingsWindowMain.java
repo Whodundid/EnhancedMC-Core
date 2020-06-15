@@ -65,7 +65,7 @@ public class SettingsWindowMain extends WindowParent {
 			@Override
 			public void mousePressed(int mXIn, int mYIn, int button) {
 				if (button == 1) {
-					windowInstance.addObject(null, new SettingsRCM(mm, new KeyBindWindow(), "Keybinds"));
+					windowInstance.addObject(new SettingsRCM(mm, new KeyBindWindow(), "Keybinds"));
 				}
 				super.mousePressed(mXIn, mYIn, button);
 			}
@@ -75,7 +75,7 @@ public class SettingsWindowMain extends WindowParent {
 			@Override
 			public void mousePressed(int mXIn, int mYIn, int button) {
 				if (button == 1) {
-					windowInstance.addObject(null, new SettingsRCM(mm, new ETerminal(), "EMC Terminal"));
+					windowInstance.addObject(new SettingsRCM(mm, new ETerminal(), "EMC Terminal"));
 				}
 				super.mousePressed(mXIn, mYIn, button);
 			}
@@ -100,10 +100,10 @@ public class SettingsWindowMain extends WindowParent {
 		searchField.setTextWhenEmpty("Search apps...").setEnableBackgroundDrawing(true);
 		
 		//add all objects first
-		addObject(null, scrollList, problemButton, searchField, keyBindButton, screenshotsButton);
+		addObject(scrollList, problemButton, searchField, keyBindButton, screenshotsButton);
 		
 		CoreApp em = (CoreApp) RegisteredApps.getApp(AppType.CORE);
-		if (em.enableTerminal.get()) { addObject(null, terminalButton); }
+		if (em.enableTerminal.get()) { addObject(terminalButton); }
 		
 		//then build the list
 		if (RegisteredApps.getRegisteredAppList().isEmpty()) { //THIS SHOULD BE IMPOSSIBLE!
@@ -240,7 +240,7 @@ public class SettingsWindowMain extends WindowParent {
 			}
 			else {
 				scrollList.growListHeight(2); //add spacing to bottom so it matches the top
-				addObject(null, separator); //add the general separator instead
+				addObject(separator); //add the general separator instead
 			}
 		}
 	}
@@ -267,7 +267,7 @@ public class SettingsWindowMain extends WindowParent {
 		}
 	}
 	
-	public void openRCM(int mXIn, int mYIn) { addObject(null, rcm = new SettingsRCM(this)); }
-	public void openRCM(int mXIn, int mYIn, EMCApp modIn) { addObject(null, rcm = new SettingsRCM(this, modIn)); }
+	public void openRCM(int mXIn, int mYIn) { addObject(rcm = new SettingsRCM(this)); }
+	public void openRCM(int mXIn, int mYIn, EMCApp modIn) { addObject(rcm = new SettingsRCM(this, modIn)); }
 	
 }

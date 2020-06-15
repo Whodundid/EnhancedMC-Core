@@ -132,8 +132,8 @@ public class AppInfoWindow extends WindowParent {
 			linkLine.setLinkText("Donation Link", link, true);
 		}
 		
-		addObject(null, nameBack, appName, topLine, reloadButton, okButton);
-		addObject(null, logoBox, dependencies, info);
+		addObject(nameBack, appName, topLine, reloadButton, okButton);
+		addObject(logoBox, dependencies, info);
 	}
 	
 	@Override

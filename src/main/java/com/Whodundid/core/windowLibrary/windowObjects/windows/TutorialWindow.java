@@ -116,9 +116,9 @@ public class TutorialWindow extends OverlayWindow {
 		setVisible(false, terminal, rcmTerm);
 		setVisible(false, gotIt);
 		
-		addObject(null, close, gotIt, next, back);
-		addObject(null, enable, info, settings);
-		addObject(null, terminal, rcmTerm);
+		addObject(close, gotIt, next, back);
+		addObject(enable, info, settings);
+		addObject(terminal, rcmTerm);
 		
 		if (!CoreApp.openedTut.get() && !updatedSetting) {
 			updatedSetting = true;
@@ -564,7 +564,7 @@ public class TutorialWindow extends OverlayWindow {
 							
 						};
 						
-						addObject(null, appSettings);
+						addObject(appSettings);
 						
 						appSettings.setPosition(midX - 275, midY - 126);
 						appSettings.setDontReloadWindows(true);
@@ -615,7 +615,7 @@ public class TutorialWindow extends OverlayWindow {
 							
 						};
 						
-						addObject(null, renderRCM);
+						addObject(renderRCM);
 						
 						renderRCM.setPosition(midX + 155, midY - 70);
 						
@@ -639,7 +639,7 @@ public class TutorialWindow extends OverlayWindow {
 							@Override public void sendArgs(Object... args) {}
 						};
 						
-						addObject(null, term);
+						addObject(term);
 						
 						term.setPosition(midX - 350, midY - 120);
 						term.resize(150, 100, ScreenLocation.botRight);
@@ -657,7 +657,7 @@ public class TutorialWindow extends OverlayWindow {
 							@Override public void sendArgs(Object... args) {}
 						};
 						
-						addObject(null, term);
+						addObject(term);
 						
 						term.setPosition(midX - 350, midY - 120);
 						term.resize(150, 100, ScreenLocation.botRight);

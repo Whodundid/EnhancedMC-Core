@@ -84,7 +84,7 @@ public class TextureDisplayer extends WindowParent {
 		imageBox.setImage(loc);
 		imageBox.setCenterImage(centered);
 		
-		addObject(null, imageBox, previous, next, open);
+		addObject(imageBox, previous, next, open);
 	}
 	
 	@Override

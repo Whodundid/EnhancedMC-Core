@@ -64,7 +64,7 @@ public class AppErrorDialogueBox extends WindowDialogueBox {
 				parent.close();
 			}
 		};
-		addObject(null, enableAll.setZLevel(1));
+		addObject(enableAll.setZLevel(1));
 	}
 	
 	private void addDisable() {
@@ -76,7 +76,7 @@ public class AppErrorDialogueBox extends WindowDialogueBox {
 				parent.close();
 			}
 		};
-		addObject(null, disableAll.setZLevel(1));
+		addObject(disableAll.setZLevel(1));
 	}
 	
 	private void addCancel() {
@@ -87,7 +87,7 @@ public class AppErrorDialogueBox extends WindowDialogueBox {
 				parent.close();
 			}
 		};
-		addObject(null, cancel.setZLevel(1));
+		addObject(cancel.setZLevel(1));
 	}
 	
 	private void addOk() {
@@ -99,7 +99,7 @@ public class AppErrorDialogueBox extends WindowDialogueBox {
 				parent.close();
 			}
 		};
-		addObject(null, okButton.setZLevel(1));
+		addObject(okButton.setZLevel(1));
 	}
 	
 	public AppErrorDialogueBox createErrorMessage(Exception e, EArrayList<EMCApp> modsIn) {
@@ -137,4 +137,5 @@ public class AppErrorDialogueBox extends WindowDialogueBox {
 			window.sendArgs("Reload");
 		}
 	}
+	
 }

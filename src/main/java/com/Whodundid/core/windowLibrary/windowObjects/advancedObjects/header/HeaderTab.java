@@ -50,7 +50,7 @@ public class HeaderTab extends WindowButton {
 		closeButton.setRunActionOnPress(true);
 		closeButton.setStringHoverColor(0xff6060);
 		
-		addObject(null, closeButton);
+		addObject(closeButton);
 	}
 	
 	@Override

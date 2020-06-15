@@ -130,7 +130,7 @@ public abstract class WindowObject extends EGui implements IWindowObject {
 			if (s == null) { throw new URISyntaxException(event.getValue(), "Missing protocol"); }
 			if (!PROTOCOLS.contains(s.toLowerCase())) { throw new URISyntaxException(event.getValue(), "Unsupported protocol: " + s.toLowerCase()); }
 			
-			if (mc.gameSettings.chatLinksPrompt) { addObject(null, new LinkConfirmationWindow(this, event.getValue())); }
+			if (mc.gameSettings.chatLinksPrompt) { addObject(new LinkConfirmationWindow(this, event.getValue())); }
 			else { openWebLink(event.getValue()); }
 		}
 		catch (URISyntaxException urisyntaxexception) { EnhancedMC.error("Can\'t open url for " + event, urisyntaxexception); }
@@ -363,9 +363,9 @@ public abstract class WindowObject extends EGui implements IWindowObject {
 	public void drawFocusLockBorder() {
 		if (checkDraw() && windowObjects.containsNoInstanceOf(FocusLockBorder.class)) {
 			if (hasHeader() && getHeader().isEnabled()) {
-				addObject(null, new FocusLockBorder(this, getHeader().startX, getHeader().startY, width, height + getHeader().height));
+				addObject(new FocusLockBorder(this, getHeader().startX, getHeader().startY, width, height + getHeader().height));
 			}
-			else { addObject(null, new FocusLockBorder(this)); }
+			else { addObject(new FocusLockBorder(this)); }
 		}
 	}
 	@Override
@@ -437,7 +437,7 @@ public abstract class WindowObject extends EGui implements IWindowObject {
 			if (getTopParent().doesFocusLockExist() && getTopParent().getFocusLockObject().equals(this)) { getTopParent().clearFocusLockObject(); }
 			//if (getTopParent().getFocusedObject().equals(this)) { relinquishFocus(); }
 			if (focusObjectOnClose != null) { focusObjectOnClose.requestFocus(); }
-			parent.removeObject(null, this);
+			parent.removeObject(this);
 			closed = true;
 		}
 	}

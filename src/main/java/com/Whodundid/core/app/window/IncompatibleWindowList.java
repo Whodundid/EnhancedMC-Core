@@ -59,16 +59,16 @@ public class IncompatibleWindowList extends WindowDialogueBox {
 			}
 		};
 		okButton.setRunActionOnPress(true);
-		addObject(null, okButton.setZLevel(1));
+		addObject(okButton.setZLevel(1));
 		
 		problem = new WindowLabel(this, midX, startY + 6, "The following EMC Apps are incompatible.");
 		problem.enableWordWrap(true, width - 15).setLineGapHeight(3).enableShadow(true).setDrawCentered(true).setColor(0xffbb00);
 		
 		topLine = new WindowRect(this, startX + 1, problem.startY + problem.getTextHeight() + 2, endX - 1, problem.startY + problem.getTextHeight() + 3, 0xff000000);
-		addObject(null, topLine);
+		addObject(topLine);
 		
 		incompatibleList = new WindowTextArea(this, startX + 7, topLine.endY + 6, width - 14, okButton.startY - topLine.endY - 12).setDrawLineNumbers(true).setEditable(false);
-		addObject(null, incompatibleList);
+		addObject(incompatibleList);
 		
 		EArrayList<EMCApp> mods = RegisteredApps.getIncompatibleAppList();
 		if (mods.isNotEmpty()) {
@@ -87,7 +87,7 @@ public class IncompatibleWindowList extends WindowDialogueBox {
 			}
 		} else { incompatibleList.addTextLine("None", 0xb2b2b2); }
 		
-		addObject(null, problem);
+		addObject(problem);
 		
 		setTitleColor(0xc2c2c2);
 		setTitle("App Incompatibility");
