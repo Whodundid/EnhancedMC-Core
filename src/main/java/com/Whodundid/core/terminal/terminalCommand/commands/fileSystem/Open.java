@@ -76,7 +76,6 @@ public class Open extends FileCommand {
 			}
 			catch (Exception e) { error(termIn, e); }
 		}
-		else { termIn.error("Too many arguments!"); }
 	}
 	
 	private void check(ETerminal termIn, File path, boolean openA) {

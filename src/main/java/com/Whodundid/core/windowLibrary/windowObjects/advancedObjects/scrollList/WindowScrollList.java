@@ -1,5 +1,6 @@
 package com.Whodundid.core.windowLibrary.windowObjects.advancedObjects.scrollList;
 
+import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
@@ -44,6 +45,7 @@ public class WindowScrollList extends WindowObject {
 	protected boolean hScrollVis = true;
 	protected boolean resetVis = false;
 	protected boolean allowScrolling = true;
+	protected boolean drawListObjects = true;
 	
 	protected WindowScrollList() {}
 	public WindowScrollList(IWindowObject parentIn, int xIn, int yIn, int widthIn, int heightIn) {
@@ -90,20 +92,20 @@ public class WindowScrollList extends WindowObject {
 				
 				//draw list contents scissored
 				scissor(startX + 1, startY + 1, endX - (isVScrollDrawn() ? verticalScroll.width + 2 : 1), endY - (isHScrollDrawn() ? horizontalScroll.height + 2 : 1));
-				
 				drawRect(startX + 1, startY + 1, endX - 1, endY - 1, backgroundColor); //draw background
 				
-				//only draw the objects that are actually in the viewable area
-				for (IWindowObject o : drawnListObjects) {
-					if (o.checkDraw()) {
-						if (!o.hasFirstDraw()) { o.onFirstDraw(); o.onFirstDraw(); }
-						GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-						EDimension d = o.getDimensions();
-						o.drawObject(mXIn, mYIn);
+				if (drawListObjects) {
+					//only draw the objects that are actually in the viewable area
+					for (IWindowObject o : drawnListObjects) {
+						if (o.checkDraw()) {
+							if (!o.hasFirstDraw()) { o.onFirstDraw(); o.onFirstDraw(); }
+							GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+							EDimension d = o.getDimensions();
+							o.drawObject(mXIn, mYIn);
+						}
 					}
 				}
-				
-				endScissor();
+				endScissor();	
 				
 				//draw non list contents as normal (non scissored)
 				for (IWindowObject o : windowObjects) {
@@ -437,8 +439,11 @@ public class WindowScrollList extends WindowObject {
 		return this;
 	}
 	
+	public WindowScrollList setDrawListObjects(boolean val) { drawListObjects = val; return this; }
 	public WindowScrollList setAllowScrolling(boolean val) { allowScrolling = val; return this; }
+	public WindowScrollList setBackgroundColor(EColors colorIn) { return setBackgroundColor(colorIn.intVal); }
 	public WindowScrollList setBackgroundColor(int colorIn) { backgroundColor = colorIn; return this; }
+	public WindowScrollList setBorderColor(EColors colorIn) { return setBorderColor(colorIn.intVal); }
 	public WindowScrollList setBorderColor(int colorIn) { borderColor = colorIn; return this; }
 	public WindowScrollList setVScrollDrawn(boolean valIn) { vScrollVis = valIn; if (verticalScroll != null) { verticalScroll.setVisible(valIn); } updateVisuals(); return this; }
 	public WindowScrollList setHScrollDrawn(boolean valIn) { hScrollVis = valIn; if (horizontalScroll != null) { horizontalScroll.setVisible(valIn); } updateVisuals(); return this; }
@@ -448,6 +453,7 @@ public class WindowScrollList extends WindowObject {
 	
 	public int getListHeight() { return scrollableHeight - (isHScrollDrawn() ? horizontalScroll.getDimensions().height : 0); }
 	public int getListWidth() { return scrollableWidth - (isVScrollDrawn() ? verticalScroll.getDimensions().width : 0); }
+	public boolean getDrawListObjects() { return drawListObjects; }
 	public boolean isVScrollDrawn() { return vScrollVis && (verticalScroll != null ? verticalScroll.getHighVal() > verticalScroll.getVisibleAmount() : false); }
 	public boolean isHScrollDrawn() { return hScrollVis && (horizontalScroll != null ? horizontalScroll.getHighVal() > horizontalScroll.getVisibleAmount() : false); }
 	public boolean isResetDrawn() { return resetVis && (isVScrollDrawn() || isHScrollDrawn()); }

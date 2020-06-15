@@ -1,6 +1,7 @@
 package com.Whodundid.core;
 
 import com.Whodundid.core.app.AppLoader;
+import com.Whodundid.core.app.RegisteredApps;
 import com.Whodundid.core.coreApp.CoreApp;
 import com.Whodundid.core.coreEvents.EventListener;
 import com.Whodundid.core.coreEvents.emcEvents.RendererRCMOpenEvent;
@@ -62,8 +63,9 @@ public class EnhancedMC extends DummyModContainer {
 	public static final Logger EMCLogger = LogManager.getLogger("EnhancedMC");
 	private static final EnhancedMCRenderer renderer = EnhancedMCRenderer.getInstance();
 	private static final TerminalCommandHandler terminal = TerminalCommandHandler.getInstance();
-	private static final NotificationHandler notifications = NotificationHandler.getHandler();
-	private static EventListener eventListener;
+	private static final NotificationHandler notifications = NotificationHandler.getInstance();
+	private static final RegisteredApps appsList = RegisteredApps.getInstance();
+	private static EventListener eventListener = EventListener.getInstance();
 	private static boolean isInitialized = false;
 	public static int updateCounter = 0;
 	public static boolean enableDebugFunctions = false;
@@ -103,7 +105,7 @@ public class EnhancedMC extends DummyModContainer {
 		info("Initializing EMC");
 		
 		//register EventListener
-		MinecraftForge.EVENT_BUS.register(eventListener = new EventListener());
+		MinecraftForge.EVENT_BUS.register(eventListener);
 		
 		//register keybinds
 		ClientRegistry.registerKeyBinding(openSettingsGui);
@@ -324,7 +326,12 @@ public class EnhancedMC extends DummyModContainer {
 	public static boolean isUserDev() { return isDev; }
 	public static boolean isObfus() { return !deobf; }
 	public static void setDebugMode(boolean val) { enableDebugFunctions = val; }
-	public static void setDevMode(boolean val) { enableDevFunctions = val; }
+	
+	public static void setDevMode(boolean val) {
+		boolean old = enableDevFunctions;
+		enableDevFunctions = val;
+		if (old && !val) { RegisteredApps.getAppsList().stream().filter(a -> !a.isIncompatible()).forEach(a -> a.onDevModeDisabled()); }
+	}
 	
 	//hypixel specific
 	public static boolean isHypixel() { return !mc.isSingleplayer() && mc.getCurrentServerData() != null && mc.getCurrentServerData().serverIP.equals("mc.hypixel.net"); }
@@ -336,6 +343,7 @@ public class EnhancedMC extends DummyModContainer {
 	public static EnhancedMCRenderer getRenderer() { return renderer; }
 	public static TerminalCommandHandler getTerminalHandler() { return terminal; }
 	public static NotificationHandler getNotificationHandler() { return notifications; }
+	public static RegisteredApps getApps() { return appsList; }
 	
 	public static void log(Level levelIn, String msg) { EMCLogger.log(levelIn, msg); }
 	public static void info(String msg) { EMCLogger.log(Level.INFO, msg); }

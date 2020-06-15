@@ -39,7 +39,14 @@ import net.minecraftforge.event.world.WorldEvent;
 public class EventListener {
 	
 	Minecraft mc = Minecraft.getMinecraft();
-	EMCEventDistributor distributor = new EMCEventDistributor();
+	EMCEventDistributor distributor;
+	private static EventListener instance = null;
+	
+	private EventListener() {
+		distributor = new EMCEventDistributor();
+	}
+	
+	public static EventListener getInstance() { return instance = (instance != null) ? instance : new EventListener(); }
 	
 	//-----------
 	//event hooks

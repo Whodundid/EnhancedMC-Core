@@ -21,9 +21,9 @@ public class ColorPickerSimple extends ActionWindowParent {
 	
 	//color buttons
 	ColorButton lred, red, maroon, brown, dorange, borange, orange, lorange, yellow;
-	ColorButton lime, green, lgreen, dgreen, seafoam, turquoise, cyan;
-	ColorButton blue, regal, navy, grape, violet, eggplant, purple, magenta, pink, hotpink;
-	ColorButton white, lgray, gray, dgray, pdgray, steel, vdgray, black;
+	ColorButton lime, green, lgreen, dgreen, seafoam, turquoise, aquamarine;
+	ColorButton cyan, skyblue, blue, regal, grape, navy, violet, eggplant, purple, magenta, pink, hotpink;
+	ColorButton white, lgray, gray, mgray, dgray, pdgray, steel, dsteel, vdgray, black;
 	
 	//functional objects
 	WindowTextField inputField;
@@ -44,7 +44,7 @@ public class ColorPickerSimple extends ActionWindowParent {
 	@Override
 	public void initWindow() {
 		setObjectName("Color Picker");
-		setDimensions(211, 197);
+		setDimensions(211, 198);
 		setPinnable(false);
 	}
 	
@@ -62,10 +62,10 @@ public class ColorPickerSimple extends ActionWindowParent {
 		updateValues();
 		
 		//create color buttons
-		WindowContainer colorContainer = new WindowContainer(this, startX + 5, colorDisplay.endY + 5, width - 10, 48);
+		WindowContainer colorContainer = new WindowContainer(this, startX + 5, colorDisplay.endY + 6, width - 10, 48);
 		colorContainer.setTitle("Color Palette");
-		colorContainer.setTitleColor(EColors.lgray.c());
-		colorContainer.setBackgroundColor(0xff555555);
+		colorContainer.setTitleColor(EColors.lgray.intVal);
+		colorContainer.setBackgroundColor(0xff383838);
 		colorContainer.setDrawTitle(false);
 		
 		int y = colorContainer.startY + 4;
@@ -87,15 +87,17 @@ public class ColorPickerSimple extends ActionWindowParent {
 		lgreen = new ColorButton(this, seafoam.endX + 1, y, w, h, EColors.lgreen);
 		dgreen = new ColorButton(this, lgreen.endX + 1, y, w, h, EColors.dgreen);
 		turquoise = new ColorButton(this, dgreen.endX + 1, y, w, h, EColors.turquoise);
-		cyan = new ColorButton(this, turquoise.endX + 1, y, w, h, EColors.cyan);
+		aquamarine = new ColorButton(this, turquoise.endX + 1, y, w, h, EColors.aquamarine);
 		
 		int y1 = lred.endY + 1;
 		
-		blue = new ColorButton(this, brown.startX, y1, w, h, EColors.blue);
+		cyan = new ColorButton(this, maroon.startX, y1, w, h, EColors.cyan);
+		skyblue = new ColorButton(this, cyan.endX + 1, y1, w, h, EColors.skyblue);
+		blue = new ColorButton(this, skyblue.endX + 1, y1, w, h, EColors.blue);
 		regal = new ColorButton(this, blue.endX + 1, y1, w, h, EColors.regal);
-		navy = new ColorButton(this, regal.endX + 1, y1, w, h, EColors.navy);
-		grape = new ColorButton(this, navy.endX + 1, y1, w, h, EColors.grape);
-		violet = new ColorButton(this, grape.endX + 1, y1, w, h, EColors.violet);
+		grape = new ColorButton(this, regal.endX + 1, y1, w, h, EColors.grape);
+		navy = new ColorButton(this, grape.endX + 1, y1, w, h, EColors.navy);
+		violet = new ColorButton(this, navy.endX + 1, y1, w, h, EColors.violet);
 		eggplant = new ColorButton(this, violet.endX + 1, y1, w, h, EColors.eggplant);
 		purple = new ColorButton(this, eggplant.endX + 1, y1, w, h, EColors.purple);
 		pink = new ColorButton(this, purple.endX + 1, y1, w, h, EColors.pink);
@@ -104,47 +106,52 @@ public class ColorPickerSimple extends ActionWindowParent {
 		
 		int y2 = navy.endY + 5;
 		
-		white = new ColorButton(this, dorange.startX, y2, w, h, EColors.white);
+		white = new ColorButton(this, brown.startX, y2, w, h, EColors.white);
 		lgray = new ColorButton(this, white.endX + 1, y2, w, h, EColors.lgray);
 		gray = new ColorButton(this, lgray.endX + 1, y2, w, h, EColors.gray);
-		dgray = new ColorButton(this, gray.endX + 1, y2, w, h, EColors.dgray);
+		mgray = new ColorButton(this, gray.endX + 1, y2, w, h, EColors.mgray);
+		dgray = new ColorButton(this, mgray.endX + 1, y2, w, h, EColors.dgray);
 		pdgray = new ColorButton(this, dgray.endX + 1, y2, w, h, EColors.pdgray);
 		steel = new ColorButton(this, pdgray.endX + 1, y2, w, h, EColors.steel);
-		vdgray = new ColorButton(this, steel.endX + 1, y2, w, h, EColors.vdgray);
+		dsteel = new ColorButton(this, steel.endX + 1, y2, w, h, EColors.dsteel);
+		vdgray = new ColorButton(this, dsteel.endX + 1, y2, w, h, EColors.vdgray);
 		black = new ColorButton(this, vdgray.endX + 1, y2, w, h, EColors.black);
 		
 		//create manual color input field & label
 		WindowContainer inputContainer = new WindowContainer(this, startX + 5, colorContainer.endY + 2, width - 10, 41);
 		inputContainer.setTitle("Hex Color Code");
-		inputContainer.setTitleColor(EColors.lgray.c());
-		inputContainer.setBackgroundColor(0xff555555);
+		inputContainer.setTitleColor(EColors.lgray.intVal);
+		inputContainer.setBackgroundColor(0xff383838);
 		inputContainer.setHoverText("The current color value in (RGB) hexadecimal format");
 		
 		inputField = new WindowTextField(this, inputContainer.startX + 6, inputContainer.startY + 22, 66, 14);
-		//inputLabel = new EGuiLabel(this, inputContainer.startX + 10, inputField.startY + 3, "Hexadecimal color value");
+		inputLabel = new WindowLabel(this, inputField.endX + 10, inputField.startY + 3, "(ARGB) color value");
 		
 		inputField.setMaxStringLength(8);
 		//inputLabel.setHoverText("The current color value in (RGB) hexadecimal format");
-		//inputLabel.setDisplayStringColor(EColors.lgray);
+		inputLabel.setColor(EColors.seafoam);
 		
 		//create select and back buttons
-		back = new WindowButton(this, startX + 5, inputContainer.endY + 4, 62, 20, "Back");
-		select = new WindowButton(this, endX - 67, inputContainer.endY + 4, 62, 20, "Confirm");
+		back = new WindowButton(this, inputContainer.midX - 10 - 80, inputContainer.endY + 4, 80, 20, "Back");
+		select = new WindowButton(this, inputContainer.midX + 10, inputContainer.endY + 4, 80, 20, "Confirm");
+		
+		back.setStringColor(EColors.yellow);
+		select.setStringColor(EColors.lgreen);
 		
 		//add containers
 		addObject(null, colorContainer, inputContainer);
 		
 		//add color buttons
-		colorContainer.addObject(null, lred, red, maroon, brown, dorange, borange, orange, lorange, yellow);
-		colorContainer.addObject(null, lime, green, lgreen, dgreen, seafoam, turquoise, cyan);
-		colorContainer.addObject(null, blue, regal, navy, grape, violet, eggplant, purple, magenta, pink, hotpink);
-		colorContainer.addObject(null, white, lgray, gray, dgray, pdgray, steel, vdgray, black);
+		colorContainer.addObject(lred, red, maroon, brown, dorange, borange, orange, lorange, yellow);
+		colorContainer.addObject(lime, green, lgreen, dgreen, seafoam, turquoise, aquamarine);
+		colorContainer.addObject(cyan, skyblue, blue, regal, navy, grape, violet, eggplant, purple, magenta, pink, hotpink);
+		colorContainer.addObject(white, lgray, gray, mgray, dgray, pdgray, steel, dsteel, vdgray, black);
 		
 		//add functional objects
-		inputContainer.addObject(null, inputField);
+		inputContainer.addObject(inputField, inputLabel);
 		
-		addObject(null, select, back);
-		addObject(null, colorDisplay, colorLabel);
+		addObject(select, back);
+		addObject(colorDisplay, colorLabel);
 		
 		updateValues();
 	}
@@ -152,6 +159,7 @@ public class ColorPickerSimple extends ActionWindowParent {
 	@Override
 	public void drawObject(int mXIn, int mYIn) {
 		drawDefaultBackground();
+		//drawRect(0xff3b3b3b, 1);
 		
 		if (colorDisplay != null) {
 			EDimension cDim = colorDisplay.getDimensions();
@@ -212,18 +220,18 @@ public class ColorPickerSimple extends ActionWindowParent {
 	private void updateValues() {
 		colorDisplay.setColor(currentColor);
 		EColors c = EColors.getEColor(currentColor);
-		colorDisplay.setHoverText(c != null ? c.n() : "" + currentColor).setHoverTextColor(EColors.white.c());
-		String cs = "Current Color: " + (c != null ? c.n() : "" + Integer.toHexString(currentColor).substring(2));
+		colorDisplay.setHoverText(c != null ? c.name : "" + currentColor).setHoverTextColor(EColors.seafoam.intVal);
+		String cs = "Current Color: " + (c != null ? c.name : "" + Integer.toHexString(currentColor).substring(2));
 		colorLabel.setString(cs);
 		try {
 			String val = "";
 			if (inputField != null && inputField.getText() != null) {
-				if (inputField.getText().length() > 6) {
-					val = inputField.getText().substring(0, 2) + String.format("%6x", currentColor).substring(2);
-				}
-				else {
-					val = String.format("%6x", currentColor).substring(2);
-				}
+				//if (inputField.getText().length() > 6) {
+					val = String.format("%8x", currentColor);
+				//}
+				//else {
+				//	val = String.format("%6x", currentColor).substring(2);
+				//}
 				inputField.setTextWhenEmpty(val);
 				inputField.setText(val);
 			}

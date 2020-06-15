@@ -179,6 +179,7 @@ public abstract class EMCApp implements Comparable<EMCApp> {
 	}
 	
 	public void onPostInit(FMLPostInitializationEvent event) {}
+	public void onDevModeDisabled() {}
 	
 	public void registerResources() {
 		if (resources != null) {

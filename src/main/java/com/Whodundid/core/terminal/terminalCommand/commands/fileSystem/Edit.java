@@ -26,9 +26,14 @@ public class Edit extends FileCommand {
 	@Override
 	public void runCommand(ETerminal termIn, EArrayList<String> args, boolean runVisually) {
 		if (args.isEmpty()) { termIn.error("Not enough arguments!"); }
-		else if (args.size() == 1) {
+		else if (args.size() >= 1) {
 			try {
-				String all = EUtil.combineAll(args, " ");
+				boolean openA = args.getLast().equals("-a");
+				String all = "";
+				
+				if (openA) { all = EUtil.combineAll(args.subList(0, args.size() - 1), " "); }
+				else { all = EUtil.combineAll(args, " "); }
+				
 				File f = new File(termIn.getDir(), all);
 				
 				if (all.startsWith("..")) { f = new File(termIn.getDir(), args.get(0)); }
@@ -53,19 +58,17 @@ public class Edit extends FileCommand {
 									openEditWindow(termIn, f);
 								}
 								catch (Exception e) {
+									termIn.error("'" + args.get(0) + "' is not a vaild file!");
 									error(termIn, e);
 								}
-							}
+							} //else
 						}
 					} //else
 				}
 				
 			}
-			catch (Exception e) {
-				error(termIn, e);
-			}
+			catch (Exception e) { error(termIn, e); }
 		}
-		else { termIn.error("Too many arguments!"); }
 	}
 	
 	private void check(ETerminal termIn, File path) {

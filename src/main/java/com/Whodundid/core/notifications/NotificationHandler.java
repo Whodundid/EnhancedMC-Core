@@ -32,7 +32,7 @@ public class NotificationHandler {
 	//NotificationHandler Static Instance
 	//-----------------------------------
 	
-	public static NotificationHandler getHandler() {
+	public static NotificationHandler getInstance() {
 		return instance = instance != null ? instance : new NotificationHandler();
 	}
 

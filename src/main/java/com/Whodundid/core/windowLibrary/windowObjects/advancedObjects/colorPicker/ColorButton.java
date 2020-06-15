@@ -24,7 +24,7 @@ public class ColorButton extends WindowButton {
 	}
 	
 	public ColorButton setParams(String textIn, EColors colorIn) { return setParams(textIn, colorIn.c()); }
-	public ColorButton setParams(String textIn, int colorIn) { setColor(colorIn); setHover(textIn, 0xffffffff); return this; }
+	public ColorButton setParams(String textIn, int colorIn) { setColor(colorIn); setHover(textIn, EColors.seafoam); return this; }
 	
 	public ColorButton setHover(String textIn, EColors colorIn) { return setHover(textIn, colorIn.c()); }
 	public ColorButton setHover(String textIn, int colorIn) { setHoverText(textIn).setHoverTextColor(colorIn); return this; }

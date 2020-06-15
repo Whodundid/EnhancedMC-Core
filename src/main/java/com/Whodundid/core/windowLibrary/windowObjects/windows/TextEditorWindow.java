@@ -46,6 +46,7 @@ public class TextEditorWindow extends WindowParent {
 		document = new WindowTextArea(this, startX + 2, startY + 2, width - 4, height - 31);
 		document.setEditable(!failed);
 		document.setBackgroundColor(EColors.steel.intVal);
+		document.setResetDrawn(false);
 		if (!failed) { document.setDrawLineNumbers(true); }
 		
 		int w = MathHelper.clamp_int((width - 10 - 24) / 2, 45, 100);

@@ -1,10 +1,12 @@
 package com.Whodundid.core.windowLibrary.windowObjects.windows;
 
 import com.Whodundid.core.util.EUtil;
+import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.windowLibrary.windowObjects.actionObjects.WindowButton;
 import com.Whodundid.core.windowLibrary.windowTypes.WindowParent;
 import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IWindowObject;
+import net.minecraft.util.MathHelper;
 
 //Author: Hunter Bragg
 
@@ -37,9 +39,16 @@ public class WindowDialogueBox extends WindowParent {
 		if (type != null) {
 			switch (type) {
 			case yesNo:
-				yes = new WindowButton(this, midX - 100, endY - 30, 65, 20, "Yes");
-				no = new WindowButton(this, midX + 25, endY - 30, 65, 20, "No");
-				addObject(null, yes, no);
+				int bw = MathHelper.clamp_int((width - 10) / 3, 0, 140);
+				int g = width / 30;
+				
+				no = new WindowButton(this, midX - g - bw, endY - 30, bw, 20, "No");
+				yes = new WindowButton(this, midX + g, endY - 30, bw, 20, "Yes");
+				
+				no.setStringColor(EColors.yellow);
+				yes.setStringColor(EColors.lgreen);
+				
+				addObject(yes, no);
 				
 				defaultObject = yes;
 				break;
@@ -52,7 +61,7 @@ public class WindowDialogueBox extends WindowParent {
 					}
 				};
 				okButton.setRunActionOnPress(true);
-				addObject(null, okButton);
+				addObject(okButton);
 				
 				defaultObject = okButton;
 				break;
@@ -64,12 +73,13 @@ public class WindowDialogueBox extends WindowParent {
 	@Override
 	public void drawObject(int mXIn, int mYIn) {
 		drawDefaultBackground();
+		
 		if (wordWrappedLines != null) {
 			int lnWidth = wordWrappedLines.size() * 10;
 			int totalWidth = (endY - 25) - startY;
-			int lnStartY = startY + (totalWidth - lnWidth) / 2;
+			int lnStartY = startY + (totalWidth - lnWidth) / 2 - 2;
 			int i = 0;
-			scissor(startX, startY, endX, endY);
+			scissor(startX + 1, startY + 1, endX - 1, endY - 1);
 			for (String s : wordWrappedLines) {
 				drawStringCS(s, midX, lnStartY + (i * 10), messageColor);
 				i++;

@@ -7,7 +7,6 @@ import com.Whodundid.core.app.config.AppConfigSetting;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
 import com.Whodundid.core.terminal.terminalCommand.TerminalCommand;
 import com.Whodundid.core.terminal.window.ETerminal;
-import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.miscUtil.DataType;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
@@ -42,7 +41,7 @@ public class EMCAppTerminalCommands extends TerminalCommand {
 				
 				for (AppConfigSetting c : app.getSettings()) {
 					if (!c.getRequiresDev() || EnhancedMC.isDevMode()) {
-						if (c.getName().startsWith(input)) { options.add(c.getName()); }
+						if (c.getName().toLowerCase().startsWith(input)) { options.add(c.getName()); }
 					}
 				}
 				
@@ -164,7 +163,7 @@ public class EMCAppTerminalCommands extends TerminalCommand {
 				}
 				
 				EnumChatFormatting color = val ? EnumChatFormatting.GREEN : EnumChatFormatting.RED;
-				termIn.writeln(settingIn.getDescription() + ": " + color + val, EColors.yellow);
+				termIn.writeln(settingIn.getDescription() + ": " + color + settingIn.get(), EColors.yellow);
 				
 				EnhancedMC.reloadAllWindows();
 			}
@@ -178,7 +177,7 @@ public class EMCAppTerminalCommands extends TerminalCommand {
 	private void setSettingString(AppConfigSetting<String> settingIn, ETerminal termIn, EArrayList<String> args) {
 		if (settingIn != null) {
 			
-			String arg = args.get(1).toLowerCase();
+			String arg = args.get(1);
 			
 			boolean contains = false;
 			for (Object o : settingIn.getArgs()) {
@@ -186,7 +185,7 @@ public class EMCAppTerminalCommands extends TerminalCommand {
 			}
 			
 			if (contains) {
-				settingIn.set(EUtil.capitalFirst(arg));
+				settingIn.set(arg);
 				
 				EMCApp app = settingIn.getApp();
 				if (app != null && app.getConfig() != null) {
@@ -197,7 +196,7 @@ public class EMCAppTerminalCommands extends TerminalCommand {
 			}
 			else { termIn.error("Invalid argument given - allowed args are: " + settingIn.getArgs()); return; }
 			
-			termIn.writeln(settingIn.getDescription() + ": " + EnumChatFormatting.WHITE + EUtil.capitalFirst(args.get(1).toLowerCase()), EColors.yellow);
+			termIn.writeln(settingIn.getDescription() + ": " + EnumChatFormatting.GREEN + settingIn.get(), EColors.yellow);
 		}
 		else { termIn.error("Setting is null!"); }
 	}
@@ -224,7 +223,7 @@ public class EMCAppTerminalCommands extends TerminalCommand {
 					app.getConfig().saveMainConfig();
 				}
 				
-				termIn.writeln(settingIn.getDescription() + ": " + EnumChatFormatting.WHITE + val, EColors.yellow);
+				termIn.writeln(settingIn.getDescription() + ": " + EnumChatFormatting.GREEN + settingIn.get(), EColors.yellow);
 				
 				EnhancedMC.reloadAllWindows();
 			}
@@ -238,7 +237,7 @@ public class EMCAppTerminalCommands extends TerminalCommand {
 					app.getConfig().saveMainConfig();
 				}
 				
-				termIn.writeln(settingIn.getDescription() + ": " + EnumChatFormatting.WHITE + val, EColors.yellow);
+				termIn.writeln(settingIn.getDescription() + ": " + EnumChatFormatting.GREEN + settingIn.get(), EColors.yellow);
 			}
 			catch (Exception e) {
 				termIn.error("Failed to parse input!");

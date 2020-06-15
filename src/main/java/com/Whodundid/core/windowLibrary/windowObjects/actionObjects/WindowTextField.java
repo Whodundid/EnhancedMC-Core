@@ -88,7 +88,7 @@ public class WindowTextField extends ActionObject {
 			xOffset--;
 		}
 		
-		xOffset++;
+		//xOffset++;
 		
 		if (s.length() > 0 && hasSel && selStart < s.length()) {
 			if (drawShadowed) { xOffset = drawStringS(s.substring(selStart), xOffset, textStartY, drawColor); }
@@ -96,7 +96,9 @@ public class WindowTextField extends ActionObject {
 		}
 		
 		if (drawCursor) {
-			if (flag2) { drawRect(k1, textStartY - 1, k1 + 1, textStartY + 1 + mc.fontRendererObj.FONT_HEIGHT, -3092272); }
+			if (flag2) {
+				drawRect(k1, textStartY - 1, k1 + 1, textStartY + 1 + mc.fontRendererObj.FONT_HEIGHT, -3092272);
+			}
 			else {
 				if (drawShadowed) { drawStringS("_", k1, textStartY, drawColor); }
 				else { drawString("_", k1, textStartY, drawColor); }

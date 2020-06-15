@@ -18,6 +18,13 @@ public final class RegisteredApps {
 	private static EArrayList<EMCApp> registeredApps = new EArrayList();
 	private static EArrayList<EMCApp> incompatibleApps = new EArrayList();
 	
+	private static RegisteredApps instance = null;
+	
+	//prevent instantiation
+	private RegisteredApps() {}
+	
+	public static RegisteredApps getInstance() { return instance = (instance != null) ? instance : new RegisteredApps(); }
+	
 	//convert list object into an array structure
 	public static boolean registerApp(List<EMCApp> appsIn) {
 		if (appsIn != null && appsIn.size() > 0) {

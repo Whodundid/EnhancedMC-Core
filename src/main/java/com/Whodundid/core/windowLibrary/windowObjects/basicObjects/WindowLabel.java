@@ -59,7 +59,7 @@ public class WindowLabel extends WindowObject {
 	public WindowLabel setString(String stringIn) {
 		displayString = stringIn;
 		if (wordWrap) { wordWrappedLines = EUtil.createWordWrapString(displayString, widthMax); }
-		setDimensions(mc.fontRendererObj.getStringWidth(stringIn), mc.fontRendererObj.FONT_HEIGHT);
+		setDimensions(mc.fontRendererObj.getStringWidth(displayString), mc.fontRendererObj.FONT_HEIGHT);
 		return this;
 	}
 	
@@ -75,6 +75,9 @@ public class WindowLabel extends WindowObject {
 	public String getString() { return displayString; }
 	public int getColor() { return displayStringColor; }
 	
+	public boolean isEmpty() { return (displayString != null) ? displayString.isEmpty() : true; }
+	
+	public WindowLabel clear() { if (displayString != null) { displayString = ""; } return this; }
 	public WindowLabel setLineGapHeight(int heightIn) { gapSize = heightIn; return this; }
 	public WindowLabel setColor(int colorIn) { displayStringColor = colorIn; return this; }
 	public WindowLabel setColor(EColors colorIn) { if (colorIn != null) { displayStringColor = colorIn.c(); } return this; }
