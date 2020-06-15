@@ -58,8 +58,23 @@ public class WindowLabel extends WindowObject {
 	
 	public WindowLabel setString(String stringIn) {
 		displayString = stringIn;
-		if (wordWrap) { wordWrappedLines = EUtil.createWordWrapString(displayString, widthMax); }
-		setDimensions(mc.fontRendererObj.getStringWidth(displayString), mc.fontRendererObj.FONT_HEIGHT);
+		if (wordWrap) {
+			wordWrappedLines = EUtil.createWordWrapString(displayString, widthMax);
+			
+			int longest = 0;
+			for (String s : wordWrappedLines) {
+				int len = mc.fontRendererObj.getStringWidth(s);
+				if (len > longest) { longest = len; }
+			}
+			
+			int w = longest;
+			int h = getTextHeight();
+			
+			setDimensions(w, h);
+		}
+		else {
+			setDimensions(mc.fontRendererObj.getStringWidth(displayString), mc.fontRendererObj.FONT_HEIGHT);
+		}
 		return this;
 	}
 	
@@ -67,11 +82,11 @@ public class WindowLabel extends WindowObject {
 		boolean oldVal = wordWrap;
 		widthMax = widthMaxIn;
 		wordWrap = val;
-		if (wordWrap && wordWrap != oldVal) { wordWrappedLines = EUtil.createWordWrapString(displayString, widthMax); }
+		setString(displayString);
 		return this;
 	}
 	
-	public int getTextHeight() { return wordWrap ? (wordWrappedLines.size() * 9 + wordWrappedLines.size() * gapSize) : mc.fontRendererObj.FONT_HEIGHT; }
+	public int getTextHeight() { return wordWrap ? (wordWrappedLines.size() * mc.fontRendererObj.FONT_HEIGHT + wordWrappedLines.size() * gapSize) : mc.fontRendererObj.FONT_HEIGHT; }
 	public String getString() { return displayString; }
 	public int getColor() { return displayStringColor; }
 	

@@ -87,8 +87,8 @@ public class ETerminal extends WindowParent {
 				super.mousePressed(mXIn, mYIn, button);
 				EUtil.ifNotNullDo(getWindowParent(), w -> w.bringToFront());
 				if (button == 1) {
-					guiInstance.bringToFront();
-					guiInstance.mousePressed(mXIn, mYIn, button);
+					windowInstance.bringToFront();
+					windowInstance.mousePressed(mXIn, mYIn, button);
 					//EnhancedMC.displayWindow(new TerminalRCM((ETerminal) guiInstance), CenterType.cursorCorner);
 				}
 				else {

@@ -16,7 +16,7 @@ public abstract class ActionWindowParent extends WindowParent implements IAction
 	
 	protected ActionWindowParent(IWindowObject parentIn) {
 		actionReciever = parentIn;
-		guiInstance = this;
+		windowInstance = this;
 		objectInstance = this;
 		res = new ScaledResolution(mc);
 	}

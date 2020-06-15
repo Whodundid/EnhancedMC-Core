@@ -65,7 +65,7 @@ public class SettingsWindowMain extends WindowParent {
 			@Override
 			public void mousePressed(int mXIn, int mYIn, int button) {
 				if (button == 1) {
-					guiInstance.addObject(null, new SettingsRCM(mm, new KeyBindWindow(), "Keybinds"));
+					windowInstance.addObject(null, new SettingsRCM(mm, new KeyBindWindow(), "Keybinds"));
 				}
 				super.mousePressed(mXIn, mYIn, button);
 			}
@@ -75,7 +75,7 @@ public class SettingsWindowMain extends WindowParent {
 			@Override
 			public void mousePressed(int mXIn, int mYIn, int button) {
 				if (button == 1) {
-					guiInstance.addObject(null, new SettingsRCM(mm, new ETerminal(), "EMC Terminal"));
+					windowInstance.addObject(null, new SettingsRCM(mm, new ETerminal(), "EMC Terminal"));
 				}
 				super.mousePressed(mXIn, mYIn, button);
 			}

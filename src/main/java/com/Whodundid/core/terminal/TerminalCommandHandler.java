@@ -288,9 +288,17 @@ public class TerminalCommandHandler {
 					StorageBox<CommandType, StorageBoxHolder<String, EArrayList<TerminalCommand>>> box = sortedCommands.getBoxWithObj(c.getType());
 					if (box != null) {
 						StorageBoxHolder<String, EArrayList<TerminalCommand>> cats = box.getValue();
-						cats.getBoxWithObj(c.getCategory()).getValue().add(c);
+						StorageBox<String, EArrayList<TerminalCommand>> catBox = cats.getBoxWithObj(c.getCategory());
+						if (catBox != null) {
+							catBox.getValue().add(c);
+						}
+						else {
+							cats.add(new StorageBox(c.getCategory(), new EArrayList(c)));
+						}
 					}
-					else { sortedCommands.add(c.getType(), new StorageBoxHolder(c.getCategory(), new EArrayList(c))); }
+					else {
+						sortedCommands.add(c.getType(), new StorageBoxHolder(c.getCategory(), new EArrayList(c)));
+					}
 					it.remove();
 				}
 			}

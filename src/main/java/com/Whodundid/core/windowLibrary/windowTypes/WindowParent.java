@@ -26,7 +26,7 @@ public class WindowParent extends WindowObject implements IWindowParent, Compara
 	
 	public static int defaultWidth = 220, defaultHeight = 255;
 	
-	public WindowParent guiInstance;
+	public WindowParent windowInstance;
 	protected WindowHeader header;
 	protected boolean moveWithParent = false;
 	protected boolean pinned = false;
@@ -48,8 +48,8 @@ public class WindowParent extends WindowObject implements IWindowParent, Compara
 	
 	public WindowParent() { this(EnhancedMCRenderer.getInstance(), null); }
 	public WindowParent(Object oldGuiIn) { this(EnhancedMCRenderer.getInstance(), oldGuiIn); }
-	public WindowParent(int xPos, int yPos) { guiInstance = this; initTime = System.currentTimeMillis(); }
-	public WindowParent(int xPos, int yPos, Object oldGuiIn) { initTime = System.currentTimeMillis(); guiInstance = this; pullHistoryFrom(oldGuiIn); }
+	public WindowParent(int xPos, int yPos) { windowInstance = this; initTime = System.currentTimeMillis(); }
+	public WindowParent(int xPos, int yPos, Object oldGuiIn) { initTime = System.currentTimeMillis(); windowInstance = this; pullHistoryFrom(oldGuiIn); }
 	public WindowParent(IWindowObject parentIn) { this(parentIn, null); }
 	public WindowParent(IWindowObject parentIn, Object oldGuiIn) { initTime = System.currentTimeMillis(); initDefaultPos(parentIn); pullHistoryFrom(oldGuiIn); }
 	public WindowParent(IWindowObject parentIn, int xPos, int yPos) { this(parentIn, xPos, yPos, null); }
@@ -59,7 +59,7 @@ public class WindowParent extends WindowObject implements IWindowParent, Compara
 		initTime = System.currentTimeMillis();
 		init(parentIn, xIn, yIn, widthIn, heightIn);
 		pullHistoryFrom(oldGuiIn);
-		guiInstance = this;
+		windowInstance = this;
 		preMaxFull = new EDimension(xIn, yIn, widthIn, heightIn);
 	}
 	
@@ -290,12 +290,12 @@ public class WindowParent extends WindowObject implements IWindowParent, Compara
 	
 	private void initDefaultPos(IWindowObject parentIn) {
 		init(parentIn);
-		guiInstance = this;
+		windowInstance = this;
 	}
 	
 	private void initDefaultDims(IWindowObject parentIn, int xPos, int yPos) {
 		init(parentIn, xPos, yPos, defaultWidth, defaultHeight);
-		guiInstance = this;
+		windowInstance = this;
 	}
 	
 	private void pullHistoryFrom(Object objectIn) {

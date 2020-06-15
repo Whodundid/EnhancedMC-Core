@@ -63,8 +63,8 @@ public class AppInfoWindow extends WindowParent {
 		
 		logoWidth = MathHelper.clamp_int(logoWidth, 0, (height + 6) / 2);
 		
-		reloadButton = new WindowButton(this, midX - btnWidth - (width / 16), endY - 26, btnWidth, 20, "Rebuild");
-		okButton = new WindowButton(this, midX + (width / 16), endY - 26, btnWidth, 20, "Ok");
+		reloadButton = new WindowButton(this, midX + (width / 16), endY - 26, btnWidth, 20, "Rebuild");
+		okButton = new WindowButton(this, midX - btnWidth - (width / 16), endY - 26, btnWidth, 20, "Ok");
 		
 		logoBox = new WindowImageBox(this, endX - 6 - logoWidth, topLine.endY + 5, logoWidth, logoWidth);
 		logoBox.setImages(app);

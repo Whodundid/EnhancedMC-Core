@@ -42,8 +42,8 @@ public class WindowDialogueBox extends WindowParent {
 				int bw = MathHelper.clamp_int((width - 10) / 3, 0, 140);
 				int g = width / 30;
 				
-				no = new WindowButton(this, midX - g - bw, endY - 30, bw, 20, "No");
-				yes = new WindowButton(this, midX + g, endY - 30, bw, 20, "Yes");
+				yes = new WindowButton(this, midX - g - bw, endY - 30, bw, 20, "Yes");
+				no = new WindowButton(this, midX + g, endY - 30, bw, 20, "No");
 				
 				no.setStringColor(EColors.yellow);
 				yes.setStringColor(EColors.lgreen);
