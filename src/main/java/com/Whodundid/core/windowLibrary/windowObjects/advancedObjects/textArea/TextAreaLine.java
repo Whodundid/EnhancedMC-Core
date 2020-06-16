@@ -218,6 +218,8 @@ public class TextAreaLine<obj> extends WindowTextField {
 			}
 		}
 		catch (Exception e) { e.printStackTrace(); }
+		
+		parentTextArea.mousePressed(mX, mY, button);
 	}
 	
 	@Override

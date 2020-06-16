@@ -73,8 +73,7 @@ public class ETerminal extends WindowParent {
 	
 	@Override
 	public void initWindow() {
-		String chat = " " + EnumChatFormatting.YELLOW + EnumChatFormatting.BOLD + " Chat";
-		setObjectName("EMC Terminal" + (EnhancedMC.isDevMode() ? " +" : "") + (isChat ? chat : ""));
+		updateObjectName();
 		setDimensions(300, 153);
 		setMinDims(70, 32);
 		setResizeable(true);
@@ -723,8 +722,7 @@ public class ETerminal extends WindowParent {
 		boolean old = isChat;
 		isChat = val;
 		
-		String chat = " " + EnumChatFormatting.YELLOW + EnumChatFormatting.BOLD + " Chat";
-		setObjectName("EMC Terminal" + (EnhancedMC.isDevMode() ? " +" : "") + (isChat ? chat : ""));
+		updateObjectName();
 		
 		if (isInit()) {
 			clear();
@@ -759,6 +757,11 @@ public class ETerminal extends WindowParent {
 		}
 		
 		return this;
+	}
+	
+	public void updateObjectName() {
+		String chat = " " + EnumChatFormatting.YELLOW + EnumChatFormatting.BOLD + " Chat";
+		setObjectName("EMC Terminal" + (EnhancedMC.isDevMode() ? " +" : "") + (isChat ? chat : ""));
 	}
 	
 	public ETerminal setDir(File dirIn) { dir = dirIn; return this; }

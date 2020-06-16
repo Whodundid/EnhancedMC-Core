@@ -89,7 +89,7 @@ public class DebugFunctions {
 	public static int getTotal() { return IDebugCommand.values().length; }
 
 	private static void debug_0(ETerminal termIn, String... args) throws Throwable {
-		System.out.println("is remote: " + mc.theWorld.isRemote);
+		
 	}
 	
 	private static void debug_1(ETerminal termIn, String... args) throws Throwable {

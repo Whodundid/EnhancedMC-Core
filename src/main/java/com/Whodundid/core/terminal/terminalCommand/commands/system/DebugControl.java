@@ -23,7 +23,7 @@ public class DebugControl extends TerminalCommand {
 	@Override public boolean showInHelp() { return false; }
 	@Override public EArrayList<String> getAliases() { return new EArrayList<String>("deb", "dev"); }
 	@Override public String getHelpInfo(boolean runVisually) { return "Toggles debug mode for EMC."; }
-	@Override public String getUsage() { return "ex: deb | deb 0"; }
+	@Override public String getUsage() { return "ex: deb init"; }
 	
 	@Override
 	public void handleTabComplete(ETerminal termIn, EArrayList<String> args) {
@@ -95,7 +95,7 @@ public class DebugControl extends TerminalCommand {
 						}
 					}
 				}
-				else {
+				else if (EnhancedMC.isUserDev() || EnhancedMC.isDevMode() || EnhancedMC.isDebugMode()) {
 					try {
 						int v = Integer.parseInt(args.get(0));
 						if (v < 0 || v >= DebugFunctions.getTotal()) { termIn.error("Command number " + args.get(0) + " out of range!"); }
@@ -119,6 +119,9 @@ public class DebugControl extends TerminalCommand {
 						termIn.error("Error: No debug value found for input!");
 						error(termIn, e);
 					}
+				}
+				else {
+					termIn.error("Invalid argument!");
 				}
 			}
 			catch (Exception e) {
