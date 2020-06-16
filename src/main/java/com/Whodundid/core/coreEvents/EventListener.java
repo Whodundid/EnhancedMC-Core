@@ -2,6 +2,7 @@ package com.Whodundid.core.coreEvents;
 
 import com.Whodundid.core.coreEvents.emcEvents.ChatLineCreatedEvent;
 import com.Whodundid.core.coreEvents.emcEvents.EMCAppCalloutEvent;
+import com.Whodundid.core.coreEvents.emcEvents.GameWindowResizedEvent;
 import com.Whodundid.core.coreEvents.emcEvents.RendererRCMOpenEvent;
 import com.Whodundid.core.coreEvents.emcEvents.TabCompletionEvent;
 import com.Whodundid.core.coreEvents.emcEvents.WindowClosedEvent;
@@ -97,6 +98,7 @@ public class EventListener {
 	@SubscribeEvent public void eventAppCallout(EMCAppCalloutEvent e) { distributeEvent(EMCEvents.appCallout, e); }
 	@SubscribeEvent public void eventWindowOpened(WindowOpenedEvent e) { distributeEvent(EMCEvents.windowOpened, e); }
 	@SubscribeEvent public void eventWindowOpened(WindowClosedEvent e) { distributeEvent(EMCEvents.windowClosed, e); }
+	@SubscribeEvent public void eventGameWindowResized(GameWindowResizedEvent e) { distributeEvent(EMCEvents.gameWindowResized, e); }
 	
 	//-----------
 	//distributor

@@ -8,6 +8,7 @@ import com.Whodundid.core.app.config.AppConfigFile;
 import com.Whodundid.core.app.config.AppConfigSetting;
 import com.Whodundid.core.coreApp.settings.EnableTaskBarSetting;
 import com.Whodundid.core.coreApp.window.CoreAppSettingsWindow;
+import com.Whodundid.core.coreEvents.emcEvents.ChatLineCreatedEvent;
 import com.Whodundid.core.coreEvents.emcEvents.TabCompletionEvent;
 import com.Whodundid.core.coreEvents.emcEvents.WindowClosedEvent;
 import com.Whodundid.core.coreEvents.emcEvents.WindowOpenedEvent;
@@ -26,6 +27,7 @@ import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.terminal.window.TerminalOptionsWindow;
 import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.chatUtil.EChatUtil;
+import com.Whodundid.core.util.chatUtil.TimedChatLine;
 import com.Whodundid.core.util.hypixel.HypixelData;
 import com.Whodundid.core.util.mathUtil.NumberUtil;
 import com.Whodundid.core.util.miscUtil.EMouseHelper;
@@ -84,6 +86,7 @@ public class CoreApp extends EMCApp {
 	
 	//visual
 	public static final AppConfigSetting<Boolean> customCursors = new AppConfigSetting(Boolean.class, "customCursors", "Use Custom Cursors", true);
+	public static final AppConfigSetting<Integer> hoverTextColor = new AppConfigSetting(Integer.class, "hoverTextColor", "Text Hover Color", EColors.aquamarine.intVal);
 	
 	//debug
 	public static final AppConfigSetting<Boolean> enableTerminal = new AppConfigSetting(Boolean.class, "enableTerminal", "Enable Terminal", false);
@@ -126,6 +129,10 @@ public class CoreApp extends EMCApp {
 	private boolean recheckSent = false;
 	public static String debugCode = "";
 	
+	private static EArrayList<ETerminal> termsToAdd = new EArrayList();
+	private static EArrayList<ETerminal> termsToRemove = new EArrayList();
+	private static EArrayList<ETerminal> chatTerminals = new EArrayList();
+	
 	//-------------------
 	//CoreApp Constructor
 	//-------------------
@@ -141,7 +148,7 @@ public class CoreApp extends EMCApp {
 		version = EnhancedMC.VERSION;
 		author = "Whodundid";
 		artist = "Mr.JamminOtter";
-		versionDate = "June 13, 2020";
+		versionDate = "June 15, 2020";
 		donation = new StorageBox("Consider donating to support EMC development!", "https://www.paypal.me/Whodundid");
 		isDisableable = false;
 		setEnabled(true);
@@ -163,7 +170,7 @@ public class CoreApp extends EMCApp {
 		
 		registerSetting(closeHudWhenEmpty, hudCloseMethod, drawChatOnHud, drawHudBorder, drawCrossHairsHud);
 		registerSetting(enableTaskBar);
-		registerSetting(customCursors);
+		registerSetting(customCursors, hoverTextColor);
 		registerSetting(enableTerminal, termBackground, showIncompats, enableTextDrawer);
 		registerSetting(enableBlockDrawer, worldEditVisual, debugVal, drawHiddenPlayers);
 		registerSetting(firstUse, openedTut);
@@ -186,6 +193,15 @@ public class CoreApp extends EMCApp {
 		EnhancedMC.getNotificationHandler().update();
 		EUtil.update();
 		ServerConnector.update();
+		
+		if (termsToAdd.isNotEmpty()) {
+			chatTerminals.addAll(termsToAdd);
+			termsToAdd.clear();
+		}
+		if (termsToRemove.isNotEmpty()) {
+			chatTerminals.removeAll(termsToRemove);
+			termsToRemove.clear();
+		}
 		
 		//update counter
 		if (EnhancedMC.updateCounter == Integer.MAX_VALUE) {
@@ -252,6 +268,21 @@ public class CoreApp extends EMCApp {
 	@Override public void tabCompletionEvent(TabCompletionEvent e) { EChatUtil.onTabComplete(e.getCompletion()); }
 	@Override public void worldLoadServerEvent(WorldEvent.Load e) { CursorHelper.reset(); }
 	@Override public void worldLoadClientEvent(WorldEvent.Load e) { CursorHelper.reset(); }
+	
+	@Override
+	public void chatLineCreatedEvent(ChatLineCreatedEvent e) {
+		if (e != null) {
+			TimedChatLine line = e.getLine();
+			
+			//record
+			EChatUtil.onTimedChatLine(line);
+			
+			//send to terminals
+			for (ETerminal t : chatTerminals) {
+				t.onChat(line);
+			}
+		}
+	}
 	
 	@Override
 	public void serverJoinEvent(EntityJoinWorldEvent e) {
@@ -368,6 +399,16 @@ public class CoreApp extends EMCApp {
 		}
 	}
 	
+	public CoreApp registerChatTerminal(ETerminal termIn) {
+		termsToAdd.add(termIn);
+		return this;
+	}
+	
+	public CoreApp unregisterChatTerminal(ETerminal termIn) {
+		termsToRemove.add(termIn);
+		return this;
+	}
+	
 	public CoreApp requestHypixelData(ETerminal termIn) {
 		if (mc.thePlayer != null) {
 			mc.thePlayer.sendChatMessage("/locraw");
@@ -376,6 +417,8 @@ public class CoreApp extends EMCApp {
 		}
 		return this;
 	}
+	
+	public HypixelData getHypixelData() { return curHypixelData; }
 	
 	private void debug() {
 		EArrayList<String> codes = new EArrayList();
@@ -508,7 +551,5 @@ public class CoreApp extends EMCApp {
 		debugVal.set(fdslk2j3ajdfjlskk323jlbjas);
 		debugCode = lkfjdslka3lk4j2l3kjlkasjdl;
 	}
-	
-	public HypixelData getHypixelData() { return curHypixelData; }
 	
 }

@@ -61,6 +61,7 @@ public class WindowObjectS extends EGui {
 		}
 		else { CursorHelper.updateCursor(null); }
 	}
+	
 	public static void onMouseHover(IWindowObject obj, int mX, int mY, String hoverText, int textColor) {
 		if (hoverText != null && !hoverText.isEmpty()) {
 			ScaledResolution res = new ScaledResolution(mc);

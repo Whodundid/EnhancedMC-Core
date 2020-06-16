@@ -142,16 +142,15 @@ public class RendererProxyGui extends GuiChat implements IRendererProxy {
 				
 			}
 		}
-		else {
-			if (renderer.getObjects().size() == 0) {
-				int x = width / 2;
-				int y = height - height / 7;
-				String str = "EMC Hud: " + EnumChatFormatting.AQUA + "No currently open windows..";
-				int len = fontRendererObj.getStringWidth(str);
-				GLObject.drawRect(x - len / 2 - 5, y - 5, x + len / 2 + 5, y + 13, EColors.black);
-				GLObject.drawRect(x - len / 2 - 4, y - 4, x + len / 2 + 4, y + 12, EColors.steel);
-				GLObject.drawStringCS(str, x, y, EColors.orange);
-			}
+		
+		if (renderer.getObjects().size() == 0 || (CoreApp.enableTaskBar.get() && EnhancedMC.getAllActiveWindows().isEmpty())) {
+			int x = width / 2;
+			int y = height - height / 7;
+			String str = "EMC Hud: " + EnumChatFormatting.AQUA + "No currently open windows..";
+			int len = fontRendererObj.getStringWidth(str);
+			GLObject.drawRect(x - len / 2 - 5, y - 5, x + len / 2 + 5, y + 13, EColors.black);
+			GLObject.drawRect(x - len / 2 - 4, y - 4, x + len / 2 + 4, y + 12, EColors.steel);
+			GLObject.drawStringCS(str, x, y, EColors.orange);
 		}
 		
 	}

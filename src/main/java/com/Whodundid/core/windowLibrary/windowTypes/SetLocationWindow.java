@@ -8,29 +8,29 @@ import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IWindowObject;
 
 //Author: Hunter Bragg
 
-public abstract class SetLocationGui extends WindowParent {
+public abstract class SetLocationWindow extends OverlayWindow {
 	
 	protected StorageBoxHolder<IWindowObject, Boolean> previousStates = new StorageBoxHolder();
 	
-	protected SetLocationGui hideAllOnRenderer(IWindowObject... exceptionsIn) {
+	protected SetLocationWindow hideAllOnRenderer(IWindowObject... exceptionsIn) {
 		previousStates.clear();
 		EArrayList exceptions = new EArrayList().addA(exceptionsIn);
 		
 		for (IWindowObject o : EnhancedMCRenderer.getInstance().getAllChildren()) {
 			if (o.isPersistent()) { continue; }
-			previousStates.add(o, o.isVisible());
+			previousStates.add(o, !o.isHidden());
 		}
 		
-		previousStates.getObjects().stream().filter(o -> exceptions.notContains(o)).forEach(o -> o.setVisible(false));
+		previousStates.getObjects().stream().filter(o -> exceptions.notContains(o)).forEach(o -> o.setHidden(true));
 		
 		return this;
 	}
 	
-	protected SetLocationGui unideAllOnRenderer(IWindowObject... exceptionsIn) {
+	protected SetLocationWindow unideAllOnRenderer(IWindowObject... exceptionsIn) {
 		EArrayList exceptions = new EArrayList().addA(exceptionsIn);
 		
 		for (StorageBox<IWindowObject, Boolean> b : previousStates) {
-			if (exceptions.notContains(b.getObject())) { b.getObject().setVisible(b.getValue()); }
+			if (exceptions.notContains(b.getObject())) { b.getObject().setHidden(!b.getValue()); }
 		}
 		
 		return this;

@@ -20,10 +20,10 @@ import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IWindowObject;
 public class ColorPickerSimple extends ActionWindowParent {
 	
 	//color buttons
-	ColorButton lred, red, maroon, brown, dorange, borange, orange, lorange, yellow;
-	ColorButton lime, green, lgreen, dgreen, seafoam, turquoise, aquamarine;
-	ColorButton cyan, skyblue, blue, regal, grape, navy, violet, eggplant, purple, magenta, pink, hotpink;
-	ColorButton white, lgray, gray, mgray, dgray, pdgray, steel, dsteel, vdgray, black;
+	ColorPickerButton lred, red, maroon, brown, dorange, borange, orange, lorange, yellow;
+	ColorPickerButton lime, green, lgreen, dgreen, seafoam, turquoise, aquamarine;
+	ColorPickerButton cyan, skyblue, blue, regal, grape, navy, violet, eggplant, purple, magenta, pink, hotpink;
+	ColorPickerButton white, lgray, gray, mgray, dgray, pdgray, steel, dsteel, vdgray, black;
 	
 	//functional objects
 	WindowTextField inputField;
@@ -72,50 +72,50 @@ public class ColorPickerSimple extends ActionWindowParent {
 		int w = 11;
 		int h = 11;
 		
-		lred = new ColorButton(this, colorContainer.startX + 5, y, w, h, EColors.lred);
-		red = new ColorButton(this, lred.endX + 1, y, w, h, EColors.red);
-		maroon = new ColorButton(this, red.endX + 1, y, w, h, EColors.maroon);
-		brown = new ColorButton(this, maroon.endX + 1, y, w, h, EColors.brown);
-		dorange = new ColorButton(this, brown.endX + 1, y, w, h, EColors.dorange);
-		borange = new ColorButton(this, dorange.endX + 1, y, w, h, EColors.borange);
-		orange = new ColorButton(this, borange.endX + 1, y, w, h, EColors.orange);
-		lorange = new ColorButton(this, orange.endX + 1, y, w, h, EColors.lorange);
-		yellow = new ColorButton(this, lorange.endX + 1, y, w, h, EColors.yellow);
-		lime = new ColorButton(this, yellow.endX + 1, y, w, h, EColors.lime);
-		green = new ColorButton(this, lime.endX + 1, y, w, h, EColors.green);
-		seafoam = new ColorButton(this, green.endX + 1, y, w, h, EColors.seafoam);
-		lgreen = new ColorButton(this, seafoam.endX + 1, y, w, h, EColors.lgreen);
-		dgreen = new ColorButton(this, lgreen.endX + 1, y, w, h, EColors.dgreen);
-		turquoise = new ColorButton(this, dgreen.endX + 1, y, w, h, EColors.turquoise);
-		aquamarine = new ColorButton(this, turquoise.endX + 1, y, w, h, EColors.aquamarine);
+		lred = new ColorPickerButton(this, colorContainer.startX + 5, y, w, h, EColors.lred);
+		red = new ColorPickerButton(this, lred.endX + 1, y, w, h, EColors.red);
+		maroon = new ColorPickerButton(this, red.endX + 1, y, w, h, EColors.maroon);
+		brown = new ColorPickerButton(this, maroon.endX + 1, y, w, h, EColors.brown);
+		dorange = new ColorPickerButton(this, brown.endX + 1, y, w, h, EColors.dorange);
+		borange = new ColorPickerButton(this, dorange.endX + 1, y, w, h, EColors.borange);
+		orange = new ColorPickerButton(this, borange.endX + 1, y, w, h, EColors.orange);
+		lorange = new ColorPickerButton(this, orange.endX + 1, y, w, h, EColors.lorange);
+		yellow = new ColorPickerButton(this, lorange.endX + 1, y, w, h, EColors.yellow);
+		lime = new ColorPickerButton(this, yellow.endX + 1, y, w, h, EColors.lime);
+		green = new ColorPickerButton(this, lime.endX + 1, y, w, h, EColors.green);
+		seafoam = new ColorPickerButton(this, green.endX + 1, y, w, h, EColors.seafoam);
+		lgreen = new ColorPickerButton(this, seafoam.endX + 1, y, w, h, EColors.lgreen);
+		dgreen = new ColorPickerButton(this, lgreen.endX + 1, y, w, h, EColors.dgreen);
+		turquoise = new ColorPickerButton(this, dgreen.endX + 1, y, w, h, EColors.turquoise);
+		aquamarine = new ColorPickerButton(this, turquoise.endX + 1, y, w, h, EColors.aquamarine);
 		
 		int y1 = lred.endY + 1;
 		
-		cyan = new ColorButton(this, maroon.startX, y1, w, h, EColors.cyan);
-		skyblue = new ColorButton(this, cyan.endX + 1, y1, w, h, EColors.skyblue);
-		blue = new ColorButton(this, skyblue.endX + 1, y1, w, h, EColors.blue);
-		regal = new ColorButton(this, blue.endX + 1, y1, w, h, EColors.regal);
-		grape = new ColorButton(this, regal.endX + 1, y1, w, h, EColors.grape);
-		navy = new ColorButton(this, grape.endX + 1, y1, w, h, EColors.navy);
-		violet = new ColorButton(this, navy.endX + 1, y1, w, h, EColors.violet);
-		eggplant = new ColorButton(this, violet.endX + 1, y1, w, h, EColors.eggplant);
-		purple = new ColorButton(this, eggplant.endX + 1, y1, w, h, EColors.purple);
-		pink = new ColorButton(this, purple.endX + 1, y1, w, h, EColors.pink);
-		hotpink = new ColorButton(this, pink.endX + 1, y1, w, h, EColors.hotpink);
-		magenta = new ColorButton(this, hotpink.endX + 1, y1, w, h, EColors.magenta);
+		cyan = new ColorPickerButton(this, maroon.startX, y1, w, h, EColors.cyan);
+		skyblue = new ColorPickerButton(this, cyan.endX + 1, y1, w, h, EColors.skyblue);
+		blue = new ColorPickerButton(this, skyblue.endX + 1, y1, w, h, EColors.blue);
+		regal = new ColorPickerButton(this, blue.endX + 1, y1, w, h, EColors.regal);
+		grape = new ColorPickerButton(this, regal.endX + 1, y1, w, h, EColors.grape);
+		navy = new ColorPickerButton(this, grape.endX + 1, y1, w, h, EColors.navy);
+		violet = new ColorPickerButton(this, navy.endX + 1, y1, w, h, EColors.violet);
+		eggplant = new ColorPickerButton(this, violet.endX + 1, y1, w, h, EColors.eggplant);
+		purple = new ColorPickerButton(this, eggplant.endX + 1, y1, w, h, EColors.purple);
+		pink = new ColorPickerButton(this, purple.endX + 1, y1, w, h, EColors.pink);
+		hotpink = new ColorPickerButton(this, pink.endX + 1, y1, w, h, EColors.hotpink);
+		magenta = new ColorPickerButton(this, hotpink.endX + 1, y1, w, h, EColors.magenta);
 		
 		int y2 = navy.endY + 5;
 		
-		white = new ColorButton(this, brown.startX, y2, w, h, EColors.white);
-		lgray = new ColorButton(this, white.endX + 1, y2, w, h, EColors.lgray);
-		gray = new ColorButton(this, lgray.endX + 1, y2, w, h, EColors.gray);
-		mgray = new ColorButton(this, gray.endX + 1, y2, w, h, EColors.mgray);
-		dgray = new ColorButton(this, mgray.endX + 1, y2, w, h, EColors.dgray);
-		pdgray = new ColorButton(this, dgray.endX + 1, y2, w, h, EColors.pdgray);
-		steel = new ColorButton(this, pdgray.endX + 1, y2, w, h, EColors.steel);
-		dsteel = new ColorButton(this, steel.endX + 1, y2, w, h, EColors.dsteel);
-		vdgray = new ColorButton(this, dsteel.endX + 1, y2, w, h, EColors.vdgray);
-		black = new ColorButton(this, vdgray.endX + 1, y2, w, h, EColors.black);
+		white = new ColorPickerButton(this, brown.startX, y2, w, h, EColors.white);
+		lgray = new ColorPickerButton(this, white.endX + 1, y2, w, h, EColors.lgray);
+		gray = new ColorPickerButton(this, lgray.endX + 1, y2, w, h, EColors.gray);
+		mgray = new ColorPickerButton(this, gray.endX + 1, y2, w, h, EColors.mgray);
+		dgray = new ColorPickerButton(this, mgray.endX + 1, y2, w, h, EColors.dgray);
+		pdgray = new ColorPickerButton(this, dgray.endX + 1, y2, w, h, EColors.pdgray);
+		steel = new ColorPickerButton(this, pdgray.endX + 1, y2, w, h, EColors.steel);
+		dsteel = new ColorPickerButton(this, steel.endX + 1, y2, w, h, EColors.dsteel);
+		vdgray = new ColorPickerButton(this, dsteel.endX + 1, y2, w, h, EColors.vdgray);
+		black = new ColorPickerButton(this, vdgray.endX + 1, y2, w, h, EColors.black);
 		
 		//create manual color input field & label
 		WindowContainer inputContainer = new WindowContainer(this, startX + 5, colorContainer.endY + 2, width - 10, 41);
@@ -171,8 +171,8 @@ public class ColorPickerSimple extends ActionWindowParent {
 	
 	@Override
 	public void actionPerformed(IActionObject object, Object... args) {
-		if (object instanceof ColorButton) {
-			ColorButton b = (ColorButton) object;
+		if (object instanceof ColorPickerButton) {
+			ColorPickerButton b = (ColorPickerButton) object;
 			
 			if (args.length > 0 && args[0] instanceof String) {
 				String val = (String) args[0];

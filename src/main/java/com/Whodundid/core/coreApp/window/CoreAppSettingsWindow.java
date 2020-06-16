@@ -13,9 +13,11 @@ import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.windowLibrary.windowObjects.actionObjects.WindowButton;
 import com.Whodundid.core.windowLibrary.windowObjects.actionObjects.WindowButton3Stage;
+import com.Whodundid.core.windowLibrary.windowObjects.advancedObjects.colorPicker.ColorPickerSimple;
 import com.Whodundid.core.windowLibrary.windowObjects.advancedObjects.scrollList.WindowScrollList;
 import com.Whodundid.core.windowLibrary.windowObjects.basicObjects.WindowLabel;
 import com.Whodundid.core.windowLibrary.windowObjects.basicObjects.WindowRect;
+import com.Whodundid.core.windowLibrary.windowObjects.utilityObjects.ColorButton;
 import com.Whodundid.core.windowLibrary.windowObjects.windows.TutorialWindow;
 import com.Whodundid.core.windowLibrary.windowTypes.WindowParent;
 import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IActionObject;
@@ -43,6 +45,7 @@ public class CoreAppSettingsWindow extends WindowParent {
 	
 	//visual
 	public WindowButton drawCustomCursors;
+	public ColorButton hoverTextColor;
 	
 	//debug
 	public WindowButton showIncompats, showTerminal;
@@ -110,6 +113,14 @@ public class CoreAppSettingsWindow extends WindowParent {
 	public void actionPerformed(IActionObject object, Object... args) {
 		boolean rel = dontReloadWindows ? false : true;
 		
+		if (object instanceof ColorPickerSimple) {
+			ColorPickerSimple cp = (ColorPickerSimple) object;
+			
+			if (cp.getStoredObject() instanceof String && args.length == 1 && args[0] instanceof Integer) {
+				if ("hover".equals(cp.getStoredObject())) { CoreApp.hoverTextColor.set((int) args[0]); hoverTextColor.setColor(CoreApp.hoverTextColor.get()); }
+			}
+		}
+		
 		//menus
 		if (object == tutorial) { EnhancedMC.displayWindow(new TutorialWindow()); }
 		if (object == notifications) { EnhancedMC.displayWindow(new NotificationWindow(), this, CenterType.object); }
@@ -124,6 +135,13 @@ public class CoreAppSettingsWindow extends WindowParent {
 		if (object == enableTaskbar) { enableTaskbar.toggleTrueFalse(app.enableTaskBar, app, true, false); }
 		//visual
 		if (object == drawCustomCursors) { drawCustomCursors.toggleTrueFalse(app.customCursors, app, true, false); }
+		if (object == hoverTextColor) {
+			ColorPickerSimple cp = new ColorPickerSimple(this, CoreApp.hoverTextColor.get());
+			EnhancedMC.displayWindow(cp);
+			cp.getHeader().setTitle("Set Hover Text Color");
+			EnhancedMC.getRenderer().setFocusLockObject(cp);
+			cp.setStoredObject("hover");
+		}
 		//debug
 		if (object == showTerminal) { showTerminal.toggleTrueFalse(app.enableTerminal, app, true, rel); }
 		if (object == showIncompats) { showIncompats.toggleTrueFalse(app.showIncompats, app, true, rel); }
@@ -204,19 +222,19 @@ public class CoreAppSettingsWindow extends WindowParent {
 		WindowRect divider1 = new WindowRect(list, 0, yPos + 1, list.getDimensions().endX, yPos + 15, EColors.dsteel);
 		
 		closeHudEmpty = new WindowButton(list, ld.midX - 100, hudLabel.endY + 10, 60, 20, CoreApp.closeHudWhenEmpty);
-		WindowLabel closeEmptyLabel = new WindowLabel(list, closeHudEmpty.endX + 10, closeHudEmpty.startY + 6, "Close Hud when Empty");
+		WindowLabel closeEmptyLabel = new WindowLabel(list, closeHudEmpty.endX + 10, closeHudEmpty.startY + 6, "Close Hud when Empty", EColors.lgray);
 		
 		hudCloseMethod = new WindowButton3Stage(list, ld.midX - 100, closeHudEmpty.endY + 6, 60, 20, CoreApp.hudCloseMethod, EColors.yellow.intVal);
-		WindowLabel hudCloseMethodLabel = new WindowLabel(list, hudCloseMethod.endX + 10, hudCloseMethod.startY + 6, "Hud Close Method");
+		WindowLabel hudCloseMethodLabel = new WindowLabel(list, hudCloseMethod.endX + 10, hudCloseMethod.startY + 6, "Hud Close Method", EColors.lgray);
 		
 		drawChat = new WindowButton3Stage(list, ld.midX - 100, hudCloseMethod.endY + 6, 60, 20, CoreApp.drawChatOnHud, EColors.yellow.intVal);
-		WindowLabel drawChatLabel = new WindowLabel(list, drawChat.endX + 10, drawChat.startY + 6, "Draw Chat on Hud");
+		WindowLabel drawChatLabel = new WindowLabel(list, drawChat.endX + 10, drawChat.startY + 6, "Draw Chat on Hud", EColors.lgray);
 		
 		drawProxyBorder = new WindowButton(list, ld.midX - 100, drawChat.endY + 6, 60, 20, CoreApp.drawHudBorder);
-		WindowLabel drawProxyBorderLabel = new WindowLabel(list, drawProxyBorder.endX + 10, drawProxyBorder.startY + 6, "Draw Hud Border");
+		WindowLabel drawProxyBorderLabel = new WindowLabel(list, drawProxyBorder.endX + 10, drawProxyBorder.startY + 6, "Draw Hud Border", EColors.lgray);
 		
 		drawCrossHairs = new WindowButton(list, ld.midX - 100, drawProxyBorder.endY + 6, 60, 20, CoreApp.drawCrossHairsHud);
-		WindowLabel drawCrossHairsLabel = new WindowLabel(list, drawCrossHairs.endX + 10, drawCrossHairs.startY + 6, "Draw Crosshairs on Hud");
+		WindowLabel drawCrossHairsLabel = new WindowLabel(list, drawCrossHairs.endX + 10, drawCrossHairs.startY + 6, "Draw Crosshairs on Hud", EColors.lgray);
 		
 		//set values
 		
@@ -227,8 +245,6 @@ public class CoreAppSettingsWindow extends WindowParent {
 		setHoverText("Determines how chat messages are drawn when the hud is open.", drawChat, drawChatLabel);
 		setHoverText("Draws a red border on the screen whenever the EMC hud is open.", drawProxyBorder, drawProxyBorderLabel);
 		setHoverText("Determines if Minecraft crosshairs will draw when the hud is open.", drawCrossHairs, drawCrossHairsLabel);
-		
-		WindowLabel.setColor(0xb2b2b2, closeEmptyLabel, hudCloseMethodLabel, drawChatLabel, drawProxyBorderLabel, drawCrossHairsLabel);
 		
 		//add objects
 		
@@ -250,7 +266,7 @@ public class CoreAppSettingsWindow extends WindowParent {
 		WindowRect divider1 = new WindowRect(list, 0, yPos + 1, list.getDimensions().endX, yPos + 15, EColors.dsteel);
 		
 		enableTaskbar = new WindowButton(list, ld.midX - 100, taskbarLabel.endY + 10, 60, 20, CoreApp.enableTaskBar);
-		WindowLabel enableTaskbarLabel = new WindowLabel(this, enableTaskbar.endX + 10, enableTaskbar.startY + 6, "Enable Taskbar");
+		WindowLabel enableTaskbarLabel = new WindowLabel(this, enableTaskbar.endX + 10, enableTaskbar.startY + 6, "Enable Taskbar", EColors.lgray);
 		
 		WindowRect back = new WindowRect(list, 0, yPos + 16, list.getDimensions().endX, enableTaskbar.endY + 7, 0xff202020);
 		back.setClickable(false);
@@ -259,7 +275,6 @@ public class CoreAppSettingsWindow extends WindowParent {
 		
 		enableTaskbar.setActionReceiver(this);
 		setHoverText("Enables a taskbar which displays currently running windows.", enableTaskbar, enableTaskbarLabel);
-		enableTaskbarLabel.setColor(0xb2b2b2);
 		
 		//add objects
 		
@@ -277,16 +292,21 @@ public class CoreAppSettingsWindow extends WindowParent {
 		WindowRect divider1 = new WindowRect(list, 0, yPos + 1, list.getDimensions().endX, yPos + 15, EColors.dsteel);
 		
 		drawCustomCursors = new WindowButton(list, ld.midX - 100, visualLabel.endY + 10, 60, 20, CoreApp.customCursors);
-		WindowLabel drawCustomCursorsLabel = new WindowLabel(this, drawCustomCursors.endX + 10, drawCustomCursors.startY + 6, "Draw Custom Cursors");
+		WindowLabel drawCustomCursorsLabel = new WindowLabel(this, drawCustomCursors.endX + 10, drawCustomCursors.startY + 6, "Draw Custom Cursors", EColors.lgray);
 		
-		drawCustomCursors.setActionReceiver(this);
+		hoverTextColor = new ColorButton(list, ld.midX - 100, drawCustomCursors.endY + 6, 20, 20, CoreApp.hoverTextColor.get());
+		WindowLabel hoverTextLabel = new WindowLabel(list, hoverTextColor.endX + 10, hoverTextColor.startY + 6, "Text Hover Color", EColors.lgray);
+		
+		IActionObject.setActionReceiver(this, drawCustomCursors, hoverTextColor);
+		
 		setHoverText("Allows the cursor to change its appearance based off of what it is hovering over.", drawCustomCursors, drawCustomCursorsLabel);
-		drawCustomCursorsLabel.setColor(0xb2b2b2);
+		setHoverText("The color that [this] hovering text will be drawn with.", hoverTextColor, hoverTextLabel);
 		
 		list.addAndIgnore(labelBack, divider1, visualLabel);
 		list.addObjectToList(drawCustomCursors, drawCustomCursorsLabel);
+		list.addObjectToList(hoverTextColor, hoverTextLabel);
 		
-		return (drawCustomCursors.endY + 7) - list.getDimensions().startY;
+		return (hoverTextColor.endY + 7) - list.getDimensions().startY;
 	}
 	
 	private int addDebug(int yPos) {
@@ -302,7 +322,7 @@ public class CoreAppSettingsWindow extends WindowParent {
 		showIncompats = new WindowButton(list, ld.midX - 100, showTerminal.endY + 6, 60, 20, CoreApp.showIncompats);
 		WindowLabel incompatLabel = new WindowLabel(list, showIncompats.endX + 10, showIncompats.startY + 6, "Display Incompatible Apps");
 		
-		WindowRect back = new WindowRect(list, 0, yPos + 16, list.getDimensions().endX, ld.endY, 0xff202020);
+		WindowRect back = new WindowRect(list, 0, yPos + 16, list.getDimensions().endX, ld.endY + 10, 0xff202020);
 		back.setClickable(false);
 		
 		//set values

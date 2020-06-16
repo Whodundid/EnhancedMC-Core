@@ -72,7 +72,7 @@ public class AppConfigFile {
 				if (asType.isAssignableFrom(Double.class)) { returnVal = asType.cast(Double.parseDouble(sVal)); }
 				if (asType.isAssignableFrom(String.class)) { returnVal = asType.cast(new String(sVal)); }
 			}
-			catch (ClassCastException e) {
+			catch (Exception e) {
 				e.printStackTrace();
 				return defaultVal; //fallback to defaultVal since parse failed
 			}
@@ -145,9 +145,9 @@ public class AppConfigFile {
 									configValues.add(identifier, values);
 								}
 							}
-						}
+						} //if
 					}
-				}
+				} //while
 				
 			}
 			catch (FileNotFoundException e) { e.printStackTrace(); }

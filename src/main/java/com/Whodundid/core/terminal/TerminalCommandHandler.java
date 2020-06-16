@@ -95,6 +95,7 @@ public class TerminalCommandHandler {
 		registerCommand(new RuntimeCMD(), termIn, runVisually);
 		registerCommand(new NotificationControl(), termIn, runVisually);
 		registerCommand(new SystemCMD(), termIn, runVisually);
+		registerCommand(new SetChat(), termIn, runVisually);
 		registerCommand(new DevControl(), termIn, EnhancedMC.isDevMode() && runVisually);
 		registerCommand(new ParseCode(), termIn, EnhancedMC.isDevMode() && runVisually);
 		registerCommand(new ParseCode2(), termIn, EnhancedMC.isDevMode() && runVisually);
@@ -154,7 +155,7 @@ public class TerminalCommandHandler {
 				
 				if (command == null) {
 					termIn.error("Unrecognized command.");
-					termIn.writeln();
+					if (!termIn.isChatTerminal()) {	termIn.writeln(); }
 					return;
 				}
 				
@@ -176,7 +177,7 @@ public class TerminalCommandHandler {
 					command.runCommand(termIn, commandArguments, runVisually);
 				
 					if (addSpace && (drawSpace && !command.getName().equals("clear"))) {
-						termIn.writeln();
+						if (!termIn.isChatTerminal()) {	termIn.writeln(); }
 						drawSpace = true;
 					}
 				}
@@ -184,7 +185,7 @@ public class TerminalCommandHandler {
 				return;
 			}
 		}
-		termIn.writeln("Unrecognized command.\n", 0xff5555);
+		termIn.writeln("Unrecognized command." + (!termIn.isChatTerminal() ? "\n" : ""), 0xff5555);
 	}
 	
 	public synchronized void reregisterAllCommands(boolean runVisually) { reregisterAllCommands(null, runVisually); }

@@ -2,6 +2,7 @@ package com.Whodundid.core.renderer;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.coreApp.CoreApp;
+import com.Whodundid.core.coreEvents.emcEvents.GameWindowResizedEvent;
 import com.Whodundid.core.renderer.renderUtil.IRendererProxy;
 import com.Whodundid.core.renderer.taskView.TaskBar;
 import com.Whodundid.core.util.miscUtil.EMouseHelper;
@@ -42,6 +43,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.opengl.GL11;
 
 //Author: Hunter Bragg
@@ -672,6 +674,10 @@ public class EnhancedMCRenderer extends WindowObject implements ITopParent {
 	}
 	
 	public void windowResized(int newWidth, int newHeight) {
+		//notify apps
+		MinecraftForge.EVENT_BUS.post(new GameWindowResizedEvent(newWidth, newHeight));
+		
+		//handle windows
 		EArrayList<WindowParent> windows = EnhancedMC.getAllActiveWindows();
 		
 		int oldW = res.getScaledWidth();

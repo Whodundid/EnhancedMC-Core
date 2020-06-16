@@ -1,6 +1,7 @@
 package com.Whodundid.core.windowLibrary.windowTypes;
 
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.coreApp.CoreApp;
 import com.Whodundid.core.util.chatUtil.EChatUtil;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
@@ -69,6 +70,7 @@ public abstract class WindowObject extends EGui implements IWindowObject {
 	protected boolean closeable = true;
 	protected boolean closed = false;
 	protected boolean closesWithHud = false;
+	protected boolean hasCustomHoverColor = false;
 	protected int hoverTextColor = EColors.lime.intVal;
 	private boolean hasBeenInitialized = false;
 	private boolean objectInit = false;
@@ -205,10 +207,10 @@ public abstract class WindowObject extends EGui implements IWindowObject {
 	@Override public void onFirstDraw() { postEvent(new EventFirstDraw(this)); firstDraw = true; }
 	@Override public boolean hasFirstDraw() { return firstDraw; }
 	@Override public void updateCursorImage() { WindowObjectS.updateCursorImage(this); }
-	@Override public void onMouseHover(int mX, int mY) { WindowObjectS.onMouseHover(this, mX, mY, hoverText, hoverTextColor); }
+	@Override public void onMouseHover(int mX, int mY) { WindowObjectS.onMouseHover(this, mX, mY, hoverText, hasCustomHoverColor ? hoverTextColor : CoreApp.hoverTextColor.get()); }
 	@Override public boolean isDrawingHover() { return getTopParent() != null && this.equals(getTopParent().getHoveringObject()); }
 	@Override public WindowObject setHoverText(String textIn) { hoverText = textIn; return this; }
-	@Override public WindowObject setHoverTextColor(int colorIn) { hoverTextColor = colorIn; return this; }
+	@Override public WindowObject setHoverTextColor(int colorIn) { hoverTextColor = colorIn; hasCustomHoverColor = true; return this; }
 	@Override public String getHoverText() { return hoverText; }
 	
 	//obj ids

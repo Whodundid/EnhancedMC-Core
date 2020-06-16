@@ -48,6 +48,7 @@ public enum EMCEvents {
 	chatLine,
 	appCallout,
 	windowOpened,
-	windowClosed;
+	windowClosed,
+	gameWindowResized;
 	
 }

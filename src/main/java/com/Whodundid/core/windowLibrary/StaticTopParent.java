@@ -139,7 +139,7 @@ public class StaticTopParent extends EGui {
 	/** Notify the focused object that the keyboard just had a key pressed. */
 	public static void keyPressed(ITopParent objIn, char typedChar, int keyCode) {
 		objIn.postEvent(new EventKeyboard(objIn, typedChar, keyCode, KeyboardType.Pressed)); //post a new event
-		//(keyCode == EnhancedMC.openHud.getKeyCode())
+		
 		if ((keyCode == 1 && objIn.getEscapeStopper() == null)) { //check if the pressed key was escape in which case all unpinned objects will be removed and the proxy gui is closed
 			
 			if (CoreApp.hudCloseMethod.get().equals("hide")) { objIn.hideUnpinnedObjects(); }
@@ -155,6 +155,7 @@ public class StaticTopParent extends EGui {
 		}
 		else {
 			IWindowObject fo = objIn.getFocusedObject();
+			
 			if (fo != null && fo != objIn) { fo.keyPressed(Keyboard.getEventCharacter(), Keyboard.getEventKey()); }
 			if (fo == null || fo == objIn) {
 				if (keyCode == EnhancedMC.openHud.getKeyCode()) {

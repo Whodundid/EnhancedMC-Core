@@ -8,11 +8,14 @@ import com.Whodundid.core.terminal.terminalCommand.TerminalCommand;
 import com.Whodundid.core.terminal.window.termParts.TerminalTextField;
 import com.Whodundid.core.terminal.window.termParts.TerminalTextLine;
 import com.Whodundid.core.util.EUtil;
+import com.Whodundid.core.util.chatUtil.EChatUtil;
+import com.Whodundid.core.util.chatUtil.TimedChatLine;
 import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.TrippleBox;
+import com.Whodundid.core.windowLibrary.windowObjects.advancedObjects.header.WindowHeader;
 import com.Whodundid.core.windowLibrary.windowObjects.advancedObjects.textArea.TextAreaLine;
 import com.Whodundid.core.windowLibrary.windowObjects.advancedObjects.textArea.WindowTextArea;
 import com.Whodundid.core.windowLibrary.windowTypes.WindowParent;
@@ -25,6 +28,7 @@ import com.Whodundid.core.windowLibrary.windowUtil.windowEvents.events.EventFocu
 import com.Whodundid.core.windowLibrary.windowUtil.windowEvents.events.EventMouse;
 import java.io.File;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.client.ClientCommandHandler;
 
@@ -47,6 +51,7 @@ public class ETerminal extends WindowParent {
 	public EArrayList<String> tabData = new EArrayList();
 	EArrayList<TextAreaLine> tabDisplayLines = new EArrayList();
 	boolean isCommand = false;
+	protected boolean isChat = false;
 	
 	private String text = "";
 	int vPos = 0;
@@ -68,7 +73,8 @@ public class ETerminal extends WindowParent {
 	
 	@Override
 	public void initWindow() {
-		setObjectName("EMC Terminal" + (EnhancedMC.isDevMode() ? " +" : ""));
+		String chat = " " + EnumChatFormatting.YELLOW + EnumChatFormatting.BOLD + " Chat";
+		setObjectName("EMC Terminal" + (EnhancedMC.isDevMode() ? " +" : "") + (isChat ? chat : ""));
 		setDimensions(300, 153);
 		setMinDims(70, 32);
 		setResizeable(true);
@@ -100,7 +106,7 @@ public class ETerminal extends WindowParent {
 		inputField.setBackgroundColor(0xff000000);
 		inputField.setBorderColor(0xff222222);
 		inputField.setTextColor(0x00ff00);
-		inputField.setMaxStringLength(255);
+		inputField.setMaxStringLength(!mc.isSingleplayer() ? (EnhancedMC.isHypixel() ? 255 : 100) : 255);
 		
 		history.setBackgroundColor(0xff000000);
 		history.setBorderColor(0xff222222);
@@ -269,20 +275,51 @@ public class ETerminal extends WindowParent {
 					else {
 						if (cmd.startsWith("/")) {
 							EnhancedMC.getTerminalHandler().cmdHistory.add(cmd);
+							
 							if (ClientCommandHandler.instance.executeCommand(mc.thePlayer, cmd) == 0) {
 								mc.thePlayer.sendChatMessage(cmd);
 							}
+							
+							scrollToBottom();
+							inputField.clear();
+						}
+						else if (isChat && cmd.startsWith("\\")) {
+							EnhancedMC.getTerminalHandler().cmdHistory.add(cmd);
+							
+							cmd = cmd.substring(1);
+							
+							boolean isClear = (cmd.equals("clear") || cmd.equals("clr") || cmd.equals("cls"));
+							boolean isSetChat = (cmd.startsWith("setchat") || cmd.startsWith("chat"));
+							
+							if (!isClear && !isSetChat) {
+								writeln("> " + cmd, 0xffffff);
+							}
+							
+							EnhancedMC.getTerminalHandler().executeCommand(this, cmd, false, !isSetChat);
+							
+							inputField.clear();
+							scrollToBottom();
+							tab1 = false;
+							tabData.clear();
+						}
+						else if (isChat) {
+							EnhancedMC.getTerminalHandler().cmdHistory.add(cmd);
+							EChatUtil.sendLongerChatMessage(cmd);
 							scrollToBottom();
 							inputField.clear();
 						}
 						else if (isTab) { handleTab(); }
 						else {
-							if (!(cmd.equals("clear") || cmd.equals("clr") || cmd.equals("cls"))) {
+							boolean isClear = (cmd.equals("clear") || cmd.equals("clr") || cmd.equals("cls"));
+							boolean isSetChat = (cmd.startsWith("setchat") || cmd.startsWith("chat"));
+							
+							if (!isClear && !isSetChat) {
 								writeln("> " + cmd, 0xffffff);
 							}
+							
 							EnhancedMC.getTerminalHandler().cmdHistory.add(cmd);
-							EnhancedMC.getTerminalHandler().executeCommand(this, cmd);
-							inputField.setText("");
+							EnhancedMC.getTerminalHandler().executeCommand(this, cmd, false, !isSetChat);
+							inputField.clear();
 							scrollToBottom();
 							tab1 = false;
 							tabData.clear();
@@ -360,9 +397,33 @@ public class ETerminal extends WindowParent {
 	
 	@Override public boolean isDebugWindow() { return true; }
 	
+	@Override
+	public void close() {
+		super.close();
+		if (isChat) { EnhancedMC.getEMCApp().unregisterChatTerminal(this); }
+	}
+	
 	//-----------------
 	//ETerminal Methods
 	//-----------------
+	
+	public void onChat(TimedChatLine lineIn) {
+		if (isChat && lineIn != null) {
+			String msgIn = "[" + lineIn.getTimeStamp() + "] " + lineIn.getChatComponent().getFormattedText();
+			
+			String[] lines = msgIn.split("[\\r\\n]+", -1);
+			
+			boolean atBottom = history.getVScrollBar().getScrollPos() == history.getVScrollBar().getHighVal();
+			
+			for (String s : lines) {
+				TerminalTextLine line = new TerminalTextLine(this, s, EColors.lgray);
+				line.setFocusRequester(this).setObjectGroup(objectGroup);
+				history.addTextLine(line);
+			}
+			
+			if (atBottom) { scrollToBottom(); }
+		}
+	}
 	
 	public ETerminal scrollToBottom() {
 		history.getVScrollBar().setScrollBarPos(history.getVScrollBar().getHighVal());
@@ -516,7 +577,7 @@ public class ETerminal extends WindowParent {
 					}
 					catch (Exception e) { e.printStackTrace(); }
 					
-					if (!line.isEmpty()) { tabDisplayLines.add(new TextAreaLine(history, line, EColors.lgray.c())); }
+					if (!line.isEmpty()) { tabDisplayLines.add(new TextAreaLine(history, line, EColors.lgray.intVal)); }
 					line = "";
 					cur = 0;
 				}
@@ -648,12 +709,55 @@ public class ETerminal extends WindowParent {
 		}
 		return this;
 	}
+	
 	public ETerminal clearConfirmationRequirement() {
 		requireConfirmation = false;
 		confirmationCommand = null;
 		previousArgs = null;
 		prevRunVisually = false;
 		confirmationMessage = "";
+		return this;
+	}
+	
+	public ETerminal setChatTerminal(boolean val) {
+		boolean old = isChat;
+		isChat = val;
+		
+		String chat = " " + EnumChatFormatting.YELLOW + EnumChatFormatting.BOLD + " Chat";
+		setObjectName("EMC Terminal" + (EnhancedMC.isDevMode() ? " +" : "") + (isChat ? chat : ""));
+		
+		if (isInit()) {
+			clear();
+			
+			WindowHeader header = getHeader();
+			
+			if (val && !old) {
+				EnhancedMC.getEMCApp().registerChatTerminal(this);
+				
+				if (header != null) {
+					header.setTitle(getObjectName());
+				}
+				
+				for (TimedChatLine l : EChatUtil.getChatHistory()) {
+					writeln("[" + l.getTimeStamp() + "] " + l.getChatComponent().getFormattedText(), EColors.lgray);
+				}
+				
+				inputField.setMaxStringLength(!mc.isSingleplayer() ? (EnhancedMC.isHypixel() ? 255 : 100) : 255);
+			}
+			else if (old && !val) {
+				EnhancedMC.getEMCApp().unregisterChatTerminal(this);
+				
+				if (header != null) {
+					header.setTitle(getObjectName());
+				}
+				
+				writeln("EMC " + (EnhancedMC.isDevMode() ? "Dev " : "") + "Terminal v1.0 initialized..", 0xffff00);
+				writeln();
+				
+				inputField.setMaxStringLength(100);
+			}
+		}
+		
 		return this;
 	}
 	
@@ -665,5 +769,7 @@ public class ETerminal extends WindowParent {
 	public ETerminal setTab1(boolean val) { tab1 = val; return this; }
 	public ETerminal setTextTabBeing(String in) { textTabBegin = in; return this; }
 	public ETerminal setTabBase(String in) { tabBase = in; return this; }
+	
+	public boolean isChatTerminal() { return isChat; }
 	
 }

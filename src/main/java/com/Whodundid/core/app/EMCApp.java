@@ -5,6 +5,7 @@ import com.Whodundid.core.app.config.AppConfigManager;
 import com.Whodundid.core.app.config.AppConfigSetting;
 import com.Whodundid.core.coreEvents.emcEvents.ChatLineCreatedEvent;
 import com.Whodundid.core.coreEvents.emcEvents.EMCAppCalloutEvent;
+import com.Whodundid.core.coreEvents.emcEvents.GameWindowResizedEvent;
 import com.Whodundid.core.coreEvents.emcEvents.RendererRCMOpenEvent;
 import com.Whodundid.core.coreEvents.emcEvents.TabCompletionEvent;
 import com.Whodundid.core.coreEvents.emcEvents.WindowClosedEvent;
@@ -234,5 +235,6 @@ public abstract class EMCApp implements Comparable<EMCApp> {
 	public void subModCalloutEvent(EMCAppCalloutEvent e) {}
 	public void windowOpenedEvent(WindowOpenedEvent e) {}
 	public void windowClosedEvent(WindowClosedEvent e) {}
+	public void gameWindowResized(GameWindowResizedEvent e) {}
 	
 }

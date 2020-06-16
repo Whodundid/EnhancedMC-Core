@@ -25,6 +25,7 @@ public class EChatUtil {
 	private static EArrayList<ScreenTextObject> textsToAdd = new EArrayList();
 	private static Deque<ScreenTextObject> textsToDraw = new ArrayDeque();
 	private static boolean adding = false;
+	private static EArrayList<TimedChatLine> chatHistory = new EArrayList();
 	
 	public static void drawTexts() {
 		updateTexts();
@@ -136,6 +137,18 @@ public class EChatUtil {
 	}
 	
 	public static void readChat(IChatComponent chatMsg) { lastChat = chatMsg; }
+	
+	public static void onTimedChatLine(TimedChatLine lineIn) {
+		if (lineIn != null) {
+			chatHistory.add(lineIn);
+			
+			while (chatHistory.size() > 100) {
+				chatHistory.remove(0);
+			}
+		}
+	}
+	
+	public static EArrayList<TimedChatLine> getChatHistory() { return chatHistory; }
 	
 	public static boolean isChatOpen() { return mc.ingameGUI.getChatGUI().getChatOpen(); }
 	public static String getLMsgFor() { return lastChat != null ? lastChat.getFormattedText() : ""; }

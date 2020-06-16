@@ -48,11 +48,11 @@ public class ScreenLocationSelector extends ActionObject {
 		drawStringS("Select a location to draw " + drawName + ".", midX - mc.fontRendererObj.getStringWidth("Select a location to draw " + drawName + ".") / 2, startY - heightRatio / 5 - 12, 0xb2b2b2);
 		String msg = "";
 		switch (obj.getScreenLocation()) {
-		case botLeft: msg = "Bottom Left"; break;
-		case botRight: msg = "Bottom Right"; break;
-		case topLeft: msg = "Top Left"; break;
-		case topRight: msg = "Top Right"; break;
-		case center: msg = "Center"; break;
+		case botLeft: msg = "Bottom Left"; bLeft.drawRect(EColors.lred, -1); break;
+		case botRight: msg = "Bottom Right"; bRight.drawRect(EColors.lred, -1); break;
+		case topLeft: msg = "Top Left"; tLeft.drawRect(EColors.lred, -1); break;
+		case topRight: msg = "Top Right"; tRight.drawRect(EColors.lred, -1); break;
+		case center: msg = "Center"; center.drawRect(EColors.lred, -1); break;
 		case custom: msg = "Custom (" + obj.getLocation().getObject() + ", " + obj.getLocation().getValue() + ")"; break;
 		default: msg = "Center"; break;
 		}
@@ -70,7 +70,7 @@ public class ScreenLocationSelector extends ActionObject {
 		if (object == tLeft) { obj.setLocation(ScreenLocation.topLeft); }
 		if (object == tRight) { obj.setLocation(ScreenLocation.topRight); }
 		if (object == center) { obj.setLocation(ScreenLocation.center); }
-		if (object == custom) { EnhancedMC.displayWindow(obj.getScreenLocationGui(), this); }
+		if (object == custom) { EnhancedMC.displayWindow(obj.getScreenLocationGui()); }
 		performAction();
 	}
 	

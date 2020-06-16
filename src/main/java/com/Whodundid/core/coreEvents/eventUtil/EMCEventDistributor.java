@@ -5,6 +5,7 @@ import com.Whodundid.core.app.EMCApp;
 import com.Whodundid.core.app.RegisteredApps;
 import com.Whodundid.core.coreEvents.emcEvents.ChatLineCreatedEvent;
 import com.Whodundid.core.coreEvents.emcEvents.EMCAppCalloutEvent;
+import com.Whodundid.core.coreEvents.emcEvents.GameWindowResizedEvent;
 import com.Whodundid.core.coreEvents.emcEvents.RendererRCMOpenEvent;
 import com.Whodundid.core.coreEvents.emcEvents.TabCompletionEvent;
 import com.Whodundid.core.coreEvents.emcEvents.WindowClosedEvent;
@@ -110,6 +111,7 @@ public class EMCEventDistributor {
 			case appCallout: for (EMCApp m : mods) { m.subModCalloutEvent((EMCAppCalloutEvent) e); } break;
 			case windowOpened: for (EMCApp m : mods) { m.windowOpenedEvent((WindowOpenedEvent) e); } break;
 			case windowClosed: for (EMCApp m : mods) { m.windowClosedEvent((WindowClosedEvent) e); } break;
+			case gameWindowResized: for (EMCApp m : mods) { m.gameWindowResized((GameWindowResizedEvent) e); } break;
 			default: throw new IllegalStateException("INVALID EMC EVENT: " + e);
 			}
 		}

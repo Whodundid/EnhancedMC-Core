@@ -24,6 +24,7 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.windowLibrary.WindowObjectS;
 import com.Whodundid.core.windowLibrary.windowTypes.EnhancedGui;
+import com.Whodundid.core.windowLibrary.windowTypes.OverlayWindow;
 import com.Whodundid.core.windowLibrary.windowTypes.WindowParent;
 import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IWindowObject;
 import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IWindowParent;
@@ -300,10 +301,13 @@ public class EnhancedMC extends DummyModContainer {
 		TaskBar bar = EnhancedMC.getRenderer().getTaskBar();
 		int tb = (bar != null) ? bar.height : 0;
 		
-		sX = sX < 0 ? 4 : sX;
-		sY = (sY - headerHeight) < 2 ? tb + 4 + headerHeight : sY;
-		sX = sX + gDim.width > res.getScaledWidth() ? -4 + sX - (sX + gDim.width - res.getScaledWidth()) : sX;
-		sY = sY + gDim.height > res.getScaledHeight() ? -4 + sY - (sY + gDim.height - res.getScaledHeight()) : sY;
+		if (!(windowIn instanceof OverlayWindow)) {
+			sX = sX < 0 ? 4 : sX;
+			sY = (sY - headerHeight) < 2 ? tb + 4 + headerHeight : sY;
+			sX = sX + gDim.width > res.getScaledWidth() ? -4 + sX - (sX + gDim.width - res.getScaledWidth()) : sX;
+			sY = sY + gDim.height > res.getScaledHeight() ? -4 + sY - (sY + gDim.height - res.getScaledHeight()) : sY;
+		}
+		
 		windowIn.setPosition(sX, sY);
 	}
 	

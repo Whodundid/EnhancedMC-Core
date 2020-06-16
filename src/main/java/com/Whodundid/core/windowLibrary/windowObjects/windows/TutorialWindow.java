@@ -67,10 +67,7 @@ public class TutorialWindow extends OverlayWindow {
 	public void initObjects() {
 		ScaledResolution res = new ScaledResolution(mc);
 		
-		int y = 0;
-		int h = res.getScaledHeight();
-		
-		setDimensions(res.getScaledWidth(), h);
+		setDimensions(res.getScaledWidth(), res.getScaledHeight());
 		
 		//no header
 		
@@ -214,7 +211,7 @@ public class TutorialWindow extends OverlayWindow {
 		s1 = new WindowScreen(1) {
 			@Override
 			public void drawScreen(int mXIn, int mYIn) {
-				drawRect(startX, startY, endX, endY + 6, 0x77121212);
+				drawRect(startX, startY, endX, endY, 0x77121212);
 				
 				//draw logo background fade
 				for (int i = 0; i < 20; i++) {
@@ -322,7 +319,7 @@ public class TutorialWindow extends OverlayWindow {
 			
 			@Override
 			public void drawScreen(int mXIn, int mYIn) {
-				drawRect(startX, startY, endX, endY + 6, 0x77121212);
+				drawRect(startX, startY, endX, endY, 0x77121212);
 				
 				//draw settings example window
 				drawTexture(midX - 275, midY - 145, 220, 274, EMCResources.tutSettings);
@@ -466,7 +463,7 @@ public class TutorialWindow extends OverlayWindow {
 			
 			@Override
 			public void drawScreen(int mXIn, int mYIn) {
-				drawRect(startX, startY + 4, endX, endY + 6, 0x77121212);
+				drawRect(startX, startY + 4, endX, endY, 0x77121212);
 				StorageBoxHolder<String, Integer> lines;
 				
 				switch (getCurrentStage()) {
@@ -692,7 +689,7 @@ public class TutorialWindow extends OverlayWindow {
 				StorageBoxHolder<String, Integer> lines;
 				boolean draw = EnhancedMC.updateCounter / 30 % 2 != 0;
 				
-				drawRect(startX, startY + 4, endX, endY + 6, 0x77121212);
+				drawRect(startX, startY + 4, endX, endY, 0x77121212);
 				
 				switch (getCurrentStage()) {
 				case 0:
@@ -801,7 +798,7 @@ public class TutorialWindow extends OverlayWindow {
 			
 			@Override
 			public void drawScreen(int mXIn, int mYIn) {
-				drawRect(startX, startY + 4, endX, endY + 6, 0x77121212);
+				drawRect(startX, startY + 4, endX, endY, 0x77121212);
 				
 				switch (getCurrentStage()) {
 				case 0:
