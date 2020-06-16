@@ -304,6 +304,7 @@ public class ETerminal extends WindowParent {
 						else if (isChat) {
 							EnhancedMC.getTerminalHandler().cmdHistory.add(cmd);
 							EChatUtil.sendLongerChatMessage(cmd);
+							mc.ingameGUI.getChatGUI().addToSentMessages(cmd);
 							scrollToBottom();
 							inputField.clear();
 						}
