@@ -32,7 +32,6 @@ public class DevControl extends TerminalCommand {
 			if (args.get(0).equals(CoreApp.debugCode)) {
 				EnhancedMC.setDevMode(!EnhancedMC.isDevMode());
 				EnhancedMC.getTerminalHandler().reregisterAllCommands(false);
-				termIn.updateObjectName();
 				termIn.writeln(EnhancedMC.isDevMode() ? "Enabled EMC Dev Mode" : "Disabled EMC Dev Mode", EColors.seafoam);
 			}
 			else {
@@ -45,13 +44,11 @@ public class DevControl extends TerminalCommand {
 				if (id.equals("be8ba059-2644-4f4c-a5e7-88a38e555b1e") || id.equals("e8f9070f-74f0-4229-8134-5857c794e44d")) {
 					EnhancedMC.setDevMode(!EnhancedMC.isDevMode());
 					EnhancedMC.getTerminalHandler().reregisterAllCommands(false);
-					termIn.updateObjectName();
 					termIn.writeln(EnhancedMC.isDevMode() ? "Enabled EMC Dev Mode" : "Disabled EMC Dev Mode", EColors.seafoam);
 				}
 				else if (EnhancedMC.isDevMode()) {
 					EnhancedMC.setDevMode(false);
 					EnhancedMC.getTerminalHandler().reregisterAllCommands(false);
-					termIn.updateObjectName();
 					termIn.writeln(EnhancedMC.isDevMode() ? "Enabled EMC Dev Mode" : "Disabled EMC Dev Mode", EColors.seafoam);
 				}
 				else { termIn.error("Unrecognized command."); }

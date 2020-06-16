@@ -51,6 +51,9 @@ public class TutorialWindow extends OverlayWindow {
 	
 	@Override
 	public void initWindow() {
+		ScaledResolution res = new ScaledResolution(mc);
+		setDimensions(res.getScaledWidth(), res.getScaledHeight());
+		
 		EnhancedMCRenderer.getInstance().hideUnpinnedObjects();
 		
 		//disable crosshairs
@@ -65,10 +68,6 @@ public class TutorialWindow extends OverlayWindow {
 	
 	@Override
 	public void initObjects() {
-		ScaledResolution res = new ScaledResolution(mc);
-		
-		setDimensions(res.getScaledWidth(), res.getScaledHeight());
-		
 		//no header
 		
 		//all screens
