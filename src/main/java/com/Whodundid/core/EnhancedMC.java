@@ -1,6 +1,8 @@
 package com.Whodundid.core;
 
+import com.Whodundid.clearVisuals.ClearVisualsApp;
 import com.Whodundid.core.app.AppLoader;
+import com.Whodundid.core.app.EMCApp;
 import com.Whodundid.core.app.RegisteredApps;
 import com.Whodundid.core.coreApp.CoreApp;
 import com.Whodundid.core.coreEvents.EventListener;
@@ -28,6 +30,10 @@ import com.Whodundid.core.windowLibrary.windowTypes.OverlayWindow;
 import com.Whodundid.core.windowLibrary.windowTypes.WindowParent;
 import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IWindowObject;
 import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IWindowParent;
+import com.Whodundid.hotkeys.HotKeyApp;
+import com.Whodundid.pingDrawer.PingApp;
+import com.Whodundid.playerInfo.PlayerInfoApp;
+import com.Whodundid.slc.SLCApp;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import java.util.Arrays;
@@ -56,7 +62,7 @@ import org.lwjgl.input.Keyboard;
 public class EnhancedMC extends DummyModContainer {
 	
 	public static final String MODID = "enhancedmc";
-	public static final String VERSION = "1.0";
+	public static final String VERSION = "1.0.1";
 	public static final String NAME = "EnhancedMC";
 	public static final Minecraft mc = Minecraft.getMinecraft();
 	public static final KeyBinding openSettingsGui = new KeyBinding("Settings", Keyboard.KEY_P, "EnhancedMC");
@@ -137,6 +143,20 @@ public class EnhancedMC extends DummyModContainer {
 		notifications.loadConfig();
 		
 		isInitialized = true;
+	}
+	
+	/** Used for rebuilding bundled apps when they are reloaded. */
+	public static EArrayList<EMCApp> getBundledApps() {
+		EArrayList<EMCApp> apps = new EArrayList();
+		
+		//create bundled apps
+		ClearVisualsApp cv = new ClearVisualsApp();
+		HotKeyApp hk = new HotKeyApp();
+		PingApp pd = new PingApp();
+		PlayerInfoApp pi = new PlayerInfoApp();
+		SLCApp slc = new SLCApp();
+		
+		return apps.addAll(cv, hk, pd, pi, slc);
 	}
 	
 	public static void checkKeyBinds() {

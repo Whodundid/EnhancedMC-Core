@@ -2,6 +2,7 @@ package com.Whodundid.core.windowLibrary.windowTypes.interfaces;
 
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
 import com.Whodundid.core.util.storageUtil.EArrayList;
+import com.Whodundid.core.windowLibrary.windowUtil.windowEvents.eventUtil.FocusType;
 import com.Whodundid.core.windowLibrary.windowUtil.windowEvents.eventUtil.ObjectModifyType;
 
 //Author: Hunter Bragg
@@ -56,7 +57,7 @@ public interface ITopParent extends IWindowObject {
 	
 	public IWindowObject getFocusedObject();
 	public ITopParent setFocusedObject(IWindowObject objIn);
-	public ITopParent setObjectRequestingFocus(IWindowObject objIn);
+	public ITopParent setObjectRequestingFocus(IWindowObject objIn, FocusType typeIn);
 	public IWindowObject getFocusLockObject();
 	public ITopParent setFocusLockObject(IWindowObject objIn);
 	public ITopParent clearFocusLockObject();

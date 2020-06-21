@@ -109,7 +109,7 @@ public class ETerminal extends WindowParent {
 		
 		history.setBackgroundColor(0xff000000);
 		history.setBorderColor(0xff222222);
-		history.setDrawLineNumbers(true);
+		history.setDrawLineNumbers(false);
 		history.setResetDrawn(false);
 		
 		objectGroup = new EObjectGroup(this);

@@ -316,12 +316,12 @@ public abstract class WindowObject extends EGui implements IWindowObject {
 	public boolean relinquishFocus() {
 		if (getTopParent().doesFocusLockExist()) {
 			if (getTopParent().getFocusLockObject().equals(this)) {
-				getTopParent().setObjectRequestingFocus(getTopParent());
+				getTopParent().setObjectRequestingFocus(getTopParent(), FocusType.Transfer);
 				return true;
 			}
 			return false;
 		}
-		getTopParent().setObjectRequestingFocus(getTopParent());
+		getTopParent().setObjectRequestingFocus(getTopParent(), FocusType.Transfer);
 		return true;
 	}
 	@Override
@@ -356,10 +356,10 @@ public abstract class WindowObject extends EGui implements IWindowObject {
 		if (getTopParent().doesFocusLockExist() && getTopParent().getFocusLockObject().equals(this)) {
 			if (objIn != null) {
 				getTopParent().clearFocusLockObject();
-				getTopParent().setObjectRequestingFocus(objIn);
+				getTopParent().setObjectRequestingFocus(objIn, FocusType.Transfer);
 			}
 		}
-		else if (objIn != null) { getTopParent().setObjectRequestingFocus(objIn); }
+		else if (objIn != null) { getTopParent().setObjectRequestingFocus(objIn, FocusType.Transfer); }
 	}
 	@Override
 	public void drawFocusLockBorder() {
@@ -372,8 +372,11 @@ public abstract class WindowObject extends EGui implements IWindowObject {
 	}
 	@Override
 	public WindowObject requestFocus() {
-		//System.out.println(this + " is requesting focus");
-		getTopParent().setObjectRequestingFocus(this);
+		return requestFocus(FocusType.Transfer);
+	}
+	@Override
+	public WindowObject requestFocus(FocusType typeIn) {
+		getTopParent().setObjectRequestingFocus(this, typeIn);
 		return this;
 	}
 	@Override public IWindowObject getDefaultFocusObject() { return defaultFocusObject; }

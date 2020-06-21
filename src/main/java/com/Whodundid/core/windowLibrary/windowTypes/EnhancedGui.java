@@ -358,7 +358,7 @@ public abstract class EnhancedGui extends GuiScreen implements ITopParent, IWind
 			clearFocusedObject();
 			clearFocusLockObject();
 			clearModifyingObject();
-			setObjectRequestingFocus(null);
+			setObjectRequestingFocus(null, FocusType.Transfer);
 			initGui();
 		}
 		MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.InitGuiEvent.Post(this, this.buttonList));
@@ -589,7 +589,7 @@ public abstract class EnhancedGui extends GuiScreen implements ITopParent, IWind
 		if (doesFocusLockExist() && getFocusLockObject().equals(this)) { clearFocusLockObject(); }
 		else if (hasFocus()) {
 			System.out.println("ive got focus");
-			if (!getTopParent().equals(this)) { getTopParent().setObjectRequestingFocus(getTopParent()); return true; }
+			if (!getTopParent().equals(this)) { getTopParent().setObjectRequestingFocus(getTopParent(), FocusType.Transfer); return true; }
 		}
 		return false;
 	}
@@ -604,7 +604,7 @@ public abstract class EnhancedGui extends GuiScreen implements ITopParent, IWind
 	public void transferFocus(IWindowObject objIn) {
 		if (!doesFocusLockExist() && objIn != null) {
 			relinquishFocus();
-			getTopParent().setObjectRequestingFocus(objIn);
+			getTopParent().setObjectRequestingFocus(objIn, FocusType.Transfer);
 		}
 	}
 	@Override
@@ -622,7 +622,7 @@ public abstract class EnhancedGui extends GuiScreen implements ITopParent, IWind
 			if (doesFocusLockExist()) {
 				//getTopParent().setObjectRequestingFocus(this);
 			}
-			else { getTopParent().setObjectRequestingFocus(this); }
+			else { getTopParent().setObjectRequestingFocus(this, FocusType.Transfer); }
 		}
 		return this;
 	}
@@ -762,7 +762,7 @@ public abstract class EnhancedGui extends GuiScreen implements ITopParent, IWind
 	//focus
 	@Override public IWindowObject getFocusedObject() { return focusedObject; }
 	@Override public ITopParent setFocusedObject(IWindowObject objIn) { focusedObject = objIn; return this; }
-	@Override public ITopParent setObjectRequestingFocus(IWindowObject objIn) { focusQueue.add(new EventFocus(this, objIn, FocusType.Transfer)); return this; }
+	@Override public ITopParent setObjectRequestingFocus(IWindowObject objIn, FocusType typeIn) { focusQueue.add(new EventFocus(this, objIn, typeIn)); return this; }
 	@Override public IWindowObject getFocusLockObject() { return focusLockObject; }
 	@Override public ITopParent setFocusLockObject(IWindowObject objIn) {
 		focusLockObject = objIn;

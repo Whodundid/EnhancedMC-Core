@@ -3,13 +3,16 @@ package com.Whodundid.core.windowLibrary.windowObjects.advancedObjects.textArea;
 import com.Whodundid.core.coreApp.EMCResources;
 import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.renderUtil.CursorHelper;
+import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.EDimension;
 import com.Whodundid.core.windowLibrary.windowObjects.advancedObjects.scrollList.WindowScrollList;
 import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IWindowObject;
+import com.Whodundid.core.windowLibrary.windowUtil.windowEvents.eventUtil.FocusType;
 import com.Whodundid.core.windowLibrary.windowUtil.windowEvents.eventUtil.MouseType;
 import com.Whodundid.core.windowLibrary.windowUtil.windowEvents.events.EventMouse;
 import java.util.Iterator;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.input.Keyboard;
 
@@ -22,8 +25,10 @@ public class WindowTextArea extends WindowScrollList {
 	protected boolean editable = true;
 	protected boolean drawLineNumbers = false;
 	protected boolean drawLineHighlight = true;
+	protected boolean drawLineNumberSeparator = true;
 	protected int maxWidth = Integer.MAX_VALUE;
 	protected int lineHeight = 10;
+	protected int lineNumberSeparatorColor = 0xff000000;
 	
 	public WindowTextArea(IWindowObject parentIn, int x, int y, int widthIn, int heightIn) {
 		this(parentIn, x, y, widthIn, heightIn, false);
@@ -43,8 +48,72 @@ public class WindowTextArea extends WindowScrollList {
 	}
 	
 	@Override
+	public void drawObject(int mXIn, int mYIn) {
+		updateBeforeNextDraw(mXIn, mYIn);
+		drawRect(startX, startY, endX, endY, borderColor);
+		
+		verticalScroll.setVisible(isVScrollDrawn());
+		horizontalScroll.setVisible(isHScrollDrawn());
+		reset.setVisible(isResetDrawn());
+		
+		int scale = res.getScaleFactor();
+		try {
+			if (checkDraw() && height > (isHScrollDrawn() ? 5 : 2) && width > (isVScrollDrawn() ? 5 : 2)) {
+				GlStateManager.pushMatrix();
+				GlStateManager.enableBlend();
+				
+				int sX = startX + 1 + getLineNumberOffset() - 2;
+				
+				//draw list contents scissored
+				drawRect(startX + 1, startY + 1, endX - 1, endY - 1, backgroundColor); //draw background
+				scissor(sX, startY + 1, endX - (isVScrollDrawn() ? verticalScroll.width + 2 : 1), endY - (isHScrollDrawn() ? horizontalScroll.height + 2 : 1));
+				
+				if (drawListObjects) {
+					//only draw the objects that are actually in the viewable area
+					for (IWindowObject o : drawnListObjects) {
+						if (o.checkDraw()) {
+							if (!o.hasFirstDraw()) { o.onFirstDraw(); o.onFirstDraw(); }
+							GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+							EDimension d = o.getDimensions();
+							o.drawObject(mXIn, mYIn);
+						}
+					}
+				}
+				endScissor();
+				
+				if (hasLineNumbers() && drawLineNumberSeparator) {
+					int eY = endY - 1 - (isHScrollDrawn() ? getHScrollBar().height : 0);
+					drawRect(sX, startY + 1, sX + 1, eY, lineNumberSeparatorColor);
+					
+					for (TextAreaLine l : textDocument) {
+						int nX = startX + getLineNumberOffset() - mc.fontRendererObj.getStringWidth(String.valueOf(l.getLineNumber())) - 3;
+						drawString(l.getLineNumber(), nX, l.startY + 2, l.lineNumberColor);
+					}
+				}
+				
+				//draw non list contents as normal (non scissored)
+				for (IWindowObject o : windowObjects) {
+					if (o.checkDraw() && listContents.notContains(o)) {
+						if (!o.hasFirstDraw()) { o.onFirstDraw(); o.onFirstDraw(); }
+	    				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+	    	        	o.drawObject(mXIn, mYIn);
+	    			}
+				}
+				
+				GlStateManager.popMatrix();
+			}
+		}
+		catch (Exception e) { e.printStackTrace(); }
+	}
+	
+	@Override
 	public void mousePressed(int mXIn, int mYIn, int button) {
 		postEvent(new EventMouse(this, mX, mY, button, MouseType.Pressed));
+		listClick(mXIn, mYIn, button);
+		//super.mousePressed(mXIn, mYIn, button);
+	}
+	
+	public void listClick(int mXIn, int mYIn, int button) {
 		if (button == 0) {
 			EUtil.ifNotNullDo(getWindowParent(), w -> w.bringToFront());
 			
@@ -54,18 +123,23 @@ public class WindowTextArea extends WindowScrollList {
 				l.requestFocus();
 			}
 			else if (textDocument.isNotEmpty()) {
-				if (button != 1) {
+				if (button == 0) {
 					TextAreaLine l = getLineMouseIsOver();
-					if (l != null) {
-						setSelectedLine(l);
-						l.requestFocus();
+					if (l != currentLine) {
+						if (l != null) {
+							setSelectedLine(l, FocusType.MousePress, true);
+						}
+						else {
+							if (currentLine != null) { currentLine.setHighlighted(false); }
+							setSelectedLine(null);
+						}
 					}
-					else {
-						if (currentLine != null) { currentLine.setHighlighted(false); }
-						setSelectedLine(null);
+					else if (l != null) {
+						if (!l.hasFocus()) { l.requestFocus(FocusType.MousePress); }
+						else { l.mousePressed(mXIn, mYIn, button); }
 					}
 				}
-			}
+			} //else if
 		}
 	}
 	
@@ -113,7 +187,7 @@ public class WindowTextArea extends WindowScrollList {
 		lineIn.setDimensions(3, 1 + (textDocument.size() * 10) + offset, mc.fontRendererObj.getStringWidth(lineIn.getText()), 10);
 		textDocument.add(lineIn);
 		addObjectToList(lineIn);
-		fitItemsInList(3, 7);
+		fitItemsInList(3 + getLineNumberOffset(), 7);
 		updateVisuals();
 		lineIn.setLineNumber(textDocument.size());
 		return lineIn;
@@ -144,16 +218,17 @@ public class WindowTextArea extends WindowScrollList {
 	public WindowTextArea deleteLine(TextAreaLine lineIn) {
 		textDocument.remove(lineIn);
 		removeObjectFromList(lineIn);
-		fitItemsInList(5, 8);
+		fitItemsInList(3, 7);
 		return this;
 	}
 	
-	public WindowTextArea setSelectedLine(TextAreaLine lineIn) { return setSelectedLine(lineIn, true); }
-	public WindowTextArea setSelectedLine(TextAreaLine lineIn, boolean makeDrawn) {
+	public WindowTextArea setSelectedLine(TextAreaLine lineIn) { return setSelectedLine(lineIn, FocusType.Transfer, true); }
+	public WindowTextArea setSelectedLine(TextAreaLine lineIn, boolean makeDrawn) { return setSelectedLine(lineIn, FocusType.Transfer, true); }
+		public WindowTextArea setSelectedLine(TextAreaLine lineIn, FocusType typeIn, boolean makeDrawn) {
 		if (lineIn == null) { currentLine = null; return this; }
 		if (textDocument.contains(lineIn)) {
 			currentLine = lineIn;
-			if (!currentLine.hasFocus()) { currentLine.requestFocus(); }
+			if (!currentLine.hasFocus()) { currentLine.requestFocus(typeIn); }
 			if (makeDrawn && currentLine != null) {
 				//setLineNumberDrawn(currentLine);
 			}
@@ -194,6 +269,8 @@ public class WindowTextArea extends WindowScrollList {
 			
 			setSelectedLine(newLine);
 			newLine.setCursorPosition(0);
+			
+			return newLine;
 		}
 		return null;
 	}
@@ -203,22 +280,27 @@ public class WindowTextArea extends WindowScrollList {
 			String text = theLine.getText();
 			TextAreaLine prev = getTextLine(theLine.getLineNumber() - 1);
 			
-			EArrayList<TextAreaLine> linesAfter = new EArrayList();
-			try {
-				for (int i = theLine.getLineNumber() + 1; i < textDocument.size() + 1; i++) {
-					linesAfter.add(getTextLine(i));
+			if (prev != null) {
+				EArrayList<TextAreaLine> linesAfter = new EArrayList();
+				try {
+					for (int i = theLine.getLineNumber() + 1; i < textDocument.size() + 1; i++) {
+						linesAfter.add(getTextLine(i));
+					}
 				}
+				catch (Exception e) { e.printStackTrace(); }
+				
+				deleteLine(theLine);
+				
+				prev.setText(prev.getText() + text);
+				for (TextAreaLine l : linesAfter) { deleteLine(l); }
+				for (TextAreaLine l : linesAfter) { addTextLine(l); }
+				
+				setSelectedLine(prev);
+				int pos = MathHelper.clamp_int(prev.getText().length() - text.length(), 0, prev.getText().length());
+				prev.setCursorPosition(pos);
+				
+				return prev;
 			}
-			catch (Exception e) { e.printStackTrace(); }
-			
-			deleteLine(theLine);
-			prev.setText(prev.getText() + text);
-			for (TextAreaLine l : linesAfter) { deleteLine(l); }
-			for (TextAreaLine l : linesAfter) { addTextLine(l); }
-			
-			setSelectedLine(prev);
-			int pos = MathHelper.clamp_int(prev.getText().length() - text.length(), 0, prev.getText().length());
-			prev.setCursorPosition(pos);
 		}
 		return null;
 	}
@@ -240,8 +322,9 @@ public class WindowTextArea extends WindowScrollList {
 		if (lineIn != null) {
 			TextAreaLine line = getTextLine(lineIn.getLineNumber() - 1);
 			if (line != null) {
-				setSelectedLine(line);
+				setSelectedLine(line, FocusType.Gained, true);
 				line.setCursorPosition(pos);
+				line.startTextTimer();
 			}
 			return line;
 		}
@@ -253,8 +336,9 @@ public class WindowTextArea extends WindowScrollList {
 		if (lineIn != null) {
 			TextAreaLine line = getTextLine(lineIn.getLineNumber() + 1);
 			if (line != null) {
-				setSelectedLine(line);
+				setSelectedLine(line, FocusType.Gained, true);
 				line.setCursorPosition(pos);
+				line.startTextTimer();
 			}
 			return line;
 		}
@@ -345,6 +429,9 @@ public class WindowTextArea extends WindowScrollList {
 	public WindowTextArea setDrawLineNumbers(boolean valIn) { drawLineNumbers = valIn; return this; }
 	public WindowTextArea setDrawLineHighlight(boolean valIn) { drawLineHighlight = valIn; return this; }
 	public WindowTextArea setEditable(boolean valIn) { editable = valIn; return this; }
+	public WindowTextArea setDrawLineNumberSeparator(boolean valIn) { drawLineNumberSeparator = valIn; return this; }
+	public WindowTextArea setLineNumberSeparatorColor(EColors colorIn) { return setLineNumberSeparatorColor(colorIn.intVal); }
+	public WindowTextArea setLineNumberSeparatorColor(int colorIn) { lineNumberSeparatorColor = colorIn; return this; }
 	
 	public TextAreaLine getLineMouseIsOver() {
 		int mPosY = mY - startY - 1;
@@ -360,6 +447,7 @@ public class WindowTextArea extends WindowScrollList {
 	public int getLineHeight() { return lineHeight; }
 	public int getLineCount() { return (height - 2) / 10; }
 	public boolean hasLineNumbers() { return drawLineNumbers; }
+	public int getLineNumberOffset() { return hasLineNumbers() ? (6 + String.valueOf(textDocument.size()).length() * mc.fontRendererObj.getStringWidth("0")) : 0; }
 	public boolean getDrawLineHighlight() { return drawLineHighlight; }
 	public boolean isEditable() { return editable; }
 	public TextAreaLine getCurrentLine() { return currentLine; }

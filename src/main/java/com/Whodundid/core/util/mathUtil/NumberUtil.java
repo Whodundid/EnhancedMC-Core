@@ -108,4 +108,10 @@ public class NumberUtil {
 		return (char) getRoll(32, 126);
 	}
 	
+	public static String randomString(int length) {
+		String str = "";
+		for (int i = 0; i < length; i++) { str += randomChar(); }
+		return str;
+	}
+	
 }

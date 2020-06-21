@@ -10,6 +10,7 @@ import com.Whodundid.core.windowLibrary.windowObjects.advancedObjects.header.Win
 import com.Whodundid.core.windowLibrary.windowUtil.EObjectGroup;
 import com.Whodundid.core.windowLibrary.windowUtil.windowEvents.ObjectEvent;
 import com.Whodundid.core.windowLibrary.windowUtil.windowEvents.ObjectEventHandler;
+import com.Whodundid.core.windowLibrary.windowUtil.windowEvents.eventUtil.FocusType;
 import com.Whodundid.core.windowLibrary.windowUtil.windowEvents.events.EventFocus;
 import java.util.function.Consumer;
 
@@ -253,6 +254,8 @@ public interface IWindowObject extends ITabCompleteListener {
 	public void drawFocusLockBorder();
 	/** Signals the top parent to try transfering focus to this object on the next draw cycle. If another object has a focus lock, this object will not receive focus */ 
 	public IWindowObject requestFocus();
+	/** Same as the previous request focus but the exact type of focus event can be specified. */
+	public IWindowObject requestFocus(FocusType typeIn);
 	/** Returns the object that will recieve foucs by default when the base object has foucs transfered to it. */
 	public IWindowObject getDefaultFocusObject();
 	/** Sets a default focus object for this object. When the main object recieves focus, the top parent will attempt to transfer focus to the specified default focus object. */

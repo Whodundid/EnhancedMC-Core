@@ -24,6 +24,9 @@ public class TextEditorWindow extends WindowParent {
 	boolean failed = false;
 	boolean newFile = false;
 	
+	private int vPos, hPos;
+	private TextAreaLine line;
+	
 	public TextEditorWindow(File pathIn) {
 		super();
 		path = pathIn;
@@ -61,6 +64,22 @@ public class TextEditorWindow extends WindowParent {
 		addObject(document, save, cancel, reload);
 		
 		loadFile();
+	}
+	
+	@Override
+	public void preReInit() {
+		vPos = document.getVScrollBar().getScrollPos();
+		hPos = document.getHScrollBar().getScrollPos();
+		line = document.getCurrentLine();
+	}
+	
+	@Override
+	public void postReInit() {
+		document.getVScrollBar().setScrollBarPos(vPos);
+		document.getHScrollBar().setScrollBarPos(hPos);
+		if (line != null) {
+			document.setSelectedLine(document.getLineWithTextAndObject(line.getText(), line.getStoredObj()));
+		}
 	}
 	
 	@Override

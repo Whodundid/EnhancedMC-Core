@@ -311,8 +311,8 @@ public class WindowTextField extends ActionObject {
 			y = h;
 			h = j;
 		}
-		if (w > startX + width) { w = startX + width; }
-		if (x > startX + width) { x = startX + width; }
+		//if (w > startX + width) { w = startX + width; }
+		//if (x > startX + width) { x = startX + width; }
 		
 		Tessellator tessellator = Tessellator.getInstance();
 		WorldRenderer worldrenderer = tessellator.getWorldRenderer();

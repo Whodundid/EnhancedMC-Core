@@ -54,6 +54,7 @@ public class AppLoader {
 			if (appIn != null) {
 				//process app
 				try {
+					
 					//check for incompatibility
 					boolean incompatible = false;
 					
@@ -66,14 +67,52 @@ public class AppLoader {
 						String appName = box.getObject();
 						String appVer = box.getValue();
 						
-						EMCApp dep = null;
-						for (EMCApp app : RegisteredApps.getAppsList()) {
-							if (app.getName().equals(appName)) { dep = app; break; }
-						}
+						String[] appVerParts = appVer.split("[.]");
+						int appMajorVer = -1;
+						int appMinorVer = -1;
+						int appBuildVer = -1;
 						
-						if (dep != null) {
-							foundDepMods += 1;
-							if (appVer.equals(dep.getVersion())) { matchingVers += 1; }
+						if (appVerParts.length <= 3) {
+							if (appVerParts.length > 0) { appMajorVer = Integer.parseInt(appVerParts[0]); }
+							if (appVerParts.length > 1) { appMinorVer = Integer.parseInt(appVerParts[1]); }
+							if (appVerParts.length > 2) { appBuildVer = Integer.parseInt(appVerParts[2]); }
+							
+							if (appMajorVer != -1) {
+								EMCApp dep = null;
+								for (EMCApp app : RegisteredApps.getAppsList()) {
+									if (app.getName().equals(appName)) { dep = app; break; }
+								}
+								
+								if (dep != null) {
+									String depVer = dep.getVersion();
+									
+									String[] depVerParts = depVer.split("[.]");
+									int depMajorVer = -1;
+									int depMinorVer = -1;
+									int depBuildVer = -1;
+									
+									if (depVerParts.length > 0) { depMajorVer = Integer.parseInt(depVerParts[0]); }
+									if (depVerParts.length > 1) { depMinorVer = Integer.parseInt(depVerParts[1]); }
+									if (depVerParts.length > 2) { depBuildVer = Integer.parseInt(depVerParts[2]); }
+									
+									if (depMajorVer != -1) {
+										//check major - minor - build versions
+										if (dep.enforcesBuildVersion()) { 
+											if (appVer.equals(depVer)) { matchingVers += 1; }
+										}
+										
+										//check major version
+										else if (dep.enforcesMajorVersion()) {
+											if (appMajorVer == depMajorVer) { matchingVers += 1; }
+										}
+										
+										//check major - minor versions
+										else if (dep.enforcesMinorVersion()) {
+											if (appMajorVer == depMajorVer && appMinorVer == depMinorVer) { matchingVers += 1; } 
+										}
+									}
+								}
+							} //if appMajorVer != null
 						}
 					}
 					
@@ -176,7 +215,8 @@ public class AppLoader {
 	public static void loadApps() { loadApps(null, false); }
 	public static void loadApps(ETerminal termIn, boolean showInfo) {
 		
-		EArrayList<EMCApp> foundApps = new EArrayList();
+		EArrayList<EMCApp> bundled = EnhancedMC.getBundledApps();
+		EArrayList<EMCApp> foundApps = new EArrayList(bundled);
 		EArrayList<EMCApp> coreCheck = new EArrayList();
 		EArrayList<EMCApp> depCheck = new EArrayList();
 		foundApps.add(EnhancedMC.appInstance);
@@ -186,8 +226,22 @@ public class AppLoader {
 			Object m = c.getMod();
 			if (m instanceof EMCApp) {
 				c.getMetadata().parent = EnhancedMC.MODID; //assign the app as a child of EMC
-				foundApps.add((EMCApp) m);
-				if (showInfo && termIn != null) { termIn.writeln("Found: " + EnumChatFormatting.AQUA + ((EMCApp) m).getName(), EColors.seafoam); }
+				EMCApp app = (EMCApp) m;
+				
+				if (app != null) {
+					if (showInfo && termIn != null) { termIn.writeln("Found: " + EnumChatFormatting.AQUA + ((EMCApp) m).getName(), EColors.seafoam); }
+					
+					boolean contains = false;
+					for (EMCApp a : foundApps) {
+						if (a != null && a.getName() != null) {
+							if (a.getName().equals(app.getName())) { contains = true; break; }
+						}
+					}
+					if (!contains) { foundApps.add(app); }
+					else {
+						if (showInfo && termIn != null) { termIn.writeln("Duplicate app found! App: " + app.getName() + " " + app.getVersion() + " is already present within Found Apps List!"); }
+					}
+				}
 			}
 		}
 		
@@ -206,11 +260,53 @@ public class AppLoader {
 					String appName = box.getObject();
 					String appVer = box.getValue();
 					
-					EMCApp dep = getApp(appName, foundApps);
-					if (dep != null) {
-						foundDepMods += 1;
-						if (appVer.equals(dep.getVersion())) { matchingVers += 1; }
-					}
+					String[] appVerParts = appVer.split("[.]");
+					int appMajorVer = -1;
+					int appMinorVer = -1;
+					int appBuildVer = -1;
+					
+					if (appVerParts.length <= 3) {
+						if (appVerParts.length > 0) { appMajorVer = Integer.parseInt(appVerParts[0]); }
+						if (appVerParts.length > 1) { appMinorVer = Integer.parseInt(appVerParts[1]); }
+						if (appVerParts.length > 2) { appBuildVer = Integer.parseInt(appVerParts[2]); }
+						
+						if (appMajorVer != -1) {
+							EMCApp dep = getApp(appName, foundApps);
+							if (dep != null) {
+								foundDepMods += 1;
+								
+								String depVer = dep.getVersion();
+								
+								System.out.println("Dep: " + dep.getName() + " " + depVer);
+								
+								String[] depVerParts = depVer.split("[.]");
+								int depMajorVer = -1;
+								int depMinorVer = -1;
+								int depBuildVer = -1;
+								
+								if (depVerParts.length > 0) { depMajorVer = Integer.parseInt(depVerParts[0]); }
+								if (depVerParts.length > 1) { depMinorVer = Integer.parseInt(depVerParts[1]); }
+								if (depVerParts.length > 2) { depBuildVer = Integer.parseInt(depVerParts[2]); }
+								
+								if (depMajorVer != -1) {
+									//check major - minor - build versions
+									if (dep.enforcesBuildVersion()) { 
+										if (appVer.equals(depVer)) { matchingVers += 1; }
+									}
+									
+									//check major version
+									else if (dep.enforcesMajorVersion()) {
+										if (appMajorVer == depMajorVer) { matchingVers += 1; }
+									}
+									
+									//check major - minor versions
+									else if (dep.enforcesMinorVersion()) {
+										if (appMajorVer == depMajorVer && appMinorVer == depMinorVer) { matchingVers += 1; } 
+									}
+								}
+							} //dep != null
+						}
+					} //appVerParts <= 3
 				}
 				
 				if (foundDepMods != numDeps || matchingVers != numDeps) { incompatible = true; }

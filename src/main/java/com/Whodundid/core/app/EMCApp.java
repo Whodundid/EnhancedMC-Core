@@ -66,6 +66,9 @@ public abstract class EMCApp implements Comparable<EMCApp> {
 	protected AppResources resources;
 	protected EArrayList<EResource> logo = new EArrayList();
 	protected long logoInterval = 1000l;
+	protected boolean enforceMajorVersion = true;
+	protected boolean enforceMinorVersion = false;
+	protected boolean enforceBuildVersion = false;
 	
 	public EMCApp(AppType appIn) { this(AppType.getAppName(appIn)); }
 	public EMCApp(String appNameIn) {
@@ -122,6 +125,9 @@ public abstract class EMCApp implements Comparable<EMCApp> {
 	public EArrayList<EResource> getLogo() { return logo; }
 	public EArrayList<NotificationType> getNotifications() { return notifications; }
 	public long getLogoInterval() { return logoInterval; }
+	public boolean enforcesMajorVersion() { return enforceMajorVersion; }
+	public boolean enforcesMinorVersion() { return enforceMinorVersion; }
+	public boolean enforcesBuildVersion() { return enforceBuildVersion; }
 	
 	public EMCApp setAliases(String alias, String... additional) {
 		if (alias != null) {

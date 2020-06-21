@@ -326,7 +326,7 @@ public class EnhancedMCRenderer extends WindowObject implements ITopParent {
 	@Override public boolean relinquishFocus() {
 		if (doesFocusLockExist() && getFocusLockObject().equals(this)) { clearFocusLockObject(); }
 		else if (hasFocus()) {
-			if (!getFocusLockObject().equals(this)) { setObjectRequestingFocus(this); return true; }
+			if (!getFocusLockObject().equals(this)) { setObjectRequestingFocus(this, FocusType.Transfer); return true; }
 		}
 		return false;
 	}
@@ -342,15 +342,15 @@ public class EnhancedMCRenderer extends WindowObject implements ITopParent {
 		if (!doesFocusLockExist()) {
 			if (objIn != null) {
 				relinquishFocus();
-				setObjectRequestingFocus(objIn);
+				setObjectRequestingFocus(objIn, FocusType.Transfer);
 			}
-			else { setObjectRequestingFocus(this); }
+			else { setObjectRequestingFocus(this, FocusType.Transfer); }
 		}
 	}
 	@Override public void drawFocusLockBorder() {}
 	@Override
 	public EnhancedMCRenderer requestFocus() {
-		if (!hasFocus() && !doesFocusLockExist()) { setObjectRequestingFocus(this); }
+		if (!hasFocus() && !doesFocusLockExist()) { setObjectRequestingFocus(this, FocusType.Transfer); }
 		return this;
 	}
 	@Override public IWindowObject getDefaultFocusObject() { return defaultFocusObject; }
@@ -430,7 +430,7 @@ public class EnhancedMCRenderer extends WindowObject implements ITopParent {
 	//focus
 	@Override public IWindowObject getFocusedObject() { return focusedObject; }
 	@Override public EnhancedMCRenderer setFocusedObject(IWindowObject objIn) { focusedObject = objIn; return this; }
-	@Override public EnhancedMCRenderer setObjectRequestingFocus(IWindowObject objIn) { focusQueue.add(new EventFocus(this, objIn, FocusType.Transfer)); return this; }
+	@Override public EnhancedMCRenderer setObjectRequestingFocus(IWindowObject objIn, FocusType typeIn) { focusQueue.add(new EventFocus(this, objIn, typeIn)); return this; }
 	@Override public IWindowObject getFocusLockObject() { return focusLockObject; }
 	@Override public EnhancedMCRenderer setFocusLockObject(IWindowObject objIn) { focusLockObject = objIn; transferFocus(focusLockObject); return this; }
 	@Override public EnhancedMCRenderer clearFocusLockObject() { StaticTopParent.clearFocusLockObject(this); return this; }
