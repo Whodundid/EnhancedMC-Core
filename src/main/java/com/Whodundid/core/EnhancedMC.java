@@ -204,7 +204,6 @@ public class EnhancedMC extends DummyModContainer {
 	public static IWindowParent displayWindow(IWindowParent windowIn, Object oldObject, boolean transferFocus, boolean closeOld) { return displayWindow(windowIn, oldObject, transferFocus, closeOld, true, CenterType.object); }
 	public static IWindowParent displayWindow(IWindowParent windowIn, Object oldObject, boolean transferFocus, boolean closeOld, boolean transferHistory) { return displayWindow(windowIn, oldObject, transferFocus, closeOld, transferHistory, CenterType.object); }
 	public static IWindowParent displayWindow(IWindowParent windowIn, Object oldObject, boolean transferFocus, boolean closeOld, boolean transferHistory, CenterType loc) {
-		System.out.println("EMC: Opening window: " + windowIn);
 		if (windowIn == null) { mc.displayGuiScreen(null); }
 		if (mc.currentScreen == null || !(mc.currentScreen instanceof RendererProxyGui)) { mc.displayGuiScreen(new RendererProxyGui()); }
 		if (windowIn != null) {
