@@ -175,6 +175,8 @@ public class CoreApp extends EMCApp {
 		registerSetting(enableBlockDrawer, worldEditVisual, debugVal, drawHiddenPlayers);
 		registerSetting(firstUse, openedTut);
 		
+		notifications.add(emcNotification);
+		
 		EnhancedMC.getNotificationHandler().registerNotificationType(emcNotification);
 		
 		debug();

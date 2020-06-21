@@ -84,6 +84,8 @@ public class AppLoader {
 								}
 								
 								if (dep != null) {
+									foundDepMods += 1;
+									
 									String depVer = dep.getVersion();
 									
 									String[] depVerParts = depVer.split("[.]");
@@ -215,6 +217,8 @@ public class AppLoader {
 	public static void loadApps() { loadApps(null, false); }
 	public static void loadApps(ETerminal termIn, boolean showInfo) {
 		
+		boolean tin = showInfo && termIn != null;
+		
 		EArrayList<EMCApp> bundled = EnhancedMC.getBundledApps();
 		EArrayList<EMCApp> foundApps = new EArrayList(bundled);
 		EArrayList<EMCApp> coreCheck = new EArrayList();
@@ -229,7 +233,7 @@ public class AppLoader {
 				EMCApp app = (EMCApp) m;
 				
 				if (app != null) {
-					if (showInfo && termIn != null) { termIn.writeln("Found: " + EnumChatFormatting.AQUA + ((EMCApp) m).getName(), EColors.seafoam); }
+					if (tin) { termIn.writeln("Found mod app: " + EnumChatFormatting.AQUA + ((EMCApp) m).getName(), EColors.seafoam); }
 					
 					boolean contains = false;
 					for (EMCApp a : foundApps) {
@@ -239,7 +243,7 @@ public class AppLoader {
 					}
 					if (!contains) { foundApps.add(app); }
 					else {
-						if (showInfo && termIn != null) { termIn.writeln("Duplicate app found! App: " + app.getName() + " " + app.getVersion() + " is already present within Found Apps List!"); }
+						if (tin) { termIn.writeln("Duplicate app found! App: " + app.getName() + " " + app.getVersion() + " is already present within Found Apps List!"); }
 					}
 				}
 			}
@@ -276,8 +280,6 @@ public class AppLoader {
 								foundDepMods += 1;
 								
 								String depVer = dep.getVersion();
-								
-								System.out.println("Dep: " + dep.getName() + " " + depVer);
 								
 								String[] depVerParts = depVer.split("[.]");
 								int depMajorVer = -1;
@@ -318,7 +320,7 @@ public class AppLoader {
 				coreCheck.add(m);
 			}
 			catch (Exception q) {
-				if (showInfo && termIn != null) { termIn.writeln("Error trying to read app: " + m + "! Ignoring...", EColors.red); }
+				if (tin) { termIn.writeln("Error trying to read app: " + m + "! Ignoring...", EColors.red); }
 				EnhancedMC.error("Error trying to read app: " + m + "! Ignoring...");
 				q.printStackTrace();
 			}

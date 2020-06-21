@@ -83,6 +83,9 @@ public final class HotKeyApp extends EMCApp {
 		donation = new StorageBox("Consider donating to support EMC development!", "https://www.paypal.me/Whodundid");
 		addDependency(AppType.CORE, "1.0");
 		
+		registeredHotKeys.clear();
+		appHotKeys.clear();
+		
 		registerSetting(stopMovement, createExampleKey, exampleKeyCreated, keyInputDelay);
 		
 		AppConfigFile config = new AppConfigFile(this, "hotKeySettings", "EMC Hotkey Config") {
