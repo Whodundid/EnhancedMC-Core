@@ -67,7 +67,7 @@ public final class ClearVisualsApp extends EMCApp {
 		versionDate = "June 11, 2020";
 		donation = new StorageBox("Consider donating to support EMC development!", "https://www.paypal.me/Whodundid");
 		
-		addDependency(AppType.CORE, "1.0");
+		addDependency(AppType.CORE, "1.0.0");
 		configManager.setMainConfig(new AppConfigFile(this, "clearVisuals", "EMC Clear Visuals Config"));
 		
 		registerSetting(gama, removeFire, removeWaterOverlay, removeFog, clearLava, clearWater);

@@ -81,6 +81,12 @@ public class EnhancedMC extends DummyModContainer {
 	private static boolean isDev = false;
 	private static boolean deobf = false;
 	
+	private static final ClearVisualsApp cv = new ClearVisualsApp();
+	private static final HotKeyApp hk = new HotKeyApp();
+	private static final PingApp pd = new PingApp();
+	private static final PlayerInfoApp pi = new PlayerInfoApp();
+	private static final SLCApp slc = new SLCApp();
+	
 	public EnhancedMC() {
 		super(new ModMetadata());
 		ModMetadata meta = getMetadata();
@@ -147,19 +153,11 @@ public class EnhancedMC extends DummyModContainer {
 	
 	/** Used for rebuilding bundled apps when they are reloaded. */
 	public static EArrayList<EMCApp> getBundledApps() {
-		EArrayList<EMCApp> apps = new EArrayList();
-		
-		//create bundled apps
-		ClearVisualsApp cv = new ClearVisualsApp();
-		HotKeyApp hk = new HotKeyApp();
-		PingApp pd = new PingApp();
-		PlayerInfoApp pi = new PlayerInfoApp();
-		SLCApp slc = new SLCApp();
-		
-		return apps.addAll(cv, hk, pd, pi, slc);
+		return new EArrayList<EMCApp>(cv, hk, pd, pi, slc);
 	}
 	
 	public static void checkKeyBinds() {
+		System.out.println("key pressed: " + Keyboard.getEventKey() + " " + openSettingsGui.getKeyCode() + " " + openHud.getKeyCode());
 		if (openSettingsGui.isPressed()) { openSettingsGui(); }
 		if (openHud.isPressed()) {
 			if (mc.currentScreen instanceof IRendererProxy) { mc.displayGuiScreen(null); }
@@ -207,6 +205,7 @@ public class EnhancedMC extends DummyModContainer {
 	public static IWindowParent displayWindow(IWindowParent windowIn, Object oldObject, boolean transferFocus, boolean closeOld) { return displayWindow(windowIn, oldObject, transferFocus, closeOld, true, CenterType.object); }
 	public static IWindowParent displayWindow(IWindowParent windowIn, Object oldObject, boolean transferFocus, boolean closeOld, boolean transferHistory) { return displayWindow(windowIn, oldObject, transferFocus, closeOld, transferHistory, CenterType.object); }
 	public static IWindowParent displayWindow(IWindowParent windowIn, Object oldObject, boolean transferFocus, boolean closeOld, boolean transferHistory, CenterType loc) {
+		System.out.println("EMC: Opening window: " + windowIn);
 		if (windowIn == null) { mc.displayGuiScreen(null); }
 		if (mc.currentScreen == null || !(mc.currentScreen instanceof RendererProxyGui)) { mc.displayGuiScreen(new RendererProxyGui()); }
 		if (windowIn != null) {

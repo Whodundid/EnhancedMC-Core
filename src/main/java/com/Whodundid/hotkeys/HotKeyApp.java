@@ -81,10 +81,10 @@ public final class HotKeyApp extends EMCApp {
 		author = "Whodundid";
 		artist = "Mr.JamminOtter";
 		donation = new StorageBox("Consider donating to support EMC development!", "https://www.paypal.me/Whodundid");
-		addDependency(AppType.CORE, "1.0");
+		addDependency(AppType.CORE, "1.0.0");
 		
-		registeredHotKeys.clear();
-		appHotKeys.clear();
+		if (registeredHotKeys != null) { registeredHotKeys.clear(); }
+		if (appHotKeys != null) { appHotKeys.clear(); }
 		
 		registerSetting(stopMovement, createExampleKey, exampleKeyCreated, keyInputDelay);
 		

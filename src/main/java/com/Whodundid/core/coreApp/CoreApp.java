@@ -148,7 +148,7 @@ public class CoreApp extends EMCApp {
 		version = EnhancedMC.VERSION;
 		author = "Whodundid";
 		artist = "Mr.JamminOtter";
-		versionDate = "June 15, 2020";
+		versionDate = "June 21, 2020";
 		donation = new StorageBox("Consider donating to support EMC development!", "https://www.paypal.me/Whodundid");
 		isDisableable = false;
 		setEnabled(true);

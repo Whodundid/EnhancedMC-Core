@@ -220,10 +220,10 @@ public class AppLoader {
 		boolean tin = showInfo && termIn != null;
 		
 		EArrayList<EMCApp> bundled = EnhancedMC.getBundledApps();
-		EArrayList<EMCApp> foundApps = new EArrayList(bundled);
+		EArrayList<EMCApp> foundApps = new EArrayList(EnhancedMC.appInstance);
 		EArrayList<EMCApp> coreCheck = new EArrayList();
 		EArrayList<EMCApp> depCheck = new EArrayList();
-		foundApps.add(EnhancedMC.appInstance);
+		foundApps.addAll(bundled);
 		
 		//find any EMCApps in forge loaded mods
 		for (ModContainer c : Loader.instance().getModList()) {
