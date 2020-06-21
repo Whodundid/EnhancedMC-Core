@@ -157,7 +157,6 @@ public class EnhancedMC extends DummyModContainer {
 	}
 	
 	public static void checkKeyBinds() {
-		System.out.println("key pressed: " + Keyboard.getEventKey() + " " + openSettingsGui.getKeyCode() + " " + openHud.getKeyCode());
 		if (openSettingsGui.isPressed()) { openSettingsGui(); }
 		if (openHud.isPressed()) {
 			if (mc.currentScreen instanceof IRendererProxy) { mc.displayGuiScreen(null); }

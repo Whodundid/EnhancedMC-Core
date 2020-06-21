@@ -64,7 +64,6 @@ public class RendererProxyGui extends GuiChat implements IRendererProxy {
 	}
 	
 	private void handleOpen() {
-		System.out.println("EMC: Opening HUD");
 		renderer.revealHiddenObjects();
 		
 		if (CoreApp.enableTaskBar.get()) {
