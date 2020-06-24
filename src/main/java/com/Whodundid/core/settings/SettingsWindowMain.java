@@ -4,12 +4,12 @@ import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.app.AppType;
 import com.Whodundid.core.app.EMCApp;
 import com.Whodundid.core.app.RegisteredApps;
-import com.Whodundid.core.app.window.IncompatibleWindowList;
+import com.Whodundid.core.app.window.AppProblemsWindowList;
 import com.Whodundid.core.coreApp.CoreApp;
 import com.Whodundid.core.coreApp.EMCResources;
 import com.Whodundid.core.debug.ImportantWindow;
-import com.Whodundid.core.settings.guiParts.SettingsMenuContainer;
-import com.Whodundid.core.settings.guiParts.SettingsRCM;
+import com.Whodundid.core.settings.util.SettingsMenuContainer;
+import com.Whodundid.core.settings.util.SettingsRCM;
 import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
@@ -83,7 +83,7 @@ public class SettingsWindowMain extends WindowParent {
 		terminalButton.setTextures(EMCResources.terminalButton, EMCResources.terminalButtonSel);
 		
 		problemButton = new WindowButton(this, endX - 17, startY + 2, 15, 15).setTextures(EMCResources.guiProblemOpen, EMCResources.guiProblemOpenSel);
-		problemButton.setVisible(RegisteredApps.getIncompatibleAppList().isNotEmpty());
+		problemButton.setVisible(RegisteredApps.getIncompatibleAppsList().isNotEmpty() || RegisteredApps.getBrokenAppsList().isNotEmpty());
 		problemButton.setDrawBackground(true).setBackgroundColor(0xffbb0000);
 		
 		IActionObject.setActionReceiver(this, screenshotsButton, keyBindButton, problemButton);
@@ -106,7 +106,7 @@ public class SettingsWindowMain extends WindowParent {
 		if (em.enableTerminal.get()) { addObject(terminalButton); }
 		
 		//then build the list
-		if (RegisteredApps.getRegisteredAppList().isEmpty()) { //THIS SHOULD BE IMPOSSIBLE!
+		if (RegisteredApps.getRegisteredAppsList().isEmpty()) { //THIS SHOULD BE IMPOSSIBLE!
 			scrollList.addObjectToList(new WindowLabel(scrollList, (width - 10) / 2, 80, "No Enhanced MC Apps Detected!", 0xff5555).enableWordWrap(true, 125).setDrawCentered(true));
 		}
 		else { assembleList(); }
@@ -127,7 +127,7 @@ public class SettingsWindowMain extends WindowParent {
 		updateBeforeNextDraw(mXIn, mYIn);
 		drawDefaultBackground();
 		
-		if (RegisteredApps.getIncompatibleAppList().isNotEmpty()) {
+		if (problemButton.checkDraw()) {
 			problemButton.setDrawBackground(EnhancedMC.updateCounter / 30 % 2 == 0);
 		}
 		
@@ -263,7 +263,7 @@ public class SettingsWindowMain extends WindowParent {
 				//EnhancedMC.displayWindow(new ReloaderDialogueBox(RegisteredApps.getRegisteredAppList()), CenterType.screen);
 			}
 			if (object == terminalButton) { EnhancedMC.displayWindow(new ETerminal(), this, true, false, false, CenterType.screen); }
-			if (object == problemButton) { EnhancedMC.displayWindow(new IncompatibleWindowList()); }
+			if (object == problemButton) { EnhancedMC.displayWindow(new AppProblemsWindowList()); }
 		}
 	}
 	

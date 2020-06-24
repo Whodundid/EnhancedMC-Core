@@ -1,11 +1,11 @@
 package com.Whodundid.core.coreEvents.emcEvents;
 
+import com.Whodundid.core.coreEvents.EMCEvent;
 import com.Whodundid.core.renderer.renderUtil.RendererRCM;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
 
 @Cancelable
-public class RendererRCMOpenEvent extends Event {
+public class RendererRCMOpenEvent extends EMCEvent {
 	
 	RendererRCM rcm;
 	

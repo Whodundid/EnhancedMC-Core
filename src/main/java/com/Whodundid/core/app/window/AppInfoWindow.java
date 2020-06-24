@@ -33,6 +33,8 @@ public class AppInfoWindow extends WindowParent {
 	private WindowLabel appName;
 	private WindowTextArea info, dependencies;
 	
+	private int vPos1, hPos1, vPos2, hPos2;
+	
 	public AppInfoWindow(EMCApp modIn) {
 		super();
 		app = modIn;
@@ -60,11 +62,12 @@ public class AppInfoWindow extends WindowParent {
 		
 		int btnWidth = width / 3;
 		int logoWidth = (width + 26) / 3;
+		int gap = width / 16;
 		
-		logoWidth = MathHelper.clamp_int(logoWidth, 0, (height + 6) / 2);
+		logoWidth = MathHelper.clamp_int(logoWidth, 0, (height - 16) / 2);
 		
-		reloadButton = new WindowButton(this, midX + (width / 16), endY - 26, btnWidth, 20, "Rebuild");
-		okButton = new WindowButton(this, midX - btnWidth - (width / 16), endY - 26, btnWidth, 20, "Ok");
+		reloadButton = new WindowButton(this, midX + gap, endY - 26, btnWidth, 20, "Rebuild");
+		okButton = new WindowButton(this, midX - btnWidth - gap, endY - 26, btnWidth, 20, "Ok");
 		
 		logoBox = new WindowImageBox(this, endX - 6 - logoWidth, topLine.endY + 5, logoWidth, logoWidth);
 		logoBox.setImages(app);
@@ -72,8 +75,72 @@ public class AppInfoWindow extends WindowParent {
 		logoBox.setNullText("No logo :(").setNullTextColor(EColors.gray);
 		
 		dependencies = new WindowTextArea(this, startX + 6, logoBox.endY + 5, width - 12, okButton.startY - logoBox.endY - 10);
-		dependencies.setDrawLineNumbers(true).setEditable(false).setResetDrawn(false);
+		dependencies.setDrawLineNumbers(true).setEditable(false);
+		dependencies.setDrawLineHighlight(false);
+		dependencies.setResetDrawn(false);
 		
+		info = new WindowTextArea(this, startX + 6, topLine.endY + 5, logoBox.startX - startX - 10, dependencies.startY - topLine.endY - 10);
+		info.setDrawLineNumbers(false).setEditable(false);
+		info.setDrawLineHighlight(false);
+		info.setResetDrawn(false);
+		
+		addObject(nameBack, appName, topLine, reloadButton, okButton);
+		addObject(logoBox, dependencies, info);
+		
+		buildLists();
+	}
+	
+	@Override
+	public void preReInit() {
+		vPos1 = dependencies.getVScrollBar().getScrollPos();
+		hPos1 = dependencies.getHScrollBar().getScrollPos();
+		vPos2 = info.getVScrollBar().getScrollPos();
+		hPos2 = info.getHScrollBar().getScrollPos();
+	}
+	
+	@Override
+	public void postReInit() {
+		dependencies.getVScrollBar().setScrollBarPos(vPos1);
+		dependencies.getHScrollBar().setScrollBarPos(hPos1);
+		info.getVScrollBar().setScrollBarPos(vPos2);
+		info.getHScrollBar().setScrollBarPos(hPos2);
+	}
+	
+	@Override
+	public void drawObject(int mXIn, int mYIn) {
+		drawDefaultBackground();
+		super.drawObject(mXIn, mYIn);
+	}
+	
+	@Override
+	public void actionPerformed(IActionObject object, Object... args) {
+		if (object == okButton) { fileUpAndClose(); }
+		
+		if (object == reloadButton) {
+			if (AppLoader.reloadApp(app)) {
+				WindowDialogueBox success = new WindowDialogueBox(DialogueBoxTypes.ok);
+				success.setTitle("Reload Success");
+				success.setTitleColor(EColors.gray.intVal);
+				success.setMessage("Successfully rebuilt app: " + app.getName() + "!");
+				success.setMessageColor(EColors.green.intVal);
+				EnhancedMC.displayWindow(success, CenterType.screen);
+			}
+			else {
+				WindowDialogueBox fail = new WindowDialogueBox(DialogueBoxTypes.ok);
+				fail.setTitle("Reload Fail");
+				fail.setTitleColor(EColors.gray.intVal);
+				fail.setMessage("Failed to rebuild app: " + app.getName() + "!");
+				fail.setMessageColor(EColors.lred.intVal);
+				EnhancedMC.displayWindow(fail, CenterType.screen);
+			}
+		}
+	}
+	
+	public WindowTextArea getInfoArea() { return info; }
+	public WindowTextArea getDependenciesArea() { return dependencies; }
+	public WindowImageBox getLogoBox() { return logoBox; }
+	
+	private void buildLists() {
 		dependencies.addTextLine("Dependencies:", EColors.seafoam.intVal);
 		dependencies.addTextLine();
 		
@@ -83,10 +150,6 @@ public class AppInfoWindow extends WindowParent {
 			}
 		}
 		else { dependencies.addTextLine("None", 0xb2b2b2); }
-		
-		info = new WindowTextArea(this, startX + 6, topLine.endY + 5, logoBox.startX - startX - 10, dependencies.startY - topLine.endY - 10);
-		info.setDrawLineNumbers(false).setEditable(false).setResetDrawn(false);
-		info.setDrawLineHighlight(false);
 		
 		info.addTextLine("Author: " + EnumChatFormatting.GRAY + app.getAuthor(), EColors.orange.intVal);
 		info.addTextLine("Artist: " + EnumChatFormatting.GRAY + app.getArtist(), EColors.orange.intVal);
@@ -131,43 +194,6 @@ public class AppInfoWindow extends WindowParent {
 			TextAreaLine linkLine = info.addTextLine(linkColor);
 			linkLine.setLinkText("Donation Link", link, true);
 		}
-		
-		addObject(nameBack, appName, topLine, reloadButton, okButton);
-		addObject(logoBox, dependencies, info);
 	}
-	
-	@Override
-	public void drawObject(int mXIn, int mYIn) {
-		drawDefaultBackground();
-		super.drawObject(mXIn, mYIn);
-	}
-	
-	@Override
-	public void actionPerformed(IActionObject object, Object... args) {
-		if (object == okButton) { fileUpAndClose(); }
-		
-		if (object == reloadButton) {
-			if (AppLoader.reloadApp(app)) {
-				WindowDialogueBox success = new WindowDialogueBox(DialogueBoxTypes.ok);
-				success.setTitle("Reload Success");
-				success.setTitleColor(EColors.gray.intVal);
-				success.setMessage("Successfully rebuilt app: " + app.getName() + "!");
-				success.setMessageColor(EColors.green.intVal);
-				EnhancedMC.displayWindow(success, CenterType.screen);
-			}
-			else {
-				WindowDialogueBox fail = new WindowDialogueBox(DialogueBoxTypes.ok);
-				fail.setTitle("Reload Fail");
-				fail.setTitleColor(EColors.gray.intVal);
-				fail.setMessage("Failed to rebuild app: " + app.getName() + "!");
-				fail.setMessageColor(EColors.lred.intVal);
-				EnhancedMC.displayWindow(fail, CenterType.screen);
-			}
-		}
-	}
-	
-	public WindowTextArea getInfoArea() { return info; }
-	public WindowTextArea getDependenciesArea() { return dependencies; }
-	public WindowImageBox getLogoBox() { return logoBox; }
 	
 }

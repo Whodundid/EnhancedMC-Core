@@ -42,8 +42,7 @@ public class TerminalOptionsWindow extends WindowParent {
 		settings.addObjectToList(false, visual);
 		
 		//buttons
-		//drawLineNumbers = new EGuiButton(settings, startX + 12, visual.endY + 8, 60, 20, CoreApp.termLineNumbers);
-		drawLineNumbers = new WindowButton(settings, startX + 12, visual.endY + 8, 60, 20, "false");
+		drawLineNumbers = new WindowButton(settings, startX + 12, visual.endY + 8, 60, 20, CoreApp.termLineNumbers);
 		backColor = new WindowButton(settings, startX + 13, drawLineNumbers.endY + 10, 20, 20) {
 			@Override
 			public void drawObject(int mXIn, int mYIn) {
@@ -58,8 +57,7 @@ public class TerminalOptionsWindow extends WindowParent {
 		backColor.setBackgroundColor(CoreApp.termBackground.get());
 		backColor.setTextures(null, null);
 		
-		drawLineNumbers.setActionReceiver(this);
-		backColor.setActionReceiver(this);
+		IActionObject.setActionReceiver(this, drawLineNumbers, backColor);
 		
 		//labels
 		WindowLabel numberLabel = new WindowLabel(settings, drawLineNumbers.endX + 10, drawLineNumbers.midY - 4, "Draw line numbers", EColors.lgray);
@@ -138,7 +136,9 @@ public class TerminalOptionsWindow extends WindowParent {
 	
 	private void lineNumbers() {
 		//CoreApp.termLineNumbers.set(!CoreApp.termLineNumbers.get());
-		//drawLineNumbers.toggleTrueFalse(CoreApp.termLineNumbers, CoreApp.instance(), false);
+		drawLineNumbers.toggleTrueFalse(CoreApp.termLineNumbers, CoreApp.instance(), true);
+		
+		EnhancedMC.reloadAllWindowInstances(ETerminal.class);
 	}
 	
 	private void changeColor() {

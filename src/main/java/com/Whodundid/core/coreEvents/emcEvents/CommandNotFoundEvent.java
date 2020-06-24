@@ -1,10 +1,10 @@
 package com.Whodundid.core.coreEvents.emcEvents;
 
-import net.minecraftforge.fml.common.eventhandler.Event;
+import com.Whodundid.core.coreEvents.EMCEvent;
 
 //Author: Hunter Bragg
 
-public class CommandNotFoundEvent extends Event {
+public class CommandNotFoundEvent extends EMCEvent {
 	
 	String attemptedCommand = "";
 	

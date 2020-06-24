@@ -1,12 +1,11 @@
 package com.Whodundid.core.coreEvents.emcEvents;
 
+import com.Whodundid.core.coreEvents.EMCEvent;
 import com.Whodundid.core.util.chatUtil.TimedChatLine;
-
-import net.minecraftforge.fml.common.eventhandler.Event;
 
 //Author: Hunter Bragg
 
-public class ChatLineCreatedEvent extends Event {
+public class ChatLineCreatedEvent extends EMCEvent {
 
 	TimedChatLine l;
 	

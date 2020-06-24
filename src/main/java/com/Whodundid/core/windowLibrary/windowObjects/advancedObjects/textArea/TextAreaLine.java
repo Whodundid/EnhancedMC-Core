@@ -79,11 +79,6 @@ public class TextAreaLine<obj> extends WindowTextField {
 		updateValues();
 		boolean current = parentTextArea.getCurrentLine() == this;
 		
-		if (current && parentTextArea.getDrawLineHighlight()) {
-			int sX = startX - 2 + (parentTextArea.hasLineNumbers() ? parentTextArea.getLineNumberOffset() - 1: 0);
-			drawRect(sX, startY + 1, parentTextArea.endX - 1, endY, 0x39909090);
-		}
-		
 		if (parentTextArea.hasLineNumbers()) { drawLineNumber(); }
 		drawText();
 		
@@ -406,7 +401,7 @@ public class TextAreaLine<obj> extends WindowTextField {
 		if (drawShadowed) { drawStringS(text, startX + parentTextArea.getLineNumberOffset(), startY + 2, textColor); }
 		else { drawString(text, startX + parentTextArea.getLineNumberOffset(), startY + 2, textColor); }
 		
-		if (lineEquals) {
+		if (lineEquals && parentTextArea.isEditable()) {
 			if (hasSel) { //draw highlight
 				int start = selStart;
 				int end = selEnd;

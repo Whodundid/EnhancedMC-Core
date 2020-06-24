@@ -1,5 +1,6 @@
 package com.Whodundid.core.app.util;
 
+import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.app.EMCApp;
 import com.Whodundid.core.app.window.AppErrorDialogueBox;
 import com.Whodundid.core.app.window.windowUtil.AppErrorType;
@@ -18,8 +19,9 @@ public class AppErrorDisplay {
 		EnhancedMCRenderer ren = EnhancedMCRenderer.getInstance();
 		if (ren != null) {
 			AppErrorDialogueBox errorBox = new AppErrorDialogueBox(ren, type, modIn);
-			ren.addObject(null, errorBox);
+			EnhancedMC.displayWindow(errorBox);
 			errorBox.createErrorMessage(e, mods);
 		}
 	}
+	
 }

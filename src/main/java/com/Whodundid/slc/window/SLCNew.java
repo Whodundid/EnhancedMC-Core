@@ -52,7 +52,7 @@ public class SLCNew extends WindowParent {
 		stop = new WindowButton(this, play.endX + 10, endY - 30, 60, 20, "Stop");
 		globalSetting = new WindowButton(this, stop.endX + 10, endY - 30, 90, 20, mod.currentMode.getModeType());
 		
-		EArrayList<LayerTypes> types = EArrayList.of(LayerTypes.H, LayerTypes.J, LayerTypes.LA, LayerTypes.RA, LayerTypes.LL, LayerTypes.RL, LayerTypes.CA);
+		EArrayList<LayerTypes> types = new EArrayList(LayerTypes.H, LayerTypes.J, LayerTypes.LA, LayerTypes.RA, LayerTypes.LL, LayerTypes.RL, LayerTypes.CA);
 		
 		int lastY = startY;
 		for (int i = 0; i < types.size(); i++) {

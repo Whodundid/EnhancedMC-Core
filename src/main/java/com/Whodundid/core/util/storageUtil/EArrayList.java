@@ -210,7 +210,8 @@ public class EArrayList<E> extends AbstractList<E> {
 		return false;
 	}
 
-	@Override public boolean removeAll(Collection<?> c) {
+	@Override
+	public boolean removeAll(Collection<?> c) {
 		Objects.requireNonNull(c);
 		return batchRemove(c, false);
 	}
@@ -363,7 +364,7 @@ public class EArrayList<E> extends AbstractList<E> {
 
 	// Add methods
 
-	public EArrayList add(E... e) {
+	public EArrayList<E> add(E... e) {
 		if (e == null) {
 			if (contains(null)) {
 				if (allowDuplicates) {
@@ -382,7 +383,7 @@ public class EArrayList<E> extends AbstractList<E> {
 		return this;
 	}
 
-	public EArrayList addA(E[] e) { add(e); return this; }
+	public EArrayList<E> addA(E[] e) { add(e); return this; }
 
 	private void addE(E e) {
 		ensureCapacityInternal(size + 1);
@@ -420,14 +421,14 @@ public class EArrayList<E> extends AbstractList<E> {
 		}
 	}
 
-	public EArrayList reduceTo(Stream<E> s) {
+	public EArrayList<E> reduceTo(Stream<E> s) {
 		Objects.requireNonNull(s);
 		List<E> l = s.collect(Collectors.toList());
 		retainAll(l);
 		return this;
 	}
 
-	public EArrayList addAll(E... e) {
+	public EArrayList<E> addAll(E... e) {
 		if (e != null) {
 			for (E entry : e) { add(entry); }
 		}
@@ -556,8 +557,8 @@ public class EArrayList<E> extends AbstractList<E> {
 		return new ECollector<>((Supplier<List<T>>) EArrayList::new, List::add, (left, right) -> { left.addAll(right); return left; }, CH_ID);
 	}
 	
-	public static <T> EArrayList<T> of(T... vals) {
-		return new EArrayList<T>().addA(vals);
+	public static <T> EArrayList<T> of(Class<T> type, T... vals) {
+		return new EArrayList<T>().addAll(vals);
 	}
 
 	//---------------

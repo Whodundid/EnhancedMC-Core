@@ -4,7 +4,7 @@ import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.app.AppSettings;
 import com.Whodundid.core.app.EMCApp;
 import com.Whodundid.core.app.RegisteredApps;
-import com.Whodundid.core.settings.guiParts.ReloaderDialogueBox.Reason;
+import com.Whodundid.core.settings.util.ReloaderDialogueBox.Reason;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
 import com.Whodundid.core.terminal.terminalCommand.TerminalCommand;
 import com.Whodundid.core.terminal.window.ETerminal;
@@ -92,7 +92,7 @@ public class Config extends TerminalCommand {
 			EArrayList<EMCApp> reloadedMods = new EArrayList();
 			StorageBoxHolder<EMCApp, Reason> failedMods = new StorageBoxHolder();
 			
-			for (EMCApp m : RegisteredApps.getRegisteredAppList()) {
+			for (EMCApp m : RegisteredApps.getRegisteredAppsList()) {
 				boolean load = m.getConfig().loadAllConfigs();
 				if (load) { reloadedMods.add(m); }
 				else { failedMods.add(m, Reason.Loading); }
@@ -134,7 +134,7 @@ public class Config extends TerminalCommand {
 			EArrayList<EMCApp> savedMods = new EArrayList();
 			StorageBoxHolder<EMCApp, Reason> failedMods = new StorageBoxHolder();
 			
-			for (EMCApp m : RegisteredApps.getRegisteredAppList()) {
+			for (EMCApp m : RegisteredApps.getRegisteredAppsList()) {
 				boolean save = m.getConfig().saveAllConfigs();
 				if (save) { savedMods.add(m); }
 				else { failedMods.add(m, Reason.Saving); }
@@ -175,7 +175,7 @@ public class Config extends TerminalCommand {
 			EArrayList<EMCApp> resetMods = new EArrayList();
 			StorageBoxHolder<EMCApp, Reason> failedMods = new StorageBoxHolder();
 			
-			for (EMCApp m : RegisteredApps.getRegisteredAppList()) {
+			for (EMCApp m : RegisteredApps.getRegisteredAppsList()) {
 				boolean reset = m.getConfig().resetAllConfigs();
 				if (reset) { resetMods.add(m); }
 				else { failedMods.add(m, Reason.Resetting); }

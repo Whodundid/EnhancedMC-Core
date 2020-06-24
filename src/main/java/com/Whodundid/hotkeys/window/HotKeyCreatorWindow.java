@@ -20,18 +20,18 @@ import com.Whodundid.core.windowLibrary.windowObjects.windows.WindowDialogueBox.
 import com.Whodundid.core.windowLibrary.windowTypes.WindowParent;
 import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IActionObject;
 import com.Whodundid.hotkeys.HotKeyApp;
-import com.Whodundid.hotkeys.control.HotKey;
+import com.Whodundid.hotkeys.control.Hotkey;
 import com.Whodundid.hotkeys.control.KeyActionType;
-import com.Whodundid.hotkeys.control.hotKeyTypes.CommandSenderHotKey;
-import com.Whodundid.hotkeys.control.hotKeyTypes.DebugHotKey;
-import com.Whodundid.hotkeys.control.hotKeyTypes.GuiOpenerHotKey;
-import com.Whodundid.hotkeys.control.hotKeyTypes.ConditionalCommandSenderHotKey;
-import com.Whodundid.hotkeys.control.hotKeyTypes.KeyCategoryActivatorHotKey;
-import com.Whodundid.hotkeys.control.hotKeyTypes.KeyCategoryDeactivatorHotKey;
-import com.Whodundid.hotkeys.control.hotKeyTypes.ModActivatorHotKey;
-import com.Whodundid.hotkeys.control.hotKeyTypes.ModDeactivatorHotKey;
+import com.Whodundid.hotkeys.control.hotKeyTypes.CommandSenderHotkey;
+import com.Whodundid.hotkeys.control.hotKeyTypes.DebugHotkey;
+import com.Whodundid.hotkeys.control.hotKeyTypes.GuiOpenerHotkey;
+import com.Whodundid.hotkeys.control.hotKeyTypes.ConditionalCommandSenderHotkey;
+import com.Whodundid.hotkeys.control.hotKeyTypes.KeyCategoryActivatorHotkey;
+import com.Whodundid.hotkeys.control.hotKeyTypes.KeyCategoryDeactivatorHotkey;
+import com.Whodundid.hotkeys.control.hotKeyTypes.ModActivatorHotkey;
+import com.Whodundid.hotkeys.control.hotKeyTypes.ModDeactivatorHotkey;
 import com.Whodundid.hotkeys.control.hotKeyUtil.*;
-import com.Whodundid.hotkeys.control.hotKeyUtil.exceptions.MissingHotKeyArgumentException;
+import com.Whodundid.hotkeys.control.hotKeyUtil.exceptions.MissingHotkeyArgumentException;
 import com.Whodundid.hotkeys.keySaveLoad.HotKeyBuilder;
 import com.Whodundid.hotkeys.util.HKResources;
 import com.Whodundid.hotkeys.window.util.KeyEntryTextField;
@@ -54,7 +54,7 @@ public class HotKeyCreatorWindow extends WindowParent {
 	WindowDropDownList trueFalseList;
 	WindowSelectionList selectionList;
 	WindowDialogueBox msgBox;
-	HotKey key;
+	Hotkey key;
 	KeyComboAction keys;
 	KeyActionType selectedHotKeyType;
 	Class selectedGui;
@@ -68,7 +68,7 @@ public class HotKeyCreatorWindow extends WindowParent {
 	protected enum SelectionType { Type, Gui, Script, Debug, Mod, Keybind; }
 	
 	public HotKeyCreatorWindow() { this(null); }
-	public HotKeyCreatorWindow(HotKey keyIn) {
+	public HotKeyCreatorWindow(Hotkey keyIn) {
 		super();
 		key = keyIn;
 		aliases.add("hotkeycreator", "keycreator", "hkc");
@@ -168,7 +168,7 @@ public class HotKeyCreatorWindow extends WindowParent {
 		drawStringWithShadow("Description:", startX + 13, startY + 252, 0xffd800);
 	}
 	
-	private void loadKeyValues(HotKey keyIn) {
+	private void loadKeyValues(Hotkey keyIn) {
 		originalKeyName = keyIn.getKeyName();
 		keyNameEntry.setText(keyIn.getKeyName());
 		enabledVal = keyIn.isEnabled();
@@ -187,33 +187,33 @@ public class HotKeyCreatorWindow extends WindowParent {
 		
 		switch (selectedHotKeyType) {
 		case COMMANDSENDER:
-			mainArgEntry.setText(((CommandSenderHotKey) keyIn).getCommand()).setVisible(true);
+			mainArgEntry.setText(((CommandSenderHotkey) keyIn).getCommand()).setVisible(true);
 			break;
 		case CONDITIONAL_COMMAND_ITEMTEST:
-			mainArgEntry.setText(((ConditionalCommandSenderHotKey) keyIn).getCommand()).setVisible(true);
-			secondaryArgEntry.setText(((ConditionalCommandSenderHotKey) keyIn).getItemID() + "").setVisible(true);
+			mainArgEntry.setText(((ConditionalCommandSenderHotkey) keyIn).getCommand()).setVisible(true);
+			secondaryArgEntry.setText(((ConditionalCommandSenderHotkey) keyIn).getItemID() + "").setVisible(true);
 			break;
 		case DEBUG:
-			selectArg1.setString(IDebugCommand.getDebugCommandName(((DebugHotKey) keyIn).getDebugFunction())).setVisible(true);
-			selectedDebug = ((DebugHotKey) keyIn).getDebugFunction();
+			selectArg1.setString(IDebugCommand.getDebugCommandName(((DebugHotkey) keyIn).getDebugFunction())).setVisible(true);
+			selectedDebug = ((DebugHotkey) keyIn).getDebugFunction();
 			break;
 		case GUI_OPENER:
-			selectArg1.setString(((GuiOpenerHotKey) keyIn).getGuiDisplayName()).setVisible(true);
-			selectedGui = ((GuiOpenerHotKey) keyIn).getGui();
+			selectArg1.setString(((GuiOpenerHotkey) keyIn).getGuiDisplayName()).setVisible(true);
+			selectedGui = ((GuiOpenerHotkey) keyIn).getGui();
 			break;
 		case CATEGORY_ACTIVATOR:
-			selectArg1.setString(((KeyCategoryActivatorHotKey) keyIn).getCategoryName()).setVisible(true);
+			selectArg1.setString(((KeyCategoryActivatorHotkey) keyIn).getCategoryName()).setVisible(true);
 			break;
 		case CATEGORY_DEACTIVATOR:
-			selectArg1.setString(((KeyCategoryDeactivatorHotKey) keyIn).getCategoryName()).setVisible(true);
+			selectArg1.setString(((KeyCategoryDeactivatorHotkey) keyIn).getCategoryName()).setVisible(true);
 			break;
 		case APP_ACTIVATOR:
-			selectArg1.setString(AppType.getAppName(((ModActivatorHotKey) keyIn).getApp())).setVisible(true);
-			selectedMod = ((ModActivatorHotKey) keyIn).getApp();
+			selectArg1.setString(AppType.getAppName(((ModActivatorHotkey) keyIn).getApp())).setVisible(true);
+			selectedMod = ((ModActivatorHotkey) keyIn).getApp();
 			break;
 		case APP_DEACTIVATOR:
-			selectArg1.setString(AppType.getAppName(((ModDeactivatorHotKey) keyIn).getApp())).setVisible(true);
-			selectedMod = ((ModDeactivatorHotKey) keyIn).getApp();
+			selectArg1.setString(AppType.getAppName(((ModDeactivatorHotkey) keyIn).getApp())).setVisible(true);
+			selectedMod = ((ModDeactivatorHotkey) keyIn).getApp();
 			break;
 		//case SCRIPT:
 		//	selectArg1.setDisplayString(((ScriptHotKey) keyIn).getScript().getScriptName()).setVisible(true);
@@ -277,10 +277,10 @@ public class HotKeyCreatorWindow extends WindowParent {
 		if (object == back) { fileUpAndClose(); }
 		if (object.equals(create)) {
 			try {
-				if (!keyNameEntry.getText().isEmpty() && keyNameEntry.getText().equals("enter a key name")) { throw new MissingHotKeyArgumentException("Key name not defined!"); }
+				if (!keyNameEntry.getText().isEmpty() && keyNameEntry.getText().equals("enter a key name")) { throw new MissingHotkeyArgumentException("Key name not defined!"); }
 				
-				if (key != null && keys == null) { throw new MissingHotKeyArgumentException("No keys defined!"); }
-				else if (keysEntry.getKeys().length == 0) { throw new MissingHotKeyArgumentException("No keys defined!"); }
+				if (key != null && keys == null) { throw new MissingHotkeyArgumentException("No keys defined!"); }
+				else if (keysEntry.getKeys().length == 0) { throw new MissingHotkeyArgumentException("No keys defined!"); }
 				
 				//get key builder instance
 				HotKeyBuilder builder = man.getKeyBuilder();
@@ -296,44 +296,44 @@ public class HotKeyCreatorWindow extends WindowParent {
 				switch (selectedHotKeyType) {
 				case COMMANDSENDER:
 					if (!mainArgEntry.getText().isEmpty() && mainArgEntry.getText().equals("enter command")) {
-						throw new MissingHotKeyArgumentException("Command not set!");
+						throw new MissingHotkeyArgumentException("Command not set!");
 					}
 					builder.setBuilderCommand(mainArgEntry.getText());
 					break;
 				case CONDITIONAL_COMMAND_ITEMTEST:
 					if (!mainArgEntry.getText().isEmpty() && mainArgEntry.getText().equals("enter command")) {
-						throw new MissingHotKeyArgumentException("Command not set!");
+						throw new MissingHotkeyArgumentException("Command not set!");
 					}
 					
 					try {
 						if (!secondaryArgEntry.getText().isEmpty() && secondaryArgEntry.getText().equals("enter an item id to test for")) {
-							throw new MissingHotKeyArgumentException("Item id not specified!");
+							throw new MissingHotkeyArgumentException("Item id not specified!");
 						}
 						Integer.parseInt(secondaryArgEntry.getText());
 					}
-					catch (NumberFormatException e) { throw new MissingHotKeyArgumentException("Could not parse item id!"); }
-					catch (MissingHotKeyArgumentException e) { throw e; }
+					catch (NumberFormatException e) { throw new MissingHotkeyArgumentException("Could not parse item id!"); }
+					catch (MissingHotkeyArgumentException e) { throw e; }
 					catch (Exception e) { e.printStackTrace(); }
 					
 					builder.setBuilderCommandAndItemArgs(mainArgEntry.getText(), Integer.parseInt(secondaryArgEntry.getText()));
 					break;
 				case DEBUG:
-					if (selectedDebug == null) { throw new MissingHotKeyArgumentException("DebugCommand not selected!"); }
+					if (selectedDebug == null) { throw new MissingHotkeyArgumentException("DebugCommand not selected!"); }
 					builder.setBuilderDebugCommand(selectedDebug);
 					break;
 				case GUI_OPENER:
-					if (selectedGui == null) { throw new MissingHotKeyArgumentException("No gui not selected!"); }
+					if (selectedGui == null) { throw new MissingHotkeyArgumentException("No gui not selected!"); }
 					if (additionalGuiArgs != null) { builder.setBuilderGuiToBeOpened(selectedGui, additionalGuiArgs); }
 					else { builder.setBuilderGuiToBeOpened(selectedGui); }
 					break;
 				case CATEGORY_ACTIVATOR:
 				case CATEGORY_DEACTIVATOR:
-					if (!categoryEntry.getText().isEmpty() && categoryEntry.getText().equals("enter a category name")) { throw new MissingHotKeyArgumentException("Category name not entered!"); }
+					if (!categoryEntry.getText().isEmpty() && categoryEntry.getText().equals("enter a category name")) { throw new MissingHotkeyArgumentException("Category name not entered!"); }
 					builder.setBuilderCommand(categoryEntry.getText());
 					break;
 				case APP_ACTIVATOR:
 				case APP_DEACTIVATOR:
-					if (selectedMod == null) { throw new MissingHotKeyArgumentException("App not selected!"); }
+					if (selectedMod == null) { throw new MissingHotkeyArgumentException("App not selected!"); }
 					builder.setBuilderSubMod(selectedMod);
 					break;
 				default: break;
@@ -387,10 +387,10 @@ public class HotKeyCreatorWindow extends WindowParent {
 					getTopParent().setFocusLockObject(msgBox);
 				}
 				else {
-					throw new MissingHotKeyArgumentException("Cannot create hotkey!");
+					throw new MissingHotkeyArgumentException("Cannot create hotkey!");
 				}
 			}
-			catch (MissingHotKeyArgumentException e) { createErrorDialogue("Creation Error", e.getMessage()); }
+			catch (MissingHotkeyArgumentException e) { createErrorDialogue("Creation Error", e.getMessage()); }
 			catch (Exception e) { e.printStackTrace(); }
 		}
 	}

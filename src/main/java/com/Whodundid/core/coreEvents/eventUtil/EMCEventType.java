@@ -2,7 +2,7 @@ package com.Whodundid.core.coreEvents.eventUtil;
 
 //Author: Hunter Bragg
 
-public enum EMCEvents {
+public enum EMCEventType {
 	
 	//init
 	postInit,
@@ -49,6 +49,10 @@ public enum EMCEvents {
 	appCallout,
 	windowOpened,
 	windowClosed,
-	gameWindowResized;
+	gameWindowResized,
+	reloadingApp,
+	appsReloaded,
+	emcPostInit,
+	genericEMC;
 	
 }

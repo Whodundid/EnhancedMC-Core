@@ -1,4 +1,4 @@
-package com.Whodundid.core.settings.guiParts;
+package com.Whodundid.core.settings.util;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.app.EMCApp;
@@ -84,7 +84,8 @@ public class SettingsMenuContainer extends WindowObject {
 				else { EnhancedMC.displayWindow(gui, windowObj, CenterType.object); }
 			}
 			else { AppErrorDisplay.displayError(AppErrorType.NOGUI, mod); }
-		} catch (Exception e) { e.printStackTrace(); System.out.println("Unable to open: " + mod.getName() + "'s main window!"); AppErrorDisplay.displayError(AppErrorType.NOGUI, mod, e); }
+		}
+		catch (Exception e) { e.printStackTrace(); System.out.println("Unable to open: " + mod.getName() + "'s main window!"); AppErrorDisplay.displayError(AppErrorType.NOGUI, mod, e); }
 	}
 	
 	private void toggleEnable() {
@@ -101,4 +102,5 @@ public class SettingsMenuContainer extends WindowObject {
 	}
 	
 	public int getHeight() { return settings.height; }
+	
 }

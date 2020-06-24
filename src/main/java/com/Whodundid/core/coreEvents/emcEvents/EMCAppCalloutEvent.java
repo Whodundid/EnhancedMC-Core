@@ -1,12 +1,12 @@
 package com.Whodundid.core.coreEvents.emcEvents;
 
+import com.Whodundid.core.coreEvents.EMCEvent;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
 
 //Author: Hunter Bragg
 
 @Cancelable
-public class EMCAppCalloutEvent extends Event {
+public class EMCAppCalloutEvent extends EMCEvent {
 	
 	Object sender, receiver;
 	String senderMessage = "", receiverMessage = "";

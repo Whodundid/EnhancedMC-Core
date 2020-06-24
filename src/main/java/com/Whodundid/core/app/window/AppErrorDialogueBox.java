@@ -8,9 +8,10 @@ import com.Whodundid.core.app.window.windowUtil.AppErrorType;
 import com.Whodundid.core.settings.SettingsWindowMain;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.windowLibrary.windowObjects.actionObjects.WindowButton;
-import com.Whodundid.core.windowLibrary.windowObjects.advancedObjects.header.WindowHeader;
 import com.Whodundid.core.windowLibrary.windowObjects.windows.WindowDialogueBox;
+import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IActionObject;
 import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IWindowObject;
+import net.minecraft.util.MathHelper;
 
 //Author: Hunter Bragg
 
@@ -20,30 +21,32 @@ public class AppErrorDialogueBox extends WindowDialogueBox {
 	protected EMCApp mod;
 	protected EArrayList<EMCApp> mods = new EArrayList();
 	
-	public AppErrorDialogueBox(IWindowObject parentIn, AppErrorType typeIn, EMCApp modIn) {
-		init(parentIn);
-		centerObjectWithSize(250, 75);
-		mInit(typeIn, modIn);
-	}
-	public AppErrorDialogueBox(IWindowObject parentIn, int xPos, int yPos, int width, int height, AppErrorType typeIn, EMCApp modIn) {
-		init(parentIn, xPos, yPos, width, height);
-		mInit(typeIn, modIn);
-	}
+	private WindowButton okButton, disable, enable, cancel;
+	private int wPos, gap;
 	
-	private void mInit(AppErrorType typeIn, EMCApp modIn) {
+	public AppErrorDialogueBox(IWindowObject parentIn, AppErrorType typeIn, EMCApp modIn) {
+		super();
 		type = typeIn;
 		mod = modIn;
-		requestFocus();
+	}
+	
+	@Override
+	public void initWindow() {
+		setDimensions(250, 75);
 		getTopParent().setFocusLockObject(this);
 		setMessageColor(0xff5555);
-		bringToFront();
 		setObjectName("Error");
 		setPinnable(false);
 	}
 	
 	@Override
 	public void initObjects() {
-		this.setHeader(new WindowHeader(this));
+		defaultHeader(this);
+		
+		wPos = width / 3;
+		gap = width / 20;
+		
+		wPos = MathHelper.clamp_int(wPos, 60, 120);
 		
 		switch (type) {
 		case ENABLE: setTitle("App Enable Error"); addEnable(); addCancel(); break;
@@ -53,60 +56,42 @@ public class AppErrorDialogueBox extends WindowDialogueBox {
 		case INCOMPATIBLE: setTitle("App Incompatible"); addOk(); break;
 		case ERROR: setTitle("App Error!"); addOk(); break;
 		}
+		
+		if (message != null) { setMessage(message); }
+	}
+	
+	@Override
+	public void actionPerformed(IActionObject object, Object... args) {
+		if (object == okButton || object == cancel) { fileUpAndClose(); }
+		if (object == disable) { reloadSettings(false); fileUpAndClose(); }
+		if (object == enable) { reloadSettings(true); fileUpAndClose(); }
 	}
 	
 	private void addEnable() {
-		WindowButton enableAll = new WindowButton(this, midX - 90, midY + 7, 65, 20, "Enable All") {
-			{ setRunActionOnPress(true); }
-			@Override public void onPress() {
-				playPressSound();
-				reloadSettings(true);
-				parent.close();
-			}
-		};
-		addObject(enableAll.setZLevel(1));
+		enable = new WindowButton(this, midX - wPos - gap, midY + 7, wPos, 20, "Enable All");
+		addObject(enable);
 	}
 	
 	private void addDisable() {
-		WindowButton disableAll = new WindowButton(this, midX - 90, midY + 7, 65, 20, "Disable All") {
-			{ setRunActionOnPress(true); }
-			@Override public void onPress() {
-				playPressSound();
-				reloadSettings(false);
-				parent.close();
-			}
-		};
-		addObject(disableAll.setZLevel(1));
+		disable = new WindowButton(this, midX - wPos - gap, midY + 7, wPos, 20, "Disable All");
+		addObject(disable);
 	}
 	
 	private void addCancel() {
-		WindowButton cancel = new WindowButton(this, midX + 30, midY + 7, 65, 20, "Cancel") {
-			{ setRunActionOnPress(true); }
-			@Override public void onPress() {
-				playPressSound();
-				parent.close();
-			}
-		};
-		addObject(cancel.setZLevel(1));
+		cancel = new WindowButton(this, midX + gap, midY + 7, wPos, 20, "Cancel");
+		addObject(cancel);
 	}
 	
 	private void addOk() {
-		WindowButton okButton = new WindowButton(this, midX - 25, midY + 7, 50, 20, "Ok") {
-			{ setRunActionOnPress(true); }
-			@Override
-			public void onPress() {
-				playPressSound();
-				parent.close();
-			}
-		};
-		addObject(okButton.setZLevel(1));
+		okButton = new WindowButton(this, midX - (wPos / 2), midY + 7, wPos, 20, "Ok");
+		addObject(okButton);
 	}
 	
 	public AppErrorDialogueBox createErrorMessage(Exception e, EArrayList<EMCApp> modsIn) {
 		if (e != null) { setMessage(e.toString() + (e.getStackTrace().length > 0 ? " at " + e.getStackTrace()[0] : "")); }
 		else if (modsIn != null && !modsIn.isEmpty()) {
 			mods.addAll(modsIn);
-			message += "Mods: (";
+			message += "Apps: (";
 			modsIn.forEach((m) -> { message += (AppType.getAppName(m.getAppType()) + ", "); } );
 			message = message.substring(0, message.length() - 2);
 			message += ")";
@@ -122,7 +107,7 @@ public class AppErrorDialogueBox extends WindowDialogueBox {
 		}
 		
 		if (type == AppErrorType.INCOMPATIBLE) {
-			setMessage(message = mod.getName() + " is either incompatible or deals with incompatible mods!");
+			setMessage(message = mod.getName() + " is either incompatible or deals with incompatible apps!");
 		}
 		
 		setMessageColor(0xff5555);

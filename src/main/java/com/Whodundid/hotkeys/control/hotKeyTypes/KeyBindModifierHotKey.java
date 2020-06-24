@@ -1,6 +1,6 @@
 package com.Whodundid.hotkeys.control.hotKeyTypes;
 
-import com.Whodundid.hotkeys.control.HotKey;
+import com.Whodundid.hotkeys.control.Hotkey;
 import com.Whodundid.hotkeys.control.KeyActionType;
 import com.Whodundid.hotkeys.control.hotKeyUtil.KeyComboAction;
 import net.minecraft.client.settings.KeyBinding;
@@ -9,15 +9,15 @@ import net.minecraft.client.settings.KeyBinding;
 //First Added: 9-14-18
 //Author: Hunter Bragg
 
-public class KeyBindModifierHotKey extends HotKey {
+public class KeyBindModifierHotkey extends Hotkey {
 	
 	public KeyBinding keyBind;
 	public boolean val;
 	
-	public KeyBindModifierHotKey(String keyNameIn, KeyComboAction keysIn, KeyBinding mcKeyIn, boolean newVal) { this(keyNameIn, keysIn, mcKeyIn, newVal, false, "", null); }
-	public KeyBindModifierHotKey(String keyNameIn, KeyComboAction keysIn, KeyBinding mcKeyIn, boolean newVal, boolean builtInVal) { this(keyNameIn, keysIn, mcKeyIn, newVal, builtInVal, "", null); }
-	public KeyBindModifierHotKey(String keyNameIn, KeyComboAction keysIn, KeyBinding mcKeyIn, boolean newVal, String descriptionIn) { this(keyNameIn, keysIn, mcKeyIn, newVal, false, descriptionIn, null); }
-	public KeyBindModifierHotKey(String keyNameIn, KeyComboAction keysIn, KeyBinding mcKeyIn, boolean newVal, boolean builtInVal, String descriptionIn, String builtInAppTypeIn) {
+	public KeyBindModifierHotkey(String keyNameIn, KeyComboAction keysIn, KeyBinding mcKeyIn, boolean newVal) { this(keyNameIn, keysIn, mcKeyIn, newVal, false, "", null); }
+	public KeyBindModifierHotkey(String keyNameIn, KeyComboAction keysIn, KeyBinding mcKeyIn, boolean newVal, boolean builtInVal) { this(keyNameIn, keysIn, mcKeyIn, newVal, builtInVal, "", null); }
+	public KeyBindModifierHotkey(String keyNameIn, KeyComboAction keysIn, KeyBinding mcKeyIn, boolean newVal, String descriptionIn) { this(keyNameIn, keysIn, mcKeyIn, newVal, false, descriptionIn, null); }
+	public KeyBindModifierHotkey(String keyNameIn, KeyComboAction keysIn, KeyBinding mcKeyIn, boolean newVal, boolean builtInVal, String descriptionIn, String builtInAppTypeIn) {
 		super(keyNameIn, keysIn, builtInVal, KeyActionType.MC_KEYBIND_MODIFIER, builtInAppTypeIn);
 		if (descriptionIn != null && !descriptionIn.isEmpty()) { description = descriptionIn; }
 		keyBind = mcKeyIn;

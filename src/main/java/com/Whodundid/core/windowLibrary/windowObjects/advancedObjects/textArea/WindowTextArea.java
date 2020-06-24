@@ -67,8 +67,14 @@ public class WindowTextArea extends WindowScrollList {
 				//draw list contents scissored
 				drawRect(startX + 1, startY + 1, endX - 1, endY - 1, backgroundColor); //draw background
 				scissor(sX, startY + 1, endX - (isVScrollDrawn() ? verticalScroll.width + 2 : 1), endY - (isHScrollDrawn() ? horizontalScroll.height + 2 : 1));
-				
 				if (drawListObjects) {
+					
+					//draw line highlight
+					if (currentLine != null && drawLineHighlight) {
+						int lX = currentLine.startX - 2 + (hasLineNumbers() ? getLineNumberOffset() - 1: 0);
+						drawRect(lX, currentLine.startY + 1, endX - 1, currentLine.endY, 0x39909090);
+					}
+					
 					//only draw the objects that are actually in the viewable area
 					for (IWindowObject o : drawnListObjects) {
 						if (o.checkDraw()) {
@@ -81,6 +87,7 @@ public class WindowTextArea extends WindowScrollList {
 				}
 				endScissor();
 				
+				scissor(startX + 1, startY + 1, startX + 1 + getLineNumberOffset() - 1, endY - 1);
 				if (hasLineNumbers() && drawLineNumberSeparator) {
 					int eY = endY - 1 - (isHScrollDrawn() ? getHScrollBar().height : 0);
 					drawRect(sX, startY + 1, sX + 1, eY, lineNumberSeparatorColor);
@@ -90,6 +97,10 @@ public class WindowTextArea extends WindowScrollList {
 						drawString(l.getLineNumber(), nX, l.startY + 2, l.lineNumberColor);
 					}
 				}
+				endScissor();
+				
+				if (isVScrollDrawn()) { drawRect(endX - verticalScroll.width - 2, startY + 1, endX, endY, EColors.black); }
+				if (isHScrollDrawn()) { drawRect(startX + 1, endY - horizontalScroll.height - 2, endX, endY, EColors.black); }
 				
 				//draw non list contents as normal (non scissored)
 				for (IWindowObject o : windowObjects) {

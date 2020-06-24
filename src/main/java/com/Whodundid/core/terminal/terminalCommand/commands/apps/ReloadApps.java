@@ -3,10 +3,12 @@ package com.Whodundid.core.terminal.terminalCommand.commands.apps;
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.app.AppLoader;
 import com.Whodundid.core.app.EMCApp;
+import com.Whodundid.core.coreEvents.emcEvents.AppsReloadedEvent;
 import com.Whodundid.core.terminal.terminalCommand.CommandType;
 import com.Whodundid.core.terminal.terminalCommand.TerminalCommand;
 import com.Whodundid.core.terminal.window.ETerminal;
 import com.Whodundid.core.util.storageUtil.EArrayList;
+import net.minecraftforge.common.MinecraftForge;
 
 public class ReloadApps extends TerminalCommand {
 	
@@ -34,6 +36,8 @@ public class ReloadApps extends TerminalCommand {
 	
 	private void reload(ETerminal termIn, boolean runVisually) {
 		try {
+			MinecraftForge.EVENT_BUS.post(new AppsReloadedEvent.Pre());
+			
 			termIn.writeln("Reloading all EMCApps!!\n");
 			EArrayList<EMCApp> apps = new EArrayList(EnhancedMC.getApps().getAppsList());
 			for (EMCApp app : apps) {
@@ -41,6 +45,8 @@ public class ReloadApps extends TerminalCommand {
 			}
 			termIn.setInputEnabled(true);
 			termIn.writeln("\nApps reloaded!");
+			
+			MinecraftForge.EVENT_BUS.post(new AppsReloadedEvent.Post());
 		}
 		catch (Exception e) { error(termIn, e); }
 	}

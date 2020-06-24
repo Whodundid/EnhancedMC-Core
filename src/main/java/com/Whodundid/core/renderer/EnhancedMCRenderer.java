@@ -606,11 +606,12 @@ public class EnhancedMCRenderer extends WindowObject implements ITopParent {
 	public IRendererProxy getProxy() { return proxy; }
 	
 	public void checkMouseHover() {
-		if (getHighestZObjectUnderMouse() != null) {
-			if (mX == oldMousePos.getObject() && mY == oldMousePos.getValue()) {
+		IWindowObject o = getHighestZObjectUnderMouse();
+		if (o != null) {
+			if (mX == oldMousePos.getObject() && mY == oldMousePos.getValue() && o == hoveringTextObject) {
 				mouseHoverTime = (System.currentTimeMillis() - hoverRefTime);
-				if (mouseHoverTime >= 650) {
-					setHoveringObject(getHighestZObjectUnderMouse());
+				if (mouseHoverTime >= 1000) {
+					setHoveringObject(o);
 				}
 			}
 			else {

@@ -18,7 +18,7 @@ import net.minecraft.client.settings.KeyBinding;
 public class HotKeyBuilder {
 	
 	HotKeyApp man;
-	HotKey createdKey = null;
+	Hotkey createdKey = null;
 	KeyComboAction keys;
 	String command;
 	int testHeldItemId = -1;
@@ -59,20 +59,20 @@ public class HotKeyBuilder {
 	public boolean buildHotKey(String keyName, String categoryIn, String keyDescription, boolean keyEnabled, KeyActionType keyType) {
 		try {
 			switch (keyType) {
-			case COMMANDSENDER: createdKey = new CommandSenderHotKey(keyName, keys, command, keyDescription); break;
-			case CONDITIONAL_COMMAND_ITEMTEST: createdKey = new ConditionalCommandSenderHotKey(keyName, keys, command, testHeldItemId, keyDescription); break;
-			case DEBUG: createdKey = new DebugHotKey(keyName, keys, debugCommand, keyDescription); break;
+			case COMMANDSENDER: createdKey = new CommandSenderHotkey(keyName, keys, command, keyDescription); break;
+			case CONDITIONAL_COMMAND_ITEMTEST: createdKey = new ConditionalCommandSenderHotkey(keyName, keys, command, testHeldItemId, keyDescription); break;
+			case DEBUG: createdKey = new DebugHotkey(keyName, keys, debugCommand, keyDescription); break;
 			case GUI_OPENER:
 				if (additionalGuiArgs != null) {
-					createdKey = new GuiOpenerHotKey(keyName, keys, gui, keyDescription).setParamTypes(additionalGuiArgs.getObject()).setParamValues(additionalGuiArgs.getValue());
+					createdKey = new GuiOpenerHotkey(keyName, keys, gui, keyDescription).setParamTypes(additionalGuiArgs.getObject()).setParamValues(additionalGuiArgs.getValue());
 				}
-				else { createdKey = new GuiOpenerHotKey(keyName, keys, gui, keyDescription); }
+				else { createdKey = new GuiOpenerHotkey(keyName, keys, gui, keyDescription); }
 				break;
-			case MC_KEYBIND_MODIFIER: createdKey = new KeyBindModifierHotKey(keyName, keys, keyBind, val, keyDescription); break;
-			case APP_ACTIVATOR: createdKey = new ModActivatorHotKey(keyName, keys, mod, keyDescription); break;
-			case APP_DEACTIVATOR: createdKey = new ModDeactivatorHotKey(keyName, keys, mod, keyDescription); break;
-			case CATEGORY_ACTIVATOR: createdKey = new KeyCategoryActivatorHotKey(keyName, keys, command, keyDescription); break;
-			case CATEGORY_DEACTIVATOR: createdKey = new KeyCategoryDeactivatorHotKey(keyName, keys, command, keyDescription); break;
+			case MC_KEYBIND_MODIFIER: createdKey = new KeyBindModifierHotkey(keyName, keys, keyBind, val, keyDescription); break;
+			case APP_ACTIVATOR: createdKey = new ModActivatorHotkey(keyName, keys, mod, keyDescription); break;
+			case APP_DEACTIVATOR: createdKey = new ModDeactivatorHotkey(keyName, keys, mod, keyDescription); break;
+			case CATEGORY_ACTIVATOR: createdKey = new KeyCategoryActivatorHotkey(keyName, keys, command, keyDescription); break;
+			case CATEGORY_DEACTIVATOR: createdKey = new KeyCategoryDeactivatorHotkey(keyName, keys, command, keyDescription); break;
 			default: clearBuilderArgs(); return false;
 			}
 			
@@ -86,6 +86,6 @@ public class HotKeyBuilder {
 		return true;
 	}
 	
-	public HotKey getBuiltKey() { return createdKey; }
+	public Hotkey getBuiltKey() { return createdKey; }
 	
 }

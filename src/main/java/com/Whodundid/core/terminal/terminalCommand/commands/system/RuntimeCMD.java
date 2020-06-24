@@ -45,7 +45,7 @@ public class RuntimeCMD extends TerminalCommand {
 			String freeMem = "Free Memory: " + EnumChatFormatting.GREEN + memJVMFreeString;
 			String obfus = "Obfuscated: " + EnumChatFormatting.GREEN + EnhancedMC.isObfus();
 			
-			String longest = EArrayList.of(javaVer, totMem, usedMem, obfus).stream().max(Comparator.comparingInt(String::length)).get();
+			String longest = EArrayList.of(String.class, javaVer, totMem, usedMem, obfus).stream().max(Comparator.comparingInt(String::length)).get();
 			int len = (longest != null) ? longest.length() : 0;
 			
 			String divider = EUtil.repeatString("-", len - 3);

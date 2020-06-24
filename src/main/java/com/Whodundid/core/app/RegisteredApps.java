@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import com.Whodundid.core.EnhancedMC;
+import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
 import com.Whodundid.core.util.storageUtil.StorageBoxHolder;
@@ -17,6 +18,7 @@ public final class RegisteredApps {
 	private static EArrayList<EMCApp> allApps = new EArrayList();
 	private static EArrayList<EMCApp> registeredApps = new EArrayList();
 	private static EArrayList<EMCApp> incompatibleApps = new EArrayList();
+	private static StorageBoxHolder<EMCApp, Throwable> brokenApps = new StorageBoxHolder();
 	
 	private static RegisteredApps instance = null;
 	
@@ -139,6 +141,14 @@ public final class RegisteredApps {
 		return false;
 	}
 	
+	//keeps track of apps which failed to build during initial load
+	public static void addToBrokenApps(EMCApp appIn, Throwable reason) {
+		brokenApps.add(appIn, reason);
+	}
+	public static void addToBrokenApps(StorageBox<EMCApp, Throwable> appIn) {
+		brokenApps.add(appIn);
+	}
+	
 	//returns a submod object from a given apptype if it is currently registered
 	public static EMCApp getApp(AppType typeIn) {
 		for (EMCApp m : allApps) {
@@ -196,11 +206,13 @@ public final class RegisteredApps {
 	}
 	
 	//returns a copy of the current list of registered apps at the called instant
-	public static EArrayList<EMCApp> getRegisteredAppList() {return new EArrayList(registeredApps); }
+	public static EArrayList<EMCApp> getRegisteredAppsList() {return new EArrayList(registeredApps); }
 	//returns a copy of the current incompatible apps
-	public static EArrayList<EMCApp> getIncompatibleAppList() { return new EArrayList(incompatibleApps); }
+	public static EArrayList<EMCApp> getIncompatibleAppsList() { return new EArrayList(incompatibleApps); }
 	//returns the current list of all apps currently loaded
 	public static EArrayList<EMCApp> getAppsList() { return allApps; }
+	//returns the apps which failed to build during discovery
+	public static StorageBoxHolder<EMCApp, Throwable> getBrokenAppsList() { return brokenApps; }
 	
 	public static EArrayList<String> getAppNames() {
 		EArrayList<String> names = new EArrayList();
@@ -212,16 +224,12 @@ public final class RegisteredApps {
 	
 	//returns a list of currently enabled apps
 	public static EArrayList<EMCApp> getEnabledAppsList() {
-		EArrayList<EMCApp> enabledApps = new EArrayList();
-		registeredApps.forEach((m) -> { if (m.isEnabled()) { enabledApps.add(m); } });
-		return enabledApps;
+		return EUtil.filter(m -> m.isEnabled(), registeredApps).collect(EArrayList.toEArrayList());
 	}
 	
 	//returns a list of currently disabled apps
 	public static EArrayList<EMCApp> getDisabledAppsList() {
-		EArrayList<EMCApp> disabledApps = new EArrayList();
-		registeredApps.forEach((m) -> { if (!m.isEnabled()) { disabledApps.add(m); } });
-		return disabledApps;
+		return EUtil.filter(m -> !m.isEnabled(), registeredApps).collect(EArrayList.toEArrayList());
 	}
 	
 	//returns a list of app names which are direct dependencies of the given app
@@ -243,10 +251,12 @@ public final class RegisteredApps {
 					});
 					workList.clear();
 					withDep.forEach(t -> { getApp(t).getDependencies().forEach(d -> { workList.add(d.getObject()); }); });
-				} else { break; }
+				}
+				else { break; }
 			}
 			return allDependencies;
-		} catch (Exception e) { e.printStackTrace(); }
+		}
+		catch (Exception e) { e.printStackTrace(); }
 		return new EArrayList();
 	}
 	
@@ -269,38 +279,33 @@ public final class RegisteredApps {
 			}
 			dependants.addAll(workList);
 			return dependants;
-		} catch (Exception e) { e.printStackTrace(); }
+		}
+		catch (Exception e) { e.printStackTrace(); }
 		return new EArrayList();
 	}
 	
 	//returns a list of app names which have a dependency to the given app
 	public static EArrayList<String> getAllAppsWithDependency(AppType typeIn) { return getAllAppsWithDependency(typeIn.appName); }
 	public static EArrayList<String> getAllAppsWithDependency(String appNameIn) {
-		EArrayList<String> mods = new EArrayList();
-		getRegisteredAppList().forEach(m -> { if (m.getDependencies().contains(appNameIn)) { mods.add(m.getName()); } });
-		return mods;
+		return EUtil.filter(m -> m.getDependencies().contains(appNameIn), getRegisteredAppsList()).map(m -> m.getName()).collect(EArrayList.toEArrayList());
 	}
 	
 	//returns a list of app names which are currently enabled that have a dependency to the given app
 	public static EArrayList<String> getAllEnabledAppsWithDependency(AppType typeIn) { return getAllEnabledAppsWithDependency(typeIn.appName); }
 	public static EArrayList<String> getAllEnabledAppsWithDependency(String appNameIn) {
-		EArrayList<String> mods = new EArrayList();
-		getEnabledAppsList().forEach(m -> { if (m.getDependencies().contains(appNameIn)) { mods.add(m.getName()); } });
-		return mods;
+		return EUtil.filter(m -> m.getDependencies().contains(appNameIn), getEnabledAppsList()).map(m -> m.getName()).collect(EArrayList.toEArrayList());
 	}
 	
 	//returns a list of app names which are currently disabled that have a dependency to the given app
 	public static EArrayList<String> getAllDisabledAppsWithDependency(AppType typeIn) { return getAllDisabledAppsWithDependency(typeIn.appName); }
 	public static EArrayList<String> getAllDisabledAppsWithDependency(String appNameIn) {
-		EArrayList<String> mods = new EArrayList();
-		getDisabledAppsList().forEach(m -> { if (m.getDependencies().contains(appNameIn)) { mods.add(m.getName()); } });
-		return mods;
+		return EUtil.filter(m -> m.getDependencies().contains(appNameIn), getDisabledAppsList()).map(m -> m.getName()).collect(EArrayList.toEArrayList());
 	}
 	
 	//returns a list of all gui classes across all registered apps
 	public static EArrayList<Class> getAllGuiClasses() {
 		EArrayList<Class> guis = new EArrayList();
-		for (EMCApp m : getRegisteredAppList()) {
+		for (EMCApp m : getRegisteredAppsList()) {
 			for (IWindowParent g : m.getWindows()) { if (g != null) { guis.add(g.getClass()); } }
 		}
 		return guis;
@@ -308,7 +313,7 @@ public final class RegisteredApps {
 	
 	public static Class getGuiClassByAlias(String aliasIn) {
 		if (aliasIn != null && !aliasIn.isEmpty()) {
-			for (EMCApp m : getRegisteredAppList()) {
+			for (EMCApp m : getRegisteredAppsList()) {
 				for (IWindowParent g : m.getWindows()) {
 					for (String a : g.getAliases()) {
 						if (a.equals(aliasIn)) { return g.getClass(); }
@@ -330,4 +335,5 @@ public final class RegisteredApps {
 		}
 		return mods;
 	}
+	
 }

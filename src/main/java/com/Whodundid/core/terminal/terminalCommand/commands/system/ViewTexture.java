@@ -37,7 +37,7 @@ public class ViewTexture extends TerminalCommand {
 
 	@Override public String getName() { return "viewtexture"; }
 	@Override public boolean showInHelp() { return EnhancedMC.isDevMode(); }
-	@Override public EArrayList<String> getAliases() { return EArrayList.of("vt"); }
+	@Override public EArrayList<String> getAliases() { return new EArrayList<String>("vt"); }
 	@Override public String getHelpInfo(boolean runVisually) { return "Attempts to display a texture from the specified runtime (resources) path."; }
 	@Override public String getUsage() { return "ex: vt /assets/enhancedmc/global/logo.png"; }
 	@Override public void handleTabComplete(ETerminal termIn, EArrayList<String> args) {}

@@ -3,9 +3,13 @@ package com.Whodundid.core.app;
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.app.config.AppConfigManager;
 import com.Whodundid.core.app.config.AppConfigSetting;
+import com.Whodundid.core.coreEvents.EMCEvent;
+import com.Whodundid.core.coreEvents.emcEvents.AppsReloadedEvent;
 import com.Whodundid.core.coreEvents.emcEvents.ChatLineCreatedEvent;
 import com.Whodundid.core.coreEvents.emcEvents.EMCAppCalloutEvent;
+import com.Whodundid.core.coreEvents.emcEvents.EMCPostInitEvent;
 import com.Whodundid.core.coreEvents.emcEvents.GameWindowResizedEvent;
+import com.Whodundid.core.coreEvents.emcEvents.ReloadingAppEvent;
 import com.Whodundid.core.coreEvents.emcEvents.RendererRCMOpenEvent;
 import com.Whodundid.core.coreEvents.emcEvents.TabCompletionEvent;
 import com.Whodundid.core.coreEvents.emcEvents.WindowClosedEvent;
@@ -74,7 +78,6 @@ public abstract class EMCApp implements Comparable<EMCApp> {
 	public EMCApp(String appNameIn) {
 		appName = appNameIn;
 		configManager = new AppConfigManager(this);
-		build();
 	}
 	
 	public abstract void build();
@@ -186,6 +189,7 @@ public abstract class EMCApp implements Comparable<EMCApp> {
 	}
 	
 	public void onPostInit(FMLPostInitializationEvent event) {}
+	public void onDisabled() {}
 	public void onDevModeDisabled() {}
 	
 	public void registerResources() {
@@ -238,9 +242,13 @@ public abstract class EMCApp implements Comparable<EMCApp> {
 	public void rendererRCMOpenEvent(RendererRCMOpenEvent e) {}
 	public void tabCompletionEvent(TabCompletionEvent e) {}
 	public void chatLineCreatedEvent(ChatLineCreatedEvent e) {}
-	public void subModCalloutEvent(EMCAppCalloutEvent e) {}
+	public void EMCAppCalloutEvent(EMCAppCalloutEvent e) {}
 	public void windowOpenedEvent(WindowOpenedEvent e) {}
 	public void windowClosedEvent(WindowClosedEvent e) {}
 	public void gameWindowResized(GameWindowResizedEvent e) {}
+	public void reloadingAppEvent(ReloadingAppEvent e) {}
+	public void appsReloadedEvent(AppsReloadedEvent e) {}
+	public void onEMCPostInitEvent(EMCPostInitEvent e) {}
+	public void genericEMCEvent(EMCEvent e) {}
 	
 }

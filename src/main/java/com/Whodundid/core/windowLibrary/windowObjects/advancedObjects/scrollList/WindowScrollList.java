@@ -56,8 +56,8 @@ public class WindowScrollList extends WindowObject {
 	
 	@Override
 	public void initObjects() {
-		verticalScroll = new WindowScrollBar(this, height - 2, scrollableHeight, ScreenLocation.right);
-		horizontalScroll = new WindowScrollBar(this, width - 2, scrollableWidth, ScreenLocation.bot);
+		verticalScroll = new WindowScrollBar(this, height - 2, scrollableHeight, ScreenLocation.right, 3);
+		horizontalScroll = new WindowScrollBar(this, width - 2, scrollableWidth, ScreenLocation.bot, 3);
 		
 		reset = new WindowButton(this, endX - 5, endY - 5, 5, 5);
 		
@@ -105,7 +105,10 @@ public class WindowScrollList extends WindowObject {
 						}
 					}
 				}
-				endScissor();	
+				endScissor();
+				
+				if (isVScrollDrawn()) { drawRect(endX - verticalScroll.width - 2, startY + 1, endX, endY, EColors.black); }
+				if (isHScrollDrawn()) { drawRect(startX + 1, endY - horizontalScroll.height - 2, endX, endY, EColors.black); }
 				
 				//draw non list contents as normal (non scissored)
 				for (IWindowObject o : windowObjects) {
@@ -406,15 +409,21 @@ public class WindowScrollList extends WindowObject {
 	}
 	
 	protected void updateVisuals() {
+		if (isHScrollDrawn() && !isVScrollDrawn()) {
+			EDimension h = horizontalScroll.getDimensions();
+			horizontalScroll.setDimensions(h.startX, h.startY, width - 2 - (isResetDrawn() ? 4 : 0), h.height);
+		}
+		
 		if (isVScrollDrawn() && !isHScrollDrawn()) {
 			EDimension v = verticalScroll.getDimensions();
 			verticalScroll.setDimensions(v.startX, v.startY, v.width, height - 2 - (isResetDrawn() ? 4 : 0));
 		}
+		
 		if (isHScrollDrawn() && isVScrollDrawn()) {
 			EDimension h = horizontalScroll.getDimensions();
 			EDimension v = verticalScroll.getDimensions();
 			
-			horizontalScroll.setDimensions(h.startX, h.startY, width - verticalScroll.width - 3, h.height);
+			horizontalScroll.setDimensions(h.startX, h.startY, width - 3 - verticalScroll.width - (isResetDrawn() ? 3 : 0), h.height);
 			verticalScroll.setDimensions(v.startX, v.startY, v.width, height - 2 - (isResetDrawn() ? 4 : 0));
 		}
 	}

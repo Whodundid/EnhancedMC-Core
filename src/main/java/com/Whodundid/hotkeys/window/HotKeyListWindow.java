@@ -20,14 +20,14 @@ import com.Whodundid.core.windowLibrary.windowObjects.windows.WindowDialogueBox.
 import com.Whodundid.core.windowLibrary.windowTypes.WindowParent;
 import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IActionObject;
 import com.Whodundid.hotkeys.HotKeyApp;
-import com.Whodundid.hotkeys.control.HotKey;
+import com.Whodundid.hotkeys.control.Hotkey;
 import com.Whodundid.hotkeys.control.KeyActionType;
-import com.Whodundid.hotkeys.control.hotKeyTypes.CommandSenderHotKey;
-import com.Whodundid.hotkeys.control.hotKeyTypes.DebugHotKey;
-import com.Whodundid.hotkeys.control.hotKeyTypes.GuiOpenerHotKey;
-import com.Whodundid.hotkeys.control.hotKeyTypes.ConditionalCommandSenderHotKey;
-import com.Whodundid.hotkeys.control.hotKeyTypes.ModActivatorHotKey;
-import com.Whodundid.hotkeys.control.hotKeyTypes.ModDeactivatorHotKey;
+import com.Whodundid.hotkeys.control.hotKeyTypes.CommandSenderHotkey;
+import com.Whodundid.hotkeys.control.hotKeyTypes.DebugHotkey;
+import com.Whodundid.hotkeys.control.hotKeyTypes.GuiOpenerHotkey;
+import com.Whodundid.hotkeys.control.hotKeyTypes.ConditionalCommandSenderHotkey;
+import com.Whodundid.hotkeys.control.hotKeyTypes.ModActivatorHotkey;
+import com.Whodundid.hotkeys.control.hotKeyTypes.ModDeactivatorHotkey;
 import com.Whodundid.hotkeys.util.HKResources;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
@@ -45,7 +45,7 @@ public class HotKeyListWindow extends WindowParent {
 	WindowDialogueBox msgBox;
 	WindowSelectionList sortSelection;
 	EMCApp selectedMod;
-	HotKey currentKey;
+	Hotkey currentKey;
 	boolean hasCategory = false, hasArg1 = false, hasArg2 = false, hasDescription = false;
 	WindowLabel keyName;
 	WindowLabel keyType;
@@ -55,7 +55,7 @@ public class HotKeyListWindow extends WindowParent {
 	WindowLabel keyArg2String, keyArg2;
 	WindowLabel desc;
 	int listVerticalPos = 0;
-	HotKey prev = null;
+	Hotkey prev = null;
 	
 	private int vPos1 = 0, vPos2 = 0;
 	private int hPos1 = 0, hPos2 = 0;
@@ -204,7 +204,7 @@ public class HotKeyListWindow extends WindowParent {
 		
 		//draw separator lines
 		if (keyList.getCurrentLine() != null && keyList.getCurrentLine().getStoredObj() != null) {
-			HotKey k = (HotKey) keyList.getCurrentLine().getStoredObj();
+			Hotkey k = (Hotkey) keyList.getCurrentLine().getStoredObj();
 			if (k != prev) {
 				prev = k;
 				currentKey = k;
@@ -222,18 +222,18 @@ public class HotKeyListWindow extends WindowParent {
 	public void actionPerformed(IActionObject object, Object... args) {
 		if (object.equals(edit)) {
 			if (keyList.getCurrentLine() != null && keyList.getCurrentLine().getStoredObj() != null) {
-				HotKey key = (HotKey) keyList.getCurrentLine().getStoredObj();
+				Hotkey key = (Hotkey) keyList.getCurrentLine().getStoredObj();
 				EnhancedMC.displayWindow(new HotKeyCreatorWindow(key));
 			}
 		}
 		if (object.equals(delete)) {
 			if (keyList.getCurrentLine() != null && keyList.getCurrentLine().getStoredObj() != null) {
-				deleteKey((HotKey) keyList.getCurrentLine().getStoredObj());
+				deleteKey((Hotkey) keyList.getCurrentLine().getStoredObj());
 			}
 		}
 		if (object.equals(toggleEnabled)) {
 			if (keyList.getCurrentLine() != null && keyList.getCurrentLine().getStoredObj() != null) {
-				HotKey k = (HotKey) keyList.getCurrentLine().getStoredObj();
+				Hotkey k = (Hotkey) keyList.getCurrentLine().getStoredObj();
 				toggleEnabled(k);
 			}
 		}
@@ -245,7 +245,7 @@ public class HotKeyListWindow extends WindowParent {
 		
 	}
 	
-	public void loadKeyValues(HotKey keyIn) {
+	public void loadKeyValues(Hotkey keyIn) {
 		try {
 			resetValues();
 			if (keyIn != null) {
@@ -267,10 +267,10 @@ public class HotKeyListWindow extends WindowParent {
 				case COMMANDSENDER:
 					hasArg1 = true;
 					keyArg1String.setString("Command:");
-					keyArg1.setString(((CommandSenderHotKey) keyIn).getCommand());
+					keyArg1.setString(((CommandSenderHotkey) keyIn).getCommand());
 					break;
 				case CONDITIONAL_COMMAND_ITEMTEST:
-					ConditionalCommandSenderHotKey k = (ConditionalCommandSenderHotKey) keyIn;
+					ConditionalCommandSenderHotkey k = (ConditionalCommandSenderHotkey) keyIn;
 					hasArg1 = true;
 					keyArg1String.setString("Command:");
 					keyArg1.setString(k.getCommand());
@@ -281,23 +281,23 @@ public class HotKeyListWindow extends WindowParent {
 				case DEBUG:
 					hasArg1 = true;
 					keyArg1String.setString("Debug Command:");
-					keyArg1.setString(IDebugCommand.getDebugCommandName(((DebugHotKey) keyIn).getDebugFunction()));
+					keyArg1.setString(IDebugCommand.getDebugCommandName(((DebugHotkey) keyIn).getDebugFunction()));
 					break;
 				case GUI_OPENER:
 					hasArg1 = true;
 					keyArg1String.setString("Gui to be opened:");
-					keyArg1.setString(((GuiOpenerHotKey) keyIn).getGuiDisplayName());
+					keyArg1.setString(((GuiOpenerHotkey) keyIn).getGuiDisplayName());
 					break;
 				case MC_KEYBIND_MODIFIER: break; //i don't know what i am doing with this yet
 				case APP_ACTIVATOR:
 					hasArg1 = true;
 					keyArg1String.setString("App to be activated:");
-					keyArg1.setString(AppType.getAppName(((ModActivatorHotKey) keyIn).getApp()));
+					keyArg1.setString(AppType.getAppName(((ModActivatorHotkey) keyIn).getApp()));
 					break;
 				case APP_DEACTIVATOR:
 					hasArg1 = true;
 					keyArg1String.setString("App to be deactivated:");
-					keyArg1.setString(AppType.getAppName(((ModDeactivatorHotKey) keyIn).getApp()));
+					keyArg1.setString(AppType.getAppName(((ModDeactivatorHotkey) keyIn).getApp()));
 					break;
 				case UNDEFINED: break;
 				default: break;
@@ -352,7 +352,7 @@ public class HotKeyListWindow extends WindowParent {
 		toggleEnabled.setStringColor(EColors.lgray);
 	}
 	
-	private void toggleEnabled(HotKey key) {
+	private void toggleEnabled(Hotkey key) {
 		key.setEnabled(!key.isEnabled());
 		resetValues();
 		buildKeyList(mod.getDefaultListSort());
@@ -361,7 +361,7 @@ public class HotKeyListWindow extends WindowParent {
 		mod.saveHotKeys();
 	}
 	
-	private void deleteKey(HotKey key) {
+	private void deleteKey(Hotkey key) {
 		if (key.isAppKey()) {
 			msgBox = new WindowDialogueBox(DialogueBoxTypes.ok);
 			msgBox.setTitle("HotKey Deletion Error");
@@ -430,22 +430,22 @@ public class HotKeyListWindow extends WindowParent {
 	
 	private void sortListByEnabled() {
 		boolean anyDisabled = false, anyEnabled = false;
-		for (HotKey k : mod.getRegisteredHotKeys()) { if (!k.isEnabled()) { anyDisabled = true; break; } }
-		for (HotKey k : mod.getRegisteredHotKeys()) { if (k.isEnabled()) { anyEnabled = true; break; } }
+		for (Hotkey k : mod.getRegisteredHotKeys()) { if (!k.isEnabled()) { anyDisabled = true; break; } }
+		for (Hotkey k : mod.getRegisteredHotKeys()) { if (k.isEnabled()) { anyEnabled = true; break; } }
 		if (anyEnabled) { keyList.addTextLine("Enabled Hotkeys:").setLineNumberColor(0xb2b2b2).setTextColor(0x00ffdc); }
-		for (HotKey k : mod.getRegisteredHotKeys()) {
+		for (Hotkey k : mod.getRegisteredHotKeys()) {
 			if (k.isEnabled()) {
 				TextAreaLine l = new TextAreaLine(keyList) {
 					@Override
 					public void onDoubleClick() {
-						EnhancedMC.displayWindow(new HotKeyCreatorWindow((HotKey) getStoredObj()));
+						EnhancedMC.displayWindow(new HotKeyCreatorWindow((Hotkey) getStoredObj()));
 					}
 					
 					@Override
 					public void keyPressed(char typedChar, int keyCode) {
 						super.keyPressed(typedChar, keyCode);
 						if (keyCode == 28) { //enter
-							EnhancedMC.displayWindow(new HotKeyCreatorWindow((HotKey) getStoredObj()));
+							EnhancedMC.displayWindow(new HotKeyCreatorWindow((Hotkey) getStoredObj()));
 						}
 					}
 				};
@@ -456,18 +456,18 @@ public class HotKeyListWindow extends WindowParent {
 			}
 		}
 		if (anyDisabled) { keyList.addTextLine("Disabled Hotkeys:").setLineNumberColor(0xb2b2b2).setTextColor(0x00ffdc); }
-		for (HotKey k : mod.getRegisteredHotKeys()) {
+		for (Hotkey k : mod.getRegisteredHotKeys()) {
 			if (!k.isEnabled()) {
 				TextAreaLine l = new TextAreaLine(keyList) {
 					@Override
 					public void onDoubleClick() {
-						EnhancedMC.displayWindow(new HotKeyCreatorWindow((HotKey) getStoredObj()));
+						EnhancedMC.displayWindow(new HotKeyCreatorWindow((Hotkey) getStoredObj()));
 					}
 					@Override
 					public void keyPressed(char typedChar, int keyCode) {
 						super.keyPressed(typedChar, keyCode);
 						if (keyCode == 28) { //enter
-							EnhancedMC.displayWindow(new HotKeyCreatorWindow((HotKey) getStoredObj()));
+							EnhancedMC.displayWindow(new HotKeyCreatorWindow((Hotkey) getStoredObj()));
 						}
 					}
 				};

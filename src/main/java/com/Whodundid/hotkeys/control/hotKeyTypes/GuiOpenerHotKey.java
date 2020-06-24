@@ -2,7 +2,7 @@ package com.Whodundid.hotkeys.control.hotKeyTypes;
 
 import com.Whodundid.core.util.chatUtil.EChatUtil;
 import com.Whodundid.core.util.guiUtil.GuiOpener;
-import com.Whodundid.hotkeys.control.HotKey;
+import com.Whodundid.hotkeys.control.Hotkey;
 import com.Whodundid.hotkeys.control.KeyActionType;
 import com.Whodundid.hotkeys.control.hotKeyUtil.KeyComboAction;
 import net.minecraft.util.EnumChatFormatting;
@@ -11,16 +11,16 @@ import net.minecraft.util.EnumChatFormatting;
 //First Added: 9-14-18
 //Author: Hunter Bragg
 
-public class GuiOpenerHotKey extends HotKey {
+public class GuiOpenerHotkey extends Hotkey {
 	
 	public Class gui;
 	public Class[] paramTypes;
 	public Object[] paramValues;
 	
-	public GuiOpenerHotKey(String keyNameIn, KeyComboAction keysIn, Class guiIn) { this(keyNameIn, keysIn, guiIn, false, "", null); }
-	public GuiOpenerHotKey(String keyNameIn, KeyComboAction keysIn, Class guiIn, boolean builtInVal) { this(keyNameIn, keysIn, guiIn, false, "", null); }
-	public GuiOpenerHotKey(String keyNameIn, KeyComboAction keysIn, Class guiIn, String descriptionIn) { this(keyNameIn, keysIn, guiIn, false, descriptionIn, null); }
-	public GuiOpenerHotKey(String keyNameIn, KeyComboAction keysIn, Class guiIn, boolean builtInVal, String descriptionIn, String builtInAppTypeIn) {
+	public GuiOpenerHotkey(String keyNameIn, KeyComboAction keysIn, Class guiIn) { this(keyNameIn, keysIn, guiIn, false, "", null); }
+	public GuiOpenerHotkey(String keyNameIn, KeyComboAction keysIn, Class guiIn, boolean builtInVal) { this(keyNameIn, keysIn, guiIn, false, "", null); }
+	public GuiOpenerHotkey(String keyNameIn, KeyComboAction keysIn, Class guiIn, String descriptionIn) { this(keyNameIn, keysIn, guiIn, false, descriptionIn, null); }
+	public GuiOpenerHotkey(String keyNameIn, KeyComboAction keysIn, Class guiIn, boolean builtInVal, String descriptionIn, String builtInAppTypeIn) {
 		super(keyNameIn, keysIn, builtInVal, KeyActionType.GUI_OPENER, builtInAppTypeIn);
 		if (descriptionIn != null && !descriptionIn.isEmpty()) { description = descriptionIn; }
 		gui = guiIn;
@@ -29,11 +29,11 @@ public class GuiOpenerHotKey extends HotKey {
 	public Class getGui() { return gui; }
 	public String getGuiName() { return gui.getName(); }
 	public String getGuiDisplayName() { return gui.getSimpleName(); }
-	public GuiOpenerHotKey setGui(Class guiIn) { gui = guiIn; return this; }
+	public GuiOpenerHotkey setGui(Class guiIn) { gui = guiIn; return this; }
 	public Class[] getParamTypes() { return paramTypes; }
 	public Object[] getParamValues() { return paramValues; }
-	public GuiOpenerHotKey setParamTypes(Class[] typesIn) { paramTypes = typesIn; return this; }
-	public GuiOpenerHotKey setParamValues(Object[] valuesIn) { paramValues = valuesIn; return this; }
+	public GuiOpenerHotkey setParamTypes(Class[] typesIn) { paramTypes = typesIn; return this; }
+	public GuiOpenerHotkey setParamValues(Object[] valuesIn) { paramValues = valuesIn; return this; }
 	
 	@Override
 	public void executeHotKeyAction() {

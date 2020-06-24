@@ -91,7 +91,7 @@ public class CoreApp extends EMCApp {
 	//debug
 	public static final AppConfigSetting<Boolean> enableTerminal = new AppConfigSetting(Boolean.class, "enableTerminal", "Enable Terminal", false);
 	public static final AppConfigSetting<Integer> termBackground = new AppConfigSetting(Integer.class, "termBackground", "Terminal Background Color", 0xff000000);
-		//public static final AppConfigSetting<Boolean> termLineNumbers = new AppConfigSetting(Boolean.class, "termLineNumbers", "Show Terminal Line Numbers", false);
+	public static final AppConfigSetting<Boolean> termLineNumbers = new AppConfigSetting(Boolean.class, "termLineNumbers", "Show Terminal Line Numbers", false);
 		//public static final AppConfigSetting<Integer> termMaxLines = new AppConfigSetting(Integer.class, "termMaxLines", "Max Terminal Lines", 700);
 	public static final AppConfigSetting<Boolean> showIncompats = new AppConfigSetting(Boolean.class, "showIncompats", "Show Incompatible Mods", false);
 	public static final AppConfigSetting<Boolean> enableTextDrawer = new AppConfigSetting(Boolean.class, "enableTextDrawer", "Enable Text Drawer", true);

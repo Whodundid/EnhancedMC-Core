@@ -6,14 +6,14 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import com.Whodundid.hotkeys.HotKeyApp;
-import com.Whodundid.hotkeys.control.HotKey;
-import com.Whodundid.hotkeys.control.hotKeyTypes.CommandSenderHotKey;
-import com.Whodundid.hotkeys.control.hotKeyTypes.DebugHotKey;
-import com.Whodundid.hotkeys.control.hotKeyTypes.GuiOpenerHotKey;
-import com.Whodundid.hotkeys.control.hotKeyTypes.ConditionalCommandSenderHotKey;
-import com.Whodundid.hotkeys.control.hotKeyTypes.KeyBindModifierHotKey;
-import com.Whodundid.hotkeys.control.hotKeyTypes.ModActivatorHotKey;
-import com.Whodundid.hotkeys.control.hotKeyTypes.ModDeactivatorHotKey;
+import com.Whodundid.hotkeys.control.Hotkey;
+import com.Whodundid.hotkeys.control.hotKeyTypes.CommandSenderHotkey;
+import com.Whodundid.hotkeys.control.hotKeyTypes.DebugHotkey;
+import com.Whodundid.hotkeys.control.hotKeyTypes.GuiOpenerHotkey;
+import com.Whodundid.hotkeys.control.hotKeyTypes.ConditionalCommandSenderHotkey;
+import com.Whodundid.hotkeys.control.hotKeyTypes.KeyBindModifierHotkey;
+import com.Whodundid.hotkeys.control.hotKeyTypes.ModActivatorHotkey;
+import com.Whodundid.hotkeys.control.hotKeyTypes.ModDeactivatorHotkey;
 
 import net.minecraft.client.Minecraft;
 
@@ -60,7 +60,7 @@ public class KeySaver {
 		if (man.getAppHotKeys() != null && !man.getAppHotKeys().isEmpty() && man.getAppHotKeys().get(0) != null) {
 			previousType = man.getAppHotKeys().get(0).getBuiltInAppType();
 			saver.println("** " + previousType + " **");
-			for (HotKey k : man.getAppHotKeys()) {
+			for (Hotkey k : man.getAppHotKeys()) {
 				if (!k.getBuiltInAppType().equals(previousType)) {
 					previousType = k.getBuiltInAppType();
 					saver.println();
@@ -89,7 +89,7 @@ public class KeySaver {
 		saver.println();
 		
 		if (man.getRegisteredHotKeys() != null && !man.getRegisteredHotKeys().isEmpty()) {
-			for (HotKey k : man.getRegisteredHotKeys()) {
+			for (Hotkey k : man.getRegisteredHotKeys()) {
 				if (!k.isAppKey()) {
 					saver.println("KEYDEF " + k.getKeyName());
 					saver.println("KEYTYPE " + k.getHotKeyType());
@@ -107,17 +107,17 @@ public class KeySaver {
 					
 					switch (k.getHotKeyType()) {
 					case COMMANDSENDER:
-						saver.println("COMMAND " + ((CommandSenderHotKey)k).getCommand());
+						saver.println("COMMAND " + ((CommandSenderHotkey)k).getCommand());
 						break;
 					case CONDITIONAL_COMMAND_ITEMTEST:
-						saver.println("COMMAND " + ((ConditionalCommandSenderHotKey)k).getCommand());
-						saver.println("ITEM " + ((ConditionalCommandSenderHotKey)k).getItemID());
+						saver.println("COMMAND " + ((ConditionalCommandSenderHotkey)k).getCommand());
+						saver.println("ITEM " + ((ConditionalCommandSenderHotkey)k).getItemID());
 						break;
 					case DEBUG:
-						saver.println("DEBUGFUNC " + ((DebugHotKey)k).getDebugFunction());
+						saver.println("DEBUGFUNC " + ((DebugHotkey)k).getDebugFunction());
 						break;
 					case GUI_OPENER:
-						saver.println("GUI " + ((GuiOpenerHotKey)k).getGuiName());
+						saver.println("GUI " + ((GuiOpenerHotkey)k).getGuiName());
 						//String types = "";
 						//for (int i = 0; i < ((GuiOpenerHotKey)k).getParamTypes().length; i++) {
 						//	Class c = ((GuiOpenerHotKey)k).getParamTypes()[i];
@@ -126,13 +126,13 @@ public class KeySaver {
 						//saver.println("TYPES " + types);
 						break;
 					case MC_KEYBIND_MODIFIER:
-						saver.println("KEYBIND " + ((KeyBindModifierHotKey)k).getKeyBinding().getKeyDescription() + " " + ((KeyBindModifierHotKey)k).getNewVal());
+						saver.println("KEYBIND " + ((KeyBindModifierHotkey)k).getKeyBinding().getKeyDescription() + " " + ((KeyBindModifierHotkey)k).getNewVal());
 						break;
 					case APP_ACTIVATOR:
-						saver.println("MOD " + ((ModActivatorHotKey)k).getApp());
+						saver.println("MOD " + ((ModActivatorHotkey)k).getApp());
 						break;
 					case APP_DEACTIVATOR:
-						saver.println("MOD " + ((ModDeactivatorHotKey)k).getApp());
+						saver.println("MOD " + ((ModDeactivatorHotkey)k).getApp());
 						break;
 					//case SCRIPT:
 					//	saver.println("SCRIPT " + ((ScriptHotKey)k).getScript().getScriptName());

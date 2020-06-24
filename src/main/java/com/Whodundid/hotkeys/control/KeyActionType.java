@@ -17,7 +17,7 @@ public enum KeyActionType {
 	GUI_OPENER(true, "Gui Opener"),
 	MC_KEYBIND_MODIFIER(false, "KeyBind Modifier"),
 	DEBUG(true, "Debug Command Runner"),
-	APP(false, "SubMod Hotkey"),
+	APP(false, "App Hotkey"),
 	UNDEFINED(false, "none");
 	
 	private boolean canUserCreate;

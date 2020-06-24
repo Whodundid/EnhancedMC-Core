@@ -47,7 +47,7 @@ public class TerminalCommandHandler {
 	
 	public void initCommands() {
 		registerBaseCommands(false);
-		registerSubModCommands(false);
+		registerAppCommands(false);
 	}
 	
 	private void registerBaseCommands(boolean runVisually) { registerBaseCommands(null, runVisually); }
@@ -112,8 +112,8 @@ public class TerminalCommandHandler {
 		registerCommand(new MinimizeWindow(), termIn, runVisually);
 	}
 	
-	private void registerSubModCommands(boolean runVisually) { registerSubModCommands(null, runVisually); }
-	private void registerSubModCommands(ETerminal termIn, boolean runVisually) {
+	private void registerAppCommands(boolean runVisually) { registerAppCommands(null, runVisually); }
+	private void registerAppCommands(ETerminal termIn, boolean runVisually) {
 		for (EMCApp m : RegisteredApps.getAppsList()) {
 			registerCommand(new EMCAppTerminalCommands(m), termIn, runVisually);
 			m.terminalRegisterCommandEvent(termIn, runVisually);
@@ -208,7 +208,7 @@ public class TerminalCommandHandler {
 		
 		customCommandList.forEach(c -> registerCommand(c, termIn, runVisually));
 		
-		registerSubModCommands(termIn, runVisually);
+		registerAppCommands(termIn, runVisually);
 	}
 	
 	public TerminalCommand getCommand(String commandName) {

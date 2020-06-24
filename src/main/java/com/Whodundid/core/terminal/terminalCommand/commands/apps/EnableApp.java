@@ -63,7 +63,7 @@ public class EnableApp extends TerminalCommand {
 			for (String s : args) {
 				if (s.equals("all")) {
 					
-					for (EMCApp m : RegisteredApps.getRegisteredAppList()) {
+					for (EMCApp m : RegisteredApps.getRegisteredAppsList()) {
 						if (!m.isEnabled()) { termIn.writeln(m.getName() + " enabled", EColors.green); }
 						m.setEnabled(true);
 						EnhancedMC.reloadAllWindows();

@@ -135,7 +135,7 @@ public class WindowHeader extends WindowObject {
 			//prevent focusLockObjects from being minimizable
 			minimizeButton.setVisible(getTopParent().getFocusLockObject() != window);
 			
-			//scissor(startX + 1, startY + 1, endX - 1, endY - 1);
+			scissor(startX + 1, startY + 1, endX - 1, endY - 1);
 			if (drawTitle) {
 				double tx = startX + 4 + titleOffset;
 				String tempTitle = title;
@@ -164,8 +164,9 @@ public class WindowHeader extends WindowObject {
 				
 				drawString(tempTitle, tx, startY + height / 2 - 3, titleColor);
 			}
+			
 			super.drawObject(mX, mY);
-			//endScissor();
+			endScissor();
 		}
 		
 		handleMaximizeDraw(mX, mY);

@@ -4,7 +4,7 @@ import com.Whodundid.core.app.AppType;
 import com.Whodundid.core.debug.IDebugCommand;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.hotkeys.HotKeyApp;
-import com.Whodundid.hotkeys.control.HotKey;
+import com.Whodundid.hotkeys.control.Hotkey;
 import com.Whodundid.hotkeys.control.KeyActionType;
 import com.Whodundid.hotkeys.control.hotKeyUtil.KeyComboAction;
 import java.io.File;
@@ -22,7 +22,7 @@ public class KeyLoader {
 	
 	static Minecraft mc = Minecraft.getMinecraft();
 	HotKeyApp man;
-	EArrayList<HotKey> loadedKeys;
+	EArrayList<Hotkey> loadedKeys;
 	
 	public KeyLoader(HotKeyApp manIn) {
 		man = manIn;
@@ -49,7 +49,7 @@ public class KeyLoader {
 						
 						if (command.equals("END")) { isEnd = true; }
 						if (!command.equals("**")) {
-							for (HotKey k : man.getAppHotKeys()) {
+							for (Hotkey k : man.getAppHotKeys()) {
 								if (k.getKeyName().equals(command)) {
 									String[] keysIn = line.next().split(",");
 									int[] keyCodes = new int[keysIn.length];
@@ -179,6 +179,6 @@ public class KeyLoader {
 		}
 	}
 	
-	public EArrayList<HotKey> getLoadedKeys() { return loadedKeys; }
+	public EArrayList<Hotkey> getLoadedKeys() { return loadedKeys; }
 	
 }

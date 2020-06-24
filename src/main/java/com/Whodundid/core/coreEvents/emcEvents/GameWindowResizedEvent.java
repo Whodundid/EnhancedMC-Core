@@ -1,8 +1,8 @@
 package com.Whodundid.core.coreEvents.emcEvents;
 
-import net.minecraftforge.fml.common.eventhandler.Event;
+import com.Whodundid.core.coreEvents.EMCEvent;
 
-public class GameWindowResizedEvent extends Event {
+public class GameWindowResizedEvent extends EMCEvent {
 	
 	private int width, height;
 	

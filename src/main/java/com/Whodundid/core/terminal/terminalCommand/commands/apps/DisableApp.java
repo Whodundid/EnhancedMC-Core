@@ -1,6 +1,5 @@
 package com.Whodundid.core.terminal.terminalCommand.commands.apps;
 
-import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.app.EMCApp;
 import com.Whodundid.core.app.RegisteredApps;
 import com.Whodundid.core.app.util.AppEnabler;
@@ -62,13 +61,13 @@ public class DisableApp extends TerminalCommand {
 			for (String s : args) {
 				if (s.equals("all")) {
 
-					for (EMCApp m : RegisteredApps.getRegisteredAppList()) {
-						if (m.isDisableable()) {
-							if (m.isEnabled()) { termIn.writeln(m.getName() + " disabled", EColors.green); }
-							m.setEnabled(false);
-							EnhancedMC.reloadAllWindows();
+					for (EMCApp m : RegisteredApps.getRegisteredAppsList()) {
+						if (!m.isEnabled()) { termIn.writeln(m.getName() + " is already disabled.", EColors.orange); }
+						else {
+							if (AppEnabler.disableApp(m, termIn)) {
+								termIn.writeln(m.getName() + " disabled", EColors.green);
+							}
 						}
-						else { termIn.error(m.getName() + " cannot be disabled!"); }
 					}
 					
 					break;

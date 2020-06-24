@@ -4,9 +4,9 @@ package com.Whodundid.hotkeys.control.hotKeyUtil.exceptions;
 //First Added: Feb 20, 2019
 //Author: Hunter Bragg
 
-public class HotKeyActionException extends Exception {
+public class HotkeyActionException extends Exception {
 	
-	public HotKeyActionException(String message) {
+	public HotkeyActionException(String message) {
 		super(message);
 	}
 	

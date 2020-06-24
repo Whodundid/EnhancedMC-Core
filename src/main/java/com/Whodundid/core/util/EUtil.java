@@ -452,7 +452,7 @@ public class EUtil {
 	}
 	
 	public static <E> EArrayList<E> asList(E... vals) {
-		return EArrayList.of(vals);
+		return new EArrayList<E>().addA(vals);
 	}
 	
 	public static <E> E[] add(E obj, E[] array) {
@@ -492,13 +492,31 @@ public class EUtil {
 		return true;
 	}
 	
+	public static <E> String arrayString(E[] arrIn) {
+		if (arrIn != null) {
+			String out = "[";
+			
+			for (E e : arrIn) { out += (e.toString() + ", "); }
+			if (arrIn.length > 0) { out = out.substring(0, out.length() - 2); }
+			
+			out += "]";
+			
+			return out;
+			
+		}
+		return "Array is null!";
+	}
+	
+	public static <E> void printArray(E[] arrIn) {
+		System.out.println(arrayString(arrIn));
+	}
+	
 	//--------------
 	//Lambda Helpers
 	//--------------
 	
 	public static <E> Stream<E> toStream(E... vals) {
-		EArrayList<E> list = new EArrayList<E>().addA(vals);
-		return list.stream();
+		return new EArrayList<E>().addA(vals).stream();
 	}
 	
 	public static <E> Stream<E> filterNull(E... vals) {
@@ -506,62 +524,68 @@ public class EUtil {
 	}
 	
 	public static <E> Stream<E> filterNull(Predicate<? super E> filter, E... vals) {
-		Objects.requireNonNull(filter);
 		return filterNull(vals).filter(filter);
 	}
 	
 	public static <E> Stream<E> filterNull(List<E> list) {
-		//Objects.requireNonNull(list);
 		return list.stream().filter(o -> o != null);
 	}
 	
 	public static <E> Stream<E> filterNull(Predicate<? super E> filter, List<E> list) {
-		//Objects.requireNonNull(filter);
 		return filterNull(list).filter(filter);
 	}
 	
 	public static <E> void filterNullDo(Consumer<? super E> action, E... vals) {
-		//Objects.requireNonNull(action);
 		filterNull(vals).forEach(action);
 	}
 	
 	public static <E> void filterNullDo(Predicate<? super E> filter, Consumer<? super E> action, E... vals) {
-		//Objects.requireNonNull(filter);
-		//Objects.requireNonNull(action);
 		filterNull(vals).filter(filter).forEach(action);
 	}
 	
+	public static <E> void filterNullDo(Predicate<? super E> filter, Predicate<? super E> second, Consumer<? super E> action, E... vals) {
+		filterNull(vals).filter(filter).filter(second).forEach(action);
+	}
+	
 	public static <E> void filterNullDo(Consumer<? super E> action, List<E> list) {
-		//Objects.requireNonNull(action);
 		filterNull(list).forEach(action);
 	}
 	
 	public static <E> void filterNullDo(Predicate<? super E> filter, Consumer<? super E> action, List<E> list) {
-		//Objects.requireNonNull(filter);
-		//Objects.requireNonNull(action);
 		filterNull(list).filter(filter).forEach(action);
 	}
 	
-	public static <E> Stream<E> filter(Predicate<? super E> filter, E... vals) {
-		Objects.requireNonNull(filter);
-		return toStream(vals).filter(filter);
+	public static <E> void filterNullDo(Predicate<? super E> filter, Predicate<? super E> second, Consumer<? super E> action, List<E> list) {
+		filterNull(list).filter(filter).filter(second).forEach(action);
+	}
+	
+	public static <E> Stream<E> filter(Predicate<? super E> first, E... vals) {
+		return toStream(vals).filter(first);
+	}
+	
+	/** Performs the first filter on the given set of objects, then performs the second filter on the remaining objects. */
+	public static <E> Stream<E> filter(Predicate<? super E> first, Predicate<? super E> second, E... vals) {
+		return toStream(vals).filter(first).filter(second);
 	}
 	
 	public static <E> Stream<E> filter(Predicate<? super E> filter, List<E> list) {
-		//Objects.requireNonNull(filter);
-		//Objects.requireNonNull(list);
 		return list.stream().filter(filter);
 	}
 	
 	public static <E> void filterDo(Predicate<? super E> filter, Consumer<? super E> action, E... vals) {
-		//Objects.requireNonNull(filter);
-		//Objects.requireNonNull(action);
 		filter(filter, vals).forEach(action);
 	}
 	
+	public static <E> void filterDo(Predicate<? super E> first, Predicate<? super E> second, Consumer<? super E> action, E... vals) {
+		filter(first, vals).filter(second).forEach(action);
+	}
+	
 	public static <E> void filterDo(Predicate<? super E> filter, Consumer<? super E> action, List<E> list) {
-		//Objects.requireNonNull(action);
 		filter(filter, list).forEach(action);
+	}
+	
+	public static <E> void filterDo(Predicate<? super E> first, Predicate<? super E> second, Consumer<? super E> action, List<E> list) {
+		filter(first, list).filter(second).forEach(action);
 	}
 	
 	public static <E> void doForEach(Consumer<? super E> action, E... vals) {
@@ -575,10 +599,7 @@ public class EUtil {
 	}
 	
 	public static <E> void forEach(E[] arr, Consumer<? super E> action) {
-		//Objects.requireNonNull(action);
-		for (E e : arr) {
-			action.accept(e);
-		}
+		for (E e : arr) { action.accept(e); }
 	}
 	
 	public static <E, R> R forEachReturn(E[] arr, Consumer<? super E> action, R returnVal) {
@@ -593,38 +614,32 @@ public class EUtil {
 	}
 	
 	public static <E, R> R nullDoReturn(E object, Consumer<? super E> action, R returnVal) {
-		//Objects.requireNonNull(action);
 		if (object != null) { action.accept(object); }
 		return returnVal;
 	}
 	
 	public static <E, A, R> R nullDoReturn(E object1, A object2, BiConsumer<? super E, ? super A> action, R returnVal) {
-		//Objects.requireNonNull(action);
 		if (object1 != null && object2 != null) { action.accept(object1, object2); }
 		return returnVal;
 	}
 	
 	/** A statement that performs the following action on the given object if the object is not null. */
 	public static <E> boolean ifNotNullDo(E object, Consumer<? super E> action) {
-		//Objects.requireNonNull(action);
 		if (object != null) { action.accept(object); return true; }
 		return false;
 	}
 	
 	public static <E, A> boolean ifNotNullDo(E object1, A object2, BiConsumer<? super E, ? super A> action) {
-		//Objects.requireNonNull(action);
 		if (object1 != null && object2 != null) { action.accept(object1, object2); return true; }
 		return false;
 	}
 	
 	/** A statement that returns the result of a given function if the given object is not null. */
 	public static <E, R> R ifNotNullReturn(E object, Function<? super E, R> function, R defaultVal) {
-		//Objects.requireNonNull(function);
 		return object != null ? function.apply(object) : defaultVal;
 	}
 	
 	public static <E, A, R> R ifNotNullReturn(E object1, A object2, BiFunction<? super E, ? super A, R> function, R defaultVal) {
-		//Objects.requireNonNull(function);
 		return (object1 != null && object2 != null) ? function.apply(object1, object2) : defaultVal;
 	}
 	

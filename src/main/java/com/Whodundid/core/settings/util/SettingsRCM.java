@@ -1,4 +1,4 @@
-package com.Whodundid.core.settings.guiParts;
+package com.Whodundid.core.settings.util;
 
 import com.Whodundid.core.EnhancedMC;
 import com.Whodundid.core.app.EMCApp;

@@ -6,6 +6,7 @@ import com.Whodundid.core.app.EMCApp;
 import com.Whodundid.core.app.RegisteredApps;
 import com.Whodundid.core.coreApp.CoreApp;
 import com.Whodundid.core.coreEvents.EventListener;
+import com.Whodundid.core.coreEvents.emcEvents.EMCPostInitEvent;
 import com.Whodundid.core.coreEvents.emcEvents.RendererRCMOpenEvent;
 import com.Whodundid.core.coreEvents.emcEvents.WindowOpenedEvent;
 import com.Whodundid.core.notifications.NotificationHandler;
@@ -18,6 +19,7 @@ import com.Whodundid.core.renderer.taskView.TaskBar;
 import com.Whodundid.core.settings.SettingsWindowMain;
 import com.Whodundid.core.terminal.TerminalCommandHandler;
 import com.Whodundid.core.terminal.window.ETerminal;
+import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.hypixel.HypixelData;
 import com.Whodundid.core.util.miscUtil.EMouseHelper;
 import com.Whodundid.core.util.renderUtil.CenterType;
@@ -62,7 +64,7 @@ import org.lwjgl.input.Keyboard;
 public class EnhancedMC extends DummyModContainer {
 	
 	public static final String MODID = "enhancedmc";
-	public static final String VERSION = "1.0.1";
+	public static final String VERSION = "1.0.2";
 	public static final String NAME = "EnhancedMC";
 	public static final Minecraft mc = Minecraft.getMinecraft();
 	public static final KeyBinding openSettingsGui = new KeyBinding("Settings", Keyboard.KEY_P, "EnhancedMC");
@@ -133,7 +135,6 @@ public class EnhancedMC extends DummyModContainer {
 	
 	@Subscribe
 	public void postInit(FMLPostInitializationEvent e) {
-		
 		String id = mc.getSession() != null ? mc.getSession().getProfile().getId().toString() : "";
 		
 		isDev = id.equals("be8ba059-2644-4f4c-a5e7-88a38e555b1e") || id.equals("e8f9070f-74f0-4229-8134-5857c794e44d");
@@ -149,6 +150,9 @@ public class EnhancedMC extends DummyModContainer {
 		notifications.loadConfig();
 		
 		isInitialized = true;
+		
+		//notify apps that the core is now fully loaded
+		MinecraftForge.EVENT_BUS.post(new EMCPostInitEvent());
 	}
 	
 	/** Used for rebuilding bundled apps when they are reloaded. */
@@ -184,7 +188,8 @@ public class EnhancedMC extends DummyModContainer {
 	public static <T extends WindowParent> EArrayList<T> getAllWindowInstances(Class<T> windowIn) {
 		EArrayList<T> windows = new EArrayList();
 		try {
-			renderer.getAllChildren().stream().filter(o -> o.getClass() == windowIn).filter(o -> !o.isBeingRemoved()).forEach(w -> windows.add((T) w));
+			EUtil.filterNullDo(o -> o.getClass() == windowIn, o -> !o.isBeingRemoved(), o -> windows.add((T) o), renderer.getAllChildren());
+			//renderer.getAllChildren().stream().filter(o -> o.getClass() == windowIn).filter(o -> !o.isBeingRemoved()).forEach(w -> windows.add((T) w));
 		}
 		catch (Exception e) { e.printStackTrace(); }
 		return windows;
@@ -192,6 +197,8 @@ public class EnhancedMC extends DummyModContainer {
 	
 	public static void reloadAllWindows() { getAllActiveWindows().forEach(w -> w.sendArgs("Reload")); }
 	public static void reloadAllWindows(Object... args) { getAllActiveWindows().forEach(w -> w.sendArgs("Reload", args)); }
+	public static <T extends WindowParent> void reloadAllWindowInstances(Class<T> windowIn) { getAllWindowInstances(windowIn).forEach(w -> w.sendArgs("Reload")); }
+	public static <T extends WindowParent> void reloadAllWindowInstances(Class<T> windowIn, Object... args) { getAllWindowInstances(windowIn).forEach(w -> w.sendArgs("Reload", args)); }
 	
 	public static IWindowParent displayWindow(IWindowParent windowIn) { return displayWindow(windowIn, null, true, false, false, CenterType.screen); }
 	public static IWindowParent displayWindow(IWindowParent windowIn, CenterType loc) { return displayWindow(windowIn, null, true, false, false, loc); }
@@ -207,36 +214,44 @@ public class EnhancedMC extends DummyModContainer {
 		if (windowIn == null) { mc.displayGuiScreen(null); }
 		if (mc.currentScreen == null || !(mc.currentScreen instanceof RendererProxyGui)) { mc.displayGuiScreen(new RendererProxyGui()); }
 		if (windowIn != null) {
+			boolean cancel = false;
+			
 			if (windowIn instanceof EnhancedGui) { mc.displayGuiScreen((EnhancedGui) windowIn); }
 			else {
-				if (windowIn instanceof WindowParent) { MinecraftForge.EVENT_BUS.post(new WindowOpenedEvent((WindowParent) windowIn)); }
-				if (windowIn instanceof RendererRCM) {
-					if (MinecraftForge.EVENT_BUS.post(new RendererRCMOpenEvent((RendererRCM) windowIn))) { return windowIn; }
-				}
-				if (oldObject instanceof GuiScreen) { mc.displayGuiScreen(null); }
-				else if (oldObject instanceof IWindowParent && closeOld) { ((IWindowParent) oldObject).close(); }
-				windowIn.setObjectID(WindowObjectS.getPID());
-				renderer.addObject(null, windowIn);
-			}
-			if (oldObject instanceof IWindowParent && !(windowIn instanceof EnhancedGui)) {
-				IWindowParent old = (IWindowParent) oldObject;
+				if (windowIn instanceof WindowParent) { cancel = MinecraftForge.EVENT_BUS.post(new WindowOpenedEvent((WindowParent) windowIn)); }
 				
-				if (old.isMaximized() && windowIn.isMaximizable()) {
-					windowIn.setPreMax(old.getPreMax());
-					windowIn.setMaximized(old.getMaximizedPosition());
-					windowIn.maximize();
-				}
-				
-				if (transferHistory) {
-					old.getWindowHistory().add(old);
-					windowIn.setWindowHistory(old.getWindowHistory());
-					windowIn.setPinned(old.isPinned());
+				if (!cancel) {
+					if (windowIn instanceof RendererRCM) {
+						if (MinecraftForge.EVENT_BUS.post(new RendererRCMOpenEvent((RendererRCM) windowIn))) { return windowIn; }
+					}
+					
+					if (oldObject instanceof GuiScreen) { mc.displayGuiScreen(null); }
+					else if (oldObject instanceof IWindowParent && closeOld) { ((IWindowParent) oldObject).close(); }
+					
+					windowIn.setObjectID(WindowObjectS.getPID());
+					renderer.addObject(null, windowIn);
+					
+					if (oldObject instanceof IWindowParent && !(windowIn instanceof EnhancedGui)) {
+						IWindowParent old = (IWindowParent) oldObject;
+						
+						if (old.isMaximized() && windowIn.isMaximizable()) {
+							windowIn.setPreMax(old.getPreMax());
+							windowIn.setMaximized(old.getMaximizedPosition());
+							windowIn.maximize();
+						}
+						
+						if (transferHistory) {
+							old.getWindowHistory().add(old);
+							windowIn.setWindowHistory(old.getWindowHistory());
+							windowIn.setPinned(old.isPinned());
+						}
+					}
+					
+					setPos(windowIn, oldObject instanceof IWindowObject ? (IWindowObject) oldObject : null, loc);
+					windowIn.bringToFront();
+					if (transferFocus) { windowIn.requestFocus(); }
 				}
 			}
-			
-			setPos(windowIn, oldObject instanceof IWindowObject ? (IWindowObject) oldObject : null, loc);
-			windowIn.bringToFront();
-			if (transferFocus) { windowIn.requestFocus(); }
 		}
 		return windowIn;
 	}

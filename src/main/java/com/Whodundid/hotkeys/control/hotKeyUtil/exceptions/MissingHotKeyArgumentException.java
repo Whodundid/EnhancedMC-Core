@@ -4,9 +4,9 @@ package com.Whodundid.hotkeys.control.hotKeyUtil.exceptions;
 //First Added: Sep 30, 2018
 //Author: Hunter Bragg
 
-public class MissingHotKeyArgumentException extends Exception {
+public class MissingHotkeyArgumentException extends Exception {
 	
-	public MissingHotKeyArgumentException(String missingArgs) {
+	public MissingHotkeyArgumentException(String missingArgs) {
 		super(missingArgs);
 	}
 	

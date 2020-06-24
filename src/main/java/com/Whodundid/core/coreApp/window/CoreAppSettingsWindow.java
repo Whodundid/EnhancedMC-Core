@@ -6,7 +6,7 @@ import com.Whodundid.core.app.RegisteredApps;
 import com.Whodundid.core.coreApp.CoreApp;
 import com.Whodundid.core.coreApp.EMCResources;
 import com.Whodundid.core.notifications.window.NotificationWindow;
-import com.Whodundid.core.settings.guiParts.ReloaderDialogueBox;
+import com.Whodundid.core.settings.util.ReloaderDialogueBox;
 import com.Whodundid.core.util.renderUtil.CenterType;
 import com.Whodundid.core.util.renderUtil.EColors;
 import com.Whodundid.core.util.renderUtil.ScreenLocation;
@@ -124,7 +124,7 @@ public class CoreAppSettingsWindow extends WindowParent {
 		//menus
 		if (object == tutorial) { EnhancedMC.displayWindow(new TutorialWindow()); }
 		if (object == notifications) { EnhancedMC.displayWindow(new NotificationWindow(), this, CenterType.object); }
-		if (object == reloadConfigs) { EnhancedMC.displayWindow(new ReloaderDialogueBox(RegisteredApps.getRegisteredAppList()), CenterType.screen); }
+		if (object == reloadConfigs) { EnhancedMC.displayWindow(new ReloaderDialogueBox(RegisteredApps.getRegisteredAppsList()), CenterType.screen); }
 		//hud
 		if (object == closeHudEmpty) { closeHudEmpty.toggleTrueFalse(app.closeHudWhenEmpty, app, true, false); }
 		if (object == hudCloseMethod) { hudCloseMethod.updateDislay(app.hudCloseMethod, app, true); }

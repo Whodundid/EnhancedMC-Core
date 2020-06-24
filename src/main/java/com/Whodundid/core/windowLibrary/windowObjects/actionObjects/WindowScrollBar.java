@@ -30,19 +30,29 @@ public class WindowScrollBar extends ActionObject {
 	private StorageBox<Integer, Integer> mousePos = new StorageBox(0, 0);
 	
 	public WindowScrollBar(IWindowObject parentIn, int visibleAmountIn, int highValIn) {
-		this(parentIn, visibleAmountIn, highValIn, -1, -1, ScreenLocation.right); 
+		this(parentIn, visibleAmountIn, highValIn, -1, -1, ScreenLocation.right, 3); 
 	}
 	
 	public WindowScrollBar(IWindowObject parentIn, int visibleAmountIn, int highValIn, int widthIn, int heightIn) {
-		this(parentIn, visibleAmountIn, highValIn, widthIn, heightIn, ScreenLocation.right);
+		this(parentIn, visibleAmountIn, highValIn, widthIn, heightIn, ScreenLocation.right, 3);
 	}
 	
 	public WindowScrollBar(IWindowObject parentIn, int visibleAmountIn, int highValIn, ScreenLocation sideIn) {
-		this(parentIn, visibleAmountIn, highValIn, -1, -1, sideIn);
+		this(parentIn, visibleAmountIn, highValIn, -1, -1, sideIn, 3);
+	}
+	
+	public WindowScrollBar(IWindowObject parentIn, int visibleAmountIn, int highValIn, ScreenLocation sideIn, int thicknessIn) {
+		this(parentIn, visibleAmountIn, highValIn, -1, -1, sideIn, thicknessIn);
 	}
 	
 	public WindowScrollBar(IWindowObject parentIn, int visibleAmountIn, int highValIn, int widthIn, int heightIn, ScreenLocation sideIn) {
+		this(parentIn, visibleAmountIn, highValIn, -1, -1, sideIn, 3);
+	}
+	
+	public WindowScrollBar(IWindowObject parentIn, int visibleAmountIn, int highValIn, int widthIn, int heightIn, ScreenLocation sideIn, int thicknessIn) {
 		EDimension dim = parentIn.getDimensions();
+		
+		scrollBarThickness = thicknessIn;
 		
 		if (sideIn == ScreenLocation.top || sideIn == ScreenLocation.bot) { vertical = false; }
 		else { vertical = true; }

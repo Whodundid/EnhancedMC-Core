@@ -6,14 +6,14 @@ import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.hotkeys.HotKeyApp;
 import com.Whodundid.hotkeys.control.hotKeyUtil.HotkeyCategory;
 import com.Whodundid.hotkeys.control.hotKeyUtil.KeyComboAction;
-import com.Whodundid.hotkeys.control.hotKeyUtil.exceptions.HotKeyActionException;
+import com.Whodundid.hotkeys.control.hotKeyUtil.exceptions.HotkeyActionException;
 import net.minecraft.client.Minecraft;
 
 //Last edited: 9-30-18
 //First Added: 9-14-18
 //Author: Hunter Bragg
 
-public abstract class HotKey {
+public abstract class Hotkey {
 	
 	protected Minecraft mc = Minecraft.getMinecraft();
 	protected HotKeyApp man = (HotKeyApp) RegisteredApps.getApp(AppType.HOTKEYS);
@@ -27,12 +27,12 @@ public abstract class HotKey {
 	protected EArrayList<KeyActionType> actions;
 	protected KeyActionType hotKeyType;
 	
-	protected HotKey() {}
-	public HotKey(String keyNameIn, KeyComboAction keyCodeIn, KeyActionType typeIn) { this(keyNameIn, keyCodeIn, true, typeIn, null); }
-	public HotKey(String keyNameIn, KeyComboAction keyCodeIn, KeyActionType typeIn, String builtInSubModTypeIn) { this(keyNameIn, keyCodeIn, true, typeIn, builtInSubModTypeIn); }
-	public HotKey(String keyNameIn, KeyComboAction keyCodeIn, boolean builtInVal, KeyActionType typeIn) { this(keyNameIn, keyCodeIn, builtInVal, typeIn, null); }
-	public HotKey(String keyNameIn, KeyComboAction keyCodeIn, boolean builtInVal, KeyActionType typeIn, String builtInAppTypeIn) { this(keyNameIn, keyCodeIn, builtInVal, typeIn, null, builtInAppTypeIn); }
-	public HotKey(String keyNameIn, KeyComboAction keyCodeIn, boolean builtInVal, KeyActionType typeIn, String categoryNameIn, String builtInAppTypeIn) {
+	protected Hotkey() {}
+	public Hotkey(String keyNameIn, KeyComboAction keyCodeIn, KeyActionType typeIn) { this(keyNameIn, keyCodeIn, true, typeIn, null); }
+	public Hotkey(String keyNameIn, KeyComboAction keyCodeIn, KeyActionType typeIn, String builtInSubModTypeIn) { this(keyNameIn, keyCodeIn, true, typeIn, builtInSubModTypeIn); }
+	public Hotkey(String keyNameIn, KeyComboAction keyCodeIn, boolean builtInVal, KeyActionType typeIn) { this(keyNameIn, keyCodeIn, builtInVal, typeIn, null); }
+	public Hotkey(String keyNameIn, KeyComboAction keyCodeIn, boolean builtInVal, KeyActionType typeIn, String builtInAppTypeIn) { this(keyNameIn, keyCodeIn, builtInVal, typeIn, null, builtInAppTypeIn); }
+	public Hotkey(String keyNameIn, KeyComboAction keyCodeIn, boolean builtInVal, KeyActionType typeIn, String categoryNameIn, String builtInAppTypeIn) {
 		keyName = keyNameIn;
 		keyCombo = keyCodeIn;
 		builtIn = builtInVal;
@@ -58,21 +58,21 @@ public abstract class HotKey {
 	public boolean isEnabled() { return isEnabled; }
 	public boolean isAppKey() { return builtIn; }
 	
-	public HotKey addAction(KeyActionType typeIn) throws HotKeyActionException {
-		if (actions.contains(typeIn)) { throw new HotKeyActionException("Cannot have multiple actions of the same type in one key!"); }
+	public Hotkey addAction(KeyActionType typeIn) throws HotkeyActionException {
+		if (actions.contains(typeIn)) { throw new HotkeyActionException("Cannot have multiple actions of the same type in one key!"); }
 		actions.add(typeIn);
 		return this;
 	}
 	
-	public HotKey removeAction(KeyActionType typeIn) throws HotKeyActionException {
-		if (!actions.contains(typeIn)) { throw new HotKeyActionException("HotKey: " + keyName + " does not contain the action: " + typeIn.getStringFromType(typeIn)); }
+	public Hotkey removeAction(KeyActionType typeIn) throws HotkeyActionException {
+		if (!actions.contains(typeIn)) { throw new HotkeyActionException("HotKey: " + keyName + " does not contain the action: " + typeIn.getStringFromType(typeIn)); }
 		actions.remove(typeIn);
 		return this;
 	}
 	
-	public HotKey changeAction(KeyActionType oldAction, KeyActionType newAction) throws HotKeyActionException {
-		if (!actions.contains(oldAction)) { throw new HotKeyActionException("Cannot replace an action that doesn't exist!"); }
-		if (actions.contains(newAction)) { throw new HotKeyActionException("Cannot have multiple actions of the same type in one key!"); }
+	public Hotkey changeAction(KeyActionType oldAction, KeyActionType newAction) throws HotkeyActionException {
+		if (!actions.contains(oldAction)) { throw new HotkeyActionException("Cannot replace an action that doesn't exist!"); }
+		if (actions.contains(newAction)) { throw new HotkeyActionException("Cannot have multiple actions of the same type in one key!"); }
 		actions.remove(oldAction);
 		actions.add(newAction);
 		return this;

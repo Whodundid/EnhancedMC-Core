@@ -5,13 +5,16 @@ import com.Whodundid.core.app.AppType;
 import com.Whodundid.core.app.EMCApp;
 import com.Whodundid.core.app.config.AppConfigFile;
 import com.Whodundid.core.app.config.AppConfigSetting;
+import com.Whodundid.core.coreEvents.emcEvents.AppsReloadedEvent;
+import com.Whodundid.core.coreEvents.emcEvents.EMCPostInitEvent;
 import com.Whodundid.core.terminal.window.ETerminal;
+import com.Whodundid.core.util.EUtil;
 import com.Whodundid.core.util.resourceUtil.EResource;
 import com.Whodundid.core.util.storageUtil.EArrayList;
 import com.Whodundid.core.util.storageUtil.StorageBox;
-import com.Whodundid.hotkeys.control.HotKey;
+import com.Whodundid.hotkeys.control.Hotkey;
 import com.Whodundid.hotkeys.control.KeyActionType;
-import com.Whodundid.hotkeys.control.hotKeyTypes.CommandSenderHotKey;
+import com.Whodundid.hotkeys.control.hotKeyTypes.CommandSenderHotkey;
 import com.Whodundid.hotkeys.control.hotKeyUtil.KeyComboAction;
 import com.Whodundid.hotkeys.keySaveLoad.HotKeyBuilder;
 import com.Whodundid.hotkeys.keySaveLoad.KeyLoader;
@@ -19,6 +22,7 @@ import com.Whodundid.hotkeys.keySaveLoad.KeySaver;
 import com.Whodundid.hotkeys.settings.InputDelay;
 import com.Whodundid.hotkeys.terminal.CreateExampleKey;
 import com.Whodundid.hotkeys.util.HKResources;
+import com.Whodundid.hotkeys.util.IHaveHotkeys;
 import com.Whodundid.hotkeys.window.HotKeyCreatorWindow;
 import com.Whodundid.hotkeys.window.HotKeyMainWindow;
 import com.Whodundid.hotkeys.window.HotKeyListWindow;
@@ -58,10 +62,10 @@ public final class HotKeyApp extends EMCApp {
 	public static final InputDelay keyInputDelay = new InputDelay();
 	
 	public static final String MODID = "hotkeys";
-	public static final String VERSION = "2.1";
+	public static final String VERSION = "2.1.1";
 	public static final String NAME = "Hotkeys";
-	protected EArrayList<HotKey> registeredHotKeys;
-	protected EArrayList<HotKey> appHotKeys;
+	protected EArrayList<Hotkey> registeredHotKeys;
+	protected EArrayList<Hotkey> appHotKeys;
 	protected KeySaver saver;
 	protected KeyLoader loader;
 	protected HotKeyBuilder builder;
@@ -127,14 +131,53 @@ public final class HotKeyApp extends EMCApp {
 	}
 	
 	@Override
+	public void appsReloadedEvent(AppsReloadedEvent e) {
+		searchForAppKeys();
+	}
+	
+	@Override
+	public void onEMCPostInitEvent(EMCPostInitEvent e) {
+		searchForAppKeys();
+	}
+	
+	private void searchForAppKeys() {
+		for (EMCApp a : EnhancedMC.getApps().getAppsList()) {
+			if (a instanceof IHaveHotkeys) {
+				IHaveHotkeys keyApp = (IHaveHotkeys) a;
+				
+				List<Hotkey> keys = keyApp.getHotkeys();
+				
+				if (keys != null) {
+					keys.forEach(k -> registerHotKey(k));
+				}
+			}
+		} //for
+	}
+	
+	@Override
 	public void terminalRegisterCommandEvent(ETerminal termIn, boolean runVisually) {
 		if (!isIncompatible()) {
 			EnhancedMC.getTerminalHandler().registerCommand(new CreateExampleKey(), termIn, runVisually);
 		}
 	}
 	
+	@Override
+	public Object sendArgs(Object... args) {
+		if (args.length == 2) {
+			if (args[1] instanceof List<?>) {
+				if ("register".equals(args[0])) {
+					EUtil.filterNullDo(o -> o instanceof Hotkey, o -> registerHotKey((Hotkey) o), (List<?>) args[0]);
+				}
+				else if ("unregister".equals(args[0])) {
+					EUtil.filterNullDo(o -> o instanceof Hotkey, o -> unregisterHotKey((Hotkey) o), (List<?>) args[0]);
+				}
+			}
+		}
+		return false;
+	}
+	
 	public void createExampleKey() {
-		registerHotKey(new CommandSenderHotKey("Example Hotkey", new KeyComboAction(Keyboard.KEY_H), "/help") {
+		registerHotKey(new CommandSenderHotkey("Example Hotkey", new KeyComboAction(Keyboard.KEY_H), "/help") {
 			{
 				setKeyDescription("This is an example of a CommandSender Hotkey. When pressed it send the command '/help'.");
 				setKeyCategory("Example");
@@ -144,7 +187,7 @@ public final class HotKeyApp extends EMCApp {
 		getConfig().saveMainConfig();
 	}
 	
-	public boolean registerHotKey(HotKey keyIn) {
+	public boolean registerHotKey(Hotkey keyIn) {
 		if (keyIn != null) {
 			synchronized (registeredHotKeys) {
 				if (!doesListAlreadyContain(keyIn, registeredHotKeys)) {
@@ -159,10 +202,12 @@ public final class HotKeyApp extends EMCApp {
 		return false;
 	}
 	
-	private boolean doesListAlreadyContain(HotKey keyIn, EArrayList<HotKey> list) {
-		for (HotKey k : list) {
-			if (k.getKeyName().equals(keyIn.getKeyName())) {
-				if (k.getBuiltInAppType().equals(keyIn.getBuiltInAppType())) { return true; }
+	private boolean doesListAlreadyContain(Hotkey keyIn, EArrayList<Hotkey> list) {
+		if (keyIn != null) {
+			for (Hotkey k : list) {
+				if (k.getKeyName().equals(keyIn.getKeyName())) {
+					if (k.getBuiltInAppType().equals(keyIn.getBuiltInAppType())) { return true; }
+				}
 			}
 		}
 		return false;
@@ -170,9 +215,9 @@ public final class HotKeyApp extends EMCApp {
 	
 	public boolean unregisterHotKey(int... keyCodes) {
 		synchronized (registeredHotKeys) {
-			Iterator<HotKey> it = registeredHotKeys.iterator();
+			Iterator<Hotkey> it = registeredHotKeys.iterator();
 			while (it.hasNext()) {
-				HotKey key = it.next();
+				Hotkey key = it.next();
 				if (key.getKeyCombo().checkKeys(keyCodes)) {
 					if (!key.isAppKey()) {
 						it.remove();
@@ -186,9 +231,9 @@ public final class HotKeyApp extends EMCApp {
 	
 	public boolean unregisterHotKey(String keyName) {
 		synchronized (registeredHotKeys) {
-			Iterator<HotKey> it = registeredHotKeys.iterator();
+			Iterator<Hotkey> it = registeredHotKeys.iterator();
 			while (it.hasNext()) {
-				HotKey key = it.next();
+				Hotkey key = it.next();
 				if (key.getKeyName().equals(keyName)) {
 					if (!key.isAppKey()) {
 						it.remove();
@@ -200,11 +245,11 @@ public final class HotKeyApp extends EMCApp {
 		return false;
 	}
 	
-	public boolean unregisterHotKey(HotKey keyIn) {
+	public boolean unregisterHotKey(Hotkey keyIn) {
 		synchronized (registeredHotKeys) {
-			Iterator<HotKey> it = registeredHotKeys.iterator();
+			Iterator<Hotkey> it = registeredHotKeys.iterator();
 			while (it.hasNext()) {
-				HotKey key = it.next();
+				Hotkey key = it.next();
 				if (key.equals(keyIn)) {
 					if (!key.isAppKey()) {
 						it.remove();
@@ -216,22 +261,22 @@ public final class HotKeyApp extends EMCApp {
 		return false;
 	}
 	
-	public HotKey getHotKey(int... keyCodes) {
-		for (HotKey k : registeredHotKeys) {
+	public Hotkey getHotKey(int... keyCodes) {
+		for (Hotkey k : registeredHotKeys) {
 			if (k.getKeyCombo().checkKeys(keyCodes)) { return k; }
 		}
 		return null;
 	}
 	
-	public HotKey getHotKey(String keyNameIn) {
-		for (HotKey k : registeredHotKeys) {
+	public Hotkey getHotKey(String keyNameIn) {
+		for (Hotkey k : registeredHotKeys) {
 			if (k.getKeyName().equals(keyNameIn)) { return k; }
 		}
 		return null;
 	}
 	
 	public boolean checkIfKeyComboAlreadyExists(int... keyCodes) {
-		for (HotKey k : registeredHotKeys) {
+		for (Hotkey k : registeredHotKeys) {
 			if (k.getKeyCombo().checkKeys(keyCodes)) { return true; }
 		}
 		return false;
@@ -243,10 +288,10 @@ public final class HotKeyApp extends EMCApp {
 	
 	public synchronized void loadHotKeys() {
 		registeredHotKeys.clear();
-		for (HotKey k : appHotKeys) { registerHotKey(k); }
+		for (Hotkey k : appHotKeys) { registerHotKey(k); }
 		loader.loadKeysFromFile();
 		if (createExampleKey.get() && !exampleKeyCreated.get()) { createExampleKey(); }
-		for (HotKey k : loader.getLoadedKeys()) { registerHotKey(k); }
+		for (Hotkey k : loader.getLoadedKeys()) { registerHotKey(k); }
 		saver.saveKeysToFile();
 		EnhancedMC.reloadAllWindows();
 	}
@@ -254,7 +299,7 @@ public final class HotKeyApp extends EMCApp {
 	public void reset() {
 		registeredHotKeys.clear();
 		saver.saveKeysToFile();
-		for (HotKey k : appHotKeys) { registerHotKey(k); }
+		for (Hotkey k : appHotKeys) { registerHotKey(k); }
 		if (createExampleKey.get() && !exampleKeyCreated.get()) { createExampleKey(); }
 		EnhancedMC.reloadAllWindows();
 	}
@@ -304,7 +349,7 @@ public final class HotKeyApp extends EMCApp {
 					
 					synchronized (registeredHotKeys) {
 						for (int i = 0; i < registeredHotKeys.size(); i++) {
-							HotKey key = registeredHotKeys.get(i);
+							Hotkey key = registeredHotKeys.get(i);
 							if (key.getKeyCombo() != null) {
 								if (key.getKeyCombo().checkKeys(checkKeys) && key.isEnabled()) {
 									if (key.getHotKeyType() == KeyActionType.COMMANDSENDER || key.getHotKeyType() == KeyActionType.CONDITIONAL_COMMAND_ITEMTEST) {
@@ -327,8 +372,8 @@ public final class HotKeyApp extends EMCApp {
 		}
 	}
 	
-	public List<HotKey> getRegisteredHotKeys() { return Collections.unmodifiableList(registeredHotKeys); }
-	public List<HotKey> getAppHotKeys() { return Collections.unmodifiableList(appHotKeys); }
+	public List<Hotkey> getRegisteredHotKeys() { return Collections.unmodifiableList(registeredHotKeys); }
+	public List<Hotkey> getAppHotKeys() { return Collections.unmodifiableList(appHotKeys); }
 	public KeySaver getKeySaver() { return saver; }
 	public KeyLoader getKeyLoader() { return loader; }
 	public HotKeyBuilder getKeyBuilder() { return builder; }

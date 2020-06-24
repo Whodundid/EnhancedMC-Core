@@ -10,7 +10,7 @@ import com.Whodundid.core.windowLibrary.windowObjects.advancedObjects.textArea.W
 import com.Whodundid.core.windowLibrary.windowTypes.WindowParent;
 import com.Whodundid.core.windowLibrary.windowTypes.interfaces.IActionObject;
 import com.Whodundid.hotkeys.HotKeyApp;
-import com.Whodundid.hotkeys.control.HotKey;
+import com.Whodundid.hotkeys.control.Hotkey;
 import com.Whodundid.hotkeys.control.KeyActionType;
 import com.Whodundid.hotkeys.window.util.KeyEntryTextField;
 import net.minecraft.client.settings.KeyBinding;
@@ -22,7 +22,7 @@ import net.minecraft.client.settings.KeyBinding;
 public class HotKeyCreationStepByStep extends WindowParent {
 	
 	HotKeyApp man = (HotKeyApp) RegisteredApps.getApp(AppType.HOTKEYS);
-	HotKey creationKey;
+	Hotkey creationKey;
 	KeyEntryTextField keyEntry;
 	WindowTextArea selectionList;
 	WindowTextField nameEntry, commandEntry, argEntry;

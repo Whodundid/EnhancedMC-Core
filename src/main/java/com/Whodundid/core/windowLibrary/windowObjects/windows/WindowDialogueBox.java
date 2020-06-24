@@ -25,9 +25,9 @@ public class WindowDialogueBox extends WindowParent {
 	public WindowDialogueBox(DialogueBoxTypes typeIn) {
 		super();
 		type = typeIn;
-		setDimensions(250, 85);
+		setDimensions(250, 75);
 		setResizeable(true);
-		setMinDims(101, 85);
+		setMinDims(150, 85);
 	}
 	
 	@Override
@@ -76,15 +76,17 @@ public class WindowDialogueBox extends WindowParent {
 		
 		if (wordWrappedLines != null) {
 			int lnWidth = wordWrappedLines.size() * 10;
-			int totalWidth = (endY - 25) - startY;
+			int totalWidth = (midY + 12) - startY;
 			int lnStartY = startY + (totalWidth - lnWidth) / 2 - 2;
 			int i = 0;
+			
 			scissor(startX + 1, startY + 1, endX - 1, endY - 1);
 			for (String s : wordWrappedLines) {
 				drawStringCS(s, midX, lnStartY + (i * 10), messageColor);
 				i++;
 			}
 			endScissor();
+			
 		}
 		super.drawObject(mXIn, mYIn);
 	}
