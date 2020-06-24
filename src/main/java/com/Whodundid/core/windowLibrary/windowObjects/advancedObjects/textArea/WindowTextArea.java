@@ -15,6 +15,7 @@ import java.util.Iterator;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 //Author: Hunter Bragg
 
@@ -163,7 +164,10 @@ public class WindowTextArea extends WindowScrollList {
 	@Override
 	public void mouseEntered(int mX, int mY) {
 		super.mouseEntered(mX, mY);
-		if (isEditable()) {
+		IWindowObject focused = getTopParent().getFocusedObject();
+		boolean oneOf = focused == this || isChild(focused);
+		
+		if (isEditable() && (oneOf || !Mouse.isButtonDown(0))) {
 			CursorHelper.setCursor(EMCResources.cursorIBeam);
 		}
 	}

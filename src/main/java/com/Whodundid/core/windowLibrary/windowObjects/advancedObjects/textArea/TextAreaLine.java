@@ -72,9 +72,6 @@ public class TextAreaLine<obj> extends WindowTextField {
 	
 	@Override
 	public void drawObject(int mXIn, int mYIn) {
-		//drawRect(startX, startY, endX + parentTextArea.getLineNumberOffset() - 1, endY, EColors.blue);
-		//drawRect(startX, startY + 2, endX, endY, EColors.cyan);
-		
 		updateBeforeNextDraw(mXIn, mYIn);
 		updateValues();
 		boolean current = parentTextArea.getCurrentLine() == this;
@@ -257,7 +254,12 @@ public class TextAreaLine<obj> extends WindowTextField {
 	@Override
 	public void mouseEntered(int mXIn, int mYIn) {
 		super.mouseEntered(mXIn, mYIn);
-		if (parentTextArea.isEditable()) { CursorHelper.setCursor(EMCResources.cursorIBeam); }
+		IWindowObject focused = getTopParent().getFocusedObject();
+		boolean oneOf = focused == this || parentTextArea.isChild(focused);
+		
+		if (parentTextArea.isEditable() && (oneOf || !Mouse.isButtonDown(0))) {
+			CursorHelper.setCursor(EMCResources.cursorIBeam);
+		}
 	}
 	
 	@Override
