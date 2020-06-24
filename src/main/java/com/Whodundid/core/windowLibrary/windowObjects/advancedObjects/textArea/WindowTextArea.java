@@ -31,6 +31,10 @@ public class WindowTextArea extends WindowScrollList {
 	protected int lineHeight = 10;
 	protected int lineNumberSeparatorColor = 0xff000000;
 	
+	//---------------------------
+	//WindowTextArea Constructors
+	//---------------------------
+	
 	public WindowTextArea(IWindowObject parentIn, int x, int y, int widthIn, int heightIn) {
 		this(parentIn, x, y, widthIn, heightIn, false);
 	}
@@ -47,6 +51,10 @@ public class WindowTextArea extends WindowScrollList {
 		setBackgroundColor(0xff2d2d2d);
 		setResetDrawn(true);
 	}
+	
+	//----------------------
+	//WindowObject Overrides
+	//----------------------
 	
 	@Override
 	public void drawObject(int mXIn, int mYIn) {
@@ -122,7 +130,6 @@ public class WindowTextArea extends WindowScrollList {
 	public void mousePressed(int mXIn, int mYIn, int button) {
 		postEvent(new EventMouse(this, mX, mY, button, MouseType.Pressed));
 		listClick(mXIn, mYIn, button);
-		//super.mousePressed(mXIn, mYIn, button);
 	}
 	
 	public void listClick(int mXIn, int mYIn, int button) {
@@ -139,7 +146,7 @@ public class WindowTextArea extends WindowScrollList {
 					TextAreaLine l = getLineMouseIsOver();
 					if (l != currentLine) {
 						if (l != null) {
-							setSelectedLine(l, FocusType.MousePress, true);
+							setSelectedLine(l, FocusType.MousePress);
 						}
 						else {
 							if (currentLine != null) { currentLine.setHighlighted(false); }
@@ -184,6 +191,10 @@ public class WindowTextArea extends WindowScrollList {
 		else { CursorHelper.reset(); }
 	}
 	
+	//----------------------
+	//WindowTextArea Methods
+	//----------------------
+	
 	public TextAreaLine addTextLine() { return addTextLine("", 0xffffff, null, false); }
 	public TextAreaLine addTextLine(boolean moveDown) { return addTextLine("", 0xffffff, null, moveDown); }
 	public TextAreaLine addTextLine(String textIn) { return addTextLine(textIn, 0xffffff, null, false); }
@@ -208,26 +219,6 @@ public class WindowTextArea extends WindowScrollList {
 		return lineIn;
 	}
 	
-	public TextAreaLine insertTextLine() { return insertTextLine("", 0xffffff, -1); }
-	public TextAreaLine insertTextLine(int atPos) { return insertTextLine("", 0xffffff, atPos); }
-	public TextAreaLine insertTextLine(String textIn) { return insertTextLine(textIn, 0xffffff, -1); }
-	public TextAreaLine insertTextLine(String textIn, int atPos) { return insertTextLine(textIn, 0xffffff, atPos); }
-	public TextAreaLine insertTextLine(String textIn, int colorIn, int atPos) {
-		if (atPos == -1) {
-			if (currentLine == null) {
-				System.out.println("pos: " + atPos);
-				atPos = textDocument.size();
-				
-			}
-		}
-		return null;
-	}
-	
-	public TextAreaLine insertTextLine(TextAreaLine lineIn, int atPos) {
-		
-		return lineIn;
-	}
-	
 	public WindowTextArea deleteLine() { return deleteLine(getCurrentLine()); }
 	public WindowTextArea deleteLine(int lineNumber) { return deleteLine(getTextLine(lineNumber)); }
 	public WindowTextArea deleteLine(TextAreaLine lineIn) {
@@ -237,29 +228,42 @@ public class WindowTextArea extends WindowScrollList {
 		return this;
 	}
 	
-	public WindowTextArea setSelectedLine(TextAreaLine lineIn) { return setSelectedLine(lineIn, FocusType.Transfer, true); }
-	public WindowTextArea setSelectedLine(TextAreaLine lineIn, boolean makeDrawn) { return setSelectedLine(lineIn, FocusType.Transfer, true); }
-		public WindowTextArea setSelectedLine(TextAreaLine lineIn, FocusType typeIn, boolean makeDrawn) {
+	public WindowTextArea setSelectedLine(TextAreaLine lineIn) { return setSelectedLine(lineIn, FocusType.Transfer); }
+	public WindowTextArea setSelectedLine(TextAreaLine lineIn, FocusType typeIn) {
 		if (lineIn == null) { currentLine = null; return this; }
 		if (textDocument.contains(lineIn)) {
 			currentLine = lineIn;
 			if (!currentLine.hasFocus()) { currentLine.requestFocus(typeIn); }
-			if (makeDrawn && currentLine != null) {
-				//setLineNumberDrawn(currentLine);
-			}
 		}
 		return this;
 	}
 	
-	public WindowTextArea setLineNumberDrawn(int lineNumber) { return setLineNumberDrawn(getTextLine(lineNumber)); }
-	public WindowTextArea setLineNumberDrawn(TextAreaLine lineIn) {
+	public TextAreaLine selectPreviousLine(int numIn, int pos) { return selectPreviousLine(getTextLine(numIn), pos); }
+	public TextAreaLine selectPreviousLine(TextAreaLine lineIn, int pos) {
 		if (lineIn != null) {
-			int lineYPos = lineIn.endY + lineIn.height;
-			int difference = lineYPos - startY;
-			
-			getVScrollBar().setScrollBarPos(difference);
+			TextAreaLine line = getTextLine(lineIn.getLineNumber() - 1);
+			if (line != null) {
+				setSelectedLine(line, FocusType.Gained);
+				line.setCursorPosition(pos);
+				line.startTextTimer();
+			}
+			return line;
 		}
-		return this;
+		return null;
+	}
+	
+	public TextAreaLine selectNextLine(int numIn, int pos) { return selectNextLine(getTextLine(numIn), pos); }
+	public TextAreaLine selectNextLine(TextAreaLine lineIn, int pos) {
+		if (lineIn != null) {
+			TextAreaLine line = getTextLine(lineIn.getLineNumber() + 1);
+			if (line != null) {
+				setSelectedLine(line, FocusType.Gained);
+				line.setCursorPosition(pos);
+				line.startTextTimer();
+			}
+			return line;
+		}
+		return null;
 	}
 	
 	/** Used when pressing enter. */
@@ -320,6 +324,53 @@ public class WindowTextArea extends WindowScrollList {
 		return null;
 	}
 	
+	public WindowTextArea setLineNumberDrawn(int lineNumber) { return setLineNumberDrawn(getTextLine(lineNumber)); }
+	public WindowTextArea setLineNumberDrawn(TextAreaLine lineIn) {
+		if (lineIn != null) {
+			int lineYPos = lineIn.endY + lineIn.height;
+			int difference = lineYPos - startY;
+			
+			getVScrollBar().setScrollBarPos(difference);
+		}
+		return this;
+	}
+	
+	public WindowTextArea clear() {
+		setListWidth(width - 2);
+		setListHeight(0);
+		Iterator it = windowObjects.iterator();
+		while (it.hasNext()) {
+			if (it.next() instanceof TextAreaLine) { it.remove(); }
+		}
+		listContents.clear();
+		textDocument.clear();
+		currentLine = null;
+		longestLine = null;
+		return this;
+	}
+	
+	/*
+	
+	public TextAreaLine insertTextLine() { return insertTextLine("", 0xffffff, -1); }
+	public TextAreaLine insertTextLine(int atPos) { return insertTextLine("", 0xffffff, atPos); }
+	public TextAreaLine insertTextLine(String textIn) { return insertTextLine(textIn, 0xffffff, -1); }
+	public TextAreaLine insertTextLine(String textIn, int atPos) { return insertTextLine(textIn, 0xffffff, atPos); }
+	public TextAreaLine insertTextLine(String textIn, int colorIn, int atPos) {
+		if (atPos == -1) {
+			if (currentLine == null) {
+				System.out.println("pos: " + atPos);
+				atPos = textDocument.size();
+				
+			}
+		}
+		return null;
+	}
+	
+	public TextAreaLine insertTextLine(TextAreaLine lineIn, int atPos) {
+		
+		return lineIn;
+	}
+	
 	//unfinished
 	public WindowTextArea setMaxLineWidth(int widthIn) {
 		return this;
@@ -332,32 +383,26 @@ public class WindowTextArea extends WindowScrollList {
 		return this;
 	}
 	
-	public TextAreaLine selectPreviousLine(int numIn, int pos) { return selectPreviousLine(getTextLine(numIn), pos); }
-	public TextAreaLine selectPreviousLine(TextAreaLine lineIn, int pos) {
-		if (lineIn != null) {
-			TextAreaLine line = getTextLine(lineIn.getLineNumber() - 1);
-			if (line != null) {
-				setSelectedLine(line, FocusType.Gained, true);
-				line.setCursorPosition(pos);
-				line.startTextTimer();
-			}
-			return line;
-		}
-		return null;
+	*/
+	
+	//----------------------
+	//WindowTextArea Getters
+	//----------------------
+	
+	public TextAreaLine getLineMouseIsOver() {
+		int mPosY = mY - startY - 1;
+		int scrollOffset = verticalScroll.getScrollPos() - verticalScroll.getVisibleAmount();
+		int posY = mPosY + scrollOffset;
+		
+		int num = (posY / lineHeight) + 1;
+		TextAreaLine l = getTextLine(num);
+		
+		return l;
 	}
 	
-	public TextAreaLine selectNextLine(int numIn, int pos) { return selectNextLine(getTextLine(numIn), pos); }
-	public TextAreaLine selectNextLine(TextAreaLine lineIn, int pos) {
-		if (lineIn != null) {
-			TextAreaLine line = getTextLine(lineIn.getLineNumber() + 1);
-			if (line != null) {
-				setSelectedLine(line, FocusType.Gained, true);
-				line.setCursorPosition(pos);
-				line.startTextTimer();
-			}
-			return line;
-		}
-		return null;
+	public int getLongestLineLength() {
+		longestLine = getLongestTextLine();
+		return longestLine != null ? mc.fontRendererObj.getStringWidth(longestLine.getText()) : - 1;
 	}
 	
 	public TextAreaLine getTextLine(int numIn) {
@@ -415,24 +460,18 @@ public class WindowTextArea extends WindowScrollList {
 		return longest;
 	}
 	
-	public int getLongestLineLength() {
-		longestLine = getLongestTextLine();
-		return longestLine != null ? mc.fontRendererObj.getStringWidth(longestLine.getText()) : - 1;
-	}
+	public int getLineHeight() { return lineHeight; }
+	public int getLineCount() { return (height - 2) / 10; }
+	public boolean hasLineNumbers() { return drawLineNumbers; }
+	public int getLineNumberOffset() { return hasLineNumbers() ? (6 + String.valueOf(textDocument.size()).length() * mc.fontRendererObj.getStringWidth("0")) : 0; }
+	public boolean getDrawLineHighlight() { return drawLineHighlight; }
+	public boolean isEditable() { return editable; }
+	public TextAreaLine getCurrentLine() { return currentLine; }
+	public EArrayList<TextAreaLine> getTextDocument() { return textDocument; }
 	
-	public WindowTextArea clear() {
-		setListWidth(width - 2);
-		setListHeight(0);
-		Iterator it = windowObjects.iterator();
-		while (it.hasNext()) {
-			if (it.next() instanceof TextAreaLine) { it.remove(); }
-		}
-		listContents.clear();
-		textDocument.clear();
-		currentLine = null;
-		longestLine = null;
-		return this;
-	}
+	//----------------------
+	//WindowTextArea Setters
+	//----------------------
 	
 	public WindowTextArea setTextDocument(EArrayList<TextAreaLine> docIn) {
 		clear();
@@ -447,25 +486,5 @@ public class WindowTextArea extends WindowScrollList {
 	public WindowTextArea setDrawLineNumberSeparator(boolean valIn) { drawLineNumberSeparator = valIn; return this; }
 	public WindowTextArea setLineNumberSeparatorColor(EColors colorIn) { return setLineNumberSeparatorColor(colorIn.intVal); }
 	public WindowTextArea setLineNumberSeparatorColor(int colorIn) { lineNumberSeparatorColor = colorIn; return this; }
-	
-	public TextAreaLine getLineMouseIsOver() {
-		int mPosY = mY - startY - 1;
-		int scrollOffset = verticalScroll.getScrollPos() - verticalScroll.getVisibleAmount();
-		int posY = mPosY + scrollOffset;
-		
-		int num = (posY / lineHeight) + 1;
-		TextAreaLine l = getTextLine(num);
-		
-		return l;
-	}
-	
-	public int getLineHeight() { return lineHeight; }
-	public int getLineCount() { return (height - 2) / 10; }
-	public boolean hasLineNumbers() { return drawLineNumbers; }
-	public int getLineNumberOffset() { return hasLineNumbers() ? (6 + String.valueOf(textDocument.size()).length() * mc.fontRendererObj.getStringWidth("0")) : 0; }
-	public boolean getDrawLineHighlight() { return drawLineHighlight; }
-	public boolean isEditable() { return editable; }
-	public TextAreaLine getCurrentLine() { return currentLine; }
-	public EArrayList<TextAreaLine> getTextDocument() { return textDocument; }
 	
 }
